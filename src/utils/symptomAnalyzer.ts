@@ -4,7 +4,7 @@ export interface SymptomAnalysisResult {
   suggestedFilter: FilterType;
   keywords: string[];
   message: string;
-  icon: "baby" | "trauma" | "cardio" | "general" | "fever";
+  icon: "baby" | "trauma" | "cardio" | "general" | "fever" | "neuro";
   severity: "low" | "medium" | "high";
 }
 
@@ -38,7 +38,7 @@ const SYMPTOM_MAPPINGS = {
     keywords: ["머리", "두통", "어지", "현기증", "마비", "뇌", "의식", "졸도", "경련", "발작", "뇌출혈", "뇌경색"],
     filter: "neuro" as FilterType,
     message: "뇌혈관 전문 병원을 찾고 있습니다...",
-    icon: "cardio" as const,
+    icon: "neuro" as const,
   },
   fever: {
     keywords: ["열", "고열", "발열", "38도", "39도", "40도", "몸살", "오한", "감염", "코로나"],
