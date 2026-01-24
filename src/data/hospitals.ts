@@ -1751,7 +1751,7 @@ export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neuro" | "endoscopy" | "dialysis" | "trauma" | "cardio";
 
 // Special facility filters
-export type SpecialFilterType = "nursing" | "pharmacy";
+export type SpecialFilterType = "pharmacy";
 
 // Combined filter type
 export type FilterType = BedFilterType | ProcedureFilterType | SpecialFilterType;
@@ -1771,7 +1771,6 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "dialysis", label: "Dialysis", labelKr: "응급투석", category: "procedure" },
   { id: "trauma", label: "Trauma Center", labelKr: "외상센터", category: "procedure" },
   // Special facility types
-  { id: "nursing", label: "Nursing Hospital", labelKr: "요양병원", category: "special" },
   { id: "pharmacy", label: "Holiday Pharmacy", labelKr: "휴일약국", category: "special" },
 ];
 
