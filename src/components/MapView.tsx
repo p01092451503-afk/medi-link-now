@@ -6,9 +6,11 @@ import HospitalMarker from "./HospitalMarker";
 import ReportMarker from "./ReportMarker";
 import DriverMarker from "./DriverMarker";
 import NursingHospitalMarker from "./NursingHospitalMarker";
+import PharmacyMarker from "./PharmacyMarker";
 import type { LiveReport } from "./LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
+import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
 
 interface MapViewProps {
   hospitals: Hospital[];
@@ -21,6 +23,7 @@ interface MapViewProps {
   nearbyDrivers?: DriverPresence[];
   onCallDriver?: (driver: DriverPresence) => void;
   nursingHospitals?: NursingHospital[];
+  holidayPharmacies?: HolidayPharmacy[];
 }
 
 // Component to handle map center changes
@@ -180,7 +183,8 @@ const MapView = ({
   liveReports = [],
   nearbyDrivers = [],
   onCallDriver,
-  nursingHospitals = []
+  nursingHospitals = [],
+  holidayPharmacies = []
 }: MapViewProps) => {
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
@@ -233,6 +237,14 @@ const MapView = ({
           <NursingHospitalMarker
             key={`nursing-${hospital.id}`}
             hospital={hospital}
+          />
+        ))}
+
+        {/* Holiday Pharmacy Markers */}
+        {holidayPharmacies.map((pharmacy) => (
+          <PharmacyMarker
+            key={`pharmacy-${pharmacy.id}`}
+            pharmacy={pharmacy}
           />
         ))}
       </MapContainer>

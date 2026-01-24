@@ -21,6 +21,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useNursingHospitals } from "@/hooks/useNursingHospitals";
+import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LiveReportFAB from "@/components/LiveReportFAB";
@@ -56,6 +57,10 @@ const MapPage = () => {
   // Fetch nursing hospitals when filter is set to 'nursing'
   const isNursingFilter = activeFilter === "nursing";
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isNursingFilter);
+
+  // Fetch holiday pharmacies when filter is set to 'pharmacy'
+  const isPharmacyFilter = activeFilter === "pharmacy";
+  const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
@@ -234,7 +239,7 @@ const MapPage = () => {
       
       {/* Leaflet Map */}
       <MapView
-        hospitals={isNursingFilter ? [] : filteredHospitals}
+        hospitals={(isNursingFilter || isPharmacyFilter) ? [] : filteredHospitals}
         onHospitalClick={handleHospitalClick}
         userLocation={userLocation}
         center={mapCenter}
@@ -244,6 +249,7 @@ const MapPage = () => {
         nearbyDrivers={nearbyDrivers}
         onCallDriver={handleCallDriver}
         nursingHospitals={isNursingFilter ? nursingHospitals : []}
+        holidayPharmacies={isPharmacyFilter ? holidayPharmacies : []}
       />
 
       {/* Header */}
@@ -321,12 +327,16 @@ const MapPage = () => {
                 onClick={() => setActiveFilter(f.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-md transition-all ${
                   activeFilter === f.id
-                    ? f.category === "special" 
-                      ? "bg-violet-600 text-white shadow-violet-600/30"
-                      : "bg-primary text-white shadow-primary/30"
-                    : f.category === "special"
-                      ? "bg-white text-violet-600 hover:bg-violet-50 border border-violet-200"
-                      : "bg-white text-muted-foreground hover:bg-gray-50"
+                    ? f.id === "pharmacy"
+                      ? "bg-green-600 text-white shadow-green-600/30"
+                      : f.category === "special" 
+                        ? "bg-violet-600 text-white shadow-violet-600/30"
+                        : "bg-primary text-white shadow-primary/30"
+                    : f.id === "pharmacy"
+                      ? "bg-white text-green-600 hover:bg-green-50 border border-green-200"
+                      : f.category === "special"
+                        ? "bg-white text-violet-600 hover:bg-violet-50 border border-violet-200"
+                        : "bg-white text-muted-foreground hover:bg-gray-50"
                 }`}
               >
                 {f.labelKr}

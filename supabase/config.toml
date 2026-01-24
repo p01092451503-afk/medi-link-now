@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.fetch-nursing-hospitals]
 verify_jwt = false
+
+[functions.fetch-holiday-pharmacies]
+verify_jwt = false
