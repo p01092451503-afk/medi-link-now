@@ -1,9 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
-import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Shield } from "lucide-react";
+import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Shield, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  hospitals as hospitalData,
   Hospital,
   FilterType,
   filterOptions,
@@ -13,10 +12,13 @@ import {
 } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import MapView from "@/components/MapView";
+import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 
 const DEFAULT_CENTER: [number, number] = [37.5172, 127.0473];
 
 const Index = () => {
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
+  
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -35,7 +37,7 @@ const Index = () => {
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
     return result;
-  }, [activeFilter, searchQuery, userLocation]);
+  }, [activeFilter, searchQuery, userLocation, hospitalData]);
 
   const handleMyLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -122,9 +124,20 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Legend */}
+      {/* Legend with realtime status */}
       <div className="absolute bottom-24 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
-        <h4 className="text-xs font-semibold mb-2 text-foreground">병상 현황</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-xs font-semibold text-foreground">병상 현황</h4>
+          <button
+            onClick={() => {
+              refetch();
+              toast({ title: "데이터를 새로고침했습니다" });
+            }}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <RefreshCw className={`w-3 h-3 text-muted-foreground ${isLoadingHospitals ? "animate-spin" : ""}`} />
+          </button>
+        </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-green-500" />
@@ -139,6 +152,11 @@ const Index = () => {
             <span className="text-xs text-muted-foreground">만실</span>
           </div>
         </div>
+        {lastUpdated && (
+          <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t">
+            업데이트: {lastUpdated.toLocaleTimeString("ko-KR")}
+          </p>
+        )}
       </div>
 
       {/* Location FAB */}
