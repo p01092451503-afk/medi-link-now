@@ -1,3 +1,12 @@
+// Severe disease acceptance / procedure availability
+export interface HospitalAcceptance {
+  heart: boolean;       // 심근경색 (Myocardial Infarction)
+  brainBleed: boolean;  // 뇌출혈 (Cerebral Hemorrhage)
+  brainStroke: boolean; // 뇌경색 (Cerebral Infarction)
+  endoscopy: boolean;   // 응급내시경 (Emergency Endoscopy)
+  dialysis: boolean;    // 응급투석 (Emergency Dialysis)
+}
+
 export interface Hospital {
   id: number;
   name: string;
@@ -10,11 +19,15 @@ export interface Hospital {
   beds: {
     general: number;
     pediatric: number;
-    fever: number; // Changed from isolation
+    fever: number;
   };
   equipment: string[];
   distance?: number;
   region: string;
+  // New fields for extended API data
+  isTraumaCenter?: boolean;     // 권역외상센터 여부
+  acceptance?: HospitalAcceptance;
+  alertMessage?: string;        // Real-time hospital message
 }
 
 export const hospitals: Hospital[] = [
@@ -31,6 +44,9 @@ export const hospitals: Hospital[] = [
     beds: { general: 5, pediatric: 3, fever: 2 },
     equipment: ["CT", "MRI", "Ventilator", "ECMO"],
     region: "서울 송파구",
+    isTraumaCenter: true,
+    acceptance: { heart: true, brainBleed: true, brainStroke: true, endoscopy: true, dialysis: true },
+    alertMessage: "신경외과 전문의 24시간 상주 중",
   },
   {
     id: 2,
@@ -44,6 +60,9 @@ export const hospitals: Hospital[] = [
     beds: { general: 8, pediatric: 0, fever: 4 },
     equipment: ["CT", "MRI", "Ventilator"],
     region: "서울 강남구",
+    isTraumaCenter: false,
+    acceptance: { heart: true, brainBleed: false, brainStroke: true, endoscopy: true, dialysis: false },
+    alertMessage: "CT 스캐너 점검 중, 14:00까지 뇌 스캔 불가",
   },
   {
     id: 3,
@@ -57,6 +76,7 @@ export const hospitals: Hospital[] = [
     beds: { general: 0, pediatric: 2, fever: 0 },
     equipment: ["CT", "MRI"],
     region: "서울 강남구",
+    acceptance: { heart: false, brainBleed: false, brainStroke: true, endoscopy: false, dialysis: true },
   },
   {
     id: 4,
@@ -152,6 +172,9 @@ export const hospitals: Hospital[] = [
     beds: { general: 15, pediatric: 6, fever: 5 },
     equipment: ["CT", "MRI", "Ventilator", "ECMO"],
     region: "서울 종로구",
+    isTraumaCenter: true,
+    acceptance: { heart: true, brainBleed: true, brainStroke: true, endoscopy: true, dialysis: true },
+    alertMessage: "중증외상팀 대기 중",
   },
   {
     id: 11,
@@ -424,6 +447,8 @@ export const hospitals: Hospital[] = [
     beds: { general: 14, pediatric: 6, fever: 5 },
     equipment: ["CT", "MRI", "Ventilator", "ECMO"],
     region: "부산 서구",
+    isTraumaCenter: true,
+    acceptance: { heart: true, brainBleed: true, brainStroke: true, endoscopy: true, dialysis: true },
   },
   {
     id: 31,

@@ -13,6 +13,16 @@ interface ERApiResponse {
     feverBeds: number;
     lat?: number;
     lng?: number;
+    // Extended fields
+    isTraumaCenter?: boolean;
+    acceptance?: {
+      heart: boolean;
+      brainBleed: boolean;
+      brainStroke: boolean;
+      endoscopy: boolean;
+      dialysis: boolean;
+    };
+    alertMessage?: string;
   }[];
   count?: number;
   error?: string;
@@ -92,6 +102,10 @@ export const getRealTimeBeds = async (
       equipment: ["CT", "MRI"], // Default equipment since API doesn't provide this
       category: "응급의료기관",
       region: regionId,
+      // Extended fields
+      isTraumaCenter: item.isTraumaCenter,
+      acceptance: item.acceptance,
+      alertMessage: item.alertMessage,
     }));
 
     console.log(`Successfully fetched ${transformedHospitals.length} hospitals from API`);

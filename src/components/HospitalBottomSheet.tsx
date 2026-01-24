@@ -1,5 +1,5 @@
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info } from "lucide-react";
+import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -65,6 +65,29 @@ const BedStatusCard = ({
   );
 };
 
+// Acceptance badge component
+const AcceptanceBadge = ({
+  label,
+  available,
+  icon: Icon,
+}: {
+  label: string;
+  available: boolean;
+  icon: React.ElementType;
+}) => (
+  <div
+    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
+      available
+        ? "bg-green-50 text-green-700 border border-green-200"
+        : "bg-gray-100 text-gray-400 border border-gray-200"
+    }`}
+  >
+    <Icon className="w-3.5 h-3.5" />
+    <span>{label}</span>
+    <span className="ml-auto">{available ? "✅" : "❌"}</span>
+  </div>
+);
+
 const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
   if (!hospital) return null;
 
@@ -102,18 +125,33 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[1002] max-h-[80vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
           >
             {/* Handle */}
             <div className="flex justify-center py-3">
               <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
             </div>
 
-            <div className="px-5 pb-8 pt-1 max-h-[70vh] overflow-y-auto">
+            <div className="px-5 pb-8 pt-1 max-h-[75vh] overflow-y-auto">
+              {/* Alert Message */}
+              {hospital.alertMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex items-start gap-2"
+                >
+                  <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-yellow-800">실시간 안내</p>
+                    <p className="text-xs text-yellow-700 mt-0.5">{hospital.alertMessage}</p>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
                         status === "unavailable"
@@ -138,6 +176,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                         ? "혼잡"
                         : "여유"}
                     </span>
+                    {hospital.isTraumaCenter && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
+                        🏥 권역외상센터
+                      </span>
+                    )}
                     {hasPediatric && (
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600">
                         👶 아이 진료
@@ -186,6 +229,43 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   tooltipText="고열(38℃+) 및 감염 환자 전용"
                 />
               </div>
+
+              {/* Procedure Availability Section */}
+              {hospital.acceptance && (
+                <div className="mb-5">
+                  <h3 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
+                    <Activity className="w-4 h-4 text-primary" />
+                    수용/시술 가능 여부
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <AcceptanceBadge
+                      label="심근경색"
+                      available={hospital.acceptance.heart}
+                      icon={Heart}
+                    />
+                    <AcceptanceBadge
+                      label="뇌출혈"
+                      available={hospital.acceptance.brainBleed}
+                      icon={Brain}
+                    />
+                    <AcceptanceBadge
+                      label="뇌경색"
+                      available={hospital.acceptance.brainStroke}
+                      icon={Brain}
+                    />
+                    <AcceptanceBadge
+                      label="응급내시경"
+                      available={hospital.acceptance.endoscopy}
+                      icon={Activity}
+                    />
+                    <AcceptanceBadge
+                      label="응급투석"
+                      available={hospital.acceptance.dialysis}
+                      icon={Droplet}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Equipment Tags */}
               <div className="mb-5">
