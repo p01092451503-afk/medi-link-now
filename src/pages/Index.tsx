@@ -312,8 +312,8 @@ const Index = () => {
                         ? "혼잡"
                         : "여유"}
                     </span>
-                    <h2 className="text-xl font-bold text-foreground">{selectedHospital.name}</h2>
-                    <p className="text-sm text-muted-foreground">{selectedHospital.nameKr}</p>
+                    <h2 className="text-xl font-bold text-foreground">{selectedHospital.nameKr}</h2>
+                    <p className="text-sm text-muted-foreground">{selectedHospital.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">{selectedHospital.category}</p>
                     {selectedDistance && (
                       <p className="text-sm font-medium text-primary mt-1">
