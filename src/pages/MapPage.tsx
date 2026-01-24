@@ -19,11 +19,14 @@ import { toast } from "@/hooks/use-toast";
 import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
+import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LiveReportFAB from "@/components/LiveReportFAB";
 import SymptomSearchBar from "@/components/SymptomSearchBar";
 import OnboardingModal from "@/components/OnboardingModal";
+import NearbyDriversCard from "@/components/NearbyDriversCard";
+import DispatchRequestModal from "@/components/DispatchRequestModal";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
 
@@ -31,6 +34,7 @@ const MapPage = () => {
   const navigate = useNavigate();
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
   const { reports: liveReports, addReport } = useRealtimeReports();
+  const { nearbyDrivers } = useDriverPresence();
   
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("all");
@@ -43,6 +47,13 @@ const MapPage = () => {
   const [mapZoom, setMapZoom] = useState<number>(10);
   const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
   const [isStatsExpanded, setIsStatsExpanded] = useState(false);
+  const [showDispatchModal, setShowDispatchModal] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState<DriverPresence | null>(null);
+
+  const handleCallDriver = useCallback((driver: DriverPresence) => {
+    setSelectedDriver(driver);
+    setShowDispatchModal(true);
+  }, []);
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
@@ -194,6 +205,8 @@ const MapPage = () => {
         zoom={mapZoom}
         activeFilter={activeFilter}
         liveReports={liveReports}
+        nearbyDrivers={nearbyDrivers}
+        onCallDriver={handleCallDriver}
       />
 
       {/* Header */}
@@ -452,6 +465,15 @@ const MapPage = () => {
         )}
       </motion.div>
 
+      {/* Nearby Drivers Card */}
+      <div className="absolute bottom-24 right-4 z-[1000] w-64">
+        <NearbyDriversCard
+          drivers={nearbyDrivers}
+          userLocation={userLocation}
+          onCallDriver={handleCallDriver}
+        />
+      </div>
+
       {/* Location FAB */}
       <button
         onClick={handleMyLocation}
@@ -622,6 +644,17 @@ const MapPage = () => {
         onClose={() => setShowAmbulanceModal(false)}
         hospital={selectedHospital}
         distance={selectedDistance}
+      />
+
+      {/* Dispatch Request Modal */}
+      <DispatchRequestModal
+        isOpen={showDispatchModal}
+        onClose={() => {
+          setShowDispatchModal(false);
+          setSelectedDriver(null);
+        }}
+        selectedDriver={selectedDriver}
+        userLocation={userLocation}
       />
     </div>
   );

@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      ambulance_dispatch_requests: {
+        Row: {
+          created_at: string
+          destination: string | null
+          destination_lat: number | null
+          destination_lng: number | null
+          driver_id: string | null
+          estimated_distance_km: number | null
+          estimated_fee: number | null
+          id: string
+          notes: string | null
+          patient_condition: string | null
+          patient_name: string | null
+          pickup_lat: number
+          pickup_lng: number
+          pickup_location: string
+          requester_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          destination?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          driver_id?: string | null
+          estimated_distance_km?: number | null
+          estimated_fee?: number | null
+          id?: string
+          notes?: string | null
+          patient_condition?: string | null
+          patient_name?: string | null
+          pickup_lat: number
+          pickup_lng: number
+          pickup_location: string
+          requester_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          destination?: string | null
+          destination_lat?: number | null
+          destination_lng?: number | null
+          driver_id?: string | null
+          estimated_distance_km?: number | null
+          estimated_fee?: number | null
+          id?: string
+          notes?: string | null
+          patient_condition?: string | null
+          patient_name?: string | null
+          pickup_lat?: number
+          pickup_lng?: number
+          pickup_location?: string
+          requester_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           age: number

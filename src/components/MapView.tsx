@@ -5,7 +5,9 @@ import L from "leaflet";
 import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 import ReportMarker from "./ReportMarker";
+import DriverMarker from "./DriverMarker";
 import type { LiveReport } from "./LiveReportFAB";
+import type { DriverPresence } from "@/hooks/useDriverPresence";
 
 interface MapViewProps {
   hospitals: Hospital[];
@@ -15,6 +17,8 @@ interface MapViewProps {
   zoom: number;
   activeFilter: FilterType;
   liveReports?: LiveReport[];
+  nearbyDrivers?: DriverPresence[];
+  onCallDriver?: (driver: DriverPresence) => void;
 }
 
 // Component to handle map center changes
@@ -164,7 +168,17 @@ const KoreaBoundsEnforcer = ({ bounds }: { bounds: KoreaBoundsLiteral }) => {
   return null;
 };
 
-const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activeFilter, liveReports = [] }: MapViewProps) => {
+const MapView = ({ 
+  hospitals, 
+  onHospitalClick, 
+  userLocation, 
+  center, 
+  zoom, 
+  activeFilter, 
+  liveReports = [],
+  nearbyDrivers = [],
+  onCallDriver 
+}: MapViewProps) => {
   // Create a stable key for the cluster group based on hospital IDs
   // This prevents the cluster from trying to remove markers that don't exist
   const clusterKey = useMemo(() => {
@@ -255,6 +269,15 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activ
         {/* Live Report Markers */}
         {liveReports.map((report) => (
           <ReportMarker key={report.id} report={report} />
+        ))}
+
+        {/* Driver Markers */}
+        {nearbyDrivers.map((driver) => (
+          <DriverMarker 
+            key={`driver-${driver.id}`} 
+            driver={driver} 
+            onCallDriver={onCallDriver}
+          />
         ))}
       </MapContainer>
     </div>
