@@ -220,6 +220,7 @@ const MapPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           
+          {/* AI Symptom Search - temporarily hidden
           <SymptomSearchBar
             value={searchQuery}
             onChange={setSearchQuery}
@@ -229,6 +230,19 @@ const MapPage = () => {
             userLocation={userLocation}
             className="flex-1"
           />
+          */}
+          
+          {/* Simple search input replacement */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="병원명으로 검색..."
+              className="w-full bg-white rounded-2xl pl-12 pr-4 py-4 text-base shadow-lg outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+            />
+          </div>
         </div>
       </header>
 
