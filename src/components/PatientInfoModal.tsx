@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, User, Heart, Activity, Droplet, Clock, Copy, Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import VoiceRecorder, { type ParsedPatientData } from "./VoiceRecorder";
 
 interface PatientInfoModalProps {
   isOpen: boolean;
@@ -59,6 +60,37 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
     ktasLevel: "",
   });
   const [copied, setCopied] = useState(false);
+  const [lastTranscript, setLastTranscript] = useState("");
+
+  const handleVoiceTranscript = useCallback((text: string) => {
+    setLastTranscript(text);
+  }, []);
+
+  const handleParsedData = useCallback((data: ParsedPatientData) => {
+    setPatientInfo((prev) => ({
+      ...prev,
+      ageGender: data.ageGender || prev.ageGender,
+      chiefComplaint: data.chiefComplaint || prev.chiefComplaint,
+      bloodPressure: data.bloodPressure || prev.bloodPressure,
+      pulse: data.pulse || prev.pulse,
+      spo2: data.spo2 || prev.spo2,
+    }));
+
+    // Show success feedback
+    const filledFields = [];
+    if (data.ageGender) filledFields.push("나이/성별");
+    if (data.chiefComplaint) filledFields.push("주 호소");
+    if (data.bloodPressure) filledFields.push("혈압");
+    if (data.pulse) filledFields.push("맥박");
+    if (data.spo2) filledFields.push("산소포화도");
+
+    if (filledFields.length > 0) {
+      toast({
+        title: "음성 인식 완료",
+        description: `${filledFields.join(", ")} 항목이 입력되었습니다`,
+      });
+    }
+  }, []);
 
   const generateSummary = () => {
     const { ageGender, chiefComplaint, bloodPressure, pulse, spo2, ktasLevel } = patientInfo;
@@ -130,6 +162,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
       spo2: "",
       ktasLevel: "",
     });
+    setLastTranscript("");
   };
 
   return (
@@ -152,7 +185,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
             className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-primary to-primary/80 p-5 text-white">
+            <div className="sticky top-0 bg-gradient-to-r from-primary to-primary/80 p-5 text-white z-10">
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
@@ -173,6 +206,21 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
 
             {/* Form */}
             <div className="p-5 space-y-4">
+              {/* Voice Recorder */}
+              <VoiceRecorder
+                onTranscript={handleVoiceTranscript}
+                onParsedData={handleParsedData}
+              />
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-muted-foreground">또는 직접 입력</span>
+                </div>
+              </div>
+
               {/* Age/Gender */}
               <div>
                 <Label className="text-sm font-medium text-foreground flex items-center gap-2 mb-2">
