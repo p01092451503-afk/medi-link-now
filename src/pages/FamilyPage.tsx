@@ -7,10 +7,14 @@ import {
   Users, 
   Heart,
   Shield,
-  Loader2
+  Loader2,
+  LogIn,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFamilyMembers } from "@/hooks/useFamilyMembers";
+import { useFamilyMembersSupabase, FamilyMemberDB } from "@/hooks/useFamilyMembersSupabase";
+import { useAuth } from "@/hooks/useAuth";
 import FamilyMemberCard from "@/components/FamilyMemberCard";
 import FamilyMemberForm from "@/components/FamilyMemberForm";
 import { FamilyMember } from "@/types/familyMember";
@@ -18,13 +22,59 @@ import { toast } from "@/hooks/use-toast";
 
 const FamilyPage = () => {
   const navigate = useNavigate();
-  const { members, isLoading, addMember, updateMember, deleteMember } = useFamilyMembers();
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  
+  // Use Supabase if authenticated, otherwise use localStorage
+  const localMembers = useFamilyMembers();
+  const supabaseMembers = useFamilyMembersSupabase();
+  
+  const {
+    members: rawMembers,
+    isLoading,
+    addMember,
+    updateMember,
+    deleteMember,
+  } = isAuthenticated ? supabaseMembers : localMembers;
+  
+  // Normalize members to FamilyMember type
+  const members: FamilyMember[] = rawMembers.map((m: FamilyMember | FamilyMemberDB) => {
+    if ('chronic_diseases' in m) {
+      // Supabase format
+      return {
+        id: m.id,
+        name: m.name,
+        age: m.age,
+        relation: m.relation as FamilyMember["relation"],
+        bloodType: m.blood_type as FamilyMember["bloodType"],
+        chronicDiseases: m.chronic_diseases || [],
+        allergies: m.allergies || [],
+        notes: m.notes || undefined,
+        createdAt: m.created_at,
+        updatedAt: m.updated_at,
+      };
+    }
+    return m as FamilyMember;
+  });
+  
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
 
-  const handleAddMember = (data: Omit<FamilyMember, "id" | "createdAt" | "updatedAt">) => {
-    addMember(data);
-    toast({ title: "✅ 가족이 추가되었습니다" });
+  const handleAddMember = async (data: Omit<FamilyMember, "id" | "createdAt" | "updatedAt">) => {
+    if (isAuthenticated) {
+      // Supabase format
+      await supabaseMembers.addMember({
+        name: data.name,
+        age: data.age,
+        relation: data.relation,
+        blood_type: data.bloodType,
+        chronic_diseases: data.chronicDiseases,
+        allergies: data.allergies,
+        notes: data.notes || null,
+      });
+    } else {
+      localMembers.addMember(data);
+      toast({ title: "✅ 가족이 추가되었습니다" });
+    }
   };
 
   const handleEditMember = (member: FamilyMember) => {
@@ -32,18 +82,34 @@ const FamilyPage = () => {
     setIsFormOpen(true);
   };
 
-  const handleUpdateMember = (data: Omit<FamilyMember, "id" | "createdAt" | "updatedAt">) => {
+  const handleUpdateMember = async (data: Omit<FamilyMember, "id" | "createdAt" | "updatedAt">) => {
     if (editingMember) {
-      updateMember(editingMember.id, data);
-      toast({ title: "✅ 정보가 수정되었습니다" });
+      if (isAuthenticated) {
+        await supabaseMembers.updateMember(editingMember.id, {
+          name: data.name,
+          age: data.age,
+          relation: data.relation,
+          blood_type: data.bloodType,
+          chronic_diseases: data.chronicDiseases,
+          allergies: data.allergies,
+          notes: data.notes || null,
+        });
+      } else {
+        localMembers.updateMember(editingMember.id, data);
+        toast({ title: "✅ 정보가 수정되었습니다" });
+      }
       setEditingMember(null);
     }
   };
 
-  const handleDeleteMember = (id: string) => {
+  const handleDeleteMember = async (id: string) => {
     if (confirm("정말 삭제하시겠습니까?")) {
-      deleteMember(id);
-      toast({ title: "삭제되었습니다" });
+      if (isAuthenticated) {
+        await supabaseMembers.deleteMember(id);
+      } else {
+        localMembers.deleteMember(id);
+        toast({ title: "삭제되었습니다" });
+      }
     }
   };
 
@@ -56,6 +122,14 @@ const FamilyPage = () => {
     });
     navigate("/map");
   };
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background pb-8">
@@ -87,6 +161,36 @@ const FamilyPage = () => {
       </header>
 
       <main className="p-4 space-y-6">
+        {/* Auth Warning Banner */}
+        {!isAuthenticated && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-yellow-50 border border-yellow-200 rounded-xl p-4"
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm text-yellow-800 font-medium mb-1">
+                  로그인하지 않으면 데이터가 기기에만 저장됩니다
+                </p>
+                <p className="text-xs text-yellow-700 mb-3">
+                  다른 기기에서 접속하거나 브라우저 캐시를 삭제하면 데이터가 사라질 수 있습니다.
+                </p>
+                <Button
+                  onClick={() => navigate("/login?mode=guardian&returnTo=/family")}
+                  size="sm"
+                  variant="outline"
+                  className="border-yellow-400 text-yellow-800 hover:bg-yellow-100"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  로그인하고 안전하게 저장하기
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Info Banner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -146,6 +250,11 @@ const FamilyPage = () => {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Heart className="w-4 h-4 text-primary" />
               <span>등록된 가족 {members.length}명</span>
+              {isAuthenticated && (
+                <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                  ☁️ 클라우드 저장
+                </span>
+              )}
             </div>
             {members.map((member) => (
               <FamilyMemberCard

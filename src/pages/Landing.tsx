@@ -85,7 +85,7 @@ const Landing = () => {
         >
           {/* Guardian Button */}
           <Button
-            onClick={() => navigate("/guardian")}
+            onClick={() => navigate("/map")}
             className="w-full py-8 rounded-2xl text-lg font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
