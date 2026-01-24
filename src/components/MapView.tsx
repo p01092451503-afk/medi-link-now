@@ -1,5 +1,7 @@
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import L from "leaflet";
 import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 
@@ -102,15 +104,60 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activ
         {/* User location marker */}
         {userLocation && <UserLocationMarker position={userLocation} />}
         
-        {/* Hospital markers */}
-        {hospitals.map((hospital) => (
-          <HospitalMarker
-            key={hospital.id}
-            hospital={hospital}
-            onClick={onHospitalClick}
-            activeFilter={activeFilter}
-          />
-        ))}
+        {/* Hospital markers with clustering */}
+        <MarkerClusterGroup
+          chunkedLoading
+          maxClusterRadius={60}
+          spiderfyOnMaxZoom={true}
+          showCoverageOnHover={false}
+          iconCreateFunction={(cluster) => {
+            const count = cluster.getChildCount();
+            let size = "small";
+            let bgColor = "hsl(220, 100%, 50%)"; // primary color
+            
+            if (count >= 20) {
+              size = "large";
+            } else if (count >= 10) {
+              size = "medium";
+            }
+            
+            const sizeMap = {
+              small: { width: 36, height: 36, fontSize: 12 },
+              medium: { width: 44, height: 44, fontSize: 14 },
+              large: { width: 52, height: 52, fontSize: 16 },
+            };
+            
+            const s = sizeMap[size as keyof typeof sizeMap];
+            
+            return L.divIcon({
+              html: `<div style="
+                background: ${bgColor};
+                width: ${s.width}px;
+                height: ${s.height}px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 700;
+                font-size: ${s.fontSize}px;
+                border: 3px solid white;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+              ">${count}</div>`,
+              className: "custom-cluster-icon",
+              iconSize: L.point(s.width, s.height, true),
+            });
+          }}
+        >
+          {hospitals.map((hospital) => (
+            <HospitalMarker
+              key={hospital.id}
+              hospital={hospital}
+              onClick={onHospitalClick}
+              activeFilter={activeFilter}
+            />
+          ))}
+        </MarkerClusterGroup>
       </MapContainer>
     </div>
   );
