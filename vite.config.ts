@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["react", "react-dom"],
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "react-leaflet", "leaflet"],
+    include: ["react", "react-dom", "react-leaflet", "leaflet", "@react-leaflet/core"],
+    force: true,
   },
 }));
