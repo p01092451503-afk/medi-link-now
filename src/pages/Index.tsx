@@ -25,6 +25,7 @@ const Index = () => {
   const [isLocating, setIsLocating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
+  const [mapZoom, setMapZoom] = useState<number>(13);
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
@@ -64,6 +65,7 @@ const Index = () => {
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
+    setMapZoom(16); // Zoom in when hospital is clicked
   }, []);
 
   const selectedDistance = selectedHospital && userLocation 
@@ -78,6 +80,7 @@ const Index = () => {
         onHospitalClick={handleHospitalClick}
         userLocation={userLocation}
         center={mapCenter}
+        zoom={mapZoom}
         activeFilter={activeFilter}
       />
 

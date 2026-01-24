@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup } from "react-leaflet";
 import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
@@ -8,16 +8,31 @@ interface MapViewProps {
   onHospitalClick: (hospital: Hospital) => void;
   userLocation: [number, number] | null;
   center: [number, number];
+  zoom: number;
   activeFilter: FilterType;
 }
 
 // Component to handle map center changes
-const MapCenterHandler = ({ center }: { center: [number, number] }) => {
+const MapCenterHandler = ({ center, zoom }: { center: [number, number]; zoom?: number }) => {
   const map = useMap();
 
   useEffect(() => {
-    map.flyTo(center, map.getZoom(), { duration: 1 });
-  }, [center, map]);
+    map.flyTo(center, zoom ?? map.getZoom(), { duration: 1 });
+  }, [center, zoom, map]);
+
+  return null;
+};
+
+// Hook to get map instance for zooming
+const ZoomToHospital = ({ hospital, onZoomComplete }: { hospital: Hospital | null; onZoomComplete: () => void }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (hospital) {
+      map.flyTo([hospital.lat, hospital.lng], 16, { duration: 1.2 });
+      onZoomComplete();
+    }
+  }, [hospital, map, onZoomComplete]);
 
   return null;
 };
@@ -68,7 +83,7 @@ const UserLocationMarker = ({ position }: { position: [number, number] }) => {
   );
 };
 
-const MapView = ({ hospitals, onHospitalClick, userLocation, center, activeFilter }: MapViewProps) => {
+const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activeFilter }: MapViewProps) => {
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
       <MapContainer
@@ -82,7 +97,7 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, activeFilte
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapCenterHandler center={center} />
+        <MapCenterHandler center={center} zoom={zoom} />
         
         {/* User location marker */}
         {userLocation && <UserLocationMarker position={userLocation} />}
