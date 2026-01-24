@@ -1,4 +1,4 @@
-import { Marker, Popup } from "react-leaflet";
+import { Marker, Popup, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import { Hospital, getHospitalStatus, FilterType } from "@/data/hospitals";
 
@@ -188,6 +188,14 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
         click: () => onClick(hospital),
       }}
     >
+      <Tooltip 
+        direction="top" 
+        offset={[0, -55]} 
+        opacity={1}
+        className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-1.5 !text-sm !font-semibold !text-gray-800"
+      >
+        {hospital.nameKr}
+      </Tooltip>
       <Popup>
         <div className="text-sm min-w-[180px]">
           <div className="flex items-center gap-1 mb-1">
