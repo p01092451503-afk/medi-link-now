@@ -54,6 +54,8 @@ const getIconForResult = (icon: SymptomAnalysisResult["icon"]) => {
       return <Bone className="w-5 h-5 text-orange-500" />;
     case "cardio":
       return <HeartPulse className="w-5 h-5 text-red-500" />;
+    case "neuro":
+      return <AlertCircle className="w-5 h-5 text-purple-500" />;
     case "fever":
       return <Thermometer className="w-5 h-5 text-yellow-600" />;
     default:
@@ -133,7 +135,12 @@ const SymptomSearchBar = ({
     if (!analysis || !userLocation || hospitals.length === 0) return [];
 
     // Filter hospitals by the suggested filter
-    const filtered = filterHospitals(hospitals, analysis.suggestedFilter);
+    let filtered = filterHospitals(hospitals, analysis.suggestedFilter);
+
+    // Fallback: if no hospitals match the filter, show all nearby hospitals
+    if (filtered.length === 0) {
+      filtered = hospitals;
+    }
 
     // Calculate distance and travel time for each hospital
     const withDistances = filtered.map((hospital) => {

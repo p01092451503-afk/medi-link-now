@@ -1748,7 +1748,7 @@ export const hospitals: Hospital[] = [
 export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 
 // Procedure availability filters (시술 가능 여부)
-export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "endoscopy" | "dialysis" | "trauma";
+export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neuro" | "endoscopy" | "dialysis" | "trauma" | "cardio";
 
 // Combined filter type
 export type FilterType = BedFilterType | ProcedureFilterType;
@@ -1789,17 +1789,22 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
       return hospitals.filter((h) => h.equipment.includes("CT"));
     // Procedure availability filters (시술 가능 여부)
     case "heart":
-      return hospitals.filter((h) => h.acceptance?.heart === true);
+    case "cardio":
+      // 심근경색 가능 OR CT 보유 병원 (심혈관 관련)
+      return hospitals.filter((h) => h.acceptance?.heart === true || h.equipment.includes("CT"));
     case "brainBleed":
       return hospitals.filter((h) => h.acceptance?.brainBleed === true);
     case "brainStroke":
-      return hospitals.filter((h) => h.acceptance?.brainStroke === true);
+    case "neuro":
+      // 뇌경색 OR 뇌출혈 가능 병원 (신경계 관련)
+      return hospitals.filter((h) => h.acceptance?.brainStroke === true || h.acceptance?.brainBleed === true || h.equipment.includes("CT"));
     case "endoscopy":
       return hospitals.filter((h) => h.acceptance?.endoscopy === true);
     case "dialysis":
       return hospitals.filter((h) => h.acceptance?.dialysis === true);
     case "trauma":
-      return hospitals.filter((h) => h.isTraumaCenter === true);
+      // 외상센터 OR 일반 응급실 (외상 대응 가능)
+      return hospitals.filter((h) => h.isTraumaCenter === true || h.beds.general > 0);
     default:
       return hospitals;
   }
