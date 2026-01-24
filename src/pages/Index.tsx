@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info } from "lucide-react";
+import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,10 +9,20 @@ import {
   filterHospitals,
   calculateDistance,
   getHospitalStatus,
+  RegionType,
+  regionOptions,
+  filterHospitalsByRegion,
 } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0]; // Seoul Capital Area center
 
@@ -20,6 +30,7 @@ const Index = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
   
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [activeRegion, setActiveRegion] = useState<RegionType>("all");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
@@ -29,6 +40,7 @@ const Index = () => {
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
+    result = filterHospitalsByRegion(result, activeRegion);
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
@@ -38,7 +50,16 @@ const Index = () => {
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
     return result;
-  }, [activeFilter, searchQuery, userLocation, hospitalData]);
+  }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData]);
+
+  const handleRegionChange = useCallback((region: RegionType) => {
+    setActiveRegion(region);
+    const regionData = regionOptions.find((r) => r.id === region);
+    if (regionData) {
+      setMapCenter(regionData.center);
+      setMapZoom(region === "all" ? 8 : 11);
+    }
+  }, []);
 
   const handleMyLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -109,8 +130,29 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Filter Chips */}
-      <div className="absolute top-20 left-0 right-0 z-[1000] px-4">
+      {/* Filter Section */}
+      <div className="absolute top-20 left-0 right-0 z-[1000] px-4 space-y-2">
+        {/* Region Filter */}
+        <div className="flex items-center gap-2">
+          <Select value={activeRegion} onValueChange={(value) => handleRegionChange(value as RegionType)}>
+            <SelectTrigger className="w-[130px] bg-white shadow-md border-0 rounded-xl">
+              <MapPin className="w-4 h-4 mr-1 text-primary" />
+              <SelectValue placeholder="지역 선택" />
+            </SelectTrigger>
+            <SelectContent className="bg-white z-[1001]">
+              {regionOptions.map((r) => (
+                <SelectItem key={r.id} value={r.id}>
+                  {r.labelKr}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-xs text-white bg-primary/80 px-2 py-1 rounded-full">
+            {filteredHospitals.length}개 병원
+          </span>
+        </div>
+
+        {/* Bed Type Filter Chips */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {filterOptions.map((f) => (
             <button

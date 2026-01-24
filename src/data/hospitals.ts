@@ -861,6 +861,38 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
   }
 };
 
+export type RegionType = "all" | "seoul" | "incheon" | "gyeonggi" | "busan" | "daegu" | "daejeon" | "gwangju" | "ulsan";
+
+export const regionOptions: { id: RegionType; label: string; labelKr: string; center: [number, number] }[] = [
+  { id: "all", label: "All Regions", labelKr: "전체", center: [37.5, 127.0] },
+  { id: "seoul", label: "Seoul", labelKr: "서울", center: [37.5665, 126.9780] },
+  { id: "incheon", label: "Incheon", labelKr: "인천", center: [37.4563, 126.7052] },
+  { id: "gyeonggi", label: "Gyeonggi", labelKr: "경기", center: [37.4138, 127.5183] },
+  { id: "busan", label: "Busan", labelKr: "부산", center: [35.1796, 129.0756] },
+  { id: "daegu", label: "Daegu", labelKr: "대구", center: [35.8714, 128.6014] },
+  { id: "daejeon", label: "Daejeon", labelKr: "대전", center: [36.3504, 127.3845] },
+  { id: "gwangju", label: "Gwangju", labelKr: "광주", center: [35.1595, 126.8526] },
+  { id: "ulsan", label: "Ulsan", labelKr: "울산", center: [35.5384, 129.3114] },
+];
+
+export const getRegionFromHospital = (hospital: Hospital): RegionType => {
+  const region = hospital.region.toLowerCase();
+  if (region.includes("서울")) return "seoul";
+  if (region.includes("인천")) return "incheon";
+  if (region.includes("경기")) return "gyeonggi";
+  if (region.includes("부산")) return "busan";
+  if (region.includes("대구")) return "daegu";
+  if (region.includes("대전")) return "daejeon";
+  if (region.includes("광주")) return "gwangju";
+  if (region.includes("울산")) return "ulsan";
+  return "all";
+};
+
+export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionType): Hospital[] => {
+  if (region === "all") return hospitals;
+  return hospitals.filter((h) => getRegionFromHospital(h) === region);
+};
+
 export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
   const R = 6371; // Earth's radius in km
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
