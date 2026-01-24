@@ -96,7 +96,7 @@ const LiveReportFAB = ({ onReport, userLocation }: LiveReportFABProps) => {
       {/* Main FAB */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-44 left-4 z-[1000] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors ${
+        className={`fixed bottom-24 right-20 z-[1000] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors ${
           isOpen ? "bg-gray-600" : "bg-orange-500 hover:bg-orange-600"
         }`}
         whileTap={{ scale: 0.95 }}
@@ -131,7 +131,7 @@ const LiveReportFAB = ({ onReport, userLocation }: LiveReportFABProps) => {
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-60 left-4 z-[1000] bg-white rounded-2xl shadow-xl border border-border p-4 min-w-[200px]"
+            className="fixed bottom-40 right-4 z-[1000] bg-white rounded-2xl shadow-xl border border-border p-4 min-w-[200px]"
           >
             <p className="text-sm font-semibold text-foreground mb-3">
               실시간 현황 신고
