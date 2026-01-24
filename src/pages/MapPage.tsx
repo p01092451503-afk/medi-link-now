@@ -41,6 +41,7 @@ const MapPage = () => {
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(10);
   const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
+  const [isStatsExpanded, setIsStatsExpanded] = useState(false);
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
@@ -151,9 +152,9 @@ const MapPage = () => {
     ? calculateDistance(userLocation[0], userLocation[1], selectedHospital.lat, selectedHospital.lng) 
     : undefined;
 
-  // Calculate nearby hospital stats based on user location
-  const nearbyStats = useMemo(() => {
-    if (!userLocation) return null;
+  // Calculate nearby hospital stats and list based on user location
+  const { nearbyStats, nearbyHospitals } = useMemo(() => {
+    if (!userLocation) return { nearbyStats: null, nearbyHospitals: [] };
     
     // Get hospitals within 10km radius, sorted by distance
     const nearby = hospitalData
@@ -162,15 +163,20 @@ const MapPage = () => {
         distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng),
       }))
       .filter((h) => h.distance <= 10)
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, 20); // Top 20 nearest
+      .sort((a, b) => a.distance - b.distance);
 
-    const available = nearby.filter((h) => getHospitalStatus(h) === "available").length;
-    const limited = nearby.filter((h) => getHospitalStatus(h) === "limited").length;
-    const unavailable = nearby.filter((h) => getHospitalStatus(h) === "unavailable").length;
-    const totalBeds = nearby.reduce((sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever, 0);
+    const top20 = nearby.slice(0, 20);
+    const top5 = nearby.slice(0, 5);
 
-    return { total: nearby.length, available, limited, unavailable, totalBeds };
+    const available = top20.filter((h) => getHospitalStatus(h) === "available").length;
+    const limited = top20.filter((h) => getHospitalStatus(h) === "limited").length;
+    const unavailable = top20.filter((h) => getHospitalStatus(h) === "unavailable").length;
+    const totalBeds = top20.reduce((sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever, 0);
+
+    return {
+      nearbyStats: { total: top20.length, available, limited, unavailable, totalBeds },
+      nearbyHospitals: top5,
+    };
   }, [userLocation, hospitalData]);
 
   return (
@@ -291,9 +297,16 @@ const MapPage = () => {
       )}
 
       {/* Nearby Hospital Stats Card */}
-      <div className="absolute bottom-24 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden min-w-[140px]">
-        {/* Header */}
-        <div className="flex items-center justify-between px-3 py-2 bg-primary/5 border-b border-primary/10">
+      <motion.div 
+        layout
+        className="absolute bottom-24 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
+        style={{ minWidth: isStatsExpanded ? 220 : 140 }}
+      >
+        {/* Header - Clickable to expand */}
+        <div 
+          onClick={() => nearbyStats && setIsStatsExpanded(!isStatsExpanded)}
+          className={`flex items-center justify-between px-3 py-2 bg-primary/5 border-b border-primary/10 ${nearbyStats ? 'cursor-pointer hover:bg-primary/10' : ''} transition-colors`}
+        >
           <div className="flex items-center gap-1.5">
             {userLocation ? (
               <MapPin className="w-3.5 h-3.5 text-primary" />
@@ -303,9 +316,20 @@ const MapPage = () => {
             <h4 className="text-xs font-semibold text-foreground">
               {userLocation ? "내 주변 병상" : "병상 현황"}
             </h4>
+            {nearbyStats && (
+              <motion.div
+                animate={{ rotate: isStatsExpanded ? 180 : 0 }}
+                className="ml-1"
+              >
+                <svg className="w-3 h-3 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </motion.div>
+            )}
           </div>
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               refetch();
               toast({ title: "데이터를 새로고침했습니다" });
             }}
@@ -346,6 +370,49 @@ const MapPage = () => {
                   <p className="text-[10px] text-muted-foreground">만실</p>
                 </div>
               </div>
+
+              {/* Expanded: Nearby Hospital List */}
+              <AnimatePresence>
+                {isStatsExpanded && nearbyHospitals.length > 0 && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                      <p className="text-[10px] font-semibold text-muted-foreground mb-2">가까운 병원 TOP 5</p>
+                      {nearbyHospitals.map((hospital) => {
+                        const status = getHospitalStatus(hospital);
+                        const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
+                        return (
+                          <button
+                            key={hospital.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleHospitalClick(hospital);
+                              setIsStatsExpanded(false);
+                            }}
+                            className="w-full flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                          >
+                            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                              status === 'available' ? 'bg-green-500' : 
+                              status === 'limited' ? 'bg-yellow-500' : 'bg-red-500'
+                            }`} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-foreground truncate">{hospital.nameKr}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {hospital.distance?.toFixed(1)}km · {totalBeds}병상
+                              </p>
+                            </div>
+                            <Navigation className="w-3 h-3 text-primary flex-shrink-0" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </>
           ) : (
             <>
@@ -385,7 +452,7 @@ const MapPage = () => {
             </p>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Location FAB */}
       <button
