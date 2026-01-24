@@ -311,18 +311,22 @@ const MapPage = () => {
           hospitalCount={filteredHospitals.length}
         />
 
-        {/* Bed Type Filter Chips */}
+        {/* Bed Type Filter Chips + Special Filters (요양병원) */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {filterOptions
-            .filter((f) => f.category === "bed")
+            .filter((f) => f.category === "bed" || f.category === "special")
             .map((f) => (
               <button
                 key={f.id}
                 onClick={() => setActiveFilter(f.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-md transition-all ${
                   activeFilter === f.id
-                    ? "bg-primary text-white shadow-primary/30"
-                    : "bg-white text-muted-foreground hover:bg-gray-50"
+                    ? f.category === "special" 
+                      ? "bg-violet-600 text-white shadow-violet-600/30"
+                      : "bg-primary text-white shadow-primary/30"
+                    : f.category === "special"
+                      ? "bg-white text-violet-600 hover:bg-violet-50 border border-violet-200"
+                      : "bg-white text-muted-foreground hover:bg-gray-50"
                 }`}
               >
                 {f.labelKr}
