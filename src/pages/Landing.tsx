@@ -12,7 +12,7 @@ const Landing = () => {
       <header className="p-4 flex items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-            <span className="text-white font-bold text-xl">M</span>
+            <Ambulance className="w-6 h-6 text-white" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">Medi-Link</h1>
