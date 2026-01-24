@@ -121,12 +121,19 @@ const createMarkerIcon = (
           0%, 100% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.3); opacity: 0.8; }
         }
+        .marker-container {
+          transition: transform 0.2s ease-out;
+        }
+        .marker-container:hover {
+          transform: scale(1.15);
+        }
       </style>
-      <div style="
+      <div class="marker-container" style="
         position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
+        cursor: pointer;
       ">
         <div style="
           position: relative;
