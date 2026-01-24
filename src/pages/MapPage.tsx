@@ -560,23 +560,33 @@ const MapPage = () => {
           ) : (
             <>
               {/* Fallback: Simple Legend */}
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-[6px] font-bold text-white">N</span>
+                  <div className="flex flex-col items-center">
+                    <div className="w-5 h-3 rounded-full bg-primary border border-blue-600" />
+                    <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-blue-600 -mt-[1px]" />
                   </div>
-                  <span className="text-xs text-muted-foreground">병원 클러스터</span>
+                  <span className="text-xs text-muted-foreground">병원 마커</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <div className="flex flex-col items-center">
+                    <div className="w-5 h-3 rounded-full bg-green-500 border border-green-600" />
+                    <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-green-600 -mt-[1px]" />
+                  </div>
                   <span className="text-xs text-muted-foreground">여유 (3병상+)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <div className="flex flex-col items-center">
+                    <div className="w-5 h-3 rounded-full bg-yellow-500 border border-yellow-600" />
+                    <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-yellow-600 -mt-[1px]" />
+                  </div>
                   <span className="text-xs text-muted-foreground">혼잡 (1~2병상)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <div className="flex flex-col items-center">
+                    <div className="w-5 h-3 rounded-full bg-red-500 border border-red-600" />
+                    <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-red-600 -mt-[1px]" />
+                  </div>
                   <span className="text-xs text-muted-foreground">만실 (0병상)</span>
                 </div>
               </div>
