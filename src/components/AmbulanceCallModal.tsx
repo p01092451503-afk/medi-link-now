@@ -59,10 +59,12 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden"
+             // Mobile: pin to safe viewport with internal scroll (prevents cut-off)
+             // sm+: center like a classic modal
+             className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
           >
             {/* Header */}
-            <div className="relative bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
+             <div className="relative bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white shrink-0">
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
@@ -82,7 +84,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
             </div>
 
             {/* Content */}
-            <div className="p-6">
+             <div className="flex-1 overflow-y-auto p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
               {callState === "confirm" && (
                 <motion.div
                   initial={{ opacity: 0 }}
