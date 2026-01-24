@@ -3,7 +3,7 @@ import L from "leaflet";
 import { Hospital, getHospitalStatus, FilterType } from "@/data/hospitals";
 
 interface HospitalMarkerProps {
-  hospital: Hospital;
+  hospital: Hospital & { distance?: number };
   onClick: (hospital: Hospital) => void;
   activeFilter: FilterType;
 }
@@ -192,9 +192,14 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
         direction="top" 
         offset={[0, -55]} 
         opacity={1}
-        className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-1.5 !text-sm !font-semibold !text-gray-800"
+        className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-2 !text-sm !text-gray-800"
       >
-        {hospital.nameKr}
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="font-semibold">{hospital.nameKr}</span>
+          {hospital.distance !== undefined && (
+            <span className="text-xs text-primary font-medium">{hospital.distance.toFixed(1)}km</span>
+          )}
+        </div>
       </Tooltip>
       <Popup>
         <div className="text-sm min-w-[180px]">
