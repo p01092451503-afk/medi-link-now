@@ -71,6 +71,41 @@ const MapPage = () => {
     }
   }, []);
 
+  // Find the closest region based on user location
+  const findClosestRegion = useCallback((userLat: number, userLng: number) => {
+    // First, find the closest major region
+    const majorRegions = regionOptions.filter((r) => !r.parent && r.id !== "all");
+    let closestMajor = majorRegions[0];
+    let minMajorDistance = Infinity;
+
+    for (const region of majorRegions) {
+      const distance = calculateDistance(userLat, userLng, region.center[0], region.center[1]);
+      if (distance < minMajorDistance) {
+        minMajorDistance = distance;
+        closestMajor = region;
+      }
+    }
+
+    // Then, find the closest sub-region within that major region
+    const subRegions = regionOptions.filter((r) => r.parent === closestMajor.id);
+    let closestSub = closestMajor; // Default to major region if no sub-regions
+    let minSubDistance = Infinity;
+
+    for (const region of subRegions) {
+      const distance = calculateDistance(userLat, userLng, region.center[0], region.center[1]);
+      if (distance < minSubDistance) {
+        minSubDistance = distance;
+        closestSub = region;
+      }
+    }
+
+    return {
+      majorRegion: closestMajor.id as MajorRegionType,
+      subRegion: closestSub.id as RegionType,
+      subRegionData: closestSub,
+    };
+  }, []);
+
   const handleMyLocation = useCallback(() => {
     if (!navigator.geolocation) {
       toast({ title: "위치 서비스를 사용할 수 없습니다" });
@@ -82,8 +117,17 @@ const MapPage = () => {
         const newLocation: [number, number] = [pos.coords.latitude, pos.coords.longitude];
         setUserLocation(newLocation);
         setMapCenter(newLocation);
+        
+        // Auto-select closest region
+        const { majorRegion, subRegion, subRegionData } = findClosestRegion(pos.coords.latitude, pos.coords.longitude);
+        setActiveMajorRegion(majorRegion);
+        setActiveRegion(subRegion);
+        
         setIsLocating(false);
-        toast({ title: "현재 위치를 찾았습니다!" });
+        toast({ 
+          title: "현재 위치를 찾았습니다!",
+          description: `${subRegionData.labelKr} 지역으로 설정되었습니다.`
+        });
       },
       () => {
         setIsLocating(false);
@@ -91,7 +135,7 @@ const MapPage = () => {
       },
       { enableHighAccuracy: true, timeout: 5000 }
     );
-  }, []);
+  }, [findClosestRegion]);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
