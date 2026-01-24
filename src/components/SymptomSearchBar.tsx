@@ -217,7 +217,7 @@ const SymptomSearchBar = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 z-[2000]"
+            className="absolute top-full left-0 right-0 mt-2 z-[9999]"
           >
             <div className={`rounded-xl p-4 border shadow-xl backdrop-blur-sm ${getSeverityColor(analysis.severity)}`}>
               <div className="flex items-start gap-3">
@@ -313,7 +313,7 @@ const SymptomSearchBar = ({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl p-4 shadow-xl border border-gray-200 z-[2000]"
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl p-4 shadow-xl border border-gray-200 z-[9999]"
         >
           <p className="text-xs text-muted-foreground mb-3">
             💡 증상을 자연스럽게 입력하면 AI가 적합한 병원을 추천해드립니다
