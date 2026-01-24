@@ -14,7 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      hospital_monitors: {
+        Row: {
+          bed_type: string
+          created_at: string
+          hospital_id: number
+          hospital_name: string
+          id: string
+          subscription_id: string
+        }
+        Insert: {
+          bed_type?: string
+          created_at?: string
+          hospital_id: number
+          hospital_name: string
+          id?: string
+          subscription_id: string
+        }
+        Update: {
+          bed_type?: string
+          created_at?: string
+          hospital_id?: number
+          hospital_name?: string
+          id?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_monitors_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "push_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospital_status_cache: {
+        Row: {
+          general_beds: number
+          hospital_id: number
+          id: number
+          isolation_beds: number
+          last_updated: string
+          pediatric_beds: number
+        }
+        Insert: {
+          general_beds?: number
+          hospital_id: number
+          id?: number
+          isolation_beds?: number
+          last_updated?: string
+          pediatric_beds?: number
+        }
+        Update: {
+          general_beds?: number
+          hospital_id?: number
+          id?: number
+          isolation_beds?: number
+          last_updated?: string
+          pediatric_beds?: number
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
