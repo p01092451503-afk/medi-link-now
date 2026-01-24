@@ -1,13 +1,46 @@
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
-import { Hospital, getHospitalStatus } from "@/data/hospitals";
+import { Hospital, getHospitalStatus, FilterType } from "@/data/hospitals";
 
 interface HospitalMarkerProps {
   hospital: Hospital;
   onClick: (hospital: Hospital) => void;
+  activeFilter: FilterType;
 }
 
-const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds: number) => {
+const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
+  switch (filter) {
+    case "adult":
+      return hospital.beds.general;
+    case "pediatric":
+      return hospital.beds.pediatric;
+    case "isolation":
+      return hospital.beds.isolation;
+    default:
+      return hospital.beds.general + hospital.beds.pediatric + hospital.beds.isolation;
+  }
+};
+
+const getFilterLabel = (filter: FilterType): string => {
+  switch (filter) {
+    case "adult":
+      return "성인";
+    case "pediatric":
+      return "소아";
+    case "isolation":
+      return "격리";
+    default:
+      return "전체";
+  }
+};
+
+const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" => {
+  if (beds === 0) return "unavailable";
+  if (beds <= 2) return "limited";
+  return "available";
+};
+
+const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds: number, filterLabel: string) => {
   const colors = {
     available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
     limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
@@ -26,18 +59,18 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
         align-items: center;
       ">
         <div style="
-          min-width: 32px;
-          height: 32px;
-          padding: 0 8px;
+          min-width: 36px;
+          height: 36px;
+          padding: 0 10px;
           background: ${color.bg};
           border: 3px solid ${color.border};
-          border-radius: 16px;
+          border-radius: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: ${color.text};
           font-weight: 700;
-          font-size: 14px;
+          font-size: 16px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.3);
           cursor: pointer;
           transition: transform 0.2s;
@@ -54,16 +87,17 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
         "></div>
       </div>
     `,
-    iconSize: [40, 48],
-    iconAnchor: [20, 48],
-    popupAnchor: [0, -48],
+    iconSize: [44, 52],
+    iconAnchor: [22, 52],
+    popupAnchor: [0, -52],
   });
 };
 
-const HospitalMarker = ({ hospital, onClick }: HospitalMarkerProps) => {
-  const status = getHospitalStatus(hospital);
-  const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.isolation;
-  const icon = createMarkerIcon(status, totalBeds);
+const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps) => {
+  const displayBeds = getDisplayBeds(hospital, activeFilter);
+  const status = getMarkerStatus(displayBeds);
+  const filterLabel = getFilterLabel(activeFilter);
+  const icon = createMarkerIcon(status, displayBeds, filterLabel);
 
   return (
     <Marker
@@ -74,23 +108,23 @@ const HospitalMarker = ({ hospital, onClick }: HospitalMarkerProps) => {
       }}
     >
       <Popup>
-        <div className="text-sm min-w-[150px]">
+        <div className="text-sm min-w-[160px]">
           <strong className="block text-base">{hospital.nameKr}</strong>
           <span className="text-xs text-gray-500 block mb-2">{hospital.category}</span>
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div>
+            <div className={`p-1.5 rounded ${activeFilter === "adult" || activeFilter === "all" || activeFilter === "ct" ? "bg-blue-50" : ""}`}>
               <div className={`font-bold ${hospital.beds.general > 0 ? "text-green-600" : "text-red-500"}`}>
                 {hospital.beds.general}
               </div>
               <div className="text-gray-400">성인</div>
             </div>
-            <div>
+            <div className={`p-1.5 rounded ${activeFilter === "pediatric" ? "bg-blue-50" : ""}`}>
               <div className={`font-bold ${hospital.beds.pediatric > 0 ? "text-green-600" : "text-red-500"}`}>
                 {hospital.beds.pediatric}
               </div>
               <div className="text-gray-400">소아</div>
             </div>
-            <div>
+            <div className={`p-1.5 rounded ${activeFilter === "isolation" ? "bg-blue-50" : ""}`}>
               <div className={`font-bold ${hospital.beds.isolation > 0 ? "text-green-600" : "text-red-500"}`}>
                 {hospital.beds.isolation}
               </div>

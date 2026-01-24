@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup } from "react-leaflet";
-import { Hospital } from "@/data/hospitals";
+import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 
 interface MapViewProps {
@@ -8,6 +8,7 @@ interface MapViewProps {
   onHospitalClick: (hospital: Hospital) => void;
   userLocation: [number, number] | null;
   center: [number, number];
+  activeFilter: FilterType;
 }
 
 // Component to handle map center changes
@@ -67,7 +68,7 @@ const UserLocationMarker = ({ position }: { position: [number, number] }) => {
   );
 };
 
-const MapView = ({ hospitals, onHospitalClick, userLocation, center }: MapViewProps) => {
+const MapView = ({ hospitals, onHospitalClick, userLocation, center, activeFilter }: MapViewProps) => {
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
       <MapContainer
@@ -92,6 +93,7 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center }: MapViewPr
             key={hospital.id}
             hospital={hospital}
             onClick={onHospitalClick}
+            activeFilter={activeFilter}
           />
         ))}
       </MapContainer>

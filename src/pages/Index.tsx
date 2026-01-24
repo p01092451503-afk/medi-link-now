@@ -78,6 +78,7 @@ const Index = () => {
         onHospitalClick={handleHospitalClick}
         userLocation={userLocation}
         center={mapCenter}
+        activeFilter={activeFilter}
       />
 
       {/* Header */}
