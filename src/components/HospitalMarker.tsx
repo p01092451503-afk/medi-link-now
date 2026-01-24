@@ -91,7 +91,26 @@ const createMarkerIcon = (
       </div>`
     : "";
   const traumaBadge = isTraumaCenter
-    ? `<span style="position: absolute; top: -8px; left: -8px; font-size: 10px; background: #7C3AED; color: white; padding: 1px 4px; border-radius: 4px; font-weight: bold;">외상</span>`
+    ? `<div style="
+        position: absolute; 
+        top: -12px; 
+        left: -12px; 
+        width: 26px; 
+        height: 26px; 
+        background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.5);
+      ">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cross/Plus symbol for trauma -->
+          <rect x="10" y="4" width="4" height="16" rx="1" fill="white"/>
+          <rect x="4" y="10" width="16" height="4" rx="1" fill="white"/>
+        </svg>
+      </div>`
     : "";
 
   return L.divIcon({
