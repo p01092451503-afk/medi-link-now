@@ -353,16 +353,16 @@ const MapPage = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-[200px] left-1/2 -translate-x-1/2 z-[1100] bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 shadow-lg w-[90%] max-w-sm"
+            className="absolute top-[200px] left-4 right-4 z-[1100] bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 shadow-lg mx-auto max-w-sm"
           >
-            <div className="flex items-center gap-2 mb-2">
-              <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
-              <p className="text-sm text-amber-800 font-medium">
+            <div className="flex items-start gap-2 mb-2">
+              <MapPin className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-800 font-medium flex-1 leading-snug">
                 선택 지역에 병원이 없어 <span className="text-amber-600 font-bold">{distanceRange}km 이내</span> 인근 병원을 표시합니다
               </p>
               <button 
                 onClick={() => setShowNearbyNotice(false)}
-                className="ml-auto p-1 hover:bg-amber-100 rounded-full transition-colors"
+                className="p-1 hover:bg-amber-100 rounded-full transition-colors shrink-0"
               >
                 <X className="w-3.5 h-3.5 text-amber-600" />
               </button>
