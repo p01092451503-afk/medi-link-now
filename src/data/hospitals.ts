@@ -1872,7 +1872,7 @@ export const regionOptions: RegionOption[] = [
   { id: "incheon-gyeyang", label: "Gyeyang-gu", labelKr: "계양구", center: [37.5371, 126.7376], zoom: 13, parent: "incheon" },
   { id: "incheon-seo", label: "Seo-gu", labelKr: "서구", center: [37.5454, 126.6760], zoom: 12, parent: "incheon" },
   { id: "incheon-ganghwa", label: "Ganghwa-gun", labelKr: "강화군", center: [37.7469, 126.4878], zoom: 11, parent: "incheon" },
-  { id: "incheon-ongjin", label: "Ongjin-gun", labelKr: "옹진군", center: [37.4469, 126.6367], zoom: 10, parent: "incheon" },
+  { id: "incheon-ongjin", label: "Ongjin-gun", labelKr: "옹진군", center: [37.1747, 125.8110], zoom: 10, parent: "incheon" },
   
   // 경기도 및 시/군
   { id: "gyeonggi", label: "Gyeonggi", labelKr: "경기도", center: [37.4138, 127.5183], zoom: 9 },
