@@ -44,7 +44,8 @@ const createMarkerIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
   hasPediatric: boolean,
-  isTraumaCenter?: boolean
+  isTraumaCenter?: boolean,
+  isPediatricFilter?: boolean
 ) => {
   const colors = {
     available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
@@ -53,7 +54,8 @@ const createMarkerIcon = (
   };
 
   const color = colors[status];
-  const childBadge = hasPediatric ? `<span style="position: absolute; top: -10px; right: -10px; font-size: 18px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">👶</span>` : "";
+  const pulseAnimation = isPediatricFilter ? "animation: pediatric-pulse 1.5s ease-in-out infinite;" : "";
+  const childBadge = hasPediatric ? `<span style="position: absolute; top: -10px; right: -10px; font-size: 18px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); ${pulseAnimation}">👶</span>` : "";
   const traumaBadge = isTraumaCenter
     ? `<span style="position: absolute; top: -8px; left: -8px; font-size: 10px; background: #7C3AED; color: white; padding: 1px 4px; border-radius: 4px; font-weight: bold;">외상</span>`
     : "";
@@ -61,6 +63,12 @@ const createMarkerIcon = (
   return L.divIcon({
     className: "custom-marker",
     html: `
+      <style>
+        @keyframes pediatric-pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.3); opacity: 0.8; }
+        }
+      </style>
       <div style="
         position: relative;
         display: flex;
@@ -109,7 +117,8 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   const hasPediatric = hospital.beds.pediatric > 0;
-  const icon = createMarkerIcon(status, displayBeds, hasPediatric, hospital.isTraumaCenter);
+  const isPediatricFilter = activeFilter === "pediatric";
+  const icon = createMarkerIcon(status, displayBeds, hasPediatric, hospital.isTraumaCenter, isPediatricFilter);
 
   return (
     <Marker
