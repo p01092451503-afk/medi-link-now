@@ -85,6 +85,12 @@ const UserLocationMarker = ({ position }: { position: [number, number] }) => {
   );
 };
 
+// South Korea bounds
+const KOREA_BOUNDS: L.LatLngBoundsExpression = [
+  [32.5, 123.5], // Southwest corner
+  [39.0, 132.5], // Northeast corner
+];
+
 const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activeFilter }: MapViewProps) => {
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
@@ -94,6 +100,9 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activ
         scrollWheelZoom={true}
         zoomControl={false}
         style={{ height: '100%', width: '100%' }}
+        maxBounds={KOREA_BOUNDS}
+        maxBoundsViscosity={1.0}
+        minZoom={7}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
