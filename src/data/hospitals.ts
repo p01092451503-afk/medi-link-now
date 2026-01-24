@@ -1750,10 +1750,13 @@ export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 // Procedure availability filters (시술 가능 여부)
 export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neuro" | "endoscopy" | "dialysis" | "trauma" | "cardio";
 
-// Combined filter type
-export type FilterType = BedFilterType | ProcedureFilterType;
+// Special facility filters
+export type SpecialFilterType = "nursing";
 
-export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" }[] = [
+// Combined filter type
+export type FilterType = BedFilterType | ProcedureFilterType | SpecialFilterType;
+
+export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" | "special" }[] = [
   // Bed availability filters
   { id: "all", label: "All", labelKr: "전체", category: "bed" },
   { id: "adult", label: "Adult ER", labelKr: "성인 응급", category: "bed" },
@@ -1767,6 +1770,8 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "endoscopy", label: "Endoscopy", labelKr: "응급내시경", category: "procedure" },
   { id: "dialysis", label: "Dialysis", labelKr: "응급투석", category: "procedure" },
   { id: "trauma", label: "Trauma Center", labelKr: "외상센터", category: "procedure" },
+  // Special facility types
+  { id: "nursing", label: "Nursing Hospital", labelKr: "요양병원", category: "special" },
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {

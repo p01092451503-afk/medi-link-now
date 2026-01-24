@@ -6,8 +6,10 @@ import { Hospital, FilterType, getHospitalStatus } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 import ReportMarker from "./ReportMarker";
 import DriverMarker from "./DriverMarker";
+import NursingHospitalMarker from "./NursingHospitalMarker";
 import type { LiveReport } from "./LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
+import type { NursingHospital } from "@/hooks/useNursingHospitals";
 
 interface MapViewProps {
   hospitals: Hospital[];
@@ -19,6 +21,7 @@ interface MapViewProps {
   liveReports?: LiveReport[];
   nearbyDrivers?: DriverPresence[];
   onCallDriver?: (driver: DriverPresence) => void;
+  nursingHospitals?: NursingHospital[];
 }
 
 // Component to handle map center changes
@@ -177,7 +180,8 @@ const MapView = ({
   activeFilter, 
   liveReports = [],
   nearbyDrivers = [],
-  onCallDriver 
+  onCallDriver,
+  nursingHospitals = []
 }: MapViewProps) => {
   // Create a stable key for the cluster group based on hospital IDs
   // This prevents the cluster from trying to remove markers that don't exist
@@ -298,6 +302,14 @@ const MapView = ({
             key={`driver-${driver.id}`} 
             driver={driver} 
             onCallDriver={onCallDriver}
+          />
+        ))}
+
+        {/* Nursing Hospital Markers */}
+        {nursingHospitals.map((hospital) => (
+          <NursingHospitalMarker
+            key={`nursing-${hospital.id}`}
+            hospital={hospital}
           />
         ))}
       </MapContainer>

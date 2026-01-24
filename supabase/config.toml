@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.parse-patient-info]
 verify_jwt = false
+
+[functions.fetch-nursing-hospitals]
+verify_jwt = false
