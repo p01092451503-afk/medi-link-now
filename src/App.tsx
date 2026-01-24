@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import MapPage from "./pages/MapPage";
 import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
+import FamilyPage from "./pages/FamilyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/family" element={<FamilyPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/driver" element={<DriverDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

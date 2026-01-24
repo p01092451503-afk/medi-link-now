@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Landing = () => {
@@ -82,13 +82,26 @@ const Landing = () => {
             </div>
           </Button>
 
+          {/* Family Management Button */}
+          <Button
+            onClick={() => navigate("/family")}
+            variant="outline"
+            className="w-full py-6 rounded-2xl text-base font-semibold border-2 border-pink-400 text-pink-600 hover:bg-pink-50"
+          >
+            <Heart className="w-5 h-5 mr-2" />
+            <div className="text-left">
+              <p>가족 관리</p>
+              <p className="text-xs font-normal opacity-70">의료 정보 미리 저장</p>
+            </div>
+          </Button>
+
           {/* Ambulance Driver Button */}
           <Button
             onClick={() => navigate("/login")}
             variant="outline"
-            className="w-full py-8 rounded-2xl text-lg font-semibold border-2 border-primary text-primary hover:bg-primary/5"
+            className="w-full py-6 rounded-2xl text-base font-semibold border-2 border-primary text-primary hover:bg-primary/5"
           >
-            <Ambulance className="w-6 h-6 mr-3" />
+            <Ambulance className="w-5 h-5 mr-2" />
             <div className="text-left">
               <p>구급대원 / 기사님</p>
               <p className="text-xs font-normal opacity-70">로그인 필요</p>
