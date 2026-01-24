@@ -14,10 +14,10 @@ const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
       return hospital.beds.general;
     case "pediatric":
       return hospital.beds.pediatric;
-    case "isolation":
-      return hospital.beds.isolation;
+    case "fever":
+      return hospital.beds.fever;
     default:
-      return hospital.beds.general + hospital.beds.pediatric + hospital.beds.isolation;
+      return hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
   }
 };
 
@@ -27,8 +27,8 @@ const getFilterLabel = (filter: FilterType): string => {
       return "성인";
     case "pediatric":
       return "소아";
-    case "isolation":
-      return "격리";
+    case "fever":
+      return "열/감염";
     default:
       return "전체";
   }
@@ -40,7 +40,7 @@ const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" 
   return "available";
 };
 
-const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds: number, filterLabel: string) => {
+const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds: number, hasPediatric: boolean) => {
   const colors = {
     available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
     limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
@@ -48,6 +48,7 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
   };
 
   const color = colors[status];
+  const childBadge = hasPediatric ? `<span style="position: absolute; top: -8px; right: -8px; font-size: 12px;">👶</span>` : "";
 
   return L.divIcon({
     className: "custom-marker",
@@ -59,6 +60,7 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
         align-items: center;
       ">
         <div style="
+          position: relative;
           min-width: 36px;
           height: 36px;
           padding: 0 10px;
@@ -76,6 +78,7 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
           transition: transform 0.2s;
         ">
           ${beds}
+          ${childBadge}
         </div>
         <div style="
           width: 0;
@@ -96,8 +99,8 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
 const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
-  const filterLabel = getFilterLabel(activeFilter);
-  const icon = createMarkerIcon(status, displayBeds, filterLabel);
+  const hasPediatric = hospital.beds.pediatric > 0;
+  const icon = createMarkerIcon(status, displayBeds, hasPediatric);
 
   return (
     <Marker
@@ -108,8 +111,11 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
       }}
     >
       <Popup>
-        <div className="text-sm min-w-[160px]">
-          <strong className="block text-base">{hospital.nameKr}</strong>
+        <div className="text-sm min-w-[180px]">
+          <div className="flex items-center gap-1 mb-1">
+            <strong className="text-base">{hospital.nameKr}</strong>
+            {hasPediatric && <span title="아이 진료 가능">👶</span>}
+          </div>
           <span className="text-xs text-gray-500 block mb-2">{hospital.category}</span>
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
             <div className={`p-1.5 rounded ${activeFilter === "adult" || activeFilter === "all" || activeFilter === "ct" ? "bg-blue-50" : ""}`}>
@@ -124,11 +130,11 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
               </div>
               <div className="text-gray-400">소아</div>
             </div>
-            <div className={`p-1.5 rounded ${activeFilter === "isolation" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${hospital.beds.isolation > 0 ? "text-green-600" : "text-red-500"}`}>
-                {hospital.beds.isolation}
+            <div className={`p-1.5 rounded ${activeFilter === "fever" ? "bg-blue-50" : ""}`}>
+              <div className={`font-bold ${hospital.beds.fever > 0 ? "text-green-600" : "text-red-500"}`}>
+                {hospital.beds.fever}
               </div>
-              <div className="text-gray-400">격리</div>
+              <div className="text-gray-400">열/감염</div>
             </div>
           </div>
         </div>
