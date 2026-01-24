@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Heart } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Landing = () => {
@@ -46,7 +46,7 @@ const Landing = () => {
           className="grid grid-cols-3 gap-4 mb-10 w-full max-w-sm"
         >
           {[
-            { icon: MapPin, label: "전국 60+", sub: "응급실" },
+            { icon: MapPin, label: "전국 120+", sub: "응급실" },
             { icon: Clock, label: "실시간", sub: "업데이트" },
             { icon: Shield, label: "안전", sub: "최우선" },
           ].map(({ icon: Icon, label, sub }) => (
@@ -63,6 +63,18 @@ const Landing = () => {
           ))}
         </motion.div>
 
+        {/* Role Selection Title */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-4"
+        >
+          <p className="text-sm font-medium text-muted-foreground text-center">
+            어떤 서비스가 필요하신가요?
+          </p>
+        </motion.div>
+
         {/* User Segmentation Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -72,39 +84,33 @@ const Landing = () => {
         >
           {/* Guardian Button */}
           <Button
-            onClick={() => navigate("/map")}
-            className="w-full py-8 rounded-2xl text-lg font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30"
+            onClick={() => navigate("/guardian")}
+            className="w-full py-8 rounded-2xl text-lg font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group"
           >
-            <Users className="w-6 h-6 mr-3" />
-            <div className="text-left">
-              <p>보호자 / 환자</p>
-              <p className="text-xs font-normal opacity-80">병원 찾기 바로가기</p>
-            </div>
-          </Button>
-
-          {/* Family Management Button */}
-          <Button
-            onClick={() => navigate("/family")}
-            variant="outline"
-            className="w-full py-6 rounded-2xl text-base font-semibold border-2 border-pink-400 text-pink-600 hover:bg-pink-50"
-          >
-            <Heart className="w-5 h-5 mr-2" />
-            <div className="text-left">
-              <p>가족 관리</p>
-              <p className="text-xs font-normal opacity-70">의료 정보 미리 저장</p>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative flex items-center w-full">
+              <Users className="w-8 h-8 mr-4" />
+              <div className="text-left flex-1">
+                <p className="text-lg">보호자 / 환자</p>
+                <p className="text-xs font-normal opacity-80">응급실 찾기, 가족 건강관리</p>
+              </div>
+              <span className="text-2xl">→</span>
             </div>
           </Button>
 
           {/* Ambulance Driver Button */}
           <Button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/driver-intro")}
             variant="outline"
-            className="w-full py-6 rounded-2xl text-base font-semibold border-2 border-primary text-primary hover:bg-primary/5"
+            className="w-full py-8 rounded-2xl text-lg font-semibold border-2 border-orange-400 text-orange-600 hover:bg-orange-50 relative overflow-hidden group"
           >
-            <Ambulance className="w-5 h-5 mr-2" />
-            <div className="text-left">
-              <p>구급대원 / 기사님</p>
-              <p className="text-xs font-normal opacity-70">로그인 필요</p>
+            <div className="relative flex items-center w-full">
+              <Ambulance className="w-8 h-8 mr-4" />
+              <div className="text-left flex-1">
+                <p className="text-lg">구급대원 / 기사님</p>
+                <p className="text-xs font-normal opacity-70">수익 최적화, 자동 운행일지</p>
+              </div>
+              <span className="text-2xl">→</span>
             </div>
           </Button>
         </motion.div>
