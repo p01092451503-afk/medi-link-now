@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Shield, RefreshCw } from "lucide-react";
+import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 
-const DEFAULT_CENTER: [number, number] = [37.5172, 127.0473];
+const DEFAULT_CENTER: [number, number] = [37.5, 127.0]; // Seoul Capital Area center
 
 const Index = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
@@ -25,7 +25,7 @@ const Index = () => {
   const [isLocating, setIsLocating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
-  const [mapZoom, setMapZoom] = useState<number>(13);
+  const [mapZoom, setMapZoom] = useState<number>(10); // Lower zoom to show more area
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
@@ -243,10 +243,10 @@ const Index = () => {
 
                 <div className="grid grid-cols-3 gap-3 mb-5">
                   {[
-                    { label: "성인", count: selectedHospital.beds.general, Icon: Stethoscope },
-                    { label: "소아", count: selectedHospital.beds.pediatric, Icon: Baby },
-                    { label: "격리", count: selectedHospital.beds.isolation, Icon: Shield },
-                  ].map(({ label, count, Icon }) => (
+                    { label: "성인", count: selectedHospital.beds.general, Icon: Stethoscope, showInfo: false },
+                    { label: "소아", count: selectedHospital.beds.pediatric, Icon: Baby, showInfo: false },
+                    { label: "열/감염", count: selectedHospital.beds.fever, Icon: Thermometer, showInfo: true },
+                  ].map(({ label, count, Icon, showInfo }) => (
                     <div
                       key={label}
                       className={`flex flex-col items-center p-3 rounded-xl ${
@@ -257,7 +257,14 @@ const Index = () => {
                       <span className={`text-xl font-bold ${count > 0 ? "text-green-600" : "text-red-600"}`}>
                         {count}
                       </span>
-                      <span className="text-xs text-muted-foreground">{label}</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground">{label}</span>
+                        {showInfo && (
+                          <span title="고열(38℃+) 및 감염 환자 전용">
+                            <Info className="w-3 h-3 text-muted-foreground" />
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -1,7 +1,13 @@
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Navigation, Clock, Stethoscope, Baby, Shield, Activity } from "lucide-react";
+import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -14,29 +20,47 @@ const BedStatusCard = ({
   count,
   icon: Icon,
   type,
+  showTooltip,
+  tooltipText,
 }: {
   label: string;
   count: number;
   icon: React.ElementType;
-  type: "general" | "pediatric" | "isolation";
+  type: "general" | "pediatric" | "fever";
+  showTooltip?: boolean;
+  tooltipText?: string;
 }) => {
   const isAvailable = count > 0;
 
   return (
     <div
       className={`flex flex-col items-center justify-center p-3 rounded-xl ${
-        isAvailable ? "bg-success-light" : "bg-danger-light"
+        isAvailable ? "bg-green-50" : "bg-red-50"
       }`}
     >
       <Icon
-        className={`w-5 h-5 mb-1 ${isAvailable ? "text-success" : "text-danger"}`}
+        className={`w-5 h-5 mb-1 ${isAvailable ? "text-green-600" : "text-red-500"}`}
       />
       <span
-        className={`text-xl font-bold ${isAvailable ? "text-success" : "text-danger"}`}
+        className={`text-xl font-bold ${isAvailable ? "text-green-600" : "text-red-500"}`}
       >
         {count}
       </span>
-      <span className="text-xs text-muted-foreground text-center">{label}</span>
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-muted-foreground text-center">{label}</span>
+        {showTooltip && tooltipText && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="w-3 h-3 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs max-w-[200px]">{tooltipText}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
     </div>
   );
 };
@@ -45,7 +69,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
   if (!hospital) return null;
 
   const status = getHospitalStatus(hospital);
-  const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.isolation;
+  const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
+  const hasPediatric = hospital.beds.pediatric > 0;
 
   const handleCall = () => {
     window.location.href = `tel:${hospital.phone}`;
@@ -68,7 +93,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="bottom-sheet-overlay"
+            className="fixed inset-0 bg-black/40 z-[1001]"
           />
 
           {/* Bottom Sheet */}
@@ -77,11 +102,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="bottom-sheet"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[1002] max-h-[80vh] overflow-y-auto"
           >
             {/* Handle */}
             <div className="flex justify-center py-3">
-              <div className="w-12 h-1.5 bg-border rounded-full" />
+              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
             </div>
 
             <div className="px-5 pb-8 pt-1 max-h-[70vh] overflow-y-auto">
@@ -90,21 +115,34 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span
-                      className={`status-badge ${
-                        status === "unavailable" ? "unavailable" : "available"
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        status === "unavailable"
+                          ? "bg-red-100 text-red-600"
+                          : status === "limited"
+                          ? "bg-yellow-100 text-yellow-600"
+                          : "bg-green-100 text-green-600"
                       }`}
                     >
                       <span
-                        className={`w-2 h-2 rounded-full ${
-                          status === "unavailable" ? "bg-danger" : "bg-success"
-                        } animate-pulse-soft`}
+                        className={`w-2 h-2 rounded-full animate-pulse ${
+                          status === "unavailable"
+                            ? "bg-red-500"
+                            : status === "limited"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        }`}
                       />
                       {status === "unavailable"
-                        ? "Full"
+                        ? "만실"
                         : status === "limited"
-                        ? "Limited"
-                        : "Available"}
+                        ? "혼잡"
+                        : "여유"}
                     </span>
+                    {hasPediatric && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600">
+                        👶 아이 진료
+                      </span>
+                    )}
                     {distance && (
                       <span className="text-xs text-muted-foreground">
                         {distance.toFixed(1)} km
@@ -112,13 +150,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     )}
                   </div>
                   <h2 className="text-xl font-bold text-foreground mb-0.5">
-                    {hospital.name}
+                    {hospital.nameKr}
                   </h2>
-                  <p className="text-sm text-muted-foreground">{hospital.category}</p>
+                  <p className="text-sm text-muted-foreground">{hospital.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{hospital.category}</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-secondary rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
@@ -127,35 +166,37 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               {/* Bed Status Grid */}
               <div className="grid grid-cols-3 gap-3 mb-5">
                 <BedStatusCard
-                  label="Adult Beds"
+                  label="성인"
                   count={hospital.beds.general}
                   icon={Stethoscope}
                   type="general"
                 />
                 <BedStatusCard
-                  label="Pediatric"
+                  label="소아"
                   count={hospital.beds.pediatric}
                   icon={Baby}
                   type="pediatric"
                 />
                 <BedStatusCard
-                  label="Isolation"
-                  count={hospital.beds.isolation}
-                  icon={Shield}
-                  type="isolation"
+                  label="열/감염"
+                  count={hospital.beds.fever}
+                  icon={Thermometer}
+                  type="fever"
+                  showTooltip={true}
+                  tooltipText="고열(38℃+) 및 감염 환자 전용"
                 />
               </div>
 
               {/* Equipment Tags */}
               <div className="mb-5">
                 <h3 className="text-sm font-medium text-foreground mb-2">
-                  Available Equipment
+                  보유 장비
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {hospital.equipment.map((item) => (
                     <span
                       key={item}
-                      className="px-3 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full"
+                      className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
                     >
                       {item}
                     </span>
@@ -164,7 +205,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               </div>
 
               {/* Contact Info */}
-              <div className="bg-secondary rounded-xl p-4 mb-5">
+              <div className="bg-gray-50 rounded-xl p-4 mb-5">
                 <div className="flex items-center gap-3 mb-2">
                   <Phone className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium">{hospital.phone}</span>
@@ -179,7 +220,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 rounded-xl"
                 >
                   <Phone className="w-4 h-4 mr-2" />
-                  Call ER
+                  응급실 전화
                 </Button>
                 <Button
                   onClick={handleNavigate}
@@ -187,7 +228,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   className="border-primary text-primary hover:bg-primary/5 font-semibold py-6 rounded-xl"
                 >
                   <Navigation className="w-4 h-4 mr-2" />
-                  Navigate
+                  길안내
                 </Button>
               </div>
             </div>

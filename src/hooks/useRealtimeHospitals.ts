@@ -6,7 +6,7 @@ interface HospitalStatusCache {
   hospital_id: number;
   general_beds: number;
   pediatric_beds: number;
-  isolation_beds: number;
+  isolation_beds: number; // DB still uses isolation_beds, we map it to fever
   last_updated: string;
 }
 
@@ -29,7 +29,7 @@ export const useRealtimeHospitals = () => {
           beds: {
             general: status.general_beds,
             pediatric: status.pediatric_beds,
-            isolation: status.isolation_beds,
+            fever: status.isolation_beds, // Map isolation_beds from DB to fever
           },
         };
       }
@@ -91,7 +91,7 @@ export const useRealtimeHospitals = () => {
                       beds: {
                         general: newStatus.general_beds,
                         pediatric: newStatus.pediatric_beds,
-                        isolation: newStatus.isolation_beds,
+                        fever: newStatus.isolation_beds, // Map isolation_beds to fever
                       },
                     }
                   : hospital
