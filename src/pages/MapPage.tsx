@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +49,7 @@ const MapPage = () => {
   const [isStatsExpanded, setIsStatsExpanded] = useState(false);
   const [showDispatchModal, setShowDispatchModal] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState<DriverPresence | null>(null);
+  const [distanceRange, setDistanceRange] = useState(10); // km
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
@@ -64,7 +65,7 @@ const MapPage = () => {
     }
     
     // If no hospitals found in region but user location is available,
-    // include hospitals within 10km regardless of region
+    // include hospitals within distanceRange regardless of region
     if (result.length === 0 && userLocation && activeRegion !== "all") {
       let nearbyResult = filterHospitals(hospitalData, activeFilter);
       if (searchQuery.trim()) {
@@ -73,7 +74,7 @@ const MapPage = () => {
       }
       nearbyResult = nearbyResult
         .map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }))
-        .filter((h) => h.distance <= 10)
+        .filter((h) => h.distance <= distanceRange)
         .sort((a, b) => a.distance - b.distance);
       return { filteredHospitals: nearbyResult, isShowingNearbyFallback: nearbyResult.length > 0 };
     }
@@ -83,7 +84,7 @@ const MapPage = () => {
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
     return { filteredHospitals: result, isShowingNearbyFallback: false };
-  }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData]);
+  }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData, distanceRange]);
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
@@ -330,17 +331,32 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* Nearby Fallback Notice */}
+      {/* Nearby Fallback Notice with Distance Slider */}
       {isShowingNearbyFallback && (
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute top-[200px] left-1/2 -translate-x-1/2 z-[1100] bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 shadow-lg flex items-center gap-2"
+          className="absolute top-[200px] left-1/2 -translate-x-1/2 z-[1100] bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 shadow-lg w-[90%] max-w-sm"
         >
-          <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
-          <p className="text-sm text-amber-800 font-medium">
-            선택 지역에 병원이 없어 <span className="text-amber-600 font-bold">10km 이내</span> 인근 병원을 표시합니다
-          </p>
+          <div className="flex items-center gap-2 mb-2">
+            <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
+            <p className="text-sm text-amber-800 font-medium">
+              선택 지역에 병원이 없어 <span className="text-amber-600 font-bold">{distanceRange}km 이내</span> 인근 병원을 표시합니다
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <SlidersHorizontal className="w-4 h-4 text-amber-600 shrink-0" />
+            <input
+              type="range"
+              min="5"
+              max="50"
+              step="5"
+              value={distanceRange}
+              onChange={(e) => setDistanceRange(Number(e.target.value))}
+              className="flex-1 h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+            />
+            <span className="text-sm font-bold text-amber-700 min-w-[45px] text-right">{distanceRange}km</span>
+          </div>
         </motion.div>
       )}
 
