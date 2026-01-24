@@ -8,7 +8,7 @@ import { getHospitalStatus } from "@/data/hospitals";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { hospitals, isLoading } = useRealtimeHospitals();
+  const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
 
   // Calculate real-time statistics
   const stats = useMemo(() => {
@@ -75,9 +75,9 @@ const Landing = () => {
             <div className="bg-primary/5 px-4 py-2 flex items-center gap-2 border-b border-primary/10">
               <Activity className="w-4 h-4 text-primary animate-pulse" />
               <span className="text-xs font-semibold text-primary">실시간 전국 현황</span>
-              {isLoading && (
-                <span className="ml-auto text-[10px] text-muted-foreground">로딩 중...</span>
-              )}
+              <span className="ml-auto text-[10px] text-muted-foreground">
+                {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 업데이트` : ""}
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-0">
               <div className="p-4 border-r border-b border-gray-100 text-center">
