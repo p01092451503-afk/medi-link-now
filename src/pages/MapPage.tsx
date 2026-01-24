@@ -62,6 +62,22 @@ const MapPage = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
     }
+    
+    // If no hospitals found in region but user location is available,
+    // include hospitals within 10km regardless of region
+    if (result.length === 0 && userLocation && activeRegion !== "all") {
+      let nearbyResult = filterHospitals(hospitalData, activeFilter);
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        nearbyResult = nearbyResult.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
+      }
+      nearbyResult = nearbyResult
+        .map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }))
+        .filter((h) => h.distance <= 10)
+        .sort((a, b) => a.distance - b.distance);
+      return nearbyResult;
+    }
+    
     if (userLocation) {
       result = result.map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }));
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
