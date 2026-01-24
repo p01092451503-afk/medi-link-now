@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LiveReportFAB from "@/components/LiveReportFAB";
+import SymptomSearchBar from "@/components/SymptomSearchBar";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
 
@@ -180,16 +181,12 @@ const MapPage = () => {
             </div>
             <span className="font-semibold text-foreground hidden sm:block">Medi-Link</span>
           </div>
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="병원 검색..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-xl pl-10 pr-4 py-2.5 text-sm shadow-lg outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
+          <SymptomSearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onFilterChange={setActiveFilter}
+            className="flex-1"
+          />
         </div>
       </header>
 
