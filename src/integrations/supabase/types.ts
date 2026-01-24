@@ -100,6 +100,60 @@ export type Database = {
         }
         Relationships: []
       }
+      return_trip_requests: {
+        Row: {
+          accepted_by: string | null
+          created_at: string
+          destination: string
+          destination_city: string
+          distance: string
+          estimated_fee: number
+          id: string
+          patient_age: string | null
+          patient_condition: string | null
+          patient_gender: string | null
+          patient_name: string
+          pickup_city: string
+          pickup_location: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_by?: string | null
+          created_at?: string
+          destination: string
+          destination_city: string
+          distance: string
+          estimated_fee: number
+          id?: string
+          patient_age?: string | null
+          patient_condition?: string | null
+          patient_gender?: string | null
+          patient_name: string
+          pickup_city: string
+          pickup_location: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_by?: string | null
+          created_at?: string
+          destination?: string
+          destination_city?: string
+          distance?: string
+          estimated_fee?: number
+          id?: string
+          patient_age?: string | null
+          patient_condition?: string | null
+          patient_gender?: string | null
+          patient_name?: string
+          pickup_city?: string
+          pickup_location?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
