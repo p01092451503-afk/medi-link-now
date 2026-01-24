@@ -9,16 +9,51 @@ interface DriverMarkerProps {
 }
 
 const createDriverIcon = (status: DriverPresence["status"]) => {
-  const bgColor = status === "available" ? "#22c55e" : status === "busy" ? "#f59e0b" : "#6b7280";
-  const pulseClass = status === "available" ? "driver-pulse" : "";
+  const colors = {
+    available: { bg: "#22c55e", border: "#16a34a" },
+    busy: { bg: "#f59e0b", border: "#d97706" },
+    offline: { bg: "#6b7280", border: "#4b5563" },
+  };
+  const color = colors[status] || colors.offline;
 
   return L.divIcon({
-    className: "driver-marker-icon",
+    className: "custom-marker",
     html: `
-      <div class="relative ${pulseClass}">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 border-white" 
-             style="background-color: ${bgColor}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <style>
+        .driver-marker-container {
+          transition: transform 0.2s ease-out;
+        }
+        .driver-marker-container:hover {
+          transform: scale(1.15);
+        }
+        @keyframes driver-pulse {
+          0%, 100% { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); }
+          50% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.7); }
+        }
+      </style>
+      <div class="driver-marker-container" style="
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+      ">
+        <div style="
+          position: relative;
+          min-width: 36px;
+          height: 36px;
+          padding: 0 8px;
+          background: ${color.bg};
+          border: 3px solid ${color.border};
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          cursor: pointer;
+          ${status === "available" ? "animation: driver-pulse 2s ease-in-out infinite;" : ""}
+        ">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10 10H6"/>
             <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
             <path d="M19 18h2a1 1 0 0 0 1-1v-3.28a1 1 0 0 0-.684-.948l-1.923-.641a1 1 0 0 1-.578-.502l-1.539-3.076A1 1 0 0 0 16.382 8H14"/>
@@ -26,12 +61,19 @@ const createDriverIcon = (status: DriverPresence["status"]) => {
             <circle cx="7" cy="18" r="2"/>
           </svg>
         </div>
-        ${status === "available" ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>' : ''}
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 8px solid transparent;
+          border-right: 8px solid transparent;
+          border-top: 10px solid ${color.border};
+          margin-top: -2px;
+        "></div>
       </div>
     `,
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
-    popupAnchor: [0, -20],
+    iconSize: [44, 52],
+    iconAnchor: [22, 52],
+    popupAnchor: [0, -52],
   });
 };
 

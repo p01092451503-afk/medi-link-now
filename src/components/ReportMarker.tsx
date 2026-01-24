@@ -12,21 +12,25 @@ const reportConfig = {
   traffic: {
     icon: Car,
     color: "#F97316", // orange-500
+    border: "#EA580C", // orange-600
     label: "교통 정체",
   },
   construction: {
     icon: Construction,
     color: "#EAB308", // yellow-500
+    border: "#CA8A04", // yellow-600
     label: "공사 중",
   },
   hospital_full: {
     icon: Building2,
     color: "#EF4444", // red-500
+    border: "#DC2626", // red-600
     label: "병원 만실",
   },
   police: {
     icon: ShieldAlert,
     color: "#3B82F6", // blue-500
+    border: "#2563EB", // blue-600
     label: "경찰 단속",
   },
 };
@@ -35,29 +39,55 @@ const createReportIcon = (type: LiveReport["type"]) => {
   const config = reportConfig[type];
   const IconComponent = config.icon;
   
-  const iconHtml = renderToString(
-    <div
-      style={{
-        width: "36px",
-        height: "36px",
-        borderRadius: "50%",
-        backgroundColor: config.color,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        border: "3px solid white",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-      }}
-    >
-      <IconComponent size={18} color="white" />
-    </div>
-  );
+  const iconSvg = renderToString(<IconComponent size={16} color="white" strokeWidth={2.5} />);
 
   return L.divIcon({
-    html: iconHtml,
-    className: "report-marker-icon",
-    iconSize: L.point(36, 36),
-    iconAnchor: L.point(18, 18),
+    className: "custom-marker",
+    html: `
+      <style>
+        .report-marker-container {
+          transition: transform 0.2s ease-out;
+        }
+        .report-marker-container:hover {
+          transform: scale(1.15);
+        }
+      </style>
+      <div class="report-marker-container" style="
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+      ">
+        <div style="
+          position: relative;
+          min-width: 36px;
+          height: 36px;
+          padding: 0 8px;
+          background: ${config.color};
+          border: 3px solid ${config.border};
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          cursor: pointer;
+        ">
+          ${iconSvg}
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 8px solid transparent;
+          border-right: 8px solid transparent;
+          border-top: 10px solid ${config.border};
+          margin-top: -2px;
+        "></div>
+      </div>
+    `,
+    iconSize: [44, 52],
+    iconAnchor: [22, 52],
+    popupAnchor: [0, -52],
   });
 };
 
