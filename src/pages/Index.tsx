@@ -57,7 +57,7 @@ const Index = () => {
     const regionData = regionOptions.find((r) => r.id === region);
     if (regionData) {
       setMapCenter(regionData.center);
-      setMapZoom(region === "all" ? 8 : 11);
+      setMapZoom(regionData.zoom || (region === "all" ? 7 : 11));
     }
   }, []);
 
@@ -135,16 +135,39 @@ const Index = () => {
         {/* Region Filter */}
         <div className="flex items-center gap-2">
           <Select value={activeRegion} onValueChange={(value) => handleRegionChange(value as RegionType)}>
-            <SelectTrigger className="w-[130px] bg-white shadow-md border-0 rounded-xl">
+            <SelectTrigger className="w-[160px] bg-white shadow-md border-0 rounded-xl">
               <MapPin className="w-4 h-4 mr-1 text-primary" />
               <SelectValue placeholder="지역 선택" />
             </SelectTrigger>
-            <SelectContent className="bg-white z-[1001]">
-              {regionOptions.map((r) => (
-                <SelectItem key={r.id} value={r.id}>
-                  {r.labelKr}
-                </SelectItem>
-              ))}
+            <SelectContent className="bg-white z-[1001] max-h-[400px]">
+              {/* Major regions first */}
+              {regionOptions
+                .filter((r) => !r.parent)
+                .map((r) => (
+                  <SelectItem key={r.id} value={r.id} className="font-semibold">
+                    {r.labelKr}
+                  </SelectItem>
+                ))}
+              
+              {/* Sub-regions grouped by parent */}
+              {regionOptions
+                .filter((r) => !r.parent && r.id !== "all" && r.id !== "sejong")
+                .map((parent) => {
+                  const children = regionOptions.filter((r) => r.parent === parent.id);
+                  if (children.length === 0) return null;
+                  return (
+                    <div key={`group-${parent.id}`}>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-gray-50 sticky top-0">
+                        {parent.labelKr} 시/군/구
+                      </div>
+                      {children.map((child) => (
+                        <SelectItem key={child.id} value={child.id} className="pl-6 text-sm">
+                          {child.labelKr}
+                        </SelectItem>
+                      ))}
+                    </div>
+                  );
+                })}
             </SelectContent>
           </Select>
           <span className="text-xs text-white bg-primary/80 px-2 py-1 rounded-full">
