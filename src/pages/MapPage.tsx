@@ -316,7 +316,7 @@ const MapPage = () => {
 
       {/* Empty State Message */}
       {filteredHospitals.length === 0 && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl text-center max-w-xs">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1100] bg-white rounded-2xl p-6 shadow-2xl text-center max-w-xs border border-gray-200">
           <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
             <Search className="w-8 h-8 text-muted-foreground" />
           </div>
@@ -338,7 +338,8 @@ const MapPage = () => {
         </div>
       )}
 
-      {/* Nearby Hospital Stats Card */}
+      {/* Nearby Hospital Stats Card - hidden when no hospitals */}
+      {filteredHospitals.length > 0 && (
       <motion.div 
         layout
         className="absolute bottom-44 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden max-w-[160px]"
@@ -495,9 +496,10 @@ const MapPage = () => {
           </div>
         )}
       </motion.div>
+      )}
 
-      {/* Nearby Drivers Card */}
-      {/* Nearby Drivers Card */}
+      {/* Nearby Drivers Card - hidden when no hospitals */}
+      {filteredHospitals.length > 0 && (
       <div className="absolute bottom-24 left-4 z-[999] w-[160px]">
         <NearbyDriversCard
           drivers={nearbyDrivers}
@@ -505,6 +507,7 @@ const MapPage = () => {
           onCallDriver={handleCallDriver}
         />
       </div>
+      )}
 
       {/* Location FAB */}
       <button
