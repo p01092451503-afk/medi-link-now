@@ -19,7 +19,9 @@ const MapCenterHandler = ({ center, zoom }: { center: [number, number]; zoom?: n
   const map = useMap();
 
   useEffect(() => {
-    map.flyTo(center, zoom ?? map.getZoom(), { duration: 1 });
+    const minZoom = map.getMinZoom?.() ?? 0;
+    const targetZoom = Math.max(zoom ?? map.getZoom(), minZoom);
+    map.flyTo(center, targetZoom, { duration: 1 });
   }, [center, zoom, map]);
 
   return null;
@@ -85,11 +87,79 @@ const UserLocationMarker = ({ position }: { position: [number, number] }) => {
   );
 };
 
+type KoreaBoundsLiteral = [L.LatLngTuple, L.LatLngTuple];
+
 // South Korea bounds
-const KOREA_BOUNDS: L.LatLngBoundsExpression = [
-  [32.5, 123.5], // Southwest corner
-  [39.0, 132.5], // Northeast corner
+const KOREA_BOUNDS: KoreaBoundsLiteral = [
+  // Roughly South Korea (+ Jeju, Ulleung); intentionally avoids far-neighbor regions
+  [33.0, 124.0], // Southwest corner
+  [38.8, 131.0], // Northeast corner
 ];
+
+const computeMinZoomToContainViewportInBounds = (map: L.Map, bounds: L.LatLngBounds) => {
+  const size = map.getSize();
+  const center = bounds.getCenter();
+  const maxZoom = map.getMaxZoom?.() ?? 18;
+
+  for (let z = 0; z <= maxZoom; z += 1) {
+    const centerPoint = map.project(center, z);
+    const half = size.divideBy(2);
+    const swPoint = centerPoint.subtract(half);
+    const nePoint = centerPoint.add(half);
+    const sw = map.unproject(swPoint, z);
+    const ne = map.unproject(nePoint, z);
+    const viewportBounds = L.latLngBounds(sw, ne);
+
+    if (bounds.contains(viewportBounds)) return z;
+  }
+
+  return maxZoom;
+};
+
+// Enforce that the visible map never extends beyond Korea bounds
+const KoreaBoundsEnforcer = ({ bounds }: { bounds: KoreaBoundsLiteral }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const koreaBounds = L.latLngBounds(bounds);
+
+    const applyConstraints = () => {
+      const minZoom = computeMinZoomToContainViewportInBounds(map, koreaBounds);
+      map.setMaxBounds(koreaBounds);
+      map.setMinZoom(minZoom);
+
+      if (map.getZoom() < minZoom) {
+        map.setZoom(minZoom, { animate: false });
+      }
+
+      // Keep viewport inside bounds after any interaction
+      map.panInsideBounds(koreaBounds, { animate: false });
+    };
+
+    const onZoomOrMoveEnd = () => {
+      const minZoom = map.getMinZoom?.() ?? 0;
+      if (map.getZoom() < minZoom) {
+        map.setZoom(minZoom, { animate: false });
+        return;
+      }
+      map.panInsideBounds(koreaBounds, { animate: false });
+    };
+
+    applyConstraints();
+
+    map.on("zoomend", onZoomOrMoveEnd);
+    map.on("moveend", onZoomOrMoveEnd);
+    map.on("resize", applyConstraints);
+
+    return () => {
+      map.off("zoomend", onZoomOrMoveEnd);
+      map.off("moveend", onZoomOrMoveEnd);
+      map.off("resize", applyConstraints);
+    };
+  }, [map, bounds]);
+
+  return null;
+};
 
 const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activeFilter }: MapViewProps) => {
   return (
@@ -102,12 +172,13 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activ
         style={{ height: '100%', width: '100%' }}
         maxBounds={KOREA_BOUNDS}
         maxBoundsViscosity={1.0}
-        minZoom={9}
+        minZoom={0}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <KoreaBoundsEnforcer bounds={KOREA_BOUNDS} />
         <MapCenterHandler center={center} zoom={zoom} />
         
         {/* User location marker */}
