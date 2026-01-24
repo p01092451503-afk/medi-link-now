@@ -1,10 +1,35 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useMemo } from "react";
+import { getHospitalStatus } from "@/data/hospitals";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { hospitals, isLoading } = useRealtimeHospitals();
+
+  // Calculate real-time statistics
+  const stats = useMemo(() => {
+    if (!hospitals.length) return null;
+
+    const totalBeds = hospitals.reduce(
+      (sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever,
+      0
+    );
+    const availableHospitals = hospitals.filter(
+      (h) => getHospitalStatus(h) === "available"
+    ).length;
+    const pediatricBeds = hospitals.reduce((sum, h) => sum + h.beds.pediatric, 0);
+
+    return {
+      totalHospitals: hospitals.length,
+      totalBeds,
+      availableHospitals,
+      pediatricBeds,
+    };
+  }, [hospitals]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 flex flex-col">
@@ -27,7 +52,7 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center mb-6"
         >
           <h2 className="text-3xl font-bold text-foreground mb-3">
             응급상황,<br />
@@ -39,26 +64,82 @@ const Landing = () => {
           </p>
         </motion.div>
 
+        {/* Live Statistics Section */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="w-full max-w-sm mb-6"
+        >
+          <div className="bg-white rounded-2xl shadow-lg border border-primary/10 overflow-hidden">
+            <div className="bg-primary/5 px-4 py-2 flex items-center gap-2 border-b border-primary/10">
+              <Activity className="w-4 h-4 text-primary animate-pulse" />
+              <span className="text-xs font-semibold text-primary">실시간 전국 현황</span>
+              {isLoading && (
+                <span className="ml-auto text-[10px] text-muted-foreground">로딩 중...</span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-0">
+              <div className="p-4 border-r border-b border-gray-100 text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <Hospital className="w-4 h-4 text-primary" />
+                </div>
+                <p className="text-2xl font-bold text-foreground">
+                  {stats?.totalHospitals || "120+"}
+                </p>
+                <p className="text-[10px] text-muted-foreground">전국 응급실</p>
+              </div>
+              <div className="p-4 border-b border-gray-100 text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <Bed className="w-4 h-4 text-green-500" />
+                </div>
+                <p className="text-2xl font-bold text-green-600">
+                  {stats?.totalBeds || "---"}
+                </p>
+                <p className="text-[10px] text-muted-foreground">가용 병상</p>
+              </div>
+              <div className="p-4 border-r border-gray-100 text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <TrendingUp className="w-4 h-4 text-blue-500" />
+                </div>
+                <p className="text-2xl font-bold text-blue-600">
+                  {stats?.availableHospitals || "---"}
+                </p>
+                <p className="text-[10px] text-muted-foreground">여유 병원</p>
+              </div>
+              <div className="p-4 text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <Users className="w-4 h-4 text-pink-500" />
+                </div>
+                <p className="text-2xl font-bold text-pink-600">
+                  {stats?.pediatricBeds || "---"}
+                </p>
+                <p className="text-[10px] text-muted-foreground">소아 병상</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Feature Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-3 gap-4 mb-10 w-full max-w-sm"
+          className="grid grid-cols-3 gap-3 mb-6 w-full max-w-sm"
         >
           {[
-            { icon: MapPin, label: "전국 120+", sub: "응급실" },
+            { icon: MapPin, label: "전국 커버", sub: "응급실" },
             { icon: Clock, label: "실시간", sub: "업데이트" },
             { icon: Shield, label: "안전", sub: "최우선" },
           ].map(({ icon: Icon, label, sub }) => (
             <div
               key={label}
-              className="bg-white rounded-2xl p-4 shadow-md flex flex-col items-center gap-2"
+              className="bg-white rounded-xl p-3 shadow-md flex flex-col items-center gap-1"
             >
-              <Icon className="w-6 h-6 text-primary" />
+              <Icon className="w-5 h-5 text-primary" />
               <div className="text-center">
-                <p className="text-sm font-semibold text-foreground">{label}</p>
-                <p className="text-xs text-muted-foreground">{sub}</p>
+                <p className="text-xs font-semibold text-foreground">{label}</p>
+                <p className="text-[10px] text-muted-foreground">{sub}</p>
               </div>
             </div>
           ))}
@@ -69,7 +150,7 @@ const Landing = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-4"
+          className="mb-3"
         >
           <p className="text-sm font-medium text-muted-foreground text-center">
             어떤 서비스가 필요하신가요?
@@ -81,21 +162,21 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-full max-w-sm space-y-4"
+          className="w-full max-w-sm space-y-3"
         >
           {/* Guardian Button */}
           <Button
             onClick={() => navigate("/map")}
-            className="w-full py-8 rounded-2xl text-lg font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group"
+            className="w-full py-7 rounded-2xl text-lg font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative flex items-center w-full">
-              <Users className="w-8 h-8 mr-4" />
+              <Users className="w-7 h-7 mr-4" />
               <div className="text-left flex-1">
-                <p className="text-lg">보호자 / 환자</p>
-                <p className="text-xs font-normal opacity-80">응급실 찾기, 가족 건강관리</p>
+                <p className="text-base">보호자 / 환자</p>
+                <p className="text-[10px] font-normal opacity-80">응급실 찾기, 가족 건강관리</p>
               </div>
-              <span className="text-2xl">→</span>
+              <span className="text-xl">→</span>
             </div>
           </Button>
 
@@ -103,15 +184,15 @@ const Landing = () => {
           <Button
             onClick={() => navigate("/driver-intro")}
             variant="outline"
-            className="w-full py-8 rounded-2xl text-lg font-semibold border-2 border-orange-400 text-orange-600 hover:bg-orange-50 relative overflow-hidden group"
+            className="w-full py-7 rounded-2xl text-lg font-semibold border-2 border-orange-400 text-orange-600 hover:bg-orange-50 relative overflow-hidden group"
           >
             <div className="relative flex items-center w-full">
-              <Ambulance className="w-8 h-8 mr-4" />
+              <Ambulance className="w-7 h-7 mr-4" />
               <div className="text-left flex-1">
-                <p className="text-lg">구급대원 / 기사님</p>
-                <p className="text-xs font-normal opacity-70">수익 최적화, 자동 운행일지</p>
+                <p className="text-base">구급대원 / 기사님</p>
+                <p className="text-[10px] font-normal opacity-70">수익 최적화, 자동 운행일지</p>
               </div>
-              <span className="text-2xl">→</span>
+              <span className="text-xl">→</span>
             </div>
           </Button>
         </motion.div>
@@ -121,7 +202,7 @@ const Landing = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-8"
+          className="mt-6"
         >
           <a
             href="tel:119"
