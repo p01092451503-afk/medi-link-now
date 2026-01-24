@@ -96,7 +96,7 @@ const LiveReportFAB = ({ onReport, userLocation }: LiveReportFABProps) => {
       {/* Main FAB */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-24 right-20 z-[1000] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors ${
+        className={`fixed bottom-24 right-4 z-[1000] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors ${
           isOpen ? "bg-gray-600" : "bg-orange-500 hover:bg-orange-600"
         }`}
         whileTap={{ scale: 0.95 }}
