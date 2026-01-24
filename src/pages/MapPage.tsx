@@ -316,11 +316,8 @@ const MapPage = () => {
         )}
       </button>
 
-      {/* Live Report FAB */}
-      <LiveReportFAB 
-        onReport={addReport}
-        userLocation={userLocation ? { lat: userLocation[0], lng: userLocation[1] } : undefined}
-      />
+      {/* Live Report FAB - Only shown in driver mode (accessed from driver dashboard) */}
+      {/* This FAB is hidden for guardian/patient mode on /map page */}
 
       {/* Bottom Sheet */}
       <AnimatePresence>
