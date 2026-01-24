@@ -1,5 +1,5 @@
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet } from "lucide-react";
+import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +8,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useHotlines } from "@/components/HotlineManager";
+import { toast } from "@/hooks/use-toast";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -89,11 +91,14 @@ const AcceptanceBadge = ({
 );
 
 const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
+  const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
+  
   if (!hospital) return null;
 
   const status = getHospitalStatus(hospital);
   const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
   const hasPediatric = hospital.beds.pediatric > 0;
+  const isFavorite = isHotline(hospital.phone);
 
   const handleCall = () => {
     window.location.href = `tel:${hospital.phone}`;
@@ -104,6 +109,19 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
       `https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`,
       "_blank"
     );
+  };
+
+  const handleToggleHotline = () => {
+    if (isFavorite) {
+      const hotline = hotlines.find((h) => h.phone === hospital.phone);
+      if (hotline) {
+        removeHotline(hotline.id);
+        toast({ title: "핫라인에서 제거되었습니다" });
+      }
+    } else {
+      addHotline(hospital.nameKr, hospital.phone);
+      toast({ title: "핫라인에 추가되었습니다", description: "드라이버 대시보드에서 확인하세요" });
+    }
   };
 
   return (
@@ -288,7 +306,20 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               <div className="bg-gray-50 rounded-xl p-4 mb-5">
                 <div className="flex items-center gap-3 mb-2">
                   <Phone className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{hospital.phone}</span>
+                  <span className="text-sm font-medium flex-1">{hospital.phone}</span>
+                  <button
+                    onClick={handleToggleHotline}
+                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    aria-label={isFavorite ? "핫라인에서 제거" : "핫라인에 추가"}
+                  >
+                    <Star 
+                      className={`w-5 h-5 transition-colors ${
+                        isFavorite 
+                          ? "text-yellow-500 fill-yellow-500" 
+                          : "text-gray-400"
+                      }`} 
+                    />
+                  </button>
                 </div>
                 <p className="text-xs text-muted-foreground pl-7">{hospital.address}</p>
               </div>
