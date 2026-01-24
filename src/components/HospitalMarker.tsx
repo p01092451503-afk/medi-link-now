@@ -40,7 +40,12 @@ const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" 
   return "available";
 };
 
-const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds: number, hasPediatric: boolean) => {
+const createMarkerIcon = (
+  status: "available" | "limited" | "unavailable",
+  beds: number,
+  hasPediatric: boolean,
+  isTraumaCenter?: boolean
+) => {
   const colors = {
     available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
     limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
@@ -49,6 +54,9 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
 
   const color = colors[status];
   const childBadge = hasPediatric ? `<span style="position: absolute; top: -8px; right: -8px; font-size: 12px;">👶</span>` : "";
+  const traumaBadge = isTraumaCenter
+    ? `<span style="position: absolute; top: -8px; left: -8px; font-size: 10px; background: #7C3AED; color: white; padding: 1px 4px; border-radius: 4px; font-weight: bold;">외상</span>`
+    : "";
 
   return L.divIcon({
     className: "custom-marker",
@@ -79,6 +87,7 @@ const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds:
         ">
           ${beds}
           ${childBadge}
+          ${traumaBadge}
         </div>
         <div style="
           width: 0;
@@ -100,7 +109,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   const hasPediatric = hospital.beds.pediatric > 0;
-  const icon = createMarkerIcon(status, displayBeds, hasPediatric);
+  const icon = createMarkerIcon(status, displayBeds, hasPediatric, hospital.isTraumaCenter);
 
   return (
     <Marker
