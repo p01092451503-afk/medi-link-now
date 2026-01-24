@@ -854,14 +854,29 @@ export const hospitals: Hospital[] = [
   },
 ];
 
-export type FilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
+// Bed/Equipment filters
+export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 
-export const filterOptions: { id: FilterType; label: string; labelKr: string }[] = [
-  { id: "all", label: "All", labelKr: "전체" },
-  { id: "adult", label: "Adult ER", labelKr: "성인 응급" },
-  { id: "pediatric", label: "Pediatric ER", labelKr: "소아 응급" },
-  { id: "fever", label: "Fever/Infection", labelKr: "열/감염" },
-  { id: "ct", label: "CT Available", labelKr: "CT 가능" },
+// Procedure availability filters (시술 가능 여부)
+export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "endoscopy" | "dialysis" | "trauma";
+
+// Combined filter type
+export type FilterType = BedFilterType | ProcedureFilterType;
+
+export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" }[] = [
+  // Bed availability filters
+  { id: "all", label: "All", labelKr: "전체", category: "bed" },
+  { id: "adult", label: "Adult ER", labelKr: "성인 응급", category: "bed" },
+  { id: "pediatric", label: "Pediatric ER", labelKr: "소아 응급", category: "bed" },
+  { id: "fever", label: "Fever/Infection", labelKr: "열/감염", category: "bed" },
+  { id: "ct", label: "CT Available", labelKr: "CT 가능", category: "bed" },
+  // Procedure availability filters
+  { id: "heart", label: "Heart Attack", labelKr: "심근경색", category: "procedure" },
+  { id: "brainBleed", label: "Brain Hemorrhage", labelKr: "뇌출혈", category: "procedure" },
+  { id: "brainStroke", label: "Brain Infarction", labelKr: "뇌경색", category: "procedure" },
+  { id: "endoscopy", label: "Endoscopy", labelKr: "응급내시경", category: "procedure" },
+  { id: "dialysis", label: "Dialysis", labelKr: "응급투석", category: "procedure" },
+  { id: "trauma", label: "Trauma Center", labelKr: "외상센터", category: "procedure" },
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {
@@ -873,6 +888,7 @@ export const getHospitalStatus = (hospital: Hospital): "available" | "limited" |
 
 export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hospital[] => {
   switch (filter) {
+    // Bed availability filters
     case "adult":
       return hospitals.filter((h) => h.beds.general > 0);
     case "pediatric":
@@ -881,6 +897,19 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
       return hospitals.filter((h) => h.beds.fever > 0);
     case "ct":
       return hospitals.filter((h) => h.equipment.includes("CT"));
+    // Procedure availability filters (시술 가능 여부)
+    case "heart":
+      return hospitals.filter((h) => h.acceptance?.heart === true);
+    case "brainBleed":
+      return hospitals.filter((h) => h.acceptance?.brainBleed === true);
+    case "brainStroke":
+      return hospitals.filter((h) => h.acceptance?.brainStroke === true);
+    case "endoscopy":
+      return hospitals.filter((h) => h.acceptance?.endoscopy === true);
+    case "dialysis":
+      return hospitals.filter((h) => h.acceptance?.dialysis === true);
+    case "trauma":
+      return hospitals.filter((h) => h.isTraumaCenter === true);
     default:
       return hospitals;
   }
