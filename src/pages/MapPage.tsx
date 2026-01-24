@@ -185,6 +185,9 @@ const MapPage = () => {
             value={searchQuery}
             onChange={setSearchQuery}
             onFilterChange={setActiveFilter}
+            onHospitalSelect={handleHospitalClick}
+            hospitals={hospitalData}
+            userLocation={userLocation}
             className="flex-1"
           />
         </div>
