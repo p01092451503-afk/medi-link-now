@@ -243,3 +243,17 @@
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   transform-origin: center;
 }
+
+/* Hide default Leaflet marker cluster styles */
+.marker-cluster,
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  display: none !important;
+}
+
+/* Custom marker base styles */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
