@@ -217,9 +217,9 @@ const SymptomSearchBar = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 z-10"
+            className="absolute top-full left-0 right-0 mt-2 z-[2000]"
           >
-            <div className={`rounded-xl p-4 border shadow-lg ${getSeverityColor(analysis.severity)}`}>
+            <div className={`rounded-xl p-4 border shadow-xl backdrop-blur-sm ${getSeverityColor(analysis.severity)}`}>
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 mt-0.5">
                   {getIconForResult(analysis.icon)}
@@ -232,7 +232,7 @@ const SymptomSearchBar = ({
                     {analysis.keywords.map((keyword) => (
                       <span
                         key={keyword}
-                        className="px-2 py-0.5 bg-white/50 rounded-full text-xs font-medium"
+                        className="px-2 py-0.5 bg-white/70 rounded-full text-xs font-medium"
                       >
                         "{keyword}"
                       </span>
@@ -250,7 +250,7 @@ const SymptomSearchBar = ({
                         <button
                           key={hospital.id}
                           onClick={() => handleHospitalClick(hospital)}
-                          className="w-full bg-white/80 hover:bg-white rounded-lg p-2.5 text-left transition-all shadow-sm hover:shadow"
+                          className="w-full bg-white hover:bg-gray-50 rounded-lg p-2.5 text-left transition-all shadow-sm hover:shadow border border-gray-100"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
@@ -282,7 +282,7 @@ const SymptomSearchBar = ({
 
                   {/* No location warning */}
                   {!userLocation && (
-                    <div className="mb-3 py-2 px-3 bg-white/50 rounded-lg text-xs text-gray-600 flex items-center gap-2">
+                    <div className="mb-3 py-2 px-3 bg-white/70 rounded-lg text-xs text-gray-600 flex items-center gap-2">
                       <Navigation className="w-4 h-4" />
                       <span>위치를 켜면 가까운 병원을 추천해드립니다</span>
                     </div>
@@ -290,7 +290,7 @@ const SymptomSearchBar = ({
 
                   <button
                     onClick={handleApplyFilter}
-                    className="w-full py-2.5 bg-white rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all"
+                    className="w-full py-2.5 bg-white rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all border border-gray-100"
                   >
                     🔍 이 조건으로 검색
                   </button>
@@ -313,7 +313,7 @@ const SymptomSearchBar = ({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl p-4 shadow-lg border border-border z-10"
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl p-4 shadow-xl border border-gray-200 z-[2000]"
         >
           <p className="text-xs text-muted-foreground mb-3">
             💡 증상을 자연스럽게 입력하면 AI가 적합한 병원을 추천해드립니다
