@@ -341,8 +341,8 @@ const MapPage = () => {
       {/* Nearby Hospital Stats Card */}
       <motion.div 
         layout
-        className="absolute bottom-24 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
-        style={{ minWidth: isStatsExpanded ? 220 : 140 }}
+        className="absolute bottom-44 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden max-w-[160px]"
+        style={{ minWidth: isStatsExpanded ? 200 : 140 }}
       >
         {/* Header - Clickable to expand */}
         <div 
@@ -497,7 +497,8 @@ const MapPage = () => {
       </motion.div>
 
       {/* Nearby Drivers Card */}
-      <div className="absolute bottom-24 right-4 z-[1000] w-64">
+      {/* Nearby Drivers Card */}
+      <div className="absolute bottom-24 left-4 z-[999] w-[160px]">
         <NearbyDriversCard
           drivers={nearbyDrivers}
           userLocation={userLocation}
