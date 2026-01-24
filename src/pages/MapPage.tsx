@@ -20,7 +20,6 @@ import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
-import { useNursingHospitals } from "@/hooks/useNursingHospitals";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
@@ -54,9 +53,7 @@ const MapPage = () => {
   const [distanceRange, setDistanceRange] = useState(10); // km
   const [showNearbyNotice, setShowNearbyNotice] = useState(false);
 
-  // Fetch nursing hospitals when filter is set to 'nursing'
-  const isNursingFilter = activeFilter === "nursing";
-  const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isNursingFilter);
+  // Fetch holiday pharmacies when filter is set to 'pharmacy'
 
   // Fetch holiday pharmacies when filter is set to 'pharmacy'
   const isPharmacyFilter = activeFilter === "pharmacy";
@@ -239,7 +236,7 @@ const MapPage = () => {
       
       {/* Leaflet Map */}
       <MapView
-        hospitals={(isNursingFilter || isPharmacyFilter) ? [] : filteredHospitals}
+        hospitals={isPharmacyFilter ? [] : filteredHospitals}
         onHospitalClick={handleHospitalClick}
         userLocation={userLocation}
         center={mapCenter}
@@ -248,7 +245,6 @@ const MapPage = () => {
         liveReports={liveReports}
         nearbyDrivers={nearbyDrivers}
         onCallDriver={handleCallDriver}
-        nursingHospitals={isNursingFilter ? nursingHospitals : []}
         holidayPharmacies={isPharmacyFilter ? holidayPharmacies : []}
       />
 

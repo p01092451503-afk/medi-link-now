@@ -5,11 +5,9 @@ import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 import ReportMarker from "./ReportMarker";
 import DriverMarker from "./DriverMarker";
-import NursingHospitalMarker from "./NursingHospitalMarker";
 import PharmacyMarker from "./PharmacyMarker";
 import type { LiveReport } from "./LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
-import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
 
 interface MapViewProps {
@@ -22,7 +20,6 @@ interface MapViewProps {
   liveReports?: LiveReport[];
   nearbyDrivers?: DriverPresence[];
   onCallDriver?: (driver: DriverPresence) => void;
-  nursingHospitals?: NursingHospital[];
   holidayPharmacies?: HolidayPharmacy[];
 }
 
@@ -183,7 +180,6 @@ const MapView = ({
   liveReports = [],
   nearbyDrivers = [],
   onCallDriver,
-  nursingHospitals = [],
   holidayPharmacies = []
 }: MapViewProps) => {
   return (
@@ -229,14 +225,6 @@ const MapView = ({
             key={`driver-${driver.id}`} 
             driver={driver} 
             onCallDriver={onCallDriver}
-          />
-        ))}
-
-        {/* Nursing Hospital Markers */}
-        {nursingHospitals.map((hospital) => (
-          <NursingHospitalMarker
-            key={`nursing-${hospital.id}`}
-            hospital={hospital}
           />
         ))}
 
