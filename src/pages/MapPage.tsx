@@ -201,6 +201,30 @@ const MapPage = () => {
         </div>
       </div>
 
+      {/* Empty State Message */}
+      {filteredHospitals.length === 0 && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl text-center max-w-xs">
+          <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+            <Search className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="font-semibold text-foreground mb-2">조건에 맞는 병원이 없습니다</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            다른 필터를 선택하거나 검색어를 변경해 보세요.
+          </p>
+          <Button
+            onClick={() => {
+              setActiveFilter("all");
+              setActiveRegion("all");
+              setSearchQuery("");
+            }}
+            variant="outline"
+            className="w-full"
+          >
+            필터 초기화
+          </Button>
+        </div>
+      )}
+
       {/* Legend with realtime status */}
       <div className="absolute bottom-24 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
         <div className="flex items-center justify-between mb-2">
