@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
+import GuardianLanding from "./pages/GuardianLanding";
+import DriverLanding from "./pages/DriverLanding";
 import MapPage from "./pages/MapPage";
 import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
@@ -20,6 +22,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/guardian" element={<GuardianLanding />} />
+          <Route path="/driver-intro" element={<DriverLanding />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/family" element={<FamilyPage />} />
           <Route path="/login" element={<Login />} />
