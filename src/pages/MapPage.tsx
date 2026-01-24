@@ -220,28 +220,45 @@ const MapPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           
-          {/* AI Symptom Search - temporarily hidden
-          <SymptomSearchBar
-            value={searchQuery}
-            onChange={setSearchQuery}
-            onFilterChange={setActiveFilter}
-            onHospitalSelect={handleHospitalClick}
-            hospitals={hospitalData}
-            userLocation={userLocation}
-            className="flex-1"
-          />
-          */}
-          
-          {/* Simple search input replacement */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="병원명으로 검색..."
-              className="w-full bg-white rounded-2xl pl-12 pr-4 py-4 text-base shadow-lg outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-            />
+          {/* Simple search input with button */}
+          <div className="flex-1 flex gap-2">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim()) {
+                    const matched = filteredHospitals[0];
+                    if (matched) {
+                      handleHospitalClick(matched);
+                      toast({ title: `🏥 ${matched.nameKr}`, description: "검색 결과로 이동합니다." });
+                    } else {
+                      toast({ title: "검색 결과 없음", description: "다른 검색어를 입력해보세요." });
+                    }
+                  }
+                }}
+                placeholder="병원명 검색..."
+                className="w-full bg-white rounded-2xl pl-12 pr-4 py-4 text-base shadow-lg outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              />
+            </div>
+            <button
+              onClick={() => {
+                if (searchQuery.trim()) {
+                  const matched = filteredHospitals[0];
+                  if (matched) {
+                    handleHospitalClick(matched);
+                    toast({ title: `🏥 ${matched.nameKr}`, description: "검색 결과로 이동합니다." });
+                  } else {
+                    toast({ title: "검색 결과 없음", description: "다른 검색어를 입력해보세요." });
+                  }
+                }
+              }}
+              className="bg-primary text-white rounded-2xl px-5 shadow-lg hover:bg-primary/90 transition-colors flex items-center justify-center"
+            >
+              <Search className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
