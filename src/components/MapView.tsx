@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { Hospital, FilterType } from "@/data/hospitals";
+import { Hospital, FilterType, getHospitalStatus } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 import ReportMarker from "./ReportMarker";
 import DriverMarker from "./DriverMarker";
@@ -218,8 +218,25 @@ const MapView = ({
             removeOutsideVisibleBounds={false}
             iconCreateFunction={(cluster) => {
               const count = cluster.getChildCount();
+              
+              // Get markers in this cluster and count available hospitals
+              const childMarkers = cluster.getAllChildMarkers();
+              let availableCount = 0;
+              
+              childMarkers.forEach((marker: any) => {
+                const latLng = marker.getLatLng();
+                // Find matching hospital by coordinates
+                const hospital = hospitals.find(
+                  (h) => Math.abs(h.lat - latLng.lat) < 0.0001 && Math.abs(h.lng - latLng.lng) < 0.0001
+                );
+                if (hospital && getHospitalStatus(hospital) === "available") {
+                  availableCount++;
+                }
+              });
+              
               let size = "small";
-              let bgColor = "hsl(220, 100%, 50%)"; // primary color
+              // Color based on availability ratio
+              let bgColor = availableCount > 0 ? "#10B981" : "#6B7280"; // green if available, gray if none
               
               if (count >= 20) {
                 size = "large";
@@ -228,9 +245,9 @@ const MapView = ({
               }
               
               const sizeMap = {
-                small: { width: 36, height: 36, fontSize: 12 },
-                medium: { width: 44, height: 44, fontSize: 14 },
-                large: { width: 52, height: 52, fontSize: 16 },
+                small: { width: 44, height: 44, fontSize: 11 },
+                medium: { width: 52, height: 52, fontSize: 12 },
+                large: { width: 60, height: 60, fontSize: 13 },
               };
               
               const s = sizeMap[size as keyof typeof sizeMap];
@@ -242,14 +259,18 @@ const MapView = ({
                   height: ${s.height}px;
                   border-radius: 50%;
                   display: flex;
+                  flex-direction: column;
                   align-items: center;
                   justify-content: center;
                   color: white;
                   font-weight: 700;
-                  font-size: ${s.fontSize}px;
                   border: 3px solid white;
                   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                ">${count}</div>`,
+                  line-height: 1.1;
+                ">
+                  <span style="font-size: ${s.fontSize + 3}px;">${count}</span>
+                  <span style="font-size: ${s.fontSize - 2}px; opacity: 0.9;">🏥${availableCount}</span>
+                </div>`,
                 className: "custom-cluster-icon",
                 iconSize: L.point(s.width, s.height, true),
               });
