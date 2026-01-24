@@ -179,8 +179,22 @@ const SymptomSearchBar = ({
   };
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Search Input */}
+    <>
+      {/* Backdrop overlay when focused */}
+      <AnimatePresence>
+        {isFocused && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 z-[9990]"
+            onClick={() => setIsFocused(false)}
+          />
+        )}
+      </AnimatePresence>
+      
+      <div className={`relative z-[9991] ${className}`}>
+        {/* Search Input */}
       <div className="relative">
         <div className="absolute left-4 top-1/2 -translate-y-1/2">
           {isAnalyzing ? (
@@ -331,7 +345,8 @@ const SymptomSearchBar = ({
           </div>
         </motion.div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
