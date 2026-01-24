@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { 
   ArrowRight, 
@@ -7,83 +7,17 @@ import {
   Clock, 
   TrendingUp,
   RotateCcw,
-  Check
+  Check,
+  Loader2,
+  RefreshCw,
+  Bell,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-
-interface ReturnTripRequest {
-  id: string;
-  patientName: string;
-  pickupLocation: string;
-  pickupCity: string;
-  destination: string;
-  destinationCity: string;
-  estimatedFee: number;
-  distance: string;
-  timePosted: string;
-}
-
-// Mock return trip requests
-const mockReturnTrips: ReturnTripRequest[] = [
-  {
-    id: "r1",
-    patientName: "정OO",
-    pickupLocation: "대구광역시 수성구",
-    pickupCity: "대구",
-    destination: "서울아산병원",
-    destinationCity: "서울",
-    estimatedFee: 250000,
-    distance: "280km",
-    timePosted: "10분 전",
-  },
-  {
-    id: "r2",
-    patientName: "최OO",
-    pickupLocation: "대전광역시 서구",
-    pickupCity: "대전",
-    destination: "세브란스병원",
-    destinationCity: "서울",
-    estimatedFee: 180000,
-    distance: "160km",
-    timePosted: "25분 전",
-  },
-  {
-    id: "r3",
-    patientName: "한OO",
-    pickupLocation: "광주광역시 북구",
-    pickupCity: "광주",
-    destination: "삼성서울병원",
-    destinationCity: "서울",
-    estimatedFee: 320000,
-    distance: "320km",
-    timePosted: "45분 전",
-  },
-  {
-    id: "r4",
-    patientName: "임OO",
-    pickupLocation: "부산광역시 해운대구",
-    pickupCity: "부산",
-    destination: "서울대병원",
-    destinationCity: "서울",
-    estimatedFee: 380000,
-    distance: "400km",
-    timePosted: "1시간 전",
-  },
-  {
-    id: "r5",
-    patientName: "윤OO",
-    pickupLocation: "창원시 성산구",
-    pickupCity: "창원",
-    destination: "고려대병원",
-    destinationCity: "서울",
-    estimatedFee: 350000,
-    distance: "360km",
-    timePosted: "1시간 전",
-  },
-];
+import { useRealtimeReturnTrips, type ReturnTripRequest } from "@/hooks/useRealtimeReturnTrips";
 
 interface RevenueTabProps {
   todayRevenue: number;
@@ -94,28 +28,55 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
   const [currentLocation, setCurrentLocation] = useState("");
   const [homeBase, setHomeBase] = useState("서울");
   const [acceptedTrips, setAcceptedTrips] = useState<string[]>([]);
+  const [acceptingId, setAcceptingId] = useState<string | null>(null);
+  
+  const { trips, isLoading, acceptTrip, refetch } = useRealtimeReturnTrips();
 
   // Filter trips that match the route back to home base
-  const matchingTrips = mockReturnTrips.filter((trip) => {
-    if (!currentLocation) return true;
-    // Simple matching: pickup city contains current location keyword
-    // and destination city matches home base
-    const matchesRoute = 
-      trip.destinationCity.includes(homeBase) &&
-      (currentLocation === "" || trip.pickupCity.toLowerCase().includes(currentLocation.toLowerCase()));
-    return matchesRoute;
-  });
-
-  const handleAcceptTrip = (tripId: string) => {
-    setAcceptedTrips((prev) => [...prev, tripId]);
-    const trip = mockReturnTrips.find((t) => t.id === tripId);
-    toast({
-      title: "귀경길 콜 수락!",
-      description: `${trip?.patientName}님 - ${trip?.pickupCity} → ${trip?.destinationCity}`,
+  const matchingTrips = useMemo(() => {
+    return trips.filter((trip) => {
+      if (!currentLocation) {
+        // If no current location, show all trips going to home base
+        return trip.destination_city.includes(homeBase);
+      }
+      // Match pickup city with current location and destination with home base
+      const matchesRoute = 
+        trip.destination_city.includes(homeBase) &&
+        trip.pickup_city.toLowerCase().includes(currentLocation.toLowerCase());
+      return matchesRoute;
     });
+  }, [trips, currentLocation, homeBase]);
+
+  const handleAcceptTrip = async (tripId: string) => {
+    setAcceptingId(tripId);
+    const success = await acceptTrip(tripId);
+    
+    if (success) {
+      setAcceptedTrips((prev) => [...prev, tripId]);
+      const trip = trips.find((t) => t.id === tripId);
+      toast({
+        title: "✅ 귀경길 콜 수락!",
+        description: `${trip?.patient_name}님 - ${trip?.pickup_city} → ${trip?.destination_city}`,
+      });
+    }
+    setAcceptingId(null);
   };
 
-  const potentialRevenue = matchingTrips.reduce((sum, trip) => sum + trip.estimatedFee, 0);
+  const potentialRevenue = matchingTrips.reduce((sum, trip) => sum + trip.estimated_fee, 0);
+
+  // Format time ago
+  const formatTimeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return "방금 전";
+    if (diffMins < 60) return `${diffMins}분 전`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}시간 전`;
+    return `${Math.floor(diffHours / 24)}일 전`;
+  };
 
   return (
     <motion.div
@@ -144,9 +105,19 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
         <div className="flex items-center gap-2 mb-4">
           <RotateCcw className="w-5 h-5 text-primary" />
           <h3 className="font-bold text-foreground">귀경길 콜 매칭</h3>
-          <span className="ml-auto text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-            공차 방지
-          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => refetch()}
+              disabled={isLoading}
+              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <RefreshCw className={`w-4 h-4 text-muted-foreground ${isLoading ? "animate-spin" : ""}`} />
+            </button>
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full flex items-center gap-1">
+              <Bell className="w-3 h-3" />
+              실시간
+            </span>
+          </div>
         </div>
 
         {/* Route Input */}
@@ -191,7 +162,11 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
             🔙 귀경길 콜 ({matchingTrips.length}건)
           </p>
           
-          {matchingTrips.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 text-primary animate-spin" />
+            </div>
+          ) : matchingTrips.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground text-sm">
               현재 경로에 맞는 콜이 없습니다
             </div>
@@ -210,20 +185,31 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">{trip.patientName}</span>
-                      <span className="text-xs text-muted-foreground">{trip.timePosted}</span>
+                      <span className="font-semibold text-foreground">{trip.patient_name}</span>
+                      <span className="text-xs text-muted-foreground">{formatTimeAgo(trip.created_at)}</span>
                     </div>
+                    {trip.patient_age && trip.patient_gender && (
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                        <User className="w-3 h-3" />
+                        <span>{trip.patient_gender === 'male' ? '남성' : '여성'} / {trip.patient_age}</span>
+                        {trip.patient_condition && (
+                          <span className="ml-1 px-1.5 py-0.5 bg-green-100 text-green-700 rounded">
+                            {trip.patient_condition === 'stable' ? '안정' : trip.patient_condition}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <span className="text-lg font-bold text-primary">
-                    +₩{trip.estimatedFee.toLocaleString()}
+                    +₩{trip.estimated_fee.toLocaleString()}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm mb-3">
                   <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{trip.pickupLocation}</span>
-                  <ArrowRight className="w-4 h-4 text-primary" />
-                  <span className="font-medium text-foreground">{trip.destination}</span>
+                  <span className="text-muted-foreground truncate max-w-[120px]">{trip.pickup_location}</span>
+                  <ArrowRight className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span className="font-medium text-foreground truncate">{trip.destination}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -240,9 +226,14 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
                     <Button
                       size="sm"
                       onClick={() => handleAcceptTrip(trip.id)}
+                      disabled={acceptingId === trip.id}
                       className="rounded-xl"
                     >
-                      콜 수락
+                      {acceptingId === trip.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        "콜 수락"
+                      )}
                     </Button>
                   )}
                 </div>
