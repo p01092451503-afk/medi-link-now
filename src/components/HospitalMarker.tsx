@@ -53,7 +53,7 @@ const createMarkerIcon = (
   };
 
   const color = colors[status];
-  const childBadge = hasPediatric ? `<span style="position: absolute; top: -8px; right: -8px; font-size: 12px;">👶</span>` : "";
+  const childBadge = hasPediatric ? `<span style="position: absolute; top: -10px; right: -10px; font-size: 18px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">👶</span>` : "";
   const traumaBadge = isTraumaCenter
     ? `<span style="position: absolute; top: -8px; left: -8px; font-size: 10px; background: #7C3AED; color: white; padding: 1px 4px; border-radius: 4px; font-weight: bold;">외상</span>`
     : "";
