@@ -1,8 +1,7 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { Hospital, FilterType, getHospitalStatus } from "@/data/hospitals";
+import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 import ReportMarker from "./ReportMarker";
 import DriverMarker from "./DriverMarker";
@@ -183,12 +182,6 @@ const MapView = ({
   onCallDriver,
   nursingHospitals = []
 }: MapViewProps) => {
-  // Create a stable key for the cluster group based on hospital IDs
-  // This prevents the cluster from trying to remove markers that don't exist
-  const clusterKey = useMemo(() => {
-    return hospitals.map(h => h.id).sort().join('-').slice(0, 100) || 'empty';
-  }, [hospitals]);
-
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
       <MapContainer
@@ -211,85 +204,15 @@ const MapView = ({
         {/* User location marker */}
         {userLocation && <UserLocationMarker position={userLocation} />}
         
-        {/* Hospital markers with clustering */}
-        {hospitals.length > 0 && (
-          <MarkerClusterGroup
-            key={clusterKey}
-            chunkedLoading
-            maxClusterRadius={60}
-            spiderfyOnMaxZoom={true}
-            showCoverageOnHover={false}
-            removeOutsideVisibleBounds={false}
-            iconCreateFunction={(cluster) => {
-              const count = cluster.getChildCount();
-              
-              // Get markers in this cluster and count available hospitals
-              const childMarkers = cluster.getAllChildMarkers();
-              let availableCount = 0;
-              
-              childMarkers.forEach((marker: any) => {
-                const latLng = marker.getLatLng();
-                // Find matching hospital by coordinates
-                const hospital = hospitals.find(
-                  (h) => Math.abs(h.lat - latLng.lat) < 0.0001 && Math.abs(h.lng - latLng.lng) < 0.0001
-                );
-                if (hospital && getHospitalStatus(hospital) === "available") {
-                  availableCount++;
-                }
-              });
-              
-              let size = "small";
-              // Color based on availability ratio
-              let bgColor = availableCount > 0 ? "#10B981" : "#6B7280"; // green if available, gray if none
-              
-              if (count >= 20) {
-                size = "large";
-              } else if (count >= 10) {
-                size = "medium";
-              }
-              
-              const sizeMap = {
-                small: { width: 44, height: 44, fontSize: 11 },
-                medium: { width: 52, height: 52, fontSize: 12 },
-                large: { width: 60, height: 60, fontSize: 13 },
-              };
-              
-              const s = sizeMap[size as keyof typeof sizeMap];
-              
-              return L.divIcon({
-                html: `<div style="
-                  background: ${bgColor};
-                  width: ${s.width}px;
-                  height: ${s.height}px;
-                  border-radius: 50%;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  color: white;
-                  font-weight: 700;
-                  border: 3px solid white;
-                  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                  line-height: 1.1;
-                ">
-                  <span style="font-size: ${s.fontSize + 3}px;">${count}</span>
-                  <span style="font-size: ${s.fontSize - 2}px; opacity: 0.9;">🏥${availableCount}</span>
-                </div>`,
-                className: "custom-cluster-icon",
-                iconSize: L.point(s.width, s.height, true),
-              });
-            }}
-          >
-            {hospitals.map((hospital) => (
-              <HospitalMarker
-                key={`hospital-${hospital.id}`}
-                hospital={hospital}
-                onClick={onHospitalClick}
-                activeFilter={activeFilter}
-              />
-            ))}
-          </MarkerClusterGroup>
-        )}
+        {/* Hospital markers - individual display without clustering */}
+        {hospitals.map((hospital) => (
+          <HospitalMarker
+            key={`hospital-${hospital.id}`}
+            hospital={hospital}
+            onClick={onHospitalClick}
+            activeFilter={activeFilter}
+          />
+        ))}
 
         {/* Live Report Markers */}
         {liveReports.map((report) => (
