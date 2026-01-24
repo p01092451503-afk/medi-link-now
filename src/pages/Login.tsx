@@ -12,8 +12,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("p01092451503@gmail.com");
+  const [password, setPassword] = useState("111111");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
