@@ -61,19 +61,19 @@ serve(async (req) => {
       }
     }
 
-    const params = new URLSearchParams({
-      serviceKey: SERVICE_KEY,
-      STAGE1: bodyCity,
-      numOfRows: '100',
-      pageNo: '1',
-    });
+    // Try to detect if the key is already encoded or needs encoding
+    // If the key contains '%', it's likely already encoded - use as-is
+    // If not, it's a decoded key - we need to encode it
+    const isAlreadyEncoded = SERVICE_KEY.includes('%');
+    const encodedKey = isAlreadyEncoded ? SERVICE_KEY : encodeURIComponent(SERVICE_KEY);
+    
+    let apiUrl = `${API_ENDPOINT}?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(bodyCity)}&numOfRows=100&pageNo=1`;
 
     if (bodyDistrict) {
-      params.append('STAGE2', bodyDistrict);
+      apiUrl += `&STAGE2=${encodeURIComponent(bodyDistrict)}`;
     }
 
-    const apiUrl = `${API_ENDPOINT}?${params.toString()}`;
-    console.log(`Fetching ER data for: ${bodyCity} ${bodyDistrict}`);
+    console.log(`Fetching ER data for: ${bodyCity} ${bodyDistrict}, key encoded: ${isAlreadyEncoded}`);
 
     const response = await fetch(apiUrl, {
       method: 'GET',
