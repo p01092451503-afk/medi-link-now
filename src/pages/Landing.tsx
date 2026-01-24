@@ -30,8 +30,9 @@ const Landing = () => {
           className="text-center mb-10"
         >
           <h2 className="text-3xl font-bold text-foreground mb-3">
-            응급 상황,<br />
-            <span className="text-primary">가장 가까운 병상</span>을 찾아드립니다
+            응급상황,<br />
+            <span className="text-primary">가장 가까운 병상</span>을<br />
+            찾아드립니다
           </h2>
           <p className="text-muted-foreground max-w-sm mx-auto">
             전국 응급실 실시간 병상 현황을 확인하고 가장 빠른 경로를 안내받으세요
