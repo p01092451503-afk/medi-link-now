@@ -165,36 +165,35 @@ const Landing = () => {
           className="w-full max-w-sm space-y-3"
         >
           {/* Guardian Button */}
-          <Button
+          <button
             onClick={() => navigate("/map")}
-            className="w-full py-7 rounded-2xl text-lg font-semibold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group"
+            className="w-full h-[72px] px-5 rounded-2xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group transition-colors"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative flex items-center w-full">
-              <Users className="w-7 h-7 mr-4" />
-              <div className="text-left flex-1">
-                <p className="text-base">보호자 / 환자</p>
-                <p className="text-[10px] font-normal opacity-80">응급실 찾기, 가족 건강관리</p>
+            <div className="relative flex items-center w-full h-full">
+              <Users className="w-7 h-7 text-white shrink-0" />
+              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
+                <p className="text-base font-semibold text-white leading-tight">보호자 / 환자</p>
+                <p className="text-xs font-normal text-white/80 leading-tight mt-0.5">응급실 찾기, 가족 건강관리</p>
               </div>
-              <span className="text-xl">→</span>
+              <span className="text-xl text-white shrink-0">→</span>
             </div>
-          </Button>
+          </button>
 
           {/* Ambulance Driver Button */}
-          <Button
+          <button
             onClick={() => navigate("/driver-intro")}
-            variant="outline"
-            className="w-full py-7 rounded-2xl text-lg font-semibold border-2 border-orange-400 text-orange-600 hover:bg-orange-50 relative overflow-hidden group"
+            className="w-full h-[72px] px-5 rounded-2xl border-2 border-orange-400 bg-white hover:bg-orange-50 relative overflow-hidden group transition-colors"
           >
-            <div className="relative flex items-center w-full">
-              <Ambulance className="w-7 h-7 mr-4" />
-              <div className="text-left flex-1">
-                <p className="text-base">구급대원 / 기사님</p>
-                <p className="text-[10px] font-normal opacity-70">수익 최적화, 자동 운행일지</p>
+            <div className="relative flex items-center w-full h-full">
+              <Ambulance className="w-7 h-7 text-orange-500 shrink-0" />
+              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
+                <p className="text-base font-semibold text-orange-600 leading-tight">구급대원 / 기사님</p>
+                <p className="text-xs font-normal text-orange-500/70 leading-tight mt-0.5">수익 최적화, 자동 운행일지</p>
               </div>
-              <span className="text-xl">→</span>
+              <span className="text-xl text-orange-500 shrink-0">→</span>
             </div>
-          </Button>
+          </button>
         </motion.div>
 
         {/* Emergency Call */}
