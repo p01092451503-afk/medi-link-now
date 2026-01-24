@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      family_members: {
+        Row: {
+          age: number
+          allergies: string[] | null
+          blood_type: string
+          chronic_diseases: string[] | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          relation: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age: number
+          allergies?: string[] | null
+          blood_type?: string
+          chronic_diseases?: string[] | null
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          relation: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age?: number
+          allergies?: string[] | null
+          blood_type?: string
+          chronic_diseases?: string[] | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          relation?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       hospital_monitors: {
         Row: {
           bed_type: string

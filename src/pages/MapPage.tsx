@@ -23,6 +23,7 @@ import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LiveReportFAB from "@/components/LiveReportFAB";
 import SymptomSearchBar from "@/components/SymptomSearchBar";
+import OnboardingModal from "@/components/OnboardingModal";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
 
@@ -181,6 +182,9 @@ const MapPage = () => {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden">
+      {/* Onboarding Modal for first-time users */}
+      <OnboardingModal />
+      
       {/* Leaflet Map */}
       <MapView
         hospitals={filteredHospitals}

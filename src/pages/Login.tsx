@@ -1,19 +1,32 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Ambulance, Mail, Lock, Loader2 } from "lucide-react";
+import { ArrowLeft, Ambulance, Mail, Lock, Loader2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get("mode") || "driver"; // 'driver' or 'guardian'
+  const returnTo = searchParams.get("returnTo") || (mode === "guardian" ? "/family" : "/driver");
+  
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("p01092451503@gmail.com");
-  const [password, setPassword] = useState("111111");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated && !isAuthLoading) {
+      navigate(returnTo);
+    }
+  }, [isAuthenticated, isAuthLoading, navigate, returnTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +55,9 @@ const Login = () => {
         }
 
         toast({ title: "로그인 성공!" });
-        navigate("/driver");
+        navigate(returnTo);
       } else {
-        const redirectUrl = `${window.location.origin}/driver`;
+        const redirectUrl = `${window.location.origin}${returnTo}`;
         
         const { error } = await supabase.auth.signUp({
           email,
@@ -86,7 +99,9 @@ const Login = () => {
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
-        <h1 className="text-lg font-semibold text-foreground">구급대원 로그인</h1>
+        <h1 className="text-lg font-semibold text-foreground">
+          {mode === "guardian" ? "로그인 / 회원가입" : "구급대원 로그인"}
+        </h1>
       </header>
 
       {/* Main */}
@@ -100,7 +115,11 @@ const Login = () => {
           {/* Icon */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center">
-              <Ambulance className="w-10 h-10 text-primary" />
+              {mode === "guardian" ? (
+                <Users className="w-10 h-10 text-primary" />
+              ) : (
+                <Ambulance className="w-10 h-10 text-primary" />
+              )}
             </div>
           </div>
 
