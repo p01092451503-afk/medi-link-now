@@ -174,8 +174,17 @@ const SymptomSearchBar = ({
       if (analysis) {
         onFilterChange(analysis.suggestedFilter);
       }
+      // Show snackbar with hospital selection info
+      setSnackbar({ 
+        message: `${hospital.nameKr} 선택됨`, 
+        keywords: analysis?.keywords || ["병원 선택"] 
+      });
+      setIsFocused(false);
+      onChange("");
+      setAnalysis(null);
+      setTimeout(() => setSnackbar(null), 2000);
     }
-  }, [onHospitalSelect, analysis, onFilterChange]);
+  }, [onHospitalSelect, analysis, onFilterChange, onChange]);
 
   const handleClear = () => {
     onChange("");
