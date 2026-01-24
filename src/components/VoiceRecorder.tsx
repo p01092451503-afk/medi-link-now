@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Loader2 } from "lucide-react";
+import { Mic, MicOff, Loader2, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface VoiceRecorderProps {
   onTranscript: (text: string) => void;
@@ -16,6 +17,7 @@ export interface ParsedPatientData {
   bloodPressure?: string;
   pulse?: string;
   spo2?: string;
+  ktasLevel?: string;
 }
 
 // Check if SpeechRecognition is available
@@ -25,6 +27,7 @@ const SpeechRecognition =
 
 const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
   const [isListening, setIsListening] = useState(false);
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const [recognition, setRecognition] = useState<any>(null);
   const [transcript, setTranscript] = useState("");
@@ -45,11 +48,11 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
       let interimTranscript = "";
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
+        const transcriptPart = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
-          finalTranscript += transcript;
+          finalTranscript += transcriptPart;
         } else {
-          interimTranscript += transcript;
+          interimTranscript += transcriptPart;
         }
       }
 
@@ -58,7 +61,8 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
       
       if (finalTranscript) {
         onTranscript(finalTranscript);
-        parseTranscript(finalTranscript);
+        // Use AI to parse the transcript
+        parseWithAI(finalTranscript);
       }
     };
 
@@ -91,17 +95,69 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
     };
   }, [onTranscript]);
 
-  const parseTranscript = useCallback((text: string) => {
+  const parseWithAI = useCallback(async (text: string) => {
+    setIsProcessingAI(true);
+    
+    try {
+      console.log("Sending to AI for parsing:", text);
+      
+      const { data, error } = await supabase.functions.invoke("parse-patient-info", {
+        body: { transcript: text },
+      });
+
+      if (error) {
+        console.error("Edge function error:", error);
+        // Fall back to regex parsing
+        parseWithRegex(text);
+        return;
+      }
+
+      if (data?.success && data?.data) {
+        console.log("AI parsed data:", data.data);
+        onParsedData(data.data);
+        
+        const filledFields = [];
+        if (data.data.ageGender) filledFields.push("나이/성별");
+        if (data.data.chiefComplaint) filledFields.push("주 호소");
+        if (data.data.bloodPressure) filledFields.push("혈압");
+        if (data.data.pulse) filledFields.push("맥박");
+        if (data.data.spo2) filledFields.push("산소포화도");
+        if (data.data.ktasLevel) filledFields.push("KTAS");
+
+        if (filledFields.length > 0) {
+          toast({
+            title: "🤖 AI 분석 완료",
+            description: `${filledFields.join(", ")} 항목이 자동 입력되었습니다`,
+          });
+        }
+      } else if (data?.error) {
+        console.error("AI parsing error:", data.error);
+        toast({
+          title: "AI 분석 실패",
+          description: "기본 파싱으로 처리합니다",
+        });
+        parseWithRegex(text);
+      }
+    } catch (err) {
+      console.error("AI parsing failed:", err);
+      // Fall back to regex parsing
+      parseWithRegex(text);
+    } finally {
+      setIsProcessingAI(false);
+    }
+  }, [onParsedData]);
+
+  const parseWithRegex = useCallback((text: string) => {
     const parsed: ParsedPatientData = {};
 
-    // Parse gender: 남자/남성/남 or 여자/여성/여
+    // Parse gender
     if (/남자|남성|남/.test(text)) {
       parsed.gender = "M";
     } else if (/여자|여성|여/.test(text)) {
       parsed.gender = "F";
     }
 
-    // Parse age: number followed by 세/살
+    // Parse age
     const ageMatch = text.match(/(\d{1,3})\s*(세|살)/);
     if (ageMatch) {
       parsed.age = ageMatch[1];
@@ -112,26 +168,19 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
       parsed.ageGender = `${parsed.gender || ""}/${parsed.age || ""}`;
     }
 
-    // Parse blood pressure: 혈압 followed by numbers
-    // Patterns: "혈압 140에 90", "혈압 140 90", "140/90"
+    // Parse blood pressure
     const bpMatch = text.match(/혈압\s*(\d{2,3})\s*(?:에|\/|,|\s)\s*(\d{2,3})/);
     if (bpMatch) {
       parsed.bloodPressure = `${bpMatch[1]}/${bpMatch[2]}`;
-    } else {
-      // Try to find standalone BP pattern like "140/90"
-      const bpPattern = text.match(/(\d{2,3})\/(\d{2,3})/);
-      if (bpPattern) {
-        parsed.bloodPressure = `${bpPattern[1]}/${bpPattern[2]}`;
-      }
     }
 
-    // Parse pulse: 맥박 or 심박 followed by number
+    // Parse pulse
     const pulseMatch = text.match(/(?:맥박|심박|심박수)\s*(\d{2,3})/);
     if (pulseMatch) {
       parsed.pulse = pulseMatch[1];
     }
 
-    // Parse SpO2: 산소포화도 or 에스피오투 followed by number
+    // Parse SpO2
     const spo2Match = text.match(/(?:산소포화도|산소|에스피오투|spo2)\s*(\d{2,3})/i);
     if (spo2Match) {
       parsed.spo2 = spo2Match[1];
@@ -160,6 +209,20 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
     }
 
     onParsedData(parsed);
+    
+    const filledFields = [];
+    if (parsed.ageGender) filledFields.push("나이/성별");
+    if (parsed.chiefComplaint) filledFields.push("주 호소");
+    if (parsed.bloodPressure) filledFields.push("혈압");
+    if (parsed.pulse) filledFields.push("맥박");
+    if (parsed.spo2) filledFields.push("산소포화도");
+
+    if (filledFields.length > 0) {
+      toast({
+        title: "음성 인식 완료",
+        description: `${filledFields.join(", ")} 항목이 입력되었습니다`,
+      });
+    }
   }, [onParsedData]);
 
   const toggleListening = () => {
@@ -195,17 +258,21 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
       {/* Mic Button */}
       <motion.button
         onClick={toggleListening}
+        disabled={isProcessingAI}
         whileTap={{ scale: 0.95 }}
-        className={`w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-3 transition-all ${
+        className={`w-full py-4 rounded-2xl font-semibold flex items-center justify-center gap-3 transition-all disabled:opacity-70 ${
           isListening
             ? "bg-red-500 text-white"
+            : isProcessingAI
+            ? "bg-purple-500 text-white"
             : "bg-gradient-to-r from-primary to-primary/80 text-white hover:shadow-lg"
         }`}
       >
         <div className="relative">
-          {isListening ? (
+          {isProcessingAI ? (
+            <Sparkles className="w-6 h-6 animate-pulse" />
+          ) : isListening ? (
             <>
-              {/* Pulse animation rings */}
               <motion.div
                 className="absolute inset-0 rounded-full bg-white/30"
                 animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
@@ -223,35 +290,53 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
           )}
         </div>
         <span>
-          {isListening ? "듣고 있습니다... (탭하여 중지)" : "🎙️ 음성으로 입력하기"}
+          {isProcessingAI 
+            ? "🤖 AI가 분석 중..." 
+            : isListening 
+            ? "듣고 있습니다... (탭하여 중지)" 
+            : "🎙️ 음성으로 입력하기 (AI 분석)"
+          }
         </span>
       </motion.button>
 
       {/* Transcript Display */}
       <AnimatePresence>
-        {isListening && transcript && (
+        {(isListening || isProcessingAI) && transcript && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-primary/5 border border-primary/20 rounded-xl p-3"
+            className={`border rounded-xl p-3 ${
+              isProcessingAI 
+                ? "bg-purple-50 border-purple-200" 
+                : "bg-primary/5 border-primary/20"
+            }`}
           >
             <div className="flex items-center gap-2 mb-1">
-              <div className="flex gap-1">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    className="w-1.5 h-4 bg-primary rounded-full"
-                    animate={{ scaleY: [0.5, 1, 0.5] }}
-                    transition={{
-                      duration: 0.6,
-                      repeat: Infinity,
-                      delay: i * 0.15,
-                    }}
-                  />
-                ))}
-              </div>
-              <span className="text-xs font-medium text-primary">인식 중...</span>
+              {isProcessingAI ? (
+                <>
+                  <Loader2 className="w-4 h-4 text-purple-500 animate-spin" />
+                  <span className="text-xs font-medium text-purple-600">AI 분석 중...</span>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-1">
+                    {[0, 1, 2].map((i) => (
+                      <motion.div
+                        key={i}
+                        className="w-1.5 h-4 bg-primary rounded-full"
+                        animate={{ scaleY: [0.5, 1, 0.5] }}
+                        transition={{
+                          duration: 0.6,
+                          repeat: Infinity,
+                          delay: i * 0.15,
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-xs font-medium text-primary">인식 중...</span>
+                </>
+              )}
             </div>
             <p className="text-sm text-foreground">{transcript}</p>
           </motion.div>
@@ -259,9 +344,9 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
       </AnimatePresence>
 
       {/* Instructions */}
-      {!isListening && (
+      {!isListening && !isProcessingAI && (
         <p className="text-xs text-center text-muted-foreground">
-          예: "55세 남자, 흉통 호소, 혈압 140에 90"
+          예: "55세 남자, 흉통 호소, 혈압 140에 90, 맥박 88"
         </p>
       )}
     </div>
