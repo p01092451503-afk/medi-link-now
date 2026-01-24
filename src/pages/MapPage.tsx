@@ -18,15 +18,17 @@ import {
 import { toast } from "@/hooks/use-toast";
 import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
-import LiveReportFAB, { type LiveReport } from "@/components/LiveReportFAB";
+import LiveReportFAB from "@/components/LiveReportFAB";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
 
 const MapPage = () => {
   const navigate = useNavigate();
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
+  const { reports: liveReports, addReport } = useRealtimeReports();
   
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("all");
@@ -38,15 +40,6 @@ const MapPage = () => {
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(10);
   const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
-  const [liveReports, setLiveReports] = useState<LiveReport[]>([]);
-
-  const handleLiveReport = useCallback((report: LiveReport) => {
-    setLiveReports((prev) => [...prev, report]);
-    // Remove report after 30 minutes
-    setTimeout(() => {
-      setLiveReports((prev) => prev.filter((r) => r.id !== report.id));
-    }, 30 * 60 * 1000);
-  }, []);
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
@@ -167,6 +160,7 @@ const MapPage = () => {
         center={mapCenter}
         zoom={mapZoom}
         activeFilter={activeFilter}
+        liveReports={liveReports}
       />
 
       {/* Header */}
@@ -324,7 +318,7 @@ const MapPage = () => {
 
       {/* Live Report FAB */}
       <LiveReportFAB 
-        onReport={handleLiveReport}
+        onReport={addReport}
         userLocation={userLocation ? { lat: userLocation[0], lng: userLocation[1] } : undefined}
       />
 
