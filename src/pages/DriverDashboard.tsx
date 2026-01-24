@@ -15,6 +15,8 @@ import {
   FileText,
   Activity,
   Star,
+  Radio,
+  Loader2,
   ToggleLeft,
   ToggleRight
 } from "lucide-react";
@@ -27,6 +29,8 @@ import DrivingLogWidget, { type DrivingLog } from "@/components/DrivingLogWidget
 import DrivingLogHistory from "@/components/DrivingLogHistory";
 import PatientInfoModal from "@/components/PatientInfoModal";
 import HotlineManager, { useHotlines } from "@/components/HotlineManager";
+import { useDriverPresence } from "@/hooks/useDriverPresence";
+import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 
 // Mock call data
 const mockCalls = [
@@ -72,6 +76,8 @@ const DriverDashboard = () => {
   const [isSimulateMode, setIsSimulateMode] = useState(false);
   
   const { hotlines, toggleFavorite, removeHotline } = useHotlines();
+  const { isTracking, startTracking, stopTracking, nearbyDrivers } = useDriverPresence();
+  const { pendingRequests, acceptRequest } = useDispatchRequests();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -194,6 +200,25 @@ const DriverDashboard = () => {
               <ToggleLeft className="w-4 h-4" />
             )}
             시뮬레이션
+          </button>
+          <button
+            onClick={() => {
+              if (isTracking) {
+                stopTracking();
+                toast({ title: "위치 공유 중지됨" });
+              } else {
+                startTracking({ name: user?.email || "구급대원", vehicleType: "ambulance" });
+                toast({ title: "위치 공유 시작됨", description: "보호자/환자에게 표시됩니다." });
+              }
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              isTracking 
+                ? "bg-green-500 text-white" 
+                : "bg-gray-100 text-gray-500"
+            }`}
+          >
+            <Radio className={`w-4 h-4 ${isTracking ? "animate-pulse" : ""}`} />
+            {isTracking ? "위치 공유 중" : "위치 공유"}
           </button>
         </div>
       </div>
