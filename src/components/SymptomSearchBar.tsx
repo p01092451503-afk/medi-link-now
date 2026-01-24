@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, 
@@ -8,9 +8,13 @@ import {
   Thermometer,
   AlertCircle,
   X,
-  Loader2
+  Loader2,
+  Clock,
+  MapPin,
+  Navigation,
+  Car
 } from "lucide-react";
-import { FilterType } from "@/data/hospitals";
+import { FilterType, Hospital, filterHospitals, calculateDistance, getHospitalStatus } from "@/data/hospitals";
 import { analyzeSymptom, getSymptomExamples, SymptomAnalysisResult } from "@/utils/symptomAnalyzer";
 import { toast } from "@/hooks/use-toast";
 
@@ -18,8 +22,29 @@ interface SymptomSearchBarProps {
   value: string;
   onChange: (value: string) => void;
   onFilterChange: (filter: FilterType) => void;
+  onHospitalSelect?: (hospital: Hospital) => void;
+  hospitals?: Hospital[];
+  userLocation?: [number, number] | null;
   className?: string;
 }
+
+interface HospitalWithTravelTime extends Hospital {
+  distance: number;
+  travelTimeMinutes: number;
+}
+
+// Average speed assumptions for travel time calculation (km/h)
+const TRAVEL_SPEEDS = {
+  urban: 25, // Urban areas (traffic)
+  suburban: 40, // Suburban
+  emergency: 50, // With emergency lights
+};
+
+const estimateTravelTime = (distanceKm: number): number => {
+  // Use urban speed for conservative estimate
+  const hours = distanceKm / TRAVEL_SPEEDS.urban;
+  return Math.max(1, Math.round(hours * 60)); // At least 1 minute
+};
 
 const getIconForResult = (icon: SymptomAnalysisResult["icon"]) => {
   switch (icon) {
@@ -47,7 +72,27 @@ const getSeverityColor = (severity: SymptomAnalysisResult["severity"]) => {
   }
 };
 
-const SymptomSearchBar = ({ value, onChange, onFilterChange, className }: SymptomSearchBarProps) => {
+const getStatusBadge = (hospital: Hospital) => {
+  const status = getHospitalStatus(hospital);
+  switch (status) {
+    case "available":
+      return <span className="px-1.5 py-0.5 bg-green-500 text-white text-[10px] font-medium rounded">여유</span>;
+    case "limited":
+      return <span className="px-1.5 py-0.5 bg-yellow-500 text-white text-[10px] font-medium rounded">혼잡</span>;
+    default:
+      return <span className="px-1.5 py-0.5 bg-red-500 text-white text-[10px] font-medium rounded">만실</span>;
+  }
+};
+
+const SymptomSearchBar = ({ 
+  value, 
+  onChange, 
+  onFilterChange, 
+  onHospitalSelect,
+  hospitals = [],
+  userLocation,
+  className 
+}: SymptomSearchBarProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [analysis, setAnalysis] = useState<SymptomAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -82,6 +127,32 @@ const SymptomSearchBar = ({ value, onChange, onFilterChange, className }: Sympto
     return () => clearTimeout(timeout);
   }, [value]);
 
+  // Get nearby hospitals matching the suggested filter with travel times
+  const nearbyHospitals = useMemo((): HospitalWithTravelTime[] => {
+    if (!analysis || !userLocation || hospitals.length === 0) return [];
+
+    // Filter hospitals by the suggested filter
+    const filtered = filterHospitals(hospitals, analysis.suggestedFilter);
+
+    // Calculate distance and travel time for each hospital
+    const withDistances = filtered.map((hospital) => {
+      const distance = calculateDistance(
+        userLocation[0], userLocation[1],
+        hospital.lat, hospital.lng
+      );
+      return {
+        ...hospital,
+        distance,
+        travelTimeMinutes: estimateTravelTime(distance),
+      };
+    });
+
+    // Sort by distance and return top 3
+    return withDistances
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 3);
+  }, [analysis, userLocation, hospitals]);
+
   const handleApplyFilter = useCallback(() => {
     if (analysis) {
       onFilterChange(analysis.suggestedFilter);
@@ -91,6 +162,16 @@ const SymptomSearchBar = ({ value, onChange, onFilterChange, className }: Sympto
       });
     }
   }, [analysis, onFilterChange]);
+
+  const handleHospitalClick = useCallback((hospital: Hospital) => {
+    if (onHospitalSelect) {
+      onHospitalSelect(hospital);
+      // Also apply the filter
+      if (analysis) {
+        onFilterChange(analysis.suggestedFilter);
+      }
+    }
+  }, [onHospitalSelect, analysis, onFilterChange]);
 
   const handleClear = () => {
     onChange("");
@@ -115,7 +196,7 @@ const SymptomSearchBar = ({ value, onChange, onFilterChange, className }: Sympto
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           placeholder={isFocused ? "증상을 입력하세요..." : `예: ${examples[placeholderIndex]}`}
           className="w-full bg-white rounded-2xl pl-12 pr-12 py-4 text-base shadow-lg outline-none focus:ring-2 focus:ring-primary/30 transition-all"
         />
@@ -157,6 +238,56 @@ const SymptomSearchBar = ({ value, onChange, onFilterChange, className }: Sympto
                       </span>
                     ))}
                   </div>
+
+                  {/* Nearby Hospitals with Travel Time */}
+                  {nearbyHospitals.length > 0 && (
+                    <div className="mb-3 space-y-2">
+                      <p className="text-xs font-medium opacity-80 flex items-center gap-1">
+                        <Car className="w-3 h-3" />
+                        가까운 추천 병원
+                      </p>
+                      {nearbyHospitals.map((hospital) => (
+                        <button
+                          key={hospital.id}
+                          onClick={() => handleHospitalClick(hospital)}
+                          className="w-full bg-white/80 hover:bg-white rounded-lg p-2.5 text-left transition-all shadow-sm hover:shadow"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="font-semibold text-xs text-gray-900 truncate">
+                                  {hospital.nameKr}
+                                </span>
+                                {getStatusBadge(hospital)}
+                              </div>
+                              <div className="flex items-center gap-2 text-[10px] text-gray-600">
+                                <span className="flex items-center gap-0.5">
+                                  <MapPin className="w-3 h-3" />
+                                  {hospital.distance.toFixed(1)}km
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <div className="flex items-center gap-1 text-primary font-bold text-sm">
+                                <Clock className="w-3.5 h-3.5" />
+                                <span>{hospital.travelTimeMinutes}분</span>
+                              </div>
+                              <span className="text-[10px] text-gray-500">예상 이동</span>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* No location warning */}
+                  {!userLocation && (
+                    <div className="mb-3 py-2 px-3 bg-white/50 rounded-lg text-xs text-gray-600 flex items-center gap-2">
+                      <Navigation className="w-4 h-4" />
+                      <span>위치를 켜면 가까운 병원을 추천해드립니다</span>
+                    </div>
+                  )}
+
                   <button
                     onClick={handleApplyFilter}
                     className="w-full py-2.5 bg-white rounded-lg text-sm font-semibold shadow-sm hover:shadow-md transition-all"
@@ -191,7 +322,7 @@ const SymptomSearchBar = ({ value, onChange, onFilterChange, className }: Sympto
             {examples.map((example) => (
               <button
                 key={example}
-                onClick={() => onChange(example)}
+                onMouseDown={() => onChange(example)}
                 className="px-3 py-1.5 bg-gray-100 rounded-full text-xs text-foreground hover:bg-gray-200 transition-colors"
               >
                 {example}
