@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { FilterType, Hospital, filterHospitals, calculateDistance, getHospitalStatus } from "@/data/hospitals";
 import { analyzeSymptom, getSymptomExamples, SymptomAnalysisResult } from "@/utils/symptomAnalyzer";
-import { Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface SymptomSearchBarProps {
   value: string;
@@ -97,7 +97,7 @@ const SymptomSearchBar = ({
   const [analysis, setAnalysis] = useState<SymptomAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [snackbar, setSnackbar] = useState<{ message: string; keywords: string[] } | null>(null);
+  const { toast } = useToast();
 
   const examples = getSymptomExamples();
 
@@ -157,15 +157,16 @@ const SymptomSearchBar = ({
   const handleApplyFilter = useCallback(() => {
     if (analysis) {
       onFilterChange(analysis.suggestedFilter);
-      // Show snackbar instead of toast
-      setSnackbar({ message: analysis.message, keywords: analysis.keywords });
+      // Show toast message
+      toast({
+        title: `🔍 ${analysis.message}`,
+        description: `"${analysis.keywords.join(", ")}" 키워드 감지`,
+      });
       setIsFocused(false);
       onChange("");
       setAnalysis(null);
-      // Auto-hide after 2 seconds
-      setTimeout(() => setSnackbar(null), 2000);
     }
-  }, [analysis, onFilterChange, onChange]);
+  }, [analysis, onFilterChange, onChange, toast]);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     if (onHospitalSelect) {
@@ -174,17 +175,16 @@ const SymptomSearchBar = ({
       if (analysis) {
         onFilterChange(analysis.suggestedFilter);
       }
-      // Show snackbar with hospital selection info
-      setSnackbar({ 
-        message: `${hospital.nameKr} 선택됨`, 
-        keywords: analysis?.keywords || ["병원 선택"] 
+      // Show toast with hospital selection info
+      toast({
+        title: `🏥 ${hospital.nameKr} 선택됨`,
+        description: analysis?.keywords ? `"${analysis.keywords.join(", ")}" 기준 추천` : "병원을 선택했습니다",
       });
       setIsFocused(false);
       onChange("");
       setAnalysis(null);
-      setTimeout(() => setSnackbar(null), 2000);
     }
-  }, [onHospitalSelect, analysis, onFilterChange, onChange]);
+  }, [onHospitalSelect, analysis, onFilterChange, onChange, toast]);
 
   const handleClear = () => {
     onChange("");
@@ -193,40 +193,6 @@ const SymptomSearchBar = ({
 
   return (
     <>
-      {/* Top Fixed Snackbar */}
-      <AnimatePresence>
-        {snackbar && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 left-4 right-4 z-[100001] mx-auto max-w-md cursor-pointer"
-            onClick={() => setSnackbar(null)}
-          >
-            <div className="bg-primary text-primary-foreground rounded-xl px-4 py-3 shadow-2xl overflow-hidden">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm">🔍 {snackbar.message}</p>
-                  <p className="text-xs text-white/80 truncate">
-                    "{snackbar.keywords.join(", ")}" 키워드 감지
-                  </p>
-                </div>
-                <X className="w-4 h-4 text-white/60 flex-shrink-0" />
-              </div>
-              {/* Progress bar */}
-              <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0 }}
-                transition={{ duration: 2, ease: "linear" }}
-                className="absolute bottom-0 left-0 right-0 h-1 bg-white/30 origin-left"
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Backdrop overlay when focused */}
       <AnimatePresence>
