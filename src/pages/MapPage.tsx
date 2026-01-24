@@ -559,13 +559,6 @@ const MapPage = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-center">
-                    <div className="w-5 h-3 rounded-full bg-primary border border-blue-600" />
-                    <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-blue-600 -mt-[1px]" />
-                  </div>
-                  <span className="text-xs text-muted-foreground">병원 마커</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col items-center">
                     <div className="w-5 h-3 rounded-full bg-green-500 border border-green-600" />
                     <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-green-600 -mt-[1px]" />
                   </div>
