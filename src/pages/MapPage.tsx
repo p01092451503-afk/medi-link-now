@@ -352,6 +352,12 @@ const MapPage = () => {
               {/* Fallback: Simple Legend */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-primary flex items-center justify-center">
+                    <span className="text-[6px] font-bold text-white">N</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">병원 클러스터</span>
+                </div>
+                <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500" />
                   <span className="text-xs text-muted-foreground">여유 (3병상+)</span>
                 </div>
