@@ -11,12 +11,22 @@ import {
   User,
   CheckCircle2,
   AlertCircle,
-  Map
+  Map,
+  FileText,
+  Activity,
+  Star,
+  ToggleLeft,
+  ToggleRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import RevenueTab from "@/components/RevenueTab";
+import DrivingLogWidget, { type DrivingLog } from "@/components/DrivingLogWidget";
+import DrivingLogHistory from "@/components/DrivingLogHistory";
+import PatientInfoModal from "@/components/PatientInfoModal";
+import HotlineManager, { useHotlines } from "@/components/HotlineManager";
 
 // Mock call data
 const mockCalls = [
@@ -55,7 +65,13 @@ const mockCalls = [
 const DriverDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [activeTab, setActiveTab] = useState<"calls" | "revenue" | "map">("calls");
+  const [activeTab, setActiveTab] = useState<"calls" | "revenue" | "log" | "map">("calls");
+  const [drivingLogs, setDrivingLogs] = useState<DrivingLog[]>([]);
+  const [isPatientInfoOpen, setIsPatientInfoOpen] = useState(false);
+  const [isHotlineOpen, setIsHotlineOpen] = useState(false);
+  const [isSimulateMode, setIsSimulateMode] = useState(false);
+  
+  const { hotlines, toggleFavorite, removeHotline } = useHotlines();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -77,6 +93,12 @@ const DriverDashboard = () => {
       }
     });
 
+    // Load driving logs from localStorage
+    const storedLogs = localStorage.getItem("driving_logs");
+    if (storedLogs) {
+      setDrivingLogs(JSON.parse(storedLogs));
+    }
+
     return () => subscription.unsubscribe();
   }, [navigate]);
 
@@ -90,6 +112,19 @@ const DriverDashboard = () => {
     toast({ title: "호출을 수락했습니다!", description: "환자에게 연락 중..." });
   };
 
+  const handleLogComplete = (log: DrivingLog) => {
+    const newLogs = [log, ...drivingLogs];
+    setDrivingLogs(newLogs);
+    localStorage.setItem("driving_logs", JSON.stringify(newLogs));
+  };
+
+  const handleDeleteLog = (id: string) => {
+    const newLogs = drivingLogs.filter((log) => log.id !== id);
+    setDrivingLogs(newLogs);
+    localStorage.setItem("driving_logs", JSON.stringify(newLogs));
+    toast({ title: "기록이 삭제되었습니다" });
+  };
+
   const todayRevenue = mockCalls
     .filter((c) => c.status === "completed")
     .reduce((sum, c) => sum + c.estimatedFee, 0);
@@ -98,7 +133,7 @@ const DriverDashboard = () => {
   const completedCalls = mockCalls.filter((c) => c.status === "completed");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
@@ -111,30 +146,71 @@ const DriverDashboard = () => {
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-            className="text-muted-foreground"
-          >
-            <LogOut className="w-4 h-4 mr-1" />
-            로그아웃
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsHotlineOpen(true)}
+              className="text-yellow-500"
+            >
+              <Star className="w-4 h-4 fill-yellow-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-muted-foreground"
+            >
+              <LogOut className="w-4 h-4 mr-1" />
+              로그아웃
+            </Button>
+          </div>
         </div>
       </header>
 
+      {/* Quick Actions Bar */}
+      <div className="sticky top-[60px] z-40 bg-white border-b border-border px-4 py-2">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsPatientInfoOpen(true)}
+            className="rounded-full flex-1"
+          >
+            <Activity className="w-4 h-4 mr-1" />
+            환자 정보 입력
+          </Button>
+          <button
+            onClick={() => setIsSimulateMode(!isSimulateMode)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              isSimulateMode 
+                ? "bg-green-100 text-green-700" 
+                : "bg-gray-100 text-gray-500"
+            }`}
+          >
+            {isSimulateMode ? (
+              <ToggleRight className="w-4 h-4" />
+            ) : (
+              <ToggleLeft className="w-4 h-4" />
+            )}
+            시뮬레이션
+          </button>
+        </div>
+      </div>
+
       {/* Tab Navigation */}
-      <div className="sticky top-[60px] z-40 bg-white border-b border-border">
+      <div className="sticky top-[108px] z-40 bg-white border-b border-border">
         <div className="flex">
           {[
-            { id: "calls", label: "호출 목록", icon: Phone },
-            { id: "revenue", label: "수입", icon: DollarSign },
+            { id: "calls", label: "호출", icon: Phone },
+            { id: "revenue", label: "수익", icon: DollarSign },
+            { id: "log", label: "운행일지", icon: FileText },
             { id: "map", label: "지도", icon: Map },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id as typeof activeTab)}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
                 activeTab === id
                   ? "text-primary border-b-2 border-primary"
                   : "text-muted-foreground hover:text-foreground"
@@ -158,7 +234,7 @@ const DriverDashboard = () => {
             {/* Pending Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-warning" />
+                <AlertCircle className="w-4 h-4 text-orange-500" />
                 대기 중인 호출 ({pendingCalls.length})
               </h3>
               <div className="space-y-3">
@@ -172,7 +248,7 @@ const DriverDashboard = () => {
                         <p className="font-semibold text-foreground">{call.patientName}</p>
                         <p className="text-xs text-muted-foreground">{call.time}</p>
                       </div>
-                      <span className="px-2 py-1 bg-warning/10 text-warning text-xs font-medium rounded-full">
+                      <span className="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-medium rounded-full">
                         대기 중
                       </span>
                     </div>
@@ -234,41 +310,21 @@ const DriverDashboard = () => {
         )}
 
         {activeTab === "revenue" && (
+          <RevenueTab 
+            todayRevenue={todayRevenue} 
+            completedTrips={completedCalls.length} 
+          />
+        )}
+
+        {activeTab === "log" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="space-y-6"
           >
-            {/* Today's Summary */}
-            <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-6 text-white">
-              <p className="text-sm opacity-80 mb-1">오늘의 수입</p>
-              <p className="text-4xl font-bold mb-4">₩{todayRevenue.toLocaleString()}</p>
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>{completedCalls.length}건 완료</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Navigation className="w-4 h-4" />
-                  <span>12.4km 운행</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Weekly Stats */}
-            <div className="bg-white rounded-2xl p-4 border border-border">
-              <h3 className="font-semibold text-foreground mb-4">이번 주 요약</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
-                  <p className="text-2xl font-bold text-foreground">12</p>
-                  <p className="text-xs text-muted-foreground">총 운행</p>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
-                  <p className="text-2xl font-bold text-primary">₩890,000</p>
-                  <p className="text-xs text-muted-foreground">총 수입</p>
-                </div>
-              </div>
-            </div>
+            <DrivingLogHistory 
+              logs={drivingLogs} 
+              onDeleteLog={handleDeleteLog} 
+            />
           </motion.div>
         )}
 
@@ -291,6 +347,26 @@ const DriverDashboard = () => {
           </motion.div>
         )}
       </main>
+
+      {/* Driving Log Widget */}
+      <DrivingLogWidget 
+        onLogComplete={handleLogComplete}
+        isSimulateMode={isSimulateMode}
+      />
+
+      {/* Patient Info Modal */}
+      <PatientInfoModal
+        isOpen={isPatientInfoOpen}
+        onClose={() => setIsPatientInfoOpen(false)}
+      />
+
+      {/* Hotline Manager */}
+      <HotlineManager
+        isOpen={isHotlineOpen}
+        onClose={() => setIsHotlineOpen(false)}
+        contacts={hotlines}
+        onToggleFavorite={toggleFavorite}
+      />
     </div>
   );
 };
