@@ -14,6 +14,9 @@ export interface Hospital {
   category: string;
   lat: number;
   lng: number;
+  // ER Entrance coordinates (for Roadview navigation)
+  entrance_lat?: number;
+  entrance_lng?: number;
   phone: string;
   address: string;
   beds: {
@@ -39,6 +42,8 @@ export const hospitals: Hospital[] = [
     category: "Regional Emergency Center",
     lat: 37.5266,
     lng: 127.1082,
+    entrance_lat: 37.5262,
+    entrance_lng: 127.1089,
     phone: "02-3010-3333",
     address: "88 Olympic-ro 43-gil, Songpa-gu, Seoul",
     beds: { general: 5, pediatric: 3, fever: 2 },
@@ -55,6 +60,8 @@ export const hospitals: Hospital[] = [
     category: "Regional Emergency Center",
     lat: 37.4881,
     lng: 127.0855,
+    entrance_lat: 37.4877,
+    entrance_lng: 127.0861,
     phone: "02-3410-2114",
     address: "81 Irwon-ro, Gangnam-gu, Seoul",
     beds: { general: 8, pediatric: 0, fever: 4 },
@@ -113,6 +120,8 @@ export const hospitals: Hospital[] = [
     category: "Regional Emergency Center",
     lat: 37.5622,
     lng: 126.9410,
+    entrance_lat: 37.5618,
+    entrance_lng: 126.9415,
     phone: "02-2228-5800",
     address: "50-1 Yonsei-ro, Seodaemun-gu, Seoul",
     beds: { general: 12, pediatric: 5, fever: 4 },
@@ -167,6 +176,8 @@ export const hospitals: Hospital[] = [
     category: "Regional Emergency Center",
     lat: 37.5796,
     lng: 126.9990,
+    entrance_lat: 37.5792,
+    entrance_lng: 126.9985,
     phone: "02-2072-2114",
     address: "101 Daehak-ro, Jongno-gu, Seoul",
     beds: { general: 15, pediatric: 6, fever: 5 },

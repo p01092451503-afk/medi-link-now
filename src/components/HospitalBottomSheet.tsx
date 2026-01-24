@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star } from "lucide-react";
+import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useHotlines } from "@/components/HotlineManager";
 import { toast } from "@/hooks/use-toast";
+import ERRoadviewModal from "@/components/ERRoadviewModal";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -92,6 +94,7 @@ const AcceptanceBadge = ({
 
 const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
+  const [showRoadview, setShowRoadview] = useState(false);
   
   if (!hospital) return null;
 
@@ -324,6 +327,16 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 <p className="text-xs text-muted-foreground pl-7">{hospital.address}</p>
               </div>
 
+              {/* ER Entrance Roadview Button */}
+              <Button
+                onClick={() => setShowRoadview(true)}
+                variant="outline"
+                className="w-full mb-4 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 font-medium"
+              >
+                <Ambulance className="w-5 h-5 mr-2" />
+                🚑 응급실 입구 로드뷰 (ER Entrance View)
+              </Button>
+
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3">
                 <Button
@@ -344,6 +357,17 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               </div>
             </div>
           </motion.div>
+
+          {/* ER Roadview Modal */}
+          <ERRoadviewModal
+            isOpen={showRoadview}
+            onClose={() => setShowRoadview(false)}
+            hospitalName={hospital.nameKr}
+            entranceLat={hospital.entrance_lat}
+            entranceLng={hospital.entrance_lng}
+            hospitalLat={hospital.lat}
+            hospitalLng={hospital.lng}
+          />
         </>
       )}
     </AnimatePresence>

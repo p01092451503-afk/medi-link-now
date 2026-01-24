@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, Calendar, Clock, Navigation, Trash2 } from "lucide-react";
+import { FileText, Download, Calendar, Clock, Navigation, Trash2, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import type { DrivingLog } from "./DrivingLogWidget";
 
 interface DrivingLogHistoryProps {
@@ -44,67 +45,94 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
     const doc = new jsPDF();
     
     // Title
-    doc.setFontSize(20);
-    doc.text("운행일지 (Driving Log)", 105, 20, { align: "center" });
+    doc.setFontSize(22);
+    doc.setTextColor(0, 85, 255);
+    doc.text("운행일지", 105, 20, { align: "center" });
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Driving Log Report", 105, 28, { align: "center" });
     
     // Date range
     doc.setFontSize(10);
-    const dateRange = `${logsToExport[logsToExport.length - 1]?.date} ~ ${logsToExport[0]?.date}`;
-    doc.text(dateRange, 105, 30, { align: "center" });
+    doc.setTextColor(60, 60, 60);
+    const dateRange = `기간: ${logsToExport[logsToExport.length - 1]?.date} ~ ${logsToExport[0]?.date}`;
+    doc.text(dateRange, 105, 38, { align: "center" });
 
-    // Table header
-    let yPosition = 45;
-    doc.setFontSize(9);
-    doc.setFillColor(240, 240, 240);
-    doc.rect(14, yPosition - 5, 182, 8, "F");
-    doc.text("날짜", 20, yPosition);
-    doc.text("시작", 45, yPosition);
-    doc.text("종료", 70, yPosition);
-    doc.text("거리(km)", 95, yPosition);
-    doc.text("환자명", 125, yPosition);
-    doc.text("출발지", 155, yPosition);
+    // Summary box
+    const totalDistance = logsToExport.reduce((sum, log) => sum + log.distance, 0);
+    const totalDuration = logsToExport.reduce((sum, log) => {
+      const [startH, startM] = log.startTime.split(":").map(Number);
+      const [endH, endM] = log.endTime.split(":").map(Number);
+      return sum + ((endH * 60 + endM) - (startH * 60 + startM));
+    }, 0);
+    const totalHours = Math.floor(totalDuration / 60);
+    const totalMins = totalDuration % 60;
 
-    yPosition += 10;
+    doc.setFillColor(240, 245, 255);
+    doc.roundedRect(14, 45, 182, 25, 3, 3, "F");
+    doc.setFontSize(11);
+    doc.setTextColor(40, 40, 40);
+    doc.text(`총 운행 횟수: ${logsToExport.length}건`, 25, 55);
+    doc.text(`총 운행 거리: ${totalDistance.toFixed(1)}km`, 85, 55);
+    doc.text(`총 운행 시간: ${totalHours}시간 ${totalMins}분`, 145, 55);
 
-    // Table rows
-    logsToExport.forEach((log, index) => {
-      if (yPosition > 270) {
-        doc.addPage();
-        yPosition = 20;
-      }
+    // Table using autotable
+    const tableData = logsToExport.map((log) => [
+      log.date,
+      log.startTime,
+      log.endTime,
+      `${log.distance}km`,
+      log.patientName,
+      log.startLocation.length > 20 ? log.startLocation.substring(0, 20) + "..." : log.startLocation
+    ]);
 
-      if (index % 2 === 0) {
-        doc.setFillColor(250, 250, 250);
-        doc.rect(14, yPosition - 5, 182, 8, "F");
-      }
-
-      doc.text(log.date, 20, yPosition);
-      doc.text(log.startTime, 45, yPosition);
-      doc.text(log.endTime, 70, yPosition);
-      doc.text(log.distance.toString(), 95, yPosition);
-      doc.text(log.patientName.substring(0, 10), 125, yPosition);
-      doc.text(log.startLocation.substring(0, 15), 155, yPosition);
-
-      yPosition += 8;
+    autoTable(doc, {
+      startY: 78,
+      head: [["날짜", "시작", "종료", "거리", "환자명", "출발지"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: {
+        fillColor: [0, 85, 255],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        halign: "center",
+      },
+      bodyStyles: {
+        halign: "center",
+        fontSize: 9,
+      },
+      alternateRowStyles: {
+        fillColor: [248, 250, 255],
+      },
+      columnStyles: {
+        0: { cellWidth: 28 },
+        1: { cellWidth: 20 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 22 },
+        4: { cellWidth: 30 },
+        5: { cellWidth: 62 },
+      },
+      margin: { left: 14, right: 14 },
     });
 
-    // Summary
-    yPosition += 10;
-    doc.setFillColor(230, 240, 255);
-    doc.rect(14, yPosition - 5, 182, 15, "F");
-    doc.setFontSize(10);
-    const totalDistance = logsToExport.reduce((sum, log) => sum + log.distance, 0);
-    doc.text(`총 운행 횟수: ${logsToExport.length}건`, 20, yPosition);
-    doc.text(`총 운행 거리: ${totalDistance.toFixed(1)}km`, 20, yPosition + 8);
-
     // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text(`생성일시: ${new Date().toLocaleString("ko-KR")}`, 105, 285, { align: "center" });
-    doc.text("Medi-Link Pro - 자동 생성 운행일지", 105, 290, { align: "center" });
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.text(
+        `생성일시: ${new Date().toLocaleString("ko-KR")} | 페이지 ${i}/${pageCount}`,
+        105,
+        285,
+        { align: "center" }
+      );
+      doc.text("Medi-Link Pro - 자동 생성 운행일지", 105, 290, { align: "center" });
+    }
 
     // Save
-    doc.save(`운행일지_${new Date().toLocaleDateString("ko-KR").replace(/\./g, "")}.pdf`);
+    const fileName = `운행일지_${new Date().toLocaleDateString("ko-KR").replace(/\./g, "")}.pdf`;
+    doc.save(fileName);
     
     toast({
       title: "PDF 내보내기 완료",
