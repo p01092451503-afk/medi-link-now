@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { MapContainer, TileLayer, useMap, CircleMarker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup } from "react-leaflet";
 import { Hospital } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
 
@@ -21,18 +21,30 @@ const MapCenterHandler = ({ center }: { center: [number, number] }) => {
   return null;
 };
 
-// User location marker component
+// User location marker with pulse animation
 const UserLocationMarker = ({ position }: { position: [number, number] }) => {
   return (
     <>
-      {/* Outer pulse ring */}
-      <CircleMarker
+      {/* Animated pulse ring - uses CSS animation */}
+      <Circle
         center={position}
-        radius={20}
+        radius={100}
         pathOptions={{
           color: "#3B82F6",
           fillColor: "#3B82F6",
-          fillOpacity: 0.15,
+          fillOpacity: 0.1,
+          weight: 1,
+          className: "user-location-pulse",
+        }}
+      />
+      {/* Static outer glow */}
+      <CircleMarker
+        center={position}
+        radius={16}
+        pathOptions={{
+          color: "#3B82F6",
+          fillColor: "#3B82F6",
+          fillOpacity: 0.2,
           weight: 0,
         }}
       />
