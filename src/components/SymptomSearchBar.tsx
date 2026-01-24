@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { FilterType, Hospital, filterHospitals, calculateDistance, getHospitalStatus } from "@/data/hospitals";
 import { analyzeSymptom, getSymptomExamples, SymptomAnalysisResult } from "@/utils/symptomAnalyzer";
-import { toast } from "@/hooks/use-toast";
+import { Check } from "lucide-react";
 
 interface SymptomSearchBarProps {
   value: string;
@@ -97,6 +97,7 @@ const SymptomSearchBar = ({
   const [analysis, setAnalysis] = useState<SymptomAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [snackbar, setSnackbar] = useState<{ message: string; keywords: string[] } | null>(null);
 
   const examples = getSymptomExamples();
 
@@ -156,12 +157,15 @@ const SymptomSearchBar = ({
   const handleApplyFilter = useCallback(() => {
     if (analysis) {
       onFilterChange(analysis.suggestedFilter);
-      toast({
-        title: `🔍 ${analysis.message}`,
-        description: `"${analysis.keywords.join(", ")}" 키워드 감지`,
-      });
+      // Show snackbar instead of toast
+      setSnackbar({ message: analysis.message, keywords: analysis.keywords });
+      setIsFocused(false);
+      onChange("");
+      setAnalysis(null);
+      // Auto-hide after 2 seconds
+      setTimeout(() => setSnackbar(null), 2000);
     }
-  }, [analysis, onFilterChange]);
+  }, [analysis, onFilterChange, onChange]);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     if (onHospitalSelect) {
@@ -180,6 +184,30 @@ const SymptomSearchBar = ({
 
   return (
     <>
+      {/* Top Fixed Snackbar */}
+      <AnimatePresence>
+        {snackbar && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-4 left-4 right-4 z-[100001] mx-auto max-w-md"
+          >
+            <div className="bg-primary text-primary-foreground rounded-xl px-4 py-3 shadow-2xl flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                <Check className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm">🔍 {snackbar.message}</p>
+                <p className="text-xs text-white/80 truncate">
+                  "{snackbar.keywords.join(", ")}" 키워드 감지
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Backdrop overlay when focused */}
       <AnimatePresence>
         {isFocused && (
