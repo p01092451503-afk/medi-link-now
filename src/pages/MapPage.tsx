@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, MapPin, Ambulance } from "lucide-react";
+import { Search, ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,20 +11,15 @@ import {
   calculateDistance,
   getHospitalStatus,
   RegionType,
+  MajorRegionType,
   regionOptions,
   filterHospitalsByRegion,
 } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
+import RegionSelector from "@/components/RegionSelector";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
 
@@ -33,6 +28,7 @@ const MapPage = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
   
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("all");
   const [activeRegion, setActiveRegion] = useState<RegionType>("all");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -56,12 +52,22 @@ const MapPage = () => {
     return result;
   }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData]);
 
-  const handleRegionChange = useCallback((region: RegionType) => {
+  const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
+    setActiveMajorRegion(region);
     setActiveRegion(region);
     const regionData = regionOptions.find((r) => r.id === region);
     if (regionData) {
       setMapCenter(regionData.center);
       setMapZoom(regionData.zoom || (region === "all" ? 7 : 11));
+    }
+  }, []);
+
+  const handleSubRegionChange = useCallback((region: RegionType) => {
+    setActiveRegion(region);
+    const regionData = regionOptions.find((r) => r.id === region);
+    if (regionData) {
+      setMapCenter(regionData.center);
+      setMapZoom(regionData.zoom || 13);
     }
   }, []);
 
@@ -141,48 +147,14 @@ const MapPage = () => {
 
       {/* Filter Section */}
       <div className="absolute top-20 left-0 right-0 z-[1000] px-4 space-y-2">
-        {/* Region Filter */}
-        <div className="flex items-center gap-2">
-          <Select value={activeRegion} onValueChange={(value) => handleRegionChange(value as RegionType)}>
-            <SelectTrigger className="w-[160px] bg-white shadow-md border-0 rounded-xl">
-              <MapPin className="w-4 h-4 mr-1 text-primary" />
-              <SelectValue placeholder="지역 선택" />
-            </SelectTrigger>
-            <SelectContent className="bg-white z-[1001] max-h-[400px]">
-              {/* Major regions first */}
-              {regionOptions
-                .filter((r) => !r.parent)
-                .map((r) => (
-                  <SelectItem key={r.id} value={r.id} className="font-semibold">
-                    {r.labelKr}
-                  </SelectItem>
-                ))}
-              
-              {/* Sub-regions grouped by parent */}
-              {regionOptions
-                .filter((r) => !r.parent && r.id !== "all" && r.id !== "sejong")
-                .map((parent) => {
-                  const children = regionOptions.filter((r) => r.parent === parent.id);
-                  if (children.length === 0) return null;
-                  return (
-                    <div key={`group-${parent.id}`}>
-                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-gray-50 sticky top-0">
-                        {parent.labelKr} 시/군/구
-                      </div>
-                      {children.map((child) => (
-                        <SelectItem key={child.id} value={child.id} className="pl-6 text-sm">
-                          {child.labelKr}
-                        </SelectItem>
-                      ))}
-                    </div>
-                  );
-                })}
-            </SelectContent>
-          </Select>
-          <span className="text-xs text-white bg-primary/80 px-2 py-1 rounded-full">
-            {filteredHospitals.length}개 병원
-          </span>
-        </div>
+        {/* Region Filter - 2-level selector */}
+        <RegionSelector
+          majorRegion={activeMajorRegion}
+          subRegion={activeRegion}
+          onMajorRegionChange={handleMajorRegionChange}
+          onSubRegionChange={handleSubRegionChange}
+          hospitalCount={filteredHospitals.length}
+        />
 
         {/* Bed Type Filter Chips */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
