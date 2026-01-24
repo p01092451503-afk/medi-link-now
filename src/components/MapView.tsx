@@ -102,7 +102,7 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activ
         style={{ height: '100%', width: '100%' }}
         maxBounds={KOREA_BOUNDS}
         maxBoundsViscosity={1.0}
-        minZoom={7}
+        minZoom={9}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
