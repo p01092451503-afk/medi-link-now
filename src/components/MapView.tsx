@@ -4,6 +4,8 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import { Hospital, FilterType } from "@/data/hospitals";
 import HospitalMarker from "./HospitalMarker";
+import ReportMarker from "./ReportMarker";
+import type { LiveReport } from "./LiveReportFAB";
 
 interface MapViewProps {
   hospitals: Hospital[];
@@ -12,6 +14,7 @@ interface MapViewProps {
   center: [number, number];
   zoom: number;
   activeFilter: FilterType;
+  liveReports?: LiveReport[];
 }
 
 // Component to handle map center changes
@@ -161,7 +164,7 @@ const KoreaBoundsEnforcer = ({ bounds }: { bounds: KoreaBoundsLiteral }) => {
   return null;
 };
 
-const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activeFilter }: MapViewProps) => {
+const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activeFilter, liveReports = [] }: MapViewProps) => {
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
       <MapContainer
@@ -238,6 +241,11 @@ const MapView = ({ hospitals, onHospitalClick, userLocation, center, zoom, activ
             />
           ))}
         </MarkerClusterGroup>
+
+        {/* Live Report Markers */}
+        {liveReports.map((report) => (
+          <ReportMarker key={report.id} report={report} />
+        ))}
       </MapContainer>
     </div>
   );
