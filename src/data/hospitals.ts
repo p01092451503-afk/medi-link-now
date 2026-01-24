@@ -915,36 +915,290 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
   }
 };
 
-export type RegionType = "all" | "seoul" | "incheon" | "gyeonggi" | "busan" | "daegu" | "daejeon" | "gwangju" | "ulsan";
+// Major region types (광역시/도)
+export type MajorRegionType = "all" | "seoul" | "incheon" | "gyeonggi" | "busan" | "daegu" | "daejeon" | "gwangju" | "ulsan" | "sejong" | "gangwon" | "chungbuk" | "chungnam" | "jeonbuk" | "jeonnam" | "gyeongbuk" | "gyeongnam" | "jeju";
 
-export const regionOptions: { id: RegionType; label: string; labelKr: string; center: [number, number] }[] = [
-  { id: "all", label: "All Regions", labelKr: "전체", center: [37.5, 127.0] },
-  { id: "seoul", label: "Seoul", labelKr: "서울", center: [37.5665, 126.9780] },
-  { id: "incheon", label: "Incheon", labelKr: "인천", center: [37.4563, 126.7052] },
-  { id: "gyeonggi", label: "Gyeonggi", labelKr: "경기", center: [37.4138, 127.5183] },
-  { id: "busan", label: "Busan", labelKr: "부산", center: [35.1796, 129.0756] },
-  { id: "daegu", label: "Daegu", labelKr: "대구", center: [35.8714, 128.6014] },
-  { id: "daejeon", label: "Daejeon", labelKr: "대전", center: [36.3504, 127.3845] },
-  { id: "gwangju", label: "Gwangju", labelKr: "광주", center: [35.1595, 126.8526] },
-  { id: "ulsan", label: "Ulsan", labelKr: "울산", center: [35.5384, 129.3114] },
+// Sub-region types (시/군/구)
+export type SubRegionType = string;
+
+// Combined region type
+export type RegionType = MajorRegionType | SubRegionType;
+
+// Region option with optional sub-regions
+export interface RegionOption {
+  id: RegionType;
+  label: string;
+  labelKr: string;
+  center: [number, number];
+  zoom?: number;
+  parent?: MajorRegionType;
+}
+
+export const regionOptions: RegionOption[] = [
+  // 전체
+  { id: "all", label: "All Regions", labelKr: "전체", center: [36.5, 127.5], zoom: 7 },
+  
+  // 서울특별시 및 구
+  { id: "seoul", label: "Seoul", labelKr: "서울특별시", center: [37.5665, 126.9780], zoom: 12 },
+  { id: "seoul-gangnam", label: "Gangnam-gu", labelKr: "강남구", center: [37.5172, 127.0473], zoom: 14, parent: "seoul" },
+  { id: "seoul-gangdong", label: "Gangdong-gu", labelKr: "강동구", center: [37.5301, 127.1238], zoom: 14, parent: "seoul" },
+  { id: "seoul-gangbuk", label: "Gangbuk-gu", labelKr: "강북구", center: [37.6396, 127.0257], zoom: 14, parent: "seoul" },
+  { id: "seoul-gangseo", label: "Gangseo-gu", labelKr: "강서구", center: [37.5509, 126.8495], zoom: 14, parent: "seoul" },
+  { id: "seoul-gwanak", label: "Gwanak-gu", labelKr: "관악구", center: [37.4784, 126.9516], zoom: 14, parent: "seoul" },
+  { id: "seoul-gwangjin", label: "Gwangjin-gu", labelKr: "광진구", center: [37.5385, 127.0823], zoom: 14, parent: "seoul" },
+  { id: "seoul-guro", label: "Guro-gu", labelKr: "구로구", center: [37.4954, 126.8874], zoom: 14, parent: "seoul" },
+  { id: "seoul-geumcheon", label: "Geumcheon-gu", labelKr: "금천구", center: [37.4519, 126.9020], zoom: 14, parent: "seoul" },
+  { id: "seoul-nowon", label: "Nowon-gu", labelKr: "노원구", center: [37.6542, 127.0568], zoom: 14, parent: "seoul" },
+  { id: "seoul-dobong", label: "Dobong-gu", labelKr: "도봉구", center: [37.6688, 127.0471], zoom: 14, parent: "seoul" },
+  { id: "seoul-dongdaemun", label: "Dongdaemun-gu", labelKr: "동대문구", center: [37.5744, 127.0400], zoom: 14, parent: "seoul" },
+  { id: "seoul-dongjak", label: "Dongjak-gu", labelKr: "동작구", center: [37.5124, 126.9393], zoom: 14, parent: "seoul" },
+  { id: "seoul-mapo", label: "Mapo-gu", labelKr: "마포구", center: [37.5663, 126.9014], zoom: 14, parent: "seoul" },
+  { id: "seoul-seodaemun", label: "Seodaemun-gu", labelKr: "서대문구", center: [37.5791, 126.9368], zoom: 14, parent: "seoul" },
+  { id: "seoul-seocho", label: "Seocho-gu", labelKr: "서초구", center: [37.4837, 127.0324], zoom: 14, parent: "seoul" },
+  { id: "seoul-seongdong", label: "Seongdong-gu", labelKr: "성동구", center: [37.5633, 127.0371], zoom: 14, parent: "seoul" },
+  { id: "seoul-seongbuk", label: "Seongbuk-gu", labelKr: "성북구", center: [37.5894, 127.0167], zoom: 14, parent: "seoul" },
+  { id: "seoul-songpa", label: "Songpa-gu", labelKr: "송파구", center: [37.5145, 127.1066], zoom: 14, parent: "seoul" },
+  { id: "seoul-yangcheon", label: "Yangcheon-gu", labelKr: "양천구", center: [37.5270, 126.8665], zoom: 14, parent: "seoul" },
+  { id: "seoul-yeongdeungpo", label: "Yeongdeungpo-gu", labelKr: "영등포구", center: [37.5264, 126.8963], zoom: 14, parent: "seoul" },
+  { id: "seoul-yongsan", label: "Yongsan-gu", labelKr: "용산구", center: [37.5326, 126.9909], zoom: 14, parent: "seoul" },
+  { id: "seoul-eunpyeong", label: "Eunpyeong-gu", labelKr: "은평구", center: [37.6027, 126.9291], zoom: 14, parent: "seoul" },
+  { id: "seoul-jongno", label: "Jongno-gu", labelKr: "종로구", center: [37.5735, 126.9790], zoom: 14, parent: "seoul" },
+  { id: "seoul-jung", label: "Jung-gu", labelKr: "중구", center: [37.5641, 126.9979], zoom: 14, parent: "seoul" },
+  { id: "seoul-jungnang", label: "Jungnang-gu", labelKr: "중랑구", center: [37.6066, 127.0927], zoom: 14, parent: "seoul" },
+  
+  // 인천광역시 및 구/군
+  { id: "incheon", label: "Incheon", labelKr: "인천광역시", center: [37.4563, 126.7052], zoom: 11 },
+  { id: "incheon-jung", label: "Jung-gu", labelKr: "중구", center: [37.4737, 126.6216], zoom: 13, parent: "incheon" },
+  { id: "incheon-dong", label: "Dong-gu", labelKr: "동구", center: [37.4737, 126.6433], zoom: 14, parent: "incheon" },
+  { id: "incheon-michuhol", label: "Michuhol-gu", labelKr: "미추홀구", center: [37.4635, 126.6502], zoom: 14, parent: "incheon" },
+  { id: "incheon-yeonsu", label: "Yeonsu-gu", labelKr: "연수구", center: [37.4100, 126.6783], zoom: 13, parent: "incheon" },
+  { id: "incheon-namdong", label: "Namdong-gu", labelKr: "남동구", center: [37.4469, 126.7312], zoom: 13, parent: "incheon" },
+  { id: "incheon-bupyeong", label: "Bupyeong-gu", labelKr: "부평구", center: [37.5074, 126.7219], zoom: 13, parent: "incheon" },
+  { id: "incheon-gyeyang", label: "Gyeyang-gu", labelKr: "계양구", center: [37.5371, 126.7376], zoom: 13, parent: "incheon" },
+  { id: "incheon-seo", label: "Seo-gu", labelKr: "서구", center: [37.5454, 126.6760], zoom: 12, parent: "incheon" },
+  { id: "incheon-ganghwa", label: "Ganghwa-gun", labelKr: "강화군", center: [37.7469, 126.4878], zoom: 11, parent: "incheon" },
+  { id: "incheon-ongjin", label: "Ongjin-gun", labelKr: "옹진군", center: [37.4469, 126.6367], zoom: 10, parent: "incheon" },
+  
+  // 경기도 및 시/군
+  { id: "gyeonggi", label: "Gyeonggi", labelKr: "경기도", center: [37.4138, 127.5183], zoom: 9 },
+  { id: "gyeonggi-suwon", label: "Suwon", labelKr: "수원시", center: [37.2636, 127.0286], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-seongnam", label: "Seongnam", labelKr: "성남시", center: [37.4200, 127.1265], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-goyang", label: "Goyang", labelKr: "고양시", center: [37.6584, 126.8320], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-yongin", label: "Yongin", labelKr: "용인시", center: [37.2411, 127.1776], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-bucheon", label: "Bucheon", labelKr: "부천시", center: [37.5034, 126.7660], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-ansan", label: "Ansan", labelKr: "안산시", center: [37.3219, 126.8309], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-anyang", label: "Anyang", labelKr: "안양시", center: [37.3943, 126.9568], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-namyangju", label: "Namyangju", labelKr: "남양주시", center: [37.6360, 127.2165], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-hwaseong", label: "Hwaseong", labelKr: "화성시", center: [37.1997, 126.8312], zoom: 10, parent: "gyeonggi" },
+  { id: "gyeonggi-pyeongtaek", label: "Pyeongtaek", labelKr: "평택시", center: [36.9921, 127.0857], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-uijeongbu", label: "Uijeongbu", labelKr: "의정부시", center: [37.7381, 127.0337], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-siheung", label: "Siheung", labelKr: "시흥시", center: [37.3800, 126.8030], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-paju", label: "Paju", labelKr: "파주시", center: [37.7600, 126.7800], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-gimpo", label: "Gimpo", labelKr: "김포시", center: [37.6153, 126.7156], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-gwangmyeong", label: "Gwangmyeong", labelKr: "광명시", center: [37.4786, 126.8640], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-gwangju", label: "Gwangju", labelKr: "광주시", center: [37.4095, 127.2550], zoom: 12, parent: "gyeonggi" },
+  { id: "gyeonggi-gunpo", label: "Gunpo", labelKr: "군포시", center: [37.3617, 126.9352], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-hanam", label: "Hanam", labelKr: "하남시", center: [37.5392, 127.2148], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-osan", label: "Osan", labelKr: "오산시", center: [37.1499, 127.0695], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-icheon", label: "Icheon", labelKr: "이천시", center: [37.2720, 127.4350], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-anseong", label: "Anseong", labelKr: "안성시", center: [37.0080, 127.2797], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-uiwang", label: "Uiwang", labelKr: "의왕시", center: [37.3449, 126.9685], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-yangju", label: "Yangju", labelKr: "양주시", center: [37.7850, 127.0456], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-pocheon", label: "Pocheon", labelKr: "포천시", center: [37.8949, 127.2003], zoom: 10, parent: "gyeonggi" },
+  { id: "gyeonggi-yeoju", label: "Yeoju", labelKr: "여주시", center: [37.2984, 127.6366], zoom: 11, parent: "gyeonggi" },
+  { id: "gyeonggi-dongducheon", label: "Dongducheon", labelKr: "동두천시", center: [37.9034, 127.0606], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-guri", label: "Guri", labelKr: "구리시", center: [37.5943, 127.1295], zoom: 13, parent: "gyeonggi" },
+  { id: "gyeonggi-gwacheon", label: "Gwacheon", labelKr: "과천시", center: [37.4292, 126.9876], zoom: 14, parent: "gyeonggi" },
+  { id: "gyeonggi-gapyeong", label: "Gapyeong-gun", labelKr: "가평군", center: [37.8316, 127.5095], zoom: 10, parent: "gyeonggi" },
+  { id: "gyeonggi-yangpyeong", label: "Yangpyeong-gun", labelKr: "양평군", center: [37.4917, 127.4872], zoom: 10, parent: "gyeonggi" },
+  { id: "gyeonggi-yeoncheon", label: "Yeoncheon-gun", labelKr: "연천군", center: [38.0966, 127.0747], zoom: 10, parent: "gyeonggi" },
+  
+  // 부산광역시 및 구/군
+  { id: "busan", label: "Busan", labelKr: "부산광역시", center: [35.1796, 129.0756], zoom: 11 },
+  { id: "busan-jung", label: "Jung-gu", labelKr: "중구", center: [35.1060, 129.0324], zoom: 14, parent: "busan" },
+  { id: "busan-seo", label: "Seo-gu", labelKr: "서구", center: [35.0977, 129.0243], zoom: 14, parent: "busan" },
+  { id: "busan-dong", label: "Dong-gu", labelKr: "동구", center: [35.1294, 129.0455], zoom: 14, parent: "busan" },
+  { id: "busan-yeongdo", label: "Yeongdo-gu", labelKr: "영도구", center: [35.0912, 129.0678], zoom: 13, parent: "busan" },
+  { id: "busan-busanjin", label: "Busanjin-gu", labelKr: "부산진구", center: [35.1631, 129.0535], zoom: 13, parent: "busan" },
+  { id: "busan-dongnae", label: "Dongnae-gu", labelKr: "동래구", center: [35.1960, 129.0653], zoom: 13, parent: "busan" },
+  { id: "busan-nam", label: "Nam-gu", labelKr: "남구", center: [35.1365, 129.0849], zoom: 13, parent: "busan" },
+  { id: "busan-buk", label: "Buk-gu", labelKr: "북구", center: [35.1972, 128.9903], zoom: 12, parent: "busan" },
+  { id: "busan-haeundae", label: "Haeundae-gu", labelKr: "해운대구", center: [35.1630, 129.1635], zoom: 12, parent: "busan" },
+  { id: "busan-saha", label: "Saha-gu", labelKr: "사하구", center: [35.1046, 128.9746], zoom: 13, parent: "busan" },
+  { id: "busan-geumjeong", label: "Geumjeong-gu", labelKr: "금정구", center: [35.2427, 129.0925], zoom: 12, parent: "busan" },
+  { id: "busan-gangseo", label: "Gangseo-gu", labelKr: "강서구", center: [35.2123, 128.9808], zoom: 11, parent: "busan" },
+  { id: "busan-yeonje", label: "Yeonje-gu", labelKr: "연제구", center: [35.1764, 129.0800], zoom: 14, parent: "busan" },
+  { id: "busan-suyeong", label: "Suyeong-gu", labelKr: "수영구", center: [35.1458, 129.1133], zoom: 14, parent: "busan" },
+  { id: "busan-sasang", label: "Sasang-gu", labelKr: "사상구", center: [35.1527, 128.9912], zoom: 13, parent: "busan" },
+  { id: "busan-gijang", label: "Gijang-gun", labelKr: "기장군", center: [35.2444, 129.2222], zoom: 11, parent: "busan" },
+  
+  // 대구광역시 및 구/군
+  { id: "daegu", label: "Daegu", labelKr: "대구광역시", center: [35.8714, 128.6014], zoom: 11 },
+  { id: "daegu-jung", label: "Jung-gu", labelKr: "중구", center: [35.8690, 128.6059], zoom: 14, parent: "daegu" },
+  { id: "daegu-dong", label: "Dong-gu", labelKr: "동구", center: [35.8865, 128.6355], zoom: 13, parent: "daegu" },
+  { id: "daegu-seo", label: "Seo-gu", labelKr: "서구", center: [35.8718, 128.5592], zoom: 14, parent: "daegu" },
+  { id: "daegu-nam", label: "Nam-gu", labelKr: "남구", center: [35.8460, 128.5975], zoom: 14, parent: "daegu" },
+  { id: "daegu-buk", label: "Buk-gu", labelKr: "북구", center: [35.8857, 128.5828], zoom: 13, parent: "daegu" },
+  { id: "daegu-suseong", label: "Suseong-gu", labelKr: "수성구", center: [35.8584, 128.6308], zoom: 13, parent: "daegu" },
+  { id: "daegu-dalseo", label: "Dalseo-gu", labelKr: "달서구", center: [35.8299, 128.5327], zoom: 12, parent: "daegu" },
+  { id: "daegu-dalseong", label: "Dalseong-gun", labelKr: "달성군", center: [35.7748, 128.4313], zoom: 10, parent: "daegu" },
+  { id: "daegu-gunwi", label: "Gunwi-gun", labelKr: "군위군", center: [36.2428, 128.5728], zoom: 10, parent: "daegu" },
+  
+  // 대전광역시 및 구
+  { id: "daejeon", label: "Daejeon", labelKr: "대전광역시", center: [36.3504, 127.3845], zoom: 11 },
+  { id: "daejeon-dong", label: "Dong-gu", labelKr: "동구", center: [36.3121, 127.4549], zoom: 12, parent: "daejeon" },
+  { id: "daejeon-jung", label: "Jung-gu", labelKr: "중구", center: [36.3257, 127.4214], zoom: 13, parent: "daejeon" },
+  { id: "daejeon-seo", label: "Seo-gu", labelKr: "서구", center: [36.3554, 127.3836], zoom: 12, parent: "daejeon" },
+  { id: "daejeon-yuseong", label: "Yuseong-gu", labelKr: "유성구", center: [36.3623, 127.3562], zoom: 12, parent: "daejeon" },
+  { id: "daejeon-daedeok", label: "Daedeok-gu", labelKr: "대덕구", center: [36.3467, 127.4156], zoom: 12, parent: "daejeon" },
+  
+  // 광주광역시 및 구
+  { id: "gwangju", label: "Gwangju", labelKr: "광주광역시", center: [35.1595, 126.8526], zoom: 11 },
+  { id: "gwangju-dong", label: "Dong-gu", labelKr: "동구", center: [35.1462, 126.9234], zoom: 13, parent: "gwangju" },
+  { id: "gwangju-seo", label: "Seo-gu", labelKr: "서구", center: [35.1522, 126.8895], zoom: 13, parent: "gwangju" },
+  { id: "gwangju-nam", label: "Nam-gu", labelKr: "남구", center: [35.1328, 126.9025], zoom: 13, parent: "gwangju" },
+  { id: "gwangju-buk", label: "Buk-gu", labelKr: "북구", center: [35.1744, 126.9120], zoom: 12, parent: "gwangju" },
+  { id: "gwangju-gwangsan", label: "Gwangsan-gu", labelKr: "광산구", center: [35.1394, 126.7936], zoom: 12, parent: "gwangju" },
+  
+  // 울산광역시 및 구/군
+  { id: "ulsan", label: "Ulsan", labelKr: "울산광역시", center: [35.5384, 129.3114], zoom: 11 },
+  { id: "ulsan-jung", label: "Jung-gu", labelKr: "중구", center: [35.5690, 129.3328], zoom: 13, parent: "ulsan" },
+  { id: "ulsan-nam", label: "Nam-gu", labelKr: "남구", center: [35.5446, 129.3302], zoom: 13, parent: "ulsan" },
+  { id: "ulsan-dong", label: "Dong-gu", labelKr: "동구", center: [35.5050, 129.4163], zoom: 13, parent: "ulsan" },
+  { id: "ulsan-buk", label: "Buk-gu", labelKr: "북구", center: [35.5828, 129.3612], zoom: 12, parent: "ulsan" },
+  { id: "ulsan-ulju", label: "Ulju-gun", labelKr: "울주군", center: [35.5220, 129.0995], zoom: 10, parent: "ulsan" },
+  
+  // 세종특별자치시
+  { id: "sejong", label: "Sejong", labelKr: "세종특별자치시", center: [36.4800, 127.2890], zoom: 11 },
+  
+  // 강원특별자치도 주요 시
+  { id: "gangwon", label: "Gangwon", labelKr: "강원특별자치도", center: [37.8228, 128.1555], zoom: 8 },
+  { id: "gangwon-chuncheon", label: "Chuncheon", labelKr: "춘천시", center: [37.8813, 127.7298], zoom: 11, parent: "gangwon" },
+  { id: "gangwon-wonju", label: "Wonju", labelKr: "원주시", center: [37.3422, 127.9202], zoom: 11, parent: "gangwon" },
+  { id: "gangwon-gangneung", label: "Gangneung", labelKr: "강릉시", center: [37.7519, 128.8760], zoom: 10, parent: "gangwon" },
+  { id: "gangwon-donghae", label: "Donghae", labelKr: "동해시", center: [37.5247, 129.1143], zoom: 12, parent: "gangwon" },
+  { id: "gangwon-sokcho", label: "Sokcho", labelKr: "속초시", center: [38.2070, 128.5918], zoom: 12, parent: "gangwon" },
+  { id: "gangwon-samcheok", label: "Samcheok", labelKr: "삼척시", center: [37.4500, 129.1651], zoom: 10, parent: "gangwon" },
+  { id: "gangwon-taebaek", label: "Taebaek", labelKr: "태백시", center: [37.1640, 128.9856], zoom: 11, parent: "gangwon" },
+  
+  // 충청북도 주요 시
+  { id: "chungbuk", label: "Chungbuk", labelKr: "충청북도", center: [36.6357, 127.4914], zoom: 9 },
+  { id: "chungbuk-cheongju", label: "Cheongju", labelKr: "청주시", center: [36.6424, 127.4890], zoom: 11, parent: "chungbuk" },
+  { id: "chungbuk-chungju", label: "Chungju", labelKr: "충주시", center: [36.9910, 127.9259], zoom: 11, parent: "chungbuk" },
+  { id: "chungbuk-jecheon", label: "Jecheon", labelKr: "제천시", center: [37.1325, 128.1910], zoom: 11, parent: "chungbuk" },
+  
+  // 충청남도 주요 시
+  { id: "chungnam", label: "Chungnam", labelKr: "충청남도", center: [36.5184, 126.8000], zoom: 9 },
+  { id: "chungnam-cheonan", label: "Cheonan", labelKr: "천안시", center: [36.8151, 127.1139], zoom: 11, parent: "chungnam" },
+  { id: "chungnam-asan", label: "Asan", labelKr: "아산시", center: [36.7897, 127.0018], zoom: 11, parent: "chungnam" },
+  { id: "chungnam-gongju", label: "Gongju", labelKr: "공주시", center: [36.4465, 127.1190], zoom: 11, parent: "chungnam" },
+  { id: "chungnam-nonsan", label: "Nonsan", labelKr: "논산시", center: [36.1872, 127.0987], zoom: 11, parent: "chungnam" },
+  { id: "chungnam-seosan", label: "Seosan", labelKr: "서산시", center: [36.7845, 126.4503], zoom: 11, parent: "chungnam" },
+  { id: "chungnam-dangjin", label: "Dangjin", labelKr: "당진시", center: [36.8894, 126.6294], zoom: 11, parent: "chungnam" },
+  
+  // 전북특별자치도 주요 시
+  { id: "jeonbuk", label: "Jeonbuk", labelKr: "전북특별자치도", center: [35.8203, 127.1086], zoom: 9 },
+  { id: "jeonbuk-jeonju", label: "Jeonju", labelKr: "전주시", center: [35.8242, 127.1480], zoom: 11, parent: "jeonbuk" },
+  { id: "jeonbuk-gunsan", label: "Gunsan", labelKr: "군산시", center: [35.9676, 126.7369], zoom: 11, parent: "jeonbuk" },
+  { id: "jeonbuk-iksan", label: "Iksan", labelKr: "익산시", center: [35.9482, 126.9576], zoom: 11, parent: "jeonbuk" },
+  { id: "jeonbuk-jeongeup", label: "Jeongeup", labelKr: "정읍시", center: [35.5699, 126.8558], zoom: 11, parent: "jeonbuk" },
+  { id: "jeonbuk-namwon", label: "Namwon", labelKr: "남원시", center: [35.4164, 127.3903], zoom: 11, parent: "jeonbuk" },
+  { id: "jeonbuk-gimje", label: "Gimje", labelKr: "김제시", center: [35.8030, 126.8807], zoom: 11, parent: "jeonbuk" },
+  
+  // 전라남도 주요 시
+  { id: "jeonnam", label: "Jeonnam", labelKr: "전라남도", center: [34.8679, 126.9910], zoom: 9 },
+  { id: "jeonnam-mokpo", label: "Mokpo", labelKr: "목포시", center: [34.8118, 126.3922], zoom: 12, parent: "jeonnam" },
+  { id: "jeonnam-yeosu", label: "Yeosu", labelKr: "여수시", center: [34.7604, 127.6622], zoom: 11, parent: "jeonnam" },
+  { id: "jeonnam-suncheon", label: "Suncheon", labelKr: "순천시", center: [34.9506, 127.4872], zoom: 11, parent: "jeonnam" },
+  { id: "jeonnam-naju", label: "Naju", labelKr: "나주시", center: [35.0157, 126.7108], zoom: 11, parent: "jeonnam" },
+  { id: "jeonnam-gwangyang", label: "Gwangyang", labelKr: "광양시", center: [34.9407, 127.6956], zoom: 11, parent: "jeonnam" },
+  
+  // 경상북도 주요 시
+  { id: "gyeongbuk", label: "Gyeongbuk", labelKr: "경상북도", center: [36.4919, 128.8889], zoom: 8 },
+  { id: "gyeongbuk-pohang", label: "Pohang", labelKr: "포항시", center: [36.0190, 129.3435], zoom: 11, parent: "gyeongbuk" },
+  { id: "gyeongbuk-gyeongju", label: "Gyeongju", labelKr: "경주시", center: [35.8562, 129.2247], zoom: 11, parent: "gyeongbuk" },
+  { id: "gyeongbuk-gimcheon", label: "Gimcheon", labelKr: "김천시", center: [36.1398, 128.1136], zoom: 11, parent: "gyeongbuk" },
+  { id: "gyeongbuk-andong", label: "Andong", labelKr: "안동시", center: [36.5684, 128.7294], zoom: 10, parent: "gyeongbuk" },
+  { id: "gyeongbuk-gumi", label: "Gumi", labelKr: "구미시", center: [36.1195, 128.3446], zoom: 11, parent: "gyeongbuk" },
+  { id: "gyeongbuk-yeongju", label: "Yeongju", labelKr: "영주시", center: [36.8057, 128.6240], zoom: 10, parent: "gyeongbuk" },
+  { id: "gyeongbuk-sangju", label: "Sangju", labelKr: "상주시", center: [36.4110, 128.1591], zoom: 10, parent: "gyeongbuk" },
+  { id: "gyeongbuk-mungyeong", label: "Mungyeong", labelKr: "문경시", center: [36.5868, 128.1868], zoom: 10, parent: "gyeongbuk" },
+  { id: "gyeongbuk-gyeongsan", label: "Gyeongsan", labelKr: "경산시", center: [35.8251, 128.7415], zoom: 12, parent: "gyeongbuk" },
+  
+  // 경상남도 주요 시
+  { id: "gyeongnam", label: "Gyeongnam", labelKr: "경상남도", center: [35.4606, 128.2132], zoom: 9 },
+  { id: "gyeongnam-changwon", label: "Changwon", labelKr: "창원시", center: [35.2270, 128.6811], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-jinju", label: "Jinju", labelKr: "진주시", center: [35.1803, 128.1076], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-tongyeong", label: "Tongyeong", labelKr: "통영시", center: [34.8544, 128.4333], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-sacheon", label: "Sacheon", labelKr: "사천시", center: [35.0035, 128.0649], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-gimhae", label: "Gimhae", labelKr: "김해시", center: [35.2286, 128.8894], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-miryang", label: "Miryang", labelKr: "밀양시", center: [35.5037, 128.7467], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-geoje", label: "Geoje", labelKr: "거제시", center: [34.8808, 128.6211], zoom: 11, parent: "gyeongnam" },
+  { id: "gyeongnam-yangsan", label: "Yangsan", labelKr: "양산시", center: [35.3350, 129.0378], zoom: 11, parent: "gyeongnam" },
+  
+  // 제주특별자치도
+  { id: "jeju", label: "Jeju", labelKr: "제주특별자치도", center: [33.4890, 126.4983], zoom: 10 },
+  { id: "jeju-jeju", label: "Jeju City", labelKr: "제주시", center: [33.4996, 126.5312], zoom: 11, parent: "jeju" },
+  { id: "jeju-seogwipo", label: "Seogwipo", labelKr: "서귀포시", center: [33.2541, 126.5601], zoom: 11, parent: "jeju" },
 ];
 
 export const getRegionFromHospital = (hospital: Hospital): RegionType => {
-  const region = hospital.region.toLowerCase();
-  if (region.includes("서울")) return "seoul";
-  if (region.includes("인천")) return "incheon";
-  if (region.includes("경기")) return "gyeonggi";
-  if (region.includes("부산")) return "busan";
-  if (region.includes("대구")) return "daegu";
-  if (region.includes("대전")) return "daejeon";
-  if (region.includes("광주")) return "gwangju";
-  if (region.includes("울산")) return "ulsan";
+  const address = hospital.address || hospital.region || "";
+  
+  // Check for sub-regions first (more specific match)
+  for (const region of regionOptions) {
+    if (region.parent && address.includes(region.labelKr)) {
+      return region.id;
+    }
+  }
+  
+  // Fallback to major regions
+  if (address.includes("서울")) return "seoul";
+  if (address.includes("인천")) return "incheon";
+  if (address.includes("경기")) return "gyeonggi";
+  if (address.includes("부산")) return "busan";
+  if (address.includes("대구")) return "daegu";
+  if (address.includes("대전")) return "daejeon";
+  if (address.includes("광주") && !address.includes("경기")) return "gwangju";
+  if (address.includes("울산")) return "ulsan";
+  if (address.includes("세종")) return "sejong";
+  if (address.includes("강원")) return "gangwon";
+  if (address.includes("충북") || address.includes("충청북")) return "chungbuk";
+  if (address.includes("충남") || address.includes("충청남")) return "chungnam";
+  if (address.includes("전북") || address.includes("전라북")) return "jeonbuk";
+  if (address.includes("전남") || address.includes("전라남")) return "jeonnam";
+  if (address.includes("경북") || address.includes("경상북")) return "gyeongbuk";
+  if (address.includes("경남") || address.includes("경상남")) return "gyeongnam";
+  if (address.includes("제주")) return "jeju";
+  
   return "all";
 };
 
 export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionType): Hospital[] => {
   if (region === "all") return hospitals;
-  return hospitals.filter((h) => getRegionFromHospital(h) === region);
+  
+  const selectedRegion = regionOptions.find((r) => r.id === region);
+  
+  // If it's a sub-region, filter by exact match or address contains the sub-region name
+  if (selectedRegion?.parent) {
+    return hospitals.filter((h) => {
+      const address = h.address || "";
+      return address.includes(selectedRegion.labelKr);
+    });
+  }
+  
+  // If it's a major region, include hospitals from the major region and all its sub-regions
+  const childRegions = regionOptions.filter((r) => r.parent === region);
+  const childLabels = childRegions.map((r) => r.labelKr);
+  
+  return hospitals.filter((h) => {
+    const hospitalRegion = getRegionFromHospital(h);
+    // Direct match with major region
+    if (hospitalRegion === region) return true;
+    // Check if hospital is in any child region
+    const address = h.address || "";
+    return childLabels.some((label) => address.includes(label));
+  });
 };
 
 export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
