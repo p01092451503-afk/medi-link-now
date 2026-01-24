@@ -165,7 +165,7 @@ const MapPage = () => {
       />
 
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-[1000] p-4">
+      <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
         <div className="flex items-center gap-3">
           {/* Back Button */}
           <button
@@ -194,7 +194,7 @@ const MapPage = () => {
       </header>
 
       {/* Filter Section */}
-      <div className="absolute top-20 left-0 right-0 z-[1000] px-4 space-y-2">
+      <div className="absolute top-20 left-0 right-0 z-[999] px-4 space-y-2">
         {/* Region Filter - 2-level selector */}
         <RegionSelector
           majorRegion={activeMajorRegion}
