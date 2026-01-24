@@ -7,32 +7,55 @@ interface PharmacyMarkerProps {
   pharmacy: HolidayPharmacy;
 }
 
-// Green pharmacy icon
+// Green pharmacy icon - unified style with hospital markers
 const createPharmacyIcon = () => {
   return L.divIcon({
-    className: "custom-pharmacy-marker",
+    className: "custom-marker",
     html: `
-      <div style="
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-        width: 36px;
-        height: 36px;
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        border: 3px solid white;
-        box-shadow: 0 3px 10px rgba(34, 197, 94, 0.4);
+      <style>
+        .pharmacy-marker-container {
+          transition: transform 0.2s ease-out;
+        }
+        .pharmacy-marker-container:hover {
+          transform: scale(1.15);
+        }
+      </style>
+      <div class="pharmacy-marker-container" style="
+        position: relative;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        cursor: pointer;
       ">
-        <span style="
-          transform: rotate(45deg);
-          font-size: 16px;
-        ">💊</span>
+        <div style="
+          position: relative;
+          min-width: 36px;
+          height: 36px;
+          padding: 0 8px;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          border: 3px solid #15803d;
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+          cursor: pointer;
+        ">
+          <span style="font-size: 16px;">💊</span>
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 8px solid transparent;
+          border-right: 8px solid transparent;
+          border-top: 10px solid #15803d;
+          margin-top: -2px;
+        "></div>
       </div>
     `,
-    iconSize: [36, 36],
-    iconAnchor: [18, 36],
-    popupAnchor: [0, -36],
+    iconSize: [44, 52],
+    iconAnchor: [22, 52],
+    popupAnchor: [0, -52],
   });
 };
 
@@ -57,10 +80,17 @@ const PharmacyMarker = ({ pharmacy }: PharmacyMarkerProps) => {
       position={[pharmacy.lat, pharmacy.lng]}
       icon={icon}
     >
-      <Tooltip direction="top" offset={[0, -30]} opacity={0.95}>
-        <div className="text-sm font-semibold">{pharmacy.name}</div>
-        <div className="text-xs text-green-600">
-          {is24Hours ? '24시간 운영' : `휴일: ${formatTime(pharmacy.holidayOpen, pharmacy.holidayClose)}`}
+      <Tooltip 
+        direction="top" 
+        offset={[0, -55]} 
+        opacity={1}
+        className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-2 !text-sm !text-gray-800"
+      >
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="font-semibold">{pharmacy.name}</span>
+          <span className="text-xs text-green-600 font-medium">
+            {is24Hours ? '24시간 운영' : `휴일: ${formatTime(pharmacy.holidayOpen, pharmacy.holidayClose)}`}
+          </span>
         </div>
       </Tooltip>
       <Popup>
