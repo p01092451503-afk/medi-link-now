@@ -55,7 +55,7 @@ const MapPage = () => {
     setShowDispatchModal(true);
   }, []);
 
-  const filteredHospitals = useMemo(() => {
+  const { filteredHospitals, isShowingNearbyFallback } = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
     result = filterHospitalsByRegion(result, activeRegion);
     if (searchQuery.trim()) {
@@ -75,14 +75,14 @@ const MapPage = () => {
         .map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }))
         .filter((h) => h.distance <= 10)
         .sort((a, b) => a.distance - b.distance);
-      return nearbyResult;
+      return { filteredHospitals: nearbyResult, isShowingNearbyFallback: nearbyResult.length > 0 };
     }
     
     if (userLocation) {
       result = result.map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }));
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
-    return result;
+    return { filteredHospitals: result, isShowingNearbyFallback: false };
   }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData]);
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
@@ -329,6 +329,20 @@ const MapPage = () => {
             ))}
         </div>
       </div>
+
+      {/* Nearby Fallback Notice */}
+      {isShowingNearbyFallback && (
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute top-[200px] left-1/2 -translate-x-1/2 z-[1100] bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 shadow-lg flex items-center gap-2"
+        >
+          <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
+          <p className="text-sm text-amber-800 font-medium">
+            선택 지역에 병원이 없어 <span className="text-amber-600 font-bold">10km 이내</span> 인근 병원을 표시합니다
+          </p>
+        </motion.div>
+      )}
 
       {/* Empty State Message */}
       {filteredHospitals.length === 0 && (
