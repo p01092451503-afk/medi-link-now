@@ -333,46 +333,44 @@ const MapPage = () => {
           hospitalCount={filteredHospitals.length}
         />
 
-        {/* Bed Type Filter Chips + Special Filters (요양병원) + Exclude Full Toggle */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide items-center">
+        {/* Bed Type Filter Chips */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide items-center">
           {filterOptions
             .filter((f) => f.category === "bed" || f.category === "special")
-            .map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setActiveFilter(f.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-md transition-all ${
-                  activeFilter === f.id
-                    ? f.id === "pharmacy"
-                      ? "bg-green-600 text-white shadow-green-600/30"
-                      : f.category === "special" 
-                        ? "bg-violet-600 text-white shadow-violet-600/30"
-                        : "bg-primary text-white shadow-primary/30"
-                    : f.id === "pharmacy"
-                      ? "bg-white text-green-600 hover:bg-green-50 border border-green-200"
-                      : f.category === "special"
-                        ? "bg-white text-violet-600 hover:bg-violet-50 border border-violet-200"
-                        : "bg-white text-muted-foreground hover:bg-gray-50"
-                }`}
-              >
-                {f.labelKr}
-              </button>
-            ))}
+            .map((f) => {
+              const isActive = activeFilter === f.id;
+              const isPharmacy = f.id === "pharmacy";
+              
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => setActiveFilter(f.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+                    isActive
+                      ? isPharmacy
+                        ? "bg-green-500 text-white border-green-500"
+                        : "bg-primary text-white border-primary"
+                      : isPharmacy
+                        ? "bg-white/90 text-green-600 border-green-200 hover:bg-green-50"
+                        : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  {f.labelKr}
+                </button>
+              );
+            })}
           
-          {/* Divider */}
-          <div className="w-px h-6 bg-gray-300 flex-shrink-0" />
-          
-          {/* Exclude Full Hospitals Toggle */}
+          {/* Exclude Full Toggle */}
           <button
             onClick={() => setExcludeFullHospitals(!excludeFullHospitals)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-full shadow-md transition-all flex-shrink-0 ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex-shrink-0 ${
               excludeFullHospitals 
-                ? "bg-red-500 text-white shadow-red-500/30" 
-                : "bg-white text-muted-foreground hover:bg-gray-50 border border-red-200"
+                ? "bg-red-500 text-white border-red-500" 
+                : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
             }`}
           >
-            <EyeOff className="w-4 h-4" />
-            <span className="text-sm font-medium whitespace-nowrap">만실 제외</span>
+            <EyeOff className="w-3 h-3" />
+            만실 제외
           </button>
         </div>
       </div>
