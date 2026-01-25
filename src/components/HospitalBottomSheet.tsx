@@ -34,19 +34,23 @@ const BedStatusCard = ({
   showTooltip?: boolean;
   tooltipText?: string;
 }) => {
+  // 0보다 크면 여유, 0이면 "없음" (회색으로 표시)
   const isAvailable = count > 0;
+  const isEmpty = count === 0;
+
+  // 색상 결정: 여유 = 초록, 없음 = 회색 (빨간색은 전체 만실일 때만 의미있음)
+  const bgColor = isAvailable ? "bg-green-50" : "bg-gray-50";
+  const textColor = isAvailable ? "text-green-600" : "text-gray-400";
 
   return (
     <div
-      className={`flex flex-col items-center justify-center p-3 rounded-xl ${
-        isAvailable ? "bg-green-50" : "bg-red-50"
-      }`}
+      className={`flex flex-col items-center justify-center p-3 rounded-xl ${bgColor}`}
     >
       <Icon
-        className={`w-5 h-5 mb-1 ${isAvailable ? "text-green-600" : "text-red-500"}`}
+        className={`w-5 h-5 mb-1 ${textColor}`}
       />
       <span
-        className={`text-xl font-bold ${isAvailable ? "text-green-600" : "text-red-500"}`}
+        className={`text-xl font-bold ${textColor}`}
       >
         {count}
       </span>
