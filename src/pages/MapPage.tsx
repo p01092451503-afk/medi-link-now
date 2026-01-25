@@ -29,6 +29,7 @@ import OnboardingModal from "@/components/OnboardingModal";
 import NearbyDriversCard from "@/components/NearbyDriversCard";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 
+// Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
 
 const MapPage = () => {
