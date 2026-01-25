@@ -3,6 +3,9 @@ project_id = "upvjkrbxhwrhbfcetaev"
 [functions.sync-hospitals]
 verify_jwt = false
 
+[functions.sync-hospitals-nationwide]
+verify_jwt = false
+
 [functions.fetch-er-data]
 verify_jwt = false
 
