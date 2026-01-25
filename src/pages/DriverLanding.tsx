@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Ambulance, 
-  MapPin, 
+  BarChart3, 
   Clock, 
   DollarSign, 
   Phone, 
@@ -23,9 +23,9 @@ const DriverLanding = () => {
 
   const features = [
     {
-      icon: MapPin,
-      title: "응급실 입구 로드뷰",
-      description: "정확한 ER 진입로 스트리트뷰 제공",
+      icon: BarChart3,
+      title: "운행 통계 요약",
+      description: "오늘/이번 주 운행 건수 및 거리 요약",
       color: "bg-blue-100 text-blue-600",
     },
     {
