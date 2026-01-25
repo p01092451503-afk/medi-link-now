@@ -192,15 +192,17 @@ const MapPage = () => {
         setUserLocation(newLocation);
         setMapCenter(newLocation);
         
-        // Auto-select closest region
-        const { majorRegion, subRegion, subRegionData } = findClosestRegion(pos.coords.latitude, pos.coords.longitude);
+        // Auto-select closest MAJOR region only (not sub-region)
+        // This ensures all hospitals in the major region are still visible
+        const { majorRegion, subRegionData } = findClosestRegion(pos.coords.latitude, pos.coords.longitude);
         setActiveMajorRegion(majorRegion);
-        setActiveRegion(subRegion);
+        // Set activeRegion to major region (not sub-region) to show all hospitals in that province
+        setActiveRegion(majorRegion);
         
         setIsLocating(false);
         toast({ 
           title: "현재 위치를 찾았습니다!",
-          description: `${subRegionData.labelKr} 지역으로 설정되었습니다.`
+          description: `${subRegionData.labelKr} 주변 병원을 표시합니다.`
         });
       },
       () => {
