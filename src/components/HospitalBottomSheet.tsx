@@ -26,6 +26,7 @@ const BedStatusCard = ({
   type,
   showTooltip,
   tooltipText,
+  isHospitalFull,
 }: {
   label: string;
   count: number;
@@ -33,16 +34,31 @@ const BedStatusCard = ({
   type: "general" | "pediatric" | "fever";
   showTooltip?: boolean;
   tooltipText?: string;
+  isHospitalFull?: boolean;
 }) => {
   // 음수 병상은 0으로 표시 (API 데이터 이상값 처리)
   const displayCount = Math.max(0, count);
   
-  // 0보다 크면 여유, 0이면 "없음" (회색으로 표시)
+  // 0보다 크면 여유, 0이면 병원 전체 만실 여부에 따라 색상 결정
   const isAvailable = displayCount > 0;
 
-  // 색상 결정: 여유 = 초록, 없음 = 회색
-  const bgColor = isAvailable ? "bg-green-50" : "bg-gray-50";
-  const textColor = isAvailable ? "text-green-600" : "text-gray-400";
+  // 색상 결정: 
+  // - 여유 = 초록
+  // - 없음 + 병원 만실 = 빨강
+  // - 없음 + 병원 여유/혼잡 = 회색 (해당 병상만 없는 것)
+  let bgColor: string;
+  let textColor: string;
+  
+  if (isAvailable) {
+    bgColor = "bg-green-50";
+    textColor = "text-green-600";
+  } else if (isHospitalFull) {
+    bgColor = "bg-red-50";
+    textColor = "text-red-500";
+  } else {
+    bgColor = "bg-gray-50";
+    textColor = "text-gray-400";
+  }
 
   return (
     <div
@@ -240,12 +256,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   count={hospital.beds.general}
                   icon={Stethoscope}
                   type="general"
+                  isHospitalFull={status === "unavailable"}
                 />
                 <BedStatusCard
                   label="소아"
                   count={hospital.beds.pediatric}
                   icon={Baby}
                   type="pediatric"
+                  isHospitalFull={status === "unavailable"}
                 />
                 <BedStatusCard
                   label="열/감염"
@@ -254,6 +272,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   type="fever"
                   showTooltip={true}
                   tooltipText="고열(38℃+) 및 감염 환자 전용"
+                  isHospitalFull={status === "unavailable"}
                 />
               </div>
 
