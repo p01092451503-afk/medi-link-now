@@ -564,6 +564,39 @@ const MapPage = () => {
                           sideOffset={8}
                         >
                           <div className="space-y-3">
+                            {/* 거리 및 예상 도착 시간 */}
+                            {hospital.distance && (
+                              <div className="flex items-center justify-between p-2.5 bg-primary/10 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  <Navigation className="w-4 h-4 text-primary" />
+                                  <div>
+                                    <p className="text-sm font-bold text-primary">{hospital.distance.toFixed(1)}km</p>
+                                    <p className="text-[10px] text-muted-foreground">현재 위치에서</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Clock className="w-4 h-4 text-primary" />
+                                  <div className="text-right">
+                                    <p className="text-sm font-bold text-primary">
+                                      {(() => {
+                                        // 평균 시속 35km/h로 계산 (도심 교통 고려)
+                                        const avgSpeed = 35;
+                                        const timeInMinutes = Math.ceil((hospital.distance / avgSpeed) * 60);
+                                        if (timeInMinutes < 60) {
+                                          return `약 ${timeInMinutes}분`;
+                                        } else {
+                                          const hours = Math.floor(timeInMinutes / 60);
+                                          const mins = timeInMinutes % 60;
+                                          return mins > 0 ? `약 ${hours}시간 ${mins}분` : `약 ${hours}시간`;
+                                        }
+                                      })()}
+                                    </p>
+                                    <p className="text-[10px] text-muted-foreground">예상 도착</p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <h4 className="font-bold text-foreground">{hospital.nameKr}</h4>
