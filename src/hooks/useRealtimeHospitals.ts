@@ -77,17 +77,25 @@ export const useRealtimeHospitals = () => {
       // Start with static hospitals
       let mergedHospitals = [...staticHospitals];
       
-      // If we have DB hospitals, merge them
+      // If we have DB hospitals, use only legally designated emergency institutions
       if (!dbError && dbHospitals && dbHospitals.length > 0) {
         console.log(`Fetched ${dbHospitals.length} hospitals from database`);
         
-        const dbConverted = dbHospitals.map((h: DbHospital) => dbToHospital(h));
+        // Filter to only include legally designated emergency institutions
+        const legallyDesignated = dbHospitals.filter((h: DbHospital) => 
+          h.emergency_grade === 'regional_center' || 
+          h.emergency_grade === 'local_center' || 
+          h.emergency_grade === 'local_institution'
+        );
+        
+        console.log(`Filtered to ${legallyDesignated.length} legally designated institutions`);
+        
+        const dbConverted = legallyDesignated.map((h: DbHospital) => dbToHospital(h));
         
         // Create a map of existing hospitals by name for matching
         const staticByName = new Map(staticHospitals.map(h => [h.nameKr, h]));
-        const dbByName = new Map(dbConverted.map(h => [h.nameKr, h]));
         
-        // Merge: use DB data but supplement with static data if coordinates are missing
+        // Use DB data but supplement with static data if coordinates are missing
         mergedHospitals = dbConverted.map(dbHosp => {
           const staticMatch = staticByName.get(dbHosp.nameKr);
           
@@ -104,14 +112,7 @@ export const useRealtimeHospitals = () => {
           return dbHosp;
         });
         
-        // Add static hospitals that aren't in DB
-        staticHospitals.forEach(staticHosp => {
-          if (!dbByName.has(staticHosp.nameKr)) {
-            mergedHospitals.push(staticHosp);
-          }
-        });
-        
-        console.log(`Merged total: ${mergedHospitals.length} hospitals`);
+        console.log(`Final total: ${mergedHospitals.length} legally designated hospitals`);
       }
 
       // Fetch bed status
