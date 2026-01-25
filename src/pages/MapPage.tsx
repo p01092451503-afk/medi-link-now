@@ -473,7 +473,12 @@ const MapPage = () => {
       {filteredHospitals.length > 0 && (
       <motion.div 
         layout
-        className={`absolute ${userLocation && nearbyHospitals.length > 0 && !selectedHospital ? "bottom-72" : "bottom-44"} left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden max-w-[200px]`}
+        animate={{
+          opacity: userLocation && nearbyHospitals.length > 0 && !selectedHospital ? 0.6 : 1,
+          scale: userLocation && nearbyHospitals.length > 0 && !selectedHospital ? 0.9 : 1,
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className={`absolute ${userLocation && nearbyHospitals.length > 0 && !selectedHospital ? "bottom-72" : "bottom-44"} left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden max-w-[200px] origin-bottom-left hover:opacity-100 hover:scale-100`}
         style={{ minWidth: isLegendCollapsed ? 100 : (isStatsExpanded ? 200 : 140) }}
       >
         {/* Header - Clickable to toggle collapse */}
@@ -674,13 +679,20 @@ const MapPage = () => {
 
       {/* Nearby Drivers Card - hidden when no hospitals */}
       {filteredHospitals.length > 0 && (
-      <div className={`absolute ${userLocation && nearbyHospitals.length > 0 && !selectedHospital ? "bottom-48" : "bottom-24"} left-4 z-[999] w-[160px]`}>
+      <motion.div 
+        animate={{
+          opacity: userLocation && nearbyHospitals.length > 0 && !selectedHospital ? 0.6 : 1,
+          scale: userLocation && nearbyHospitals.length > 0 && !selectedHospital ? 0.9 : 1,
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className={`absolute ${userLocation && nearbyHospitals.length > 0 && !selectedHospital ? "bottom-48" : "bottom-24"} left-4 z-[999] w-[160px] origin-bottom-left hover:opacity-100 hover:scale-100`}
+      >
         <NearbyDriversCard
           drivers={nearbyDrivers}
           userLocation={userLocation}
           onCallDriver={handleCallDriver}
         />
-      </div>
+      </motion.div>
       )}
 
 
