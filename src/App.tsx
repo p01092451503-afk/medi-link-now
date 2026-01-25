@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
 import FamilyPage from "./pages/FamilyPage";
 import AdminPage from "./pages/AdminPage";
+import InstallPage from "./pages/InstallPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/driver" element={<DriverDashboard />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/install" element={<InstallPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
