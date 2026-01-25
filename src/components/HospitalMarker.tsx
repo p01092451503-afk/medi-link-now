@@ -284,6 +284,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
         direction="top" 
         offset={[0, -55]} 
         opacity={1}
+        sticky={true}
         className="!bg-white !border-gray-200 !shadow-xl !rounded-xl !p-0 !text-sm !text-gray-800 !min-w-[260px]"
       >
         <div className="p-3 space-y-2.5">
