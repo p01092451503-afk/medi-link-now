@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { syncNationwideHospitals, getHospitalCount } from "@/services/hospitalDbService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const REGION_BATCHES = [
   { name: "수도권", regions: ["seoul", "incheon", "gyeonggi"] },
@@ -17,12 +18,27 @@ const REGION_BATCHES = [
   { name: "강원/제주", regions: ["gangwon", "jeju"] },
 ];
 
+// City names for bed status API
+const CITY_NAMES = [
+  "서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시",
+  "대전광역시", "울산광역시", "세종특별자치시", "경기도", "강원특별자치도",
+  "충청북도", "충청남도", "전북특별자치도", "전라남도", "경상북도", 
+  "경상남도", "제주특별자치도"
+];
+
 interface SyncResult {
   batchName: string;
   success: boolean;
   hospitalsFound?: number;
   hospitalsInserted?: number;
   durationMs?: number;
+  error?: string;
+}
+
+interface BedSyncResult {
+  cityName: string;
+  success: boolean;
+  count?: number;
   error?: string;
 }
 
@@ -35,11 +51,80 @@ export default function AdminPage() {
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<SyncResult[]>([]);
+  
+  // Bed sync states
+  const [isSyncingBeds, setIsSyncingBeds] = useState(false);
+  const [bedProgress, setBedProgress] = useState(0);
+  const [currentCity, setCurrentCity] = useState<string | null>(null);
+  const [bedResults, setBedResults] = useState<BedSyncResult[]>([]);
 
   const { data: hospitalCount = 0, refetch: refetchCount } = useQuery({
     queryKey: ["hospital-count"],
     queryFn: getHospitalCount,
   });
+  
+  // Fetch bed status count
+  const { data: bedStatusCount = 0, refetch: refetchBedCount } = useQuery({
+    queryKey: ["bed-status-count"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("hospital_status_cache")
+        .select("*", { count: "exact", head: true });
+      return count || 0;
+    },
+  });
+
+  // Handle bed status sync for all cities
+  const handleSyncAllBeds = async () => {
+    setIsSyncingBeds(true);
+    setBedProgress(0);
+    setBedResults([]);
+
+    const newResults: BedSyncResult[] = [];
+
+    for (let i = 0; i < CITY_NAMES.length; i++) {
+      const city = CITY_NAMES[i];
+      setCurrentCity(city);
+      setBedProgress((i / CITY_NAMES.length) * 100);
+
+      try {
+        const { data, error } = await supabase.functions.invoke("fetch-er-data", {
+          body: { city },
+        });
+
+        if (error) {
+          newResults.push({ cityName: city, success: false, error: error.message });
+        } else if (data?.success) {
+          newResults.push({ cityName: city, success: true, count: data.count });
+        } else {
+          newResults.push({ cityName: city, success: false, error: data?.error || "Unknown error" });
+        }
+      } catch (error) {
+        newResults.push({
+          cityName: city,
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+
+      setBedResults([...newResults]);
+    }
+
+    setBedProgress(100);
+    setCurrentCity(null);
+    setIsSyncingBeds(false);
+    
+    await refetchBedCount();
+    queryClient.invalidateQueries({ queryKey: ["realtime-hospitals"] });
+
+    const successCount = newResults.filter(r => r.success).length;
+    const totalBeds = newResults.reduce((acc, r) => acc + (r.count || 0), 0);
+
+    toast({
+      title: "병상 데이터 갱신 완료",
+      description: `${successCount}/${CITY_NAMES.length} 지역 성공, 총 ${totalBeds}개 병원 병상 갱신`,
+    });
+  };
 
   const handleSyncAll = async () => {
     setIsSyncing(true);
@@ -186,6 +271,75 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
+        {/* Bed Status Sync Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BedDouble className="h-5 w-5" />
+              실시간 병상 데이터
+            </CardTitle>
+            <CardDescription>전국 응급실 실시간 병상 현황 갱신</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-3xl font-bold">{bedStatusCount.toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">병상 데이터 보유 병원</p>
+              </div>
+              <Button
+                onClick={handleSyncAllBeds}
+                disabled={isSyncingBeds || isSyncing}
+                size="lg"
+                variant="secondary"
+              >
+                {isSyncingBeds ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    갱신 중...
+                  </>
+                ) : (
+                  <>
+                    <BedDouble className="h-4 w-4 mr-2" />
+                    전국 병상 갱신
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {isSyncingBeds && (
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>{currentCity} 처리 중...</span>
+                  <span>{Math.round(bedProgress)}%</span>
+                </div>
+                <Progress value={bedProgress} className="bg-blue-100" />
+              </div>
+            )}
+
+            {bedResults.length > 0 && !isSyncingBeds && (
+              <div className="mt-4 p-3 rounded-lg bg-muted/50">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">마지막 갱신 결과</span>
+                  <span className="font-medium">
+                    {bedResults.filter(r => r.success).length}/{bedResults.length} 성공
+                  </span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {bedResults.map((r, idx) => (
+                    <Badge 
+                      key={idx} 
+                      variant={r.success ? "default" : "destructive"}
+                      className="text-xs"
+                    >
+                      {r.cityName.replace(/특별자치|광역|특별/, "").replace(/시|도/, "")}
+                      {r.success && ` (${r.count})`}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
         {/* Region Batch Cards */}
         <Card>
           <CardHeader>
