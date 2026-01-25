@@ -27,6 +27,7 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 import RevenueTab from "@/components/RevenueTab";
 import DrivingLogWidget, { type DrivingLog } from "@/components/DrivingLogWidget";
 import DrivingLogHistory from "@/components/DrivingLogHistory";
+import DrivingStatsWidget from "@/components/DrivingStatsWidget";
 import PatientInfoModal from "@/components/PatientInfoModal";
 import HotlineManager, { useHotlines } from "@/components/HotlineManager";
 import { useDriverPresence } from "@/hooks/useDriverPresence";
@@ -256,6 +257,8 @@ const DriverDashboard = () => {
             animate={{ opacity: 1 }}
             className="space-y-4"
           >
+            {/* Driving Stats Summary */}
+            <DrivingStatsWidget logs={drivingLogs} />
             {/* Pending Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
