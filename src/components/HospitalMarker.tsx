@@ -9,15 +9,20 @@ interface HospitalMarkerProps {
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
+  // 음수 병상은 0으로 처리
+  const general = Math.max(0, hospital.beds.general);
+  const pediatric = Math.max(0, hospital.beds.pediatric);
+  const fever = Math.max(0, hospital.beds.fever);
+  
   switch (filter) {
     case "adult":
-      return hospital.beds.general;
+      return general;
     case "pediatric":
-      return hospital.beds.pediatric;
+      return pediatric;
     case "fever":
-      return hospital.beds.fever;
+      return fever;
     default:
-      return hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
+      return general + pediatric + fever;
   }
 };
 
@@ -236,7 +241,15 @@ const createMarkerIcon = (
 const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
-  const hasPediatric = hospital.beds.pediatric > 0;
+  
+  // 음수 병상을 0으로 정규화
+  const normalizedBeds = {
+    general: Math.max(0, hospital.beds.general),
+    pediatric: Math.max(0, hospital.beds.pediatric),
+    fever: Math.max(0, hospital.beds.fever),
+  };
+  
+  const hasPediatric = normalizedBeds.pediatric > 0;
   const isPediatricFilter = activeFilter === "pediatric";
   const icon = createMarkerIcon(
     status, 
@@ -295,20 +308,20 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
           <span className="text-xs text-gray-500 block mb-2">{hospital.category}</span>
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
             <div className={`p-1.5 rounded ${activeFilter === "adult" || activeFilter === "all" || activeFilter === "ct" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${hospital.beds.general > 0 ? "text-green-600" : "text-red-500"}`}>
-                {hospital.beds.general}
+              <div className={`font-bold ${normalizedBeds.general > 0 ? "text-green-600" : "text-gray-400"}`}>
+                {normalizedBeds.general}
               </div>
               <div className="text-gray-400">성인</div>
             </div>
             <div className={`p-1.5 rounded ${activeFilter === "pediatric" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${hospital.beds.pediatric > 0 ? "text-green-600" : "text-red-500"}`}>
-                {hospital.beds.pediatric}
+              <div className={`font-bold ${normalizedBeds.pediatric > 0 ? "text-green-600" : "text-gray-400"}`}>
+                {normalizedBeds.pediatric}
               </div>
               <div className="text-gray-400">소아</div>
             </div>
             <div className={`p-1.5 rounded ${activeFilter === "fever" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${hospital.beds.fever > 0 ? "text-green-600" : "text-red-500"}`}>
-                {hospital.beds.fever}
+              <div className={`font-bold ${normalizedBeds.fever > 0 ? "text-green-600" : "text-gray-400"}`}>
+                {normalizedBeds.fever}
               </div>
               <div className="text-gray-400">열/감염</div>
             </div>

@@ -1784,7 +1784,12 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {
-  const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
+  // 음수 병상은 0으로 처리
+  const general = Math.max(0, hospital.beds.general);
+  const pediatric = Math.max(0, hospital.beds.pediatric);
+  const fever = Math.max(0, hospital.beds.fever);
+  const totalBeds = general + pediatric + fever;
+  
   if (totalBeds === 0) return "unavailable";
   if (totalBeds <= 2) return "limited";
   return "available";
