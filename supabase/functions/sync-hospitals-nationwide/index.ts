@@ -51,29 +51,33 @@ function getNumValue(xml: string, tag: string): number {
   return val ? parseInt(val, 10) || 0 : 0;
 }
 
-// Fetch hospital basic info (includes coordinates) for a region
-async function fetchHospitalBasicInfo(
+// Fetch hospital list info (includes reliable coordinates) using getEgytListInfoInqire
+async function fetchHospitalListInfo(
   serviceKey: string,
   region: { code: string; id: string }
-): Promise<Map<string, { lat: number; lng: number; address: string }>> {
-  const infoMap = new Map<string, { lat: number; lng: number; address: string }>();
+): Promise<Map<string, { lat: number; lng: number; address: string; phone: string; name: string }>> {
+  const infoMap = new Map<string, { lat: number; lng: number; address: string; phone: string; name: string }>();
   
   try {
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
-    const url = `http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytBassInfoInqire?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=200`;
     
-    console.log(`Fetching basic info for ${region.code}...`);
+    // Use getEgytListInfoInqire which has more reliable coordinate data
+    const url = `http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire?serviceKey=${encodedKey}&Q0=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=300`;
+    
+    console.log(`Fetching list info for ${region.code}...`);
     
     const response = await fetch(url, { headers: { 'Accept': 'application/xml' } });
     
     if (!response.ok) {
-      console.error(`Basic info API error: ${response.status}`);
+      console.error(`List info API error: ${response.status}`);
       return infoMap;
     }
     
     const xmlText = await response.text();
     const items = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
+    
+    console.log(`List API returned ${items.length} items for ${region.code}`);
     
     for (const item of items) {
       const hpid = getValue(item, 'hpid');
@@ -82,90 +86,115 @@ async function fetchHospitalBasicInfo(
       const lat = parseFloat(getValue(item, 'wgs84Lat'));
       const lng = parseFloat(getValue(item, 'wgs84Lon'));
       const address = getValue(item, 'dutyAddr');
+      const phone = getValue(item, 'dutyTel1') || getValue(item, 'dutyTel3');
+      const name = getValue(item, 'dutyName');
       
-      if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
-        infoMap.set(hpid, { lat, lng, address });
+      if (lat && lng && !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+        infoMap.set(hpid, { lat, lng, address, phone, name });
       }
     }
     
-    console.log(`Got coordinates for ${infoMap.size} hospitals in ${region.code}`);
+    console.log(`Got coordinates for ${infoMap.size} hospitals from list API in ${region.code}`);
   } catch (error) {
-    console.error(`Error fetching basic info for ${region.code}:`, error);
+    console.error(`Error fetching list info for ${region.code}:`, error);
   }
   
   return infoMap;
 }
 
-// Fetch hospitals for a single region
+// Fetch real-time bed info and merge with list info
 async function fetchRegionHospitals(
   serviceKey: string,
   region: { code: string; id: string },
-  basicInfoMap: Map<string, { lat: number; lng: number; address: string }>
+  listInfoMap: Map<string, { lat: number; lng: number; address: string; phone: string; name: string }>
 ): Promise<HospitalData[]> {
   const hospitals: HospitalData[] = [];
+  const processedHpids = new Set<string>();
   
   try {
     const baseUrl = 'http://apis.data.go.kr/B552657/ErmctInfoInqireService';
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
-    const url = `${baseUrl}/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=200`;
+    const url = `${baseUrl}/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=300`;
     
-    console.log(`Fetching hospitals for ${region.code}...`);
+    console.log(`Fetching realtime bed info for ${region.code}...`);
     
     const response = await fetch(url, {
       headers: { 'Accept': 'application/xml' }
     });
 
     if (!response.ok) {
-      console.error(`API error for ${region.code}: ${response.status}`);
-      return hospitals;
+      console.error(`Realtime API error for ${region.code}: ${response.status}`);
+    } else {
+      const xmlText = await response.text();
+      const items = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
+      
+      console.log(`Realtime API found ${items.length} hospitals in ${region.code}`);
+      
+      for (const item of items) {
+        const hpid = getValue(item, 'hpid');
+        if (!hpid || processedHpids.has(hpid)) continue;
+        
+        // Get coordinates from list info API (more reliable)
+        const listInfo = listInfoMap.get(hpid);
+        
+        // Use list info coordinates, fallback to realtime API coordinates
+        let lat = listInfo?.lat || parseFloat(getValue(item, 'wgs84Lat')) || 0;
+        let lng = listInfo?.lng || parseFloat(getValue(item, 'wgs84Lon')) || 0;
+        
+        // Skip hospitals without valid coordinates
+        if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
+          console.log(`Skipping ${getValue(item, 'dutyName')} - no coordinates from realtime`);
+          continue;
+        }
+        
+        processedHpids.add(hpid);
+        
+        const hospital: HospitalData = {
+          hpid,
+          name: listInfo?.name || getValue(item, 'dutyName'),
+          address: listInfo?.address || getValue(item, 'dutyAddr'),
+          phone: listInfo?.phone || getValue(item, 'dutyTel3') || getValue(item, 'dutyTel1') || null,
+          lat,
+          lng,
+          category: getValue(item, 'dutyEmclsName') || '응급의료기관',
+          region: region.id,
+          is_trauma_center: false,
+          has_pediatric: getNumValue(item, 'hvec') > 0 || getNumValue(item, 'hv28') > 0,
+          equipment: [],
+        };
+        
+        // Parse equipment
+        if (getNumValue(item, 'hvctayn') > 0) hospital.equipment.push('CT');
+        if (getNumValue(item, 'hvmriayn') > 0) hospital.equipment.push('MRI');
+        if (getNumValue(item, 'hvventiayn') > 0) hospital.equipment.push('Ventilator');
+        
+        hospitals.push(hospital);
+      }
     }
     
-    const xmlText = await response.text();
-    const items = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
-    
-    console.log(`Found ${items.length} hospitals in ${region.code}`);
-    
-    for (const item of items) {
-      const hpid = getValue(item, 'hpid');
-      if (!hpid) continue;
+    // Also add hospitals from list info that aren't in realtime data
+    for (const [hpid, info] of listInfoMap.entries()) {
+      if (processedHpids.has(hpid)) continue;
       
-      // Get coordinates from basic info API (more reliable)
-      const basicInfo = basicInfoMap.get(hpid);
-      
-      // Fallback to inline coordinates if basic info not available
-      let lat = basicInfo?.lat || parseFloat(getValue(item, 'wgs84Lat')) || 0;
-      let lng = basicInfo?.lng || parseFloat(getValue(item, 'wgs84Lon')) || 0;
-      
-      // Skip hospitals without valid coordinates
-      if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
-        console.log(`Skipping ${getValue(item, 'dutyName')} - no coordinates`);
-        continue;
-      }
-      
-      const hospital: HospitalData = {
+      hospitals.push({
         hpid,
-        name: getValue(item, 'dutyName'),
-        address: basicInfo?.address || getValue(item, 'dutyAddr'),
-        phone: getValue(item, 'dutyTel3') || getValue(item, 'dutyTel1') || null,
-        lat,
-        lng,
-        category: getValue(item, 'dutyEmclsName') || '응급의료기관',
+        name: info.name,
+        address: info.address,
+        phone: info.phone || null,
+        lat: info.lat,
+        lng: info.lng,
+        category: '응급의료기관',
         region: region.id,
         is_trauma_center: false,
-        has_pediatric: getNumValue(item, 'hvec') > 0 || getNumValue(item, 'hv28') > 0,
+        has_pediatric: false,
         equipment: [],
-      };
+      });
       
-      // Parse equipment
-      if (getNumValue(item, 'hvctayn') > 0) hospital.equipment.push('CT');
-      if (getNumValue(item, 'hvmriayn') > 0) hospital.equipment.push('MRI');
-      if (getNumValue(item, 'hvventiayn') > 0) hospital.equipment.push('Ventilator');
-      
-      hospitals.push(hospital);
+      processedHpids.add(hpid);
     }
     
-    console.log(`Successfully parsed ${hospitals.length} hospitals with coordinates in ${region.code}`);
+    console.log(`Total ${hospitals.length} hospitals with valid coordinates in ${region.code}`);
   } catch (error) {
     console.error(`Error fetching ${region.code}:`, error);
   }
@@ -178,7 +207,6 @@ async function fetchTraumaCenters(serviceKey: string): Promise<Set<string>> {
   const traumaCenters = new Set<string>();
   
   try {
-    // Handle API key encoding
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
     const url = `http://apis.data.go.kr/B552657/ErmctInfoInqireService/getStrmListInfoInqire?serviceKey=${encodedKey}&pageNo=1&numOfRows=100`;
@@ -240,16 +268,16 @@ Deno.serve(async (req) => {
     // Fetch trauma centers first
     const traumaCenters = await fetchTraumaCenters(serviceKey);
 
-    // Fetch hospitals for each region (with rate limiting)
+    // Fetch hospitals for each region
     const allHospitals: HospitalData[] = [];
     
     for (const region of targetRegions) {
-      // First fetch basic info (with coordinates)
-      const basicInfoMap = await fetchHospitalBasicInfo(serviceKey, region);
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // First fetch list info (with reliable coordinates)
+      const listInfoMap = await fetchHospitalListInfo(serviceKey, region);
+      await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Then fetch hospitals and merge with basic info
-      const hospitals = await fetchRegionHospitals(serviceKey, region, basicInfoMap);
+      // Then fetch realtime bed info and merge
+      const hospitals = await fetchRegionHospitals(serviceKey, region, listInfoMap);
       
       // Mark trauma centers
       hospitals.forEach(h => {
@@ -260,8 +288,8 @@ Deno.serve(async (req) => {
       
       allHospitals.push(...hospitals);
       
-      // Rate limiting: wait 300ms between regions
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Rate limiting between regions
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     console.log(`Total hospitals fetched: ${allHospitals.length}`);
