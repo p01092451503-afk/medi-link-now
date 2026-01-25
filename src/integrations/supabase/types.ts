@@ -155,6 +155,7 @@ export type Database = {
         Row: {
           general_beds: number
           hospital_id: number
+          hpid: string | null
           id: number
           isolation_beds: number
           last_updated: string
@@ -163,6 +164,7 @@ export type Database = {
         Insert: {
           general_beds?: number
           hospital_id: number
+          hpid?: string | null
           id?: number
           isolation_beds?: number
           last_updated?: string
@@ -171,10 +173,74 @@ export type Database = {
         Update: {
           general_beds?: number
           hospital_id?: number
+          hpid?: string | null
           id?: number
           isolation_beds?: number
           last_updated?: string
           pediatric_beds?: number
+        }
+        Relationships: []
+      }
+      hospitals: {
+        Row: {
+          address: string
+          category: string | null
+          created_at: string | null
+          entrance_lat: number | null
+          entrance_lng: number | null
+          equipment: string[] | null
+          has_pediatric: boolean | null
+          hpid: string | null
+          id: number
+          is_trauma_center: boolean | null
+          lat: number
+          lng: number
+          name: string
+          name_en: string | null
+          phone: string | null
+          region: string
+          sub_region: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          category?: string | null
+          created_at?: string | null
+          entrance_lat?: number | null
+          entrance_lng?: number | null
+          equipment?: string[] | null
+          has_pediatric?: boolean | null
+          hpid?: string | null
+          id?: number
+          is_trauma_center?: boolean | null
+          lat: number
+          lng: number
+          name: string
+          name_en?: string | null
+          phone?: string | null
+          region: string
+          sub_region?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          category?: string | null
+          created_at?: string | null
+          entrance_lat?: number | null
+          entrance_lng?: number | null
+          equipment?: string[] | null
+          has_pediatric?: boolean | null
+          hpid?: string | null
+          id?: number
+          is_trauma_center?: boolean | null
+          lat?: number
+          lng?: number
+          name?: string
+          name_en?: string | null
+          phone?: string | null
+          region?: string
+          sub_region?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
