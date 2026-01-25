@@ -473,7 +473,7 @@ const MapPage = () => {
       {filteredHospitals.length > 0 && (
       <motion.div 
         layout
-        className="absolute bottom-44 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden max-w-[200px]"
+        className={`absolute ${userLocation && nearbyHospitals.length > 0 && !selectedHospital ? "bottom-72" : "bottom-44"} left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden max-w-[200px]`}
         style={{ minWidth: isLegendCollapsed ? 100 : (isStatsExpanded ? 200 : 140) }}
       >
         {/* Header - Clickable to toggle collapse */}
@@ -674,7 +674,7 @@ const MapPage = () => {
 
       {/* Nearby Drivers Card - hidden when no hospitals */}
       {filteredHospitals.length > 0 && (
-      <div className="absolute bottom-24 left-4 z-[999] w-[160px]">
+      <div className={`absolute ${userLocation && nearbyHospitals.length > 0 && !selectedHospital ? "bottom-48" : "bottom-24"} left-4 z-[999] w-[160px]`}>
         <NearbyDriversCard
           drivers={nearbyDrivers}
           userLocation={userLocation}
