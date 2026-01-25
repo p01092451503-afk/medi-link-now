@@ -67,55 +67,78 @@ const Landing = () => {
 
         {/* Live Statistics Section */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
           className="w-full max-w-sm mb-6"
         >
-          <div className="bg-white rounded-2xl shadow-lg border border-primary/10 overflow-hidden">
-            <div className="bg-primary/5 px-4 py-2 flex items-center gap-2 border-b border-primary/10">
-              <Activity className="w-4 h-4 text-primary animate-pulse" />
-              <span className="text-xs font-semibold text-primary">실시간 전국 현황</span>
-              <span className="ml-auto text-[10px] text-muted-foreground">
-                {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 업데이트` : ""}
-              </span>
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary to-blue-600 px-4 py-3 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                <Activity className="w-4 h-4 text-white animate-pulse" />
+              </div>
+              <div className="flex-1">
+                <span className="text-sm font-bold text-white">실시간 전국 현황</span>
+                <p className="text-[10px] text-white/70">
+                  {isLoading ? "데이터 로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
+                </p>
+              </div>
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             </div>
-            <div className="grid grid-cols-2 gap-0">
-              <div className="p-4 border-r border-b border-gray-100 text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <Hospital className="w-4 h-4 text-primary" />
+            
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-3 p-4">
+              {/* Total Hospitals */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Hospital className="w-4 h-4 text-primary" />
+                  </div>
                 </div>
                 <p className="text-2xl font-bold text-foreground">
-                  {stats?.totalHospitals || "120+"}
+                  {stats?.totalHospitals || "---"}
                 </p>
-                <p className="text-[10px] text-muted-foreground">전국 응급실</p>
+                <p className="text-xs text-muted-foreground mt-0.5">전국 응급실</p>
               </div>
-              <div className="p-4 border-b border-gray-100 text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <Bed className="w-4 h-4 text-green-500" />
+              
+              {/* Available Beds */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center">
+                    <Bed className="w-4 h-4 text-green-600" />
+                  </div>
                 </div>
                 <p className="text-2xl font-bold text-green-600">
                   {stats?.totalBeds || "---"}
                 </p>
-                <p className="text-[10px] text-muted-foreground">가용 병상</p>
+                <p className="text-xs text-muted-foreground mt-0.5">가용 병상</p>
               </div>
-              <div className="p-4 border-r border-gray-100 text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <TrendingUp className="w-4 h-4 text-blue-500" />
+              
+              {/* Available Hospitals */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-blue-600" />
+                  </div>
                 </div>
                 <p className="text-2xl font-bold text-blue-600">
                   {stats?.availableHospitals || "---"}
                 </p>
-                <p className="text-[10px] text-muted-foreground">여유 병원</p>
+                <p className="text-xs text-muted-foreground mt-0.5">여유 병원</p>
               </div>
-              <div className="p-4 text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <Users className="w-4 h-4 text-pink-500" />
+              
+              {/* Pediatric Beds */}
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-pink-100 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-pink-600" />
+                  </div>
                 </div>
                 <p className="text-2xl font-bold text-pink-600">
                   {stats?.pediatricBeds || "---"}
                 </p>
-                <p className="text-[10px] text-muted-foreground">소아 병상</p>
+                <p className="text-xs text-muted-foreground mt-0.5">소아 병상</p>
               </div>
             </div>
           </div>
