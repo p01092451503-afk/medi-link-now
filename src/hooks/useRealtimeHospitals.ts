@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { hospitals as staticHospitals, Hospital, HospitalAcceptance } from "@/data/hospitals";
+import { hospitals as staticHospitals, Hospital } from "@/data/hospitals";
 
 interface DbHospital {
   id: number;
@@ -58,80 +58,56 @@ export const useRealtimeHospitals = () => {
   const [hospitals, setHospitals] = useState<Hospital[]>(staticHospitals);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [isDbConnected, setIsDbConnected] = useState(false);
+  const isMounted = useRef(true);
 
-  // Fetch hospitals from database
-  const fetchHospitalsFromDb = useCallback(async (): Promise<Hospital[]> => {
+  // Fetch hospitals from database and merge with bed status
+  const fetchHospitalData = useCallback(async () => {
+    if (!isMounted.current) return;
+    
+    setIsLoading(true);
+    
     try {
-      const { data, error } = await supabase
+      // Fetch hospitals from DB
+      const { data: dbHospitals, error: dbError } = await supabase
         .from('hospitals')
         .select('*');
 
-      if (error) {
-        console.error('Error fetching hospitals from DB:', error);
-        return [];
-      }
-
-      if (data && data.length > 0) {
-        console.log(`Fetched ${data.length} hospitals from database`);
-        setIsDbConnected(true);
-        return data.map((h: DbHospital) => dbToHospital(h));
-      }
-
-      return [];
-    } catch (err) {
-      console.error('Error fetching hospitals from DB:', err);
-      return [];
-    }
-  }, []);
-
-  // Merge hospital data with realtime bed status
-  const mergeWithBedStatus = useCallback((
-    baseHospitals: Hospital[],
-    statusData: HospitalStatusCache[]
-  ): Hospital[] => {
-    const statusMap = new Map<number, HospitalStatusCache>();
-    statusData.forEach(s => statusMap.set(s.hospital_id, s));
-
-    return baseHospitals.map(hospital => {
-      const status = statusMap.get(hospital.id);
-      if (status) {
-        return {
-          ...hospital,
-          beds: {
-            general: status.general_beds,
-            pediatric: status.pediatric_beds,
-            fever: status.isolation_beds,
-          },
-        };
-      }
-      return hospital;
-    });
-  }, []);
-
-  // Fetch initial data
-  const fetchHospitalStatus = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      // First, try to get hospitals from database
-      const dbHospitals = await fetchHospitalsFromDb();
+      let baseHospitals: Hospital[];
       
-      // Use DB hospitals if available, otherwise fall back to static data
-      const baseHospitals = dbHospitals.length > 0 ? dbHospitals : staticHospitals;
-      
+      if (dbError || !dbHospitals || dbHospitals.length === 0) {
+        console.log('Using static hospitals data');
+        baseHospitals = staticHospitals;
+      } else {
+        console.log(`Fetched ${dbHospitals.length} hospitals from database`);
+        baseHospitals = dbHospitals.map((h: DbHospital) => dbToHospital(h));
+      }
+
       // Fetch bed status
-      const { data: statusData, error: statusError } = await supabase
+      const { data: statusData } = await supabase
         .from("hospital_status_cache")
         .select("*");
 
-      if (statusError) {
-        console.error("Error fetching hospital status:", statusError);
-        setHospitals(baseHospitals);
-        return;
-      }
+      if (!isMounted.current) return;
 
       if (statusData && statusData.length > 0) {
-        const merged = mergeWithBedStatus(baseHospitals, statusData);
+        const statusMap = new Map<number, HospitalStatusCache>();
+        statusData.forEach((s: HospitalStatusCache) => statusMap.set(s.hospital_id, s));
+
+        const merged = baseHospitals.map(hospital => {
+          const status = statusMap.get(hospital.id);
+          if (status) {
+            return {
+              ...hospital,
+              beds: {
+                general: status.general_beds,
+                pediatric: status.pediatric_beds,
+                fever: status.isolation_beds,
+              },
+            };
+          }
+          return hospital;
+        });
+
         setHospitals(merged);
       } else {
         setHospitals(baseHospitals);
@@ -140,32 +116,21 @@ export const useRealtimeHospitals = () => {
       setLastUpdated(new Date());
     } catch (err) {
       console.error("Error fetching hospital data:", err);
-      setHospitals(staticHospitals);
+      if (isMounted.current) {
+        setHospitals(staticHospitals);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
     }
-  }, [fetchHospitalsFromDb, mergeWithBedStatus]);
+  }, []);
 
   useEffect(() => {
+    isMounted.current = true;
+    
     // Fetch initial data
-    fetchHospitalStatus();
-
-    // Subscribe to realtime updates for hospitals table
-    const hospitalsChannel = supabase
-      .channel("hospitals-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "hospitals",
-        },
-        () => {
-          console.log("Hospitals table updated, refetching...");
-          fetchHospitalStatus();
-        }
-      )
-      .subscribe();
+    fetchHospitalData();
 
     // Subscribe to realtime updates for bed status
     const statusChannel = supabase
@@ -178,7 +143,7 @@ export const useRealtimeHospitals = () => {
           table: "hospital_status_cache",
         },
         (payload) => {
-          console.log("Realtime bed status update received:", payload);
+          if (!isMounted.current) return;
           
           if (payload.eventType === "UPDATE" || payload.eventType === "INSERT") {
             const newStatus = payload.new as HospitalStatusCache;
@@ -204,16 +169,15 @@ export const useRealtimeHospitals = () => {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(hospitalsChannel);
+      isMounted.current = false;
       supabase.removeChannel(statusChannel);
     };
-  }, [fetchHospitalStatus]);
+  }, [fetchHospitalData]);
 
   return {
     hospitals,
     isLoading,
     lastUpdated,
-    isDbConnected,
-    refetch: fetchHospitalStatus,
+    refetch: fetchHospitalData,
   };
 };
