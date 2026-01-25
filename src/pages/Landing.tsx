@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo } from "react";
 import { getHospitalStatus } from "@/data/hospitals";
-import InstallBanner from "@/components/InstallBanner";
+
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -34,8 +34,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 flex flex-col">
-      {/* Install Banner */}
-      <InstallBanner />
       {/* Header */}
       <header className="p-4 flex items-center justify-center">
         <div className="flex items-center gap-3">
