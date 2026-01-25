@@ -26,7 +26,7 @@ import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LiveReportFAB from "@/components/LiveReportFAB";
 import SymptomSearchBar from "@/components/SymptomSearchBar";
-import OnboardingModal from "@/components/OnboardingModal";
+
 import NearbyDriversCard from "@/components/NearbyDriversCard";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 
@@ -253,8 +253,6 @@ const MapPage = () => {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden">
-      {/* Onboarding Modal for first-time users */}
-      <OnboardingModal />
       
       {/* Leaflet Map */}
       <MapView
