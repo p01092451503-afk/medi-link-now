@@ -28,7 +28,7 @@ import SymptomSearchBar from "@/components/SymptomSearchBar";
 import OnboardingModal from "@/components/OnboardingModal";
 import NearbyDriversCard from "@/components/NearbyDriversCard";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
-import RegionalStatsCard from "@/components/RegionalStatsCard";
+
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -683,15 +683,6 @@ const MapPage = () => {
       </div>
       )}
 
-      {/* Regional Stats Card */}
-      {filteredHospitals.length > 0 && (
-        <RegionalStatsCard
-          hospitals={hospitalData}
-          onRegionClick={(regionId) => {
-            handleMajorRegionChange(regionId as MajorRegionType);
-          }}
-        />
-      )}
 
       {/* Location FAB */}
       <button
