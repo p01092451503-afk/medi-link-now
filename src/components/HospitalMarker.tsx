@@ -284,16 +284,85 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
         direction="top" 
         offset={[0, -55]} 
         opacity={1}
-        className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-2 !text-sm !text-gray-800"
+        className="!bg-white !border-gray-200 !shadow-xl !rounded-xl !p-0 !text-sm !text-gray-800 !min-w-[260px]"
       >
-        <div className="flex flex-col items-center gap-0.5">
-          <span className="font-semibold">{hospital.nameKr}</span>
-          {gradeKoreanName && (
-            <span className="text-xs text-muted-foreground">{gradeKoreanName}</span>
-          )}
+        <div className="p-3 space-y-2.5">
+          {/* 거리 및 예상 도착 시간 */}
           {hospital.distance !== undefined && (
-            <span className="text-xs text-primary font-medium">{hospital.distance.toFixed(1)}km</span>
+            <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-1.5">
+                <span className="text-blue-600 font-bold text-sm">{hospital.distance.toFixed(1)}km</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span className="font-bold text-sm">
+                  {(() => {
+                    const avgSpeed = 35;
+                    const timeInMinutes = Math.ceil((hospital.distance / avgSpeed) * 60);
+                    if (timeInMinutes < 60) {
+                      return `약 ${timeInMinutes}분`;
+                    } else {
+                      const hours = Math.floor(timeInMinutes / 60);
+                      const mins = timeInMinutes % 60;
+                      return mins > 0 ? `${hours}시간 ${mins}분` : `${hours}시간`;
+                    }
+                  })()}
+                </span>
+              </div>
+            </div>
           )}
+          
+          {/* 병원명 및 상태 */}
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1">
+              <span className="font-bold text-foreground block">{hospital.nameKr}</span>
+              {gradeKoreanName && (
+                <span className="text-[10px] text-blue-600 font-medium">{gradeKoreanName}</span>
+              )}
+            </div>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold flex-shrink-0 ${
+              status === 'available' ? 'bg-green-100 text-green-700' : 
+              status === 'limited' ? 'bg-yellow-100 text-yellow-700' : 
+              'bg-red-100 text-red-700'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                status === 'available' ? 'bg-green-500' : 
+                status === 'limited' ? 'bg-yellow-500' : 
+                'bg-red-500'
+              }`} />
+              {status === 'available' ? '여유' : status === 'limited' ? '혼잡' : '만실'}
+            </span>
+          </div>
+          
+          {/* 병상 정보 그리드 */}
+          <div className="grid grid-cols-3 gap-1.5 text-center">
+            <div className={`p-1.5 rounded-lg ${normalizedBeds.general > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
+              <div className={`font-bold text-sm ${normalizedBeds.general > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                {normalizedBeds.general}
+              </div>
+              <div className="text-[10px] text-gray-500">성인</div>
+            </div>
+            <div className={`p-1.5 rounded-lg ${normalizedBeds.pediatric > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
+              <div className={`font-bold text-sm ${normalizedBeds.pediatric > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                {normalizedBeds.pediatric}
+              </div>
+              <div className="text-[10px] text-gray-500">소아</div>
+            </div>
+            <div className={`p-1.5 rounded-lg ${normalizedBeds.fever > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
+              <div className={`font-bold text-sm ${normalizedBeds.fever > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                {normalizedBeds.fever}
+              </div>
+              <div className="text-[10px] text-gray-500">열/감염</div>
+            </div>
+          </div>
+          
+          {/* 클릭 안내 */}
+          <div className="pt-1.5 border-t border-gray-100 text-center">
+            <span className="text-[10px] text-gray-400">클릭하여 상세정보 보기</span>
+          </div>
         </div>
       </Tooltip>
       <Popup>
