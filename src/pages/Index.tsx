@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info } from "lucide-react";
+import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import {
   Hospital,
@@ -31,6 +32,7 @@ const Index = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [excludeFullHospitals, setExcludeFullHospitals] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(10);
 
@@ -41,12 +43,19 @@ const Index = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
     }
+    // Exclude full hospitals (total beds = 0)
+    if (excludeFullHospitals) {
+      result = result.filter((h) => {
+        const totalBeds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
+        return totalBeds > 0;
+      });
+    }
     if (userLocation) {
       result = result.map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }));
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
     return result;
-  }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData]);
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
@@ -147,8 +156,8 @@ const Index = () => {
           hospitalCount={filteredHospitals.length}
         />
 
-        {/* Bed Type Filter Chips */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {/* Bed Type Filter Chips with Exclude Full Toggle */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {filterOptions
             .filter((f) => f.category === "bed")
             .map((f) => (
@@ -164,6 +173,24 @@ const Index = () => {
                 {f.labelKr}
               </button>
             ))}
+          
+          {/* Exclude Full Hospitals Toggle */}
+          <div 
+            className={`flex items-center gap-2 px-3 py-2 rounded-full shadow-md transition-all cursor-pointer flex-shrink-0 ${
+              excludeFullHospitals 
+                ? "bg-red-500 text-white" 
+                : "bg-white text-muted-foreground hover:bg-gray-50"
+            }`}
+            onClick={() => setExcludeFullHospitals(!excludeFullHospitals)}
+          >
+            <EyeOff className="w-4 h-4" />
+            <span className="text-sm font-medium whitespace-nowrap">만실 제외</span>
+            <Switch 
+              checked={excludeFullHospitals} 
+              onCheckedChange={setExcludeFullHospitals}
+              className="data-[state=checked]:bg-white data-[state=checked]:text-red-500 scale-75"
+            />
+          </div>
         </div>
 
         {/* Procedure Availability Filter Chips */}
