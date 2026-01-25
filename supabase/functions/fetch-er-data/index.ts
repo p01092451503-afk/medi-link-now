@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -292,6 +293,57 @@ serve(async (req) => {
     console.log(`- Trauma centers: ${hospitals.filter(h => h.isTraumaCenter).length}`);
     console.log(`- With acceptance data: ${hospitals.filter(h => h.acceptance).length}`);
     console.log(`- With messages: ${hospitals.filter(h => h.alertMessage).length}`);
+
+    // Save bed status to database
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && hospitals.length > 0) {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      
+      // First, get hospital IDs by hpid
+      const hpids = hospitals.map(h => h.hospitalId);
+      const { data: hospitalRecords } = await supabase
+        .from('hospitals')
+        .select('id, hpid')
+        .in('hpid', hpids);
+      
+      if (hospitalRecords && hospitalRecords.length > 0) {
+        const hpidToId = new Map(hospitalRecords.map(h => [h.hpid, h.id]));
+        
+        // Prepare upsert data
+        const statusUpdates = hospitals
+          .filter(h => hpidToId.has(h.hospitalId))
+          .map(h => ({
+            hospital_id: hpidToId.get(h.hospitalId)!,
+            hpid: h.hospitalId,
+            general_beds: h.generalBeds,
+            pediatric_beds: h.pediatricBeds,
+            isolation_beds: h.feverBeds,
+            last_updated: new Date().toISOString(),
+          }));
+        
+        if (statusUpdates.length > 0) {
+          // Delete existing records for these hospital_ids first
+          const hospitalIds = statusUpdates.map(s => s.hospital_id);
+          await supabase
+            .from('hospital_status_cache')
+            .delete()
+            .in('hospital_id', hospitalIds);
+          
+          // Insert new records
+          const { error: upsertError } = await supabase
+            .from('hospital_status_cache')
+            .insert(statusUpdates);
+          
+          if (upsertError) {
+            console.error('Error saving bed status:', upsertError);
+          } else {
+            console.log(`Saved ${statusUpdates.length} bed status records to database`);
+          }
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({ 
