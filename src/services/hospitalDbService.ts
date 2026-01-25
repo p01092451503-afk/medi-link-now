@@ -18,6 +18,7 @@ export interface DbHospital {
   is_trauma_center: boolean | null;
   has_pediatric: boolean | null;
   equipment: string[] | null;
+  emergency_grade: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -53,6 +54,7 @@ function dbToHospital(dbHospital: DbHospital, realtimeData?: {
     isTraumaCenter: dbHospital.is_trauma_center || false,
     acceptance: realtimeData?.acceptance,
     alertMessage: realtimeData?.alertMessage,
+    emergencyGrade: dbHospital.emergency_grade as Hospital['emergencyGrade'] || null,
   };
 }
 

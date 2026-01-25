@@ -186,6 +186,7 @@ export type Database = {
           address: string
           category: string | null
           created_at: string | null
+          emergency_grade: string | null
           entrance_lat: number | null
           entrance_lng: number | null
           equipment: string[] | null
@@ -206,6 +207,7 @@ export type Database = {
           address: string
           category?: string | null
           created_at?: string | null
+          emergency_grade?: string | null
           entrance_lat?: number | null
           entrance_lng?: number | null
           equipment?: string[] | null
@@ -226,6 +228,7 @@ export type Database = {
           address?: string
           category?: string | null
           created_at?: string | null
+          emergency_grade?: string | null
           entrance_lat?: number | null
           entrance_lng?: number | null
           equipment?: string[] | null

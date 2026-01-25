@@ -31,6 +31,8 @@ export interface Hospital {
   isTraumaCenter?: boolean;     // 권역외상센터 여부
   acceptance?: HospitalAcceptance;
   alertMessage?: string;        // Real-time hospital message
+  // Legal emergency medical institution grade (법정 응급의료기관 등급)
+  emergencyGrade?: 'regional_center' | 'local_center' | 'local_institution' | null;
 }
 
 export const hospitals: Hospital[] = [
@@ -1753,12 +1755,19 @@ export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neur
 // Special facility filters
 export type SpecialFilterType = "pharmacy";
 
-// Combined filter type
-export type FilterType = BedFilterType | ProcedureFilterType | SpecialFilterType;
+// Legal emergency medical institution filters (법정 응급의료기관)
+export type LegalGradeFilterType = "legal_only" | "regional_center" | "local_center" | "local_institution";
 
-export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" | "special" }[] = [
+// Combined filter type
+export type FilterType = BedFilterType | ProcedureFilterType | SpecialFilterType | LegalGradeFilterType;
+
+export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" | "special" | "grade" }[] = [
   // Bed availability filters
   { id: "all", label: "All", labelKr: "전체", category: "bed" },
+  { id: "legal_only", label: "Legal Only", labelKr: "법정기관", category: "grade" },
+  { id: "regional_center", label: "Regional Center", labelKr: "권역센터", category: "grade" },
+  { id: "local_center", label: "Local Center", labelKr: "지역센터", category: "grade" },
+  { id: "local_institution", label: "Local Institution", labelKr: "지역기관", category: "grade" },
   { id: "adult", label: "Adult ER", labelKr: "성인 응급", category: "bed" },
   { id: "pediatric", label: "Pediatric ER", labelKr: "소아 응급", category: "bed" },
   { id: "fever", label: "Fever/Infection", labelKr: "열/감염", category: "bed" },
@@ -1810,6 +1819,15 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
     case "trauma":
       // 외상센터 OR 일반 응급실 (외상 대응 가능)
       return hospitals.filter((h) => h.isTraumaCenter === true || h.beds.general > 0);
+    // Legal emergency medical institution filters (법정 응급의료기관)
+    case "legal_only":
+      return hospitals.filter((h) => h.emergencyGrade !== null && h.emergencyGrade !== undefined);
+    case "regional_center":
+      return hospitals.filter((h) => h.emergencyGrade === 'regional_center');
+    case "local_center":
+      return hospitals.filter((h) => h.emergencyGrade === 'local_center');
+    case "local_institution":
+      return hospitals.filter((h) => h.emergencyGrade === 'local_institution');
     default:
       return hospitals;
   }

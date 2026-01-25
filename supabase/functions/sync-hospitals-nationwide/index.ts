@@ -38,6 +38,27 @@ interface HospitalData {
   is_trauma_center: boolean;
   has_pediatric: boolean;
   equipment: string[];
+  emergency_grade: string | null;
+}
+
+// Parse emergency grade from dutyEmclsName field
+function parseEmergencyGrade(dutyEmclsName: string): string | null {
+  if (!dutyEmclsName) return null;
+  
+  // 권역응급의료센터 (Regional Emergency Medical Center)
+  if (dutyEmclsName.includes('권역응급의료센터') || dutyEmclsName.includes('권역')) {
+    return 'regional_center';
+  }
+  // 지역응급의료센터 (Local Emergency Medical Center)
+  if (dutyEmclsName.includes('지역응급의료센터')) {
+    return 'local_center';
+  }
+  // 지역응급의료기관 (Local Emergency Medical Institution)
+  if (dutyEmclsName.includes('지역응급의료기관')) {
+    return 'local_institution';
+  }
+  
+  return null;
 }
 
 // XML parsing helpers
@@ -150,6 +171,8 @@ async function fetchRegionHospitals(
         
         processedHpids.add(hpid);
         
+        const dutyEmclsName = getValue(item, 'dutyEmclsName') || '';
+        
         const hospital: HospitalData = {
           hpid,
           name: listInfo?.name || getValue(item, 'dutyName'),
@@ -157,11 +180,12 @@ async function fetchRegionHospitals(
           phone: listInfo?.phone || getValue(item, 'dutyTel3') || getValue(item, 'dutyTel1') || null,
           lat,
           lng,
-          category: getValue(item, 'dutyEmclsName') || '응급의료기관',
+          category: dutyEmclsName || '응급의료기관',
           region: region.id,
           is_trauma_center: false,
           has_pediatric: getNumValue(item, 'hvec') > 0 || getNumValue(item, 'hv28') > 0,
           equipment: [],
+          emergency_grade: parseEmergencyGrade(dutyEmclsName),
         };
         
         // Parse equipment
@@ -189,6 +213,7 @@ async function fetchRegionHospitals(
         is_trauma_center: false,
         has_pediatric: false,
         equipment: [],
+        emergency_grade: null,
       });
       
       processedHpids.add(hpid);
