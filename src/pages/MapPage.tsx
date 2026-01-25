@@ -375,26 +375,6 @@ const MapPage = () => {
             <span className="text-sm font-medium whitespace-nowrap">만실 제외</span>
           </button>
         </div>
-
-        {/* Procedure Availability Filter Chips */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <span className="px-2 py-2 text-xs font-medium text-muted-foreground whitespace-nowrap">시술:</span>
-          {filterOptions
-            .filter((f) => f.category === "procedure")
-            .map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setActiveFilter(f.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shadow-md transition-all ${
-                  activeFilter === f.id
-                    ? "bg-purple-600 text-white shadow-purple-600/30"
-                    : "bg-white text-muted-foreground hover:bg-gray-50 border border-purple-200"
-                }`}
-              >
-                {f.labelKr}
-              </button>
-            ))}
-        </div>
       </div>
 
       {/* Nearby Fallback Notice with Distance Slider */}
