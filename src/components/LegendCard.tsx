@@ -6,7 +6,7 @@ const LegendCard = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="absolute bottom-4 left-4 z-10 bg-card/95 backdrop-blur-sm rounded-xl p-3 shadow-soft"
+      className="absolute bottom-28 left-4 z-10 bg-card/95 backdrop-blur-sm rounded-xl p-3 shadow-soft"
     >
       <h4 className="text-xs font-semibold text-foreground mb-2">Bed Availability</h4>
       <div className="flex flex-col gap-1.5">
