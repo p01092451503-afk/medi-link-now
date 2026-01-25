@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff, Clock, Building2 } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff, Clock, Building2, Activity } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -577,6 +577,33 @@ const MapPage = () => {
                                 <span className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
                                 {status === 'available' ? '여유' : status === 'limited' ? '혼잡' : '만실'}
                               </span>
+                            </div>
+                            
+                            {/* 혼잡도 표시 */}
+                            <div className={`flex items-center gap-2 p-2.5 rounded-lg ${
+                              status === 'available' ? 'bg-success-light' : 
+                              status === 'limited' ? 'bg-warning/15' : 
+                              'bg-danger-light'
+                            }`}>
+                              <Activity className={`w-4 h-4 ${
+                                status === 'available' ? 'text-success' : 
+                                status === 'limited' ? 'text-warning' : 
+                                'text-danger'
+                              }`} />
+                              <div className="flex-1">
+                                <p className={`text-sm font-semibold ${
+                                  status === 'available' ? 'text-success' : 
+                                  status === 'limited' ? 'text-warning' : 
+                                  'text-danger'
+                                }`}>
+                                  {status === 'available' ? '여유 - 빠른 접수 가능' : 
+                                   status === 'limited' ? '보통 - 대기 예상' : 
+                                   '혼잡 - 장시간 대기 예상'}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  현재 가용 병상: {totalBeds}개
+                                </p>
+                              </div>
                             </div>
                             
                             <div className="grid grid-cols-3 gap-2">
