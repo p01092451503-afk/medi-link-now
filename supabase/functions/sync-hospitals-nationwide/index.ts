@@ -72,18 +72,18 @@ function getNumValue(xml: string, tag: string): number {
   return val ? parseInt(val, 10) || 0 : 0;
 }
 
-// Fetch hospital list info (includes reliable coordinates) using getEgytListInfoInqire
+// Fetch hospital list info (includes reliable coordinates and emergency grade) using getEgytListInfoInqire
 async function fetchHospitalListInfo(
   serviceKey: string,
   region: { code: string; id: string }
-): Promise<Map<string, { lat: number; lng: number; address: string; phone: string; name: string }>> {
-  const infoMap = new Map<string, { lat: number; lng: number; address: string; phone: string; name: string }>();
+): Promise<Map<string, { lat: number; lng: number; address: string; phone: string; name: string; emergencyGrade: string | null }>> {
+  const infoMap = new Map<string, { lat: number; lng: number; address: string; phone: string; name: string; emergencyGrade: string | null }>();
   
   try {
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
     
-    // Use getEgytListInfoInqire which has more reliable coordinate data
+    // Use getEgytListInfoInqire which has more reliable coordinate data and emergency grade info
     const url = `http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire?serviceKey=${encodedKey}&Q0=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=300`;
     
     console.log(`Fetching list info for ${region.code}...`);
@@ -109,9 +109,17 @@ async function fetchHospitalListInfo(
       const address = getValue(item, 'dutyAddr');
       const phone = getValue(item, 'dutyTel1') || getValue(item, 'dutyTel3');
       const name = getValue(item, 'dutyName');
+      const dutyEmclsName = getValue(item, 'dutyEmclsName');
+      
+      // Log emergency grade for debugging
+      if (dutyEmclsName && dutyEmclsName !== '응급의료기관') {
+        console.log(`Found grade: ${dutyEmclsName} for ${name}`);
+      }
+      
+      const emergencyGrade = parseEmergencyGrade(dutyEmclsName);
       
       if (lat && lng && !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-        infoMap.set(hpid, { lat, lng, address, phone, name });
+        infoMap.set(hpid, { lat, lng, address, phone, name, emergencyGrade });
       }
     }
     
@@ -127,7 +135,7 @@ async function fetchHospitalListInfo(
 async function fetchRegionHospitals(
   serviceKey: string,
   region: { code: string; id: string },
-  listInfoMap: Map<string, { lat: number; lng: number; address: string; phone: string; name: string }>
+  listInfoMap: Map<string, { lat: number; lng: number; address: string; phone: string; name: string; emergencyGrade: string | null }>
 ): Promise<HospitalData[]> {
   const hospitals: HospitalData[] = [];
   const processedHpids = new Set<string>();
@@ -156,7 +164,7 @@ async function fetchRegionHospitals(
         const hpid = getValue(item, 'hpid');
         if (!hpid || processedHpids.has(hpid)) continue;
         
-        // Get coordinates from list info API (more reliable)
+        // Get coordinates and emergency grade from list info API (more reliable)
         const listInfo = listInfoMap.get(hpid);
         
         // Use list info coordinates, fallback to realtime API coordinates
@@ -173,6 +181,10 @@ async function fetchRegionHospitals(
         
         const dutyEmclsName = getValue(item, 'dutyEmclsName') || '';
         
+        // Use emergency grade from list API first, fallback to realtime API
+        const emergencyGrade = listInfo?.emergencyGrade ?? parseEmergencyGrade(dutyEmclsName);
+        const category = dutyEmclsName || '응급의료기관';
+        
         const hospital: HospitalData = {
           hpid,
           name: listInfo?.name || getValue(item, 'dutyName'),
@@ -180,12 +192,12 @@ async function fetchRegionHospitals(
           phone: listInfo?.phone || getValue(item, 'dutyTel3') || getValue(item, 'dutyTel1') || null,
           lat,
           lng,
-          category: dutyEmclsName || '응급의료기관',
+          category,
           region: region.id,
           is_trauma_center: false,
           has_pediatric: getNumValue(item, 'hvec') > 0 || getNumValue(item, 'hv28') > 0,
           equipment: [],
-          emergency_grade: parseEmergencyGrade(dutyEmclsName),
+          emergency_grade: emergencyGrade,
         };
         
         // Parse equipment
@@ -213,7 +225,7 @@ async function fetchRegionHospitals(
         is_trauma_center: false,
         has_pediatric: false,
         equipment: [],
-        emergency_grade: null,
+        emergency_grade: info.emergencyGrade,
       });
       
       processedHpids.add(hpid);
