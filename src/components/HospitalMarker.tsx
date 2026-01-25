@@ -40,20 +40,62 @@ const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" 
   return "available";
 };
 
+// 등급별 마커 색상 정의
+const getGradeColors = (emergencyGrade?: string | null) => {
+  switch (emergencyGrade) {
+    case 'regional_center': // 권역응급의료센터 - 빨간색 계열
+      return {
+        available: { bg: "#DC2626", border: "#B91C1C", text: "#FFFFFF" },
+        limited: { bg: "#DC2626", border: "#B91C1C", text: "#FFFFFF" },
+        unavailable: { bg: "#991B1B", border: "#7F1D1D", text: "#FFFFFF" },
+      };
+    case 'local_center': // 지역응급의료센터 - 주황색 계열
+      return {
+        available: { bg: "#F97316", border: "#EA580C", text: "#FFFFFF" },
+        limited: { bg: "#F97316", border: "#EA580C", text: "#FFFFFF" },
+        unavailable: { bg: "#C2410C", border: "#9A3412", text: "#FFFFFF" },
+      };
+    case 'local_institution': // 지역응급의료기관 - 파란색 계열
+      return {
+        available: { bg: "#2563EB", border: "#1D4ED8", text: "#FFFFFF" },
+        limited: { bg: "#2563EB", border: "#1D4ED8", text: "#FFFFFF" },
+        unavailable: { bg: "#1E40AF", border: "#1E3A8A", text: "#FFFFFF" },
+      };
+    default: // 등급 없음 - 기존 상태 기반 색상
+      return {
+        available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
+        limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
+        unavailable: { bg: "#EF4444", border: "#DC2626", text: "#FFFFFF" },
+      };
+  }
+};
+
+// 등급 라벨 반환
+const getGradeLabel = (emergencyGrade?: string | null): string => {
+  switch (emergencyGrade) {
+    case 'regional_center':
+      return '권역';
+    case 'local_center':
+      return '지역센터';
+    case 'local_institution':
+      return '지역기관';
+    default:
+      return '';
+  }
+};
+
 const createMarkerIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
   hasPediatric: boolean,
   isTraumaCenter?: boolean,
-  isPediatricFilter?: boolean
+  isPediatricFilter?: boolean,
+  emergencyGrade?: string | null
 ) => {
-  const colors = {
-    available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
-    limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
-    unavailable: { bg: "#EF4444", border: "#DC2626", text: "#FFFFFF" },
-  };
-
+  const colors = getGradeColors(emergencyGrade);
   const color = colors[status];
+  const gradeLabel = getGradeLabel(emergencyGrade);
+  
   const pulseAnimation = isPediatricFilter ? "animation: pediatric-pulse 1.5s ease-in-out infinite;" : "";
   const childBadge = hasPediatric
     ? `<div style="
@@ -112,6 +154,23 @@ const createMarkerIcon = (
         </svg>
       </div>`
     : "";
+  
+  // 등급 표시 뱃지 (왼쪽 하단)
+  const gradeBadge = gradeLabel 
+    ? `<div style="
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.75);
+        color: white;
+        font-size: 9px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+      ">${gradeLabel}</div>`
+    : "";
 
   return L.divIcon({
     className: "custom-marker",
@@ -165,9 +224,10 @@ const createMarkerIcon = (
           border-top: 10px solid ${color.border};
           margin-top: -2px;
         "></div>
+        ${gradeBadge}
       </div>
     `,
-    iconSize: [44, 52],
+    iconSize: [44, 62],
     iconAnchor: [22, 52],
     popupAnchor: [0, -52],
   });
@@ -178,7 +238,26 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
   const status = getMarkerStatus(displayBeds);
   const hasPediatric = hospital.beds.pediatric > 0;
   const isPediatricFilter = activeFilter === "pediatric";
-  const icon = createMarkerIcon(status, displayBeds, hasPediatric, hospital.isTraumaCenter, isPediatricFilter);
+  const icon = createMarkerIcon(
+    status, 
+    displayBeds, 
+    hasPediatric, 
+    hospital.isTraumaCenter, 
+    isPediatricFilter,
+    hospital.emergencyGrade
+  );
+
+  // 등급 한글명 표시
+  const getGradeKoreanName = (grade?: string | null): string => {
+    switch (grade) {
+      case 'regional_center': return '권역응급의료센터';
+      case 'local_center': return '지역응급의료센터';
+      case 'local_institution': return '지역응급의료기관';
+      default: return '';
+    }
+  };
+
+  const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
 
   return (
     <Marker
@@ -196,6 +275,9 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
       >
         <div className="flex flex-col items-center gap-0.5">
           <span className="font-semibold">{hospital.nameKr}</span>
+          {gradeKoreanName && (
+            <span className="text-xs text-muted-foreground">{gradeKoreanName}</span>
+          )}
           {hospital.distance !== undefined && (
             <span className="text-xs text-primary font-medium">{hospital.distance.toFixed(1)}km</span>
           )}
@@ -207,6 +289,9 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
             <strong className="text-base">{hospital.nameKr}</strong>
             {hasPediatric && <span title="아이 진료 가능">👶</span>}
           </div>
+          {gradeKoreanName && (
+            <span className="text-xs text-blue-600 font-medium block mb-1">{gradeKoreanName}</span>
+          )}
           <span className="text-xs text-gray-500 block mb-2">{hospital.category}</span>
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
             <div className={`p-1.5 rounded ${activeFilter === "adult" || activeFilter === "all" || activeFilter === "ct" ? "bg-blue-50" : ""}`}>
