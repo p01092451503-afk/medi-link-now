@@ -1771,7 +1771,7 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "adult", label: "Adult ER", labelKr: "성인 응급", category: "bed" },
   { id: "pediatric", label: "Pediatric ER", labelKr: "소아 응급", category: "bed" },
   { id: "fever", label: "Fever/Infection", labelKr: "열/감염", category: "bed" },
-  { id: "ct", label: "CT Available", labelKr: "CT 가능", category: "bed" },
+  
   // Procedure availability filters
   { id: "heart", label: "Heart Attack", labelKr: "심근경색", category: "procedure" },
   { id: "brainBleed", label: "Brain Hemorrhage", labelKr: "뇌출혈", category: "procedure" },
