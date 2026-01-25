@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff, Clock, Building2 } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -520,40 +521,109 @@ const MapPage = () => {
                     const statusBg = status === 'available' ? 'bg-success-light border-success/20' : status === 'limited' ? 'bg-warning/15 border-warning/30' : 'bg-danger-light border-danger/20';
                     
                     return (
-                      <motion.button
-                        key={hospital.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onClick={() => handleHospitalClick(hospital)}
-                        className={`flex-shrink-0 snap-start w-[200px] ${statusBg} border rounded-2xl p-3 shadow-lg hover:shadow-xl transition-all text-left`}
-                      >
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-1.5">
-                            <div className={`w-2.5 h-2.5 rounded-full ${statusColor} animate-pulse`} />
-                            <span className="text-xs font-semibold text-muted-foreground">
-                              {hospital.distance?.toFixed(1)}km
-                            </span>
+                      <HoverCard key={hospital.id} openDelay={200} closeDelay={100}>
+                        <HoverCardTrigger asChild>
+                          <motion.button
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            onClick={() => handleHospitalClick(hospital)}
+                            className={`flex-shrink-0 snap-start w-[200px] ${statusBg} border rounded-2xl p-3 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-left`}
+                          >
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div className="flex items-center gap-1.5">
+                                <div className={`w-2.5 h-2.5 rounded-full ${statusColor} animate-pulse`} />
+                                <span className="text-xs font-semibold text-muted-foreground">
+                                  {hospital.distance?.toFixed(1)}km
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1 px-2 py-0.5 bg-white/80 rounded-full">
+                                <Stethoscope className="w-3 h-3 text-primary" />
+                                <span className="text-xs font-bold text-primary">{totalBeds}</span>
+                              </div>
+                            </div>
+                            <h4 className="text-sm font-bold text-foreground truncate mb-1">
+                              {hospital.nameKr}
+                            </h4>
+                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                              <span className="flex items-center gap-0.5">
+                                <Stethoscope className="w-3 h-3" /> {normalizedBeds.general}
+                              </span>
+                              <span className="flex items-center gap-0.5">
+                                <Baby className="w-3 h-3" /> {normalizedBeds.pediatric}
+                              </span>
+                              <span className="flex items-center gap-0.5">
+                                <Thermometer className="w-3 h-3" /> {normalizedBeds.fever}
+                              </span>
+                            </div>
+                          </motion.button>
+                        </HoverCardTrigger>
+                        <HoverCardContent 
+                          side="top" 
+                          align="center" 
+                          className="w-72 p-4 z-[1100]"
+                          sideOffset={8}
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h4 className="font-bold text-foreground">{hospital.nameKr}</h4>
+                                <p className="text-xs text-muted-foreground">{hospital.name}</p>
+                              </div>
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                status === 'available' ? 'bg-success-light text-success' : 
+                                status === 'limited' ? 'bg-warning/15 text-warning' : 
+                                'bg-danger-light text-danger'
+                              }`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
+                                {status === 'available' ? '여유' : status === 'limited' ? '혼잡' : '만실'}
+                              </span>
+                            </div>
+                            
+                            <div className="grid grid-cols-3 gap-2">
+                              <div className="flex flex-col items-center p-2 bg-muted/50 rounded-lg">
+                                <Stethoscope className="w-4 h-4 text-primary mb-1" />
+                                <span className="text-sm font-bold text-foreground">{normalizedBeds.general}</span>
+                                <span className="text-[10px] text-muted-foreground">성인</span>
+                              </div>
+                              <div className="flex flex-col items-center p-2 bg-muted/50 rounded-lg">
+                                <Baby className="w-4 h-4 text-primary mb-1" />
+                                <span className="text-sm font-bold text-foreground">{normalizedBeds.pediatric}</span>
+                                <span className="text-[10px] text-muted-foreground">소아</span>
+                              </div>
+                              <div className="flex flex-col items-center p-2 bg-muted/50 rounded-lg">
+                                <Thermometer className="w-4 h-4 text-primary mb-1" />
+                                <span className="text-sm font-bold text-foreground">{normalizedBeds.fever}</span>
+                                <span className="text-[10px] text-muted-foreground">열/감염</span>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-1.5 text-xs">
+                              <div className="flex items-center gap-2 text-muted-foreground">
+                                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span className="line-clamp-1">{hospital.address}</span>
+                              </div>
+                              {hospital.phone && (
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                  <Phone className="w-3.5 h-3.5 flex-shrink-0" />
+                                  <span>{hospital.phone}</span>
+                                </div>
+                              )}
+                              {hospital.category && (
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                  <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
+                                  <span>{hospital.category}</span>
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div className="pt-2 border-t border-border">
+                              <p className="text-xs text-center text-muted-foreground">
+                                클릭하여 상세정보 보기
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1 px-2 py-0.5 bg-white/80 rounded-full">
-                            <Stethoscope className="w-3 h-3 text-primary" />
-                            <span className="text-xs font-bold text-primary">{totalBeds}</span>
-                          </div>
-                        </div>
-                        <h4 className="text-sm font-bold text-foreground truncate mb-1">
-                          {hospital.nameKr}
-                        </h4>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                          <span className="flex items-center gap-0.5">
-                            <Stethoscope className="w-3 h-3" /> {normalizedBeds.general}
-                          </span>
-                          <span className="flex items-center gap-0.5">
-                            <Baby className="w-3 h-3" /> {normalizedBeds.pediatric}
-                          </span>
-                          <span className="flex items-center gap-0.5">
-                            <Thermometer className="w-3 h-3" /> {normalizedBeds.fever}
-                          </span>
-                        </div>
-                      </motion.button>
+                        </HoverCardContent>
+                      </HoverCard>
                     );
                   })}
                 </div>
