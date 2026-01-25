@@ -873,70 +873,54 @@ const MapPage = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 mb-5">
-                  {/**
-                   * 만실(병원 전체 0)일 때만 빨강.
-                   * 개별 병상이 0이거나 음수(데이터 이상)는 0으로 표시하고, 만실이 아니면 회색으로 구분.
-                   */}
-                  {(() => {
-                    const selectedStatus = getHospitalStatus(selectedHospital);
-                    const isHospitalFull = selectedStatus === "unavailable";
+                {(() => {
+                  const selectedStatus = getHospitalStatus(selectedHospital);
+                  const isHospitalFull = selectedStatus === "unavailable";
 
-                    const getTileClasses = (rawCount: number) => {
-                      const displayCount = Math.max(0, rawCount);
-                      if (displayCount > 0) {
-                        return {
-                          displayCount,
-                          bg: "bg-success-light",
-                          text: "text-success",
-                        };
-                      }
-                      if (isHospitalFull) {
-                        return {
-                          displayCount,
-                          bg: "bg-danger-light",
-                          text: "text-danger",
-                        };
-                      }
-                      return {
-                        displayCount,
-                        bg: "bg-muted",
-                        text: "text-muted-foreground",
-                      };
-                    };
+                  const getBedTileStyles = (rawCount: number) => {
+                    const displayCount = Math.max(0, rawCount);
+                    if (displayCount > 0) {
+                      return { displayCount, bg: "bg-success-light", text: "text-success" };
+                    }
+                    if (isHospitalFull) {
+                      return { displayCount, bg: "bg-danger-light", text: "text-danger" };
+                    }
+                    return { displayCount, bg: "bg-muted", text: "text-muted-foreground" };
+                  };
 
-                    return (
-                  {[
+                  const bedItems = [
                     { label: "성인", count: selectedHospital.beds.general, Icon: Stethoscope, showInfo: false },
                     { label: "소아", count: selectedHospital.beds.pediatric, Icon: Baby, showInfo: false },
                     { label: "열/감염", count: selectedHospital.beds.fever, Icon: Thermometer, showInfo: true },
-                  ].map(({ label, count, Icon, showInfo }) => (
-                    (() => {
-                      const { displayCount, bg, text } = getTileClasses(count);
-                      return (
-                    <div
-                      key={label}
-                      className={`flex flex-col items-center p-3 rounded-xl ${bg}`}
-                    >
-                      <Icon className={`w-5 h-5 mb-1 ${text}`} />
-                      <span className={`text-xl font-bold ${text}`}>
-                        {displayCount}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-muted-foreground">{label}</span>
-                        {showInfo && (
-                          <span title="고열(38℃+) 및 감염 환자 전용">
-                            <Info className="w-3 h-3 text-muted-foreground" />
-                          </span>
-                        )}
-                      </div>
+                  ];
+
+                  return (
+                    <div className="grid grid-cols-3 gap-3 mb-5">
+                      {bedItems.map(({ label, count, Icon, showInfo }) => {
+                        const { displayCount, bg, text } = getBedTileStyles(count);
+                        return (
+                          <div
+                            key={label}
+                            className={`flex flex-col items-center p-3 rounded-xl ${bg}`}
+                          >
+                            <Icon className={`w-5 h-5 mb-1 ${text}`} />
+                            <span className={`text-xl font-bold ${text}`}>
+                              {displayCount}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-muted-foreground">{label}</span>
+                              {showInfo && (
+                                <span title="고열(38℃+) 및 감염 환자 전용">
+                                  <Info className="w-3 h-3 text-muted-foreground" />
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                      );
-                    })()
-                  ))}
-                    );
-                  })()}
-                </div>
+                  );
+                })()}
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {selectedHospital.equipment.map((eq) => (
