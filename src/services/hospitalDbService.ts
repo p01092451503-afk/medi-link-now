@@ -148,6 +148,37 @@ export async function fetchAndSyncFromApi(city?: string): Promise<{
 }
 
 /**
+ * Sync hospitals nationwide from public API (all regions)
+ */
+export async function syncNationwideHospitals(regions?: string[]): Promise<{
+  success: boolean;
+  stats?: {
+    regionsProcessed: number;
+    hospitalsFound: number;
+    hospitalsInserted: number;
+    traumaCenters: number;
+    durationMs: number;
+  };
+  error?: string;
+}> {
+  try {
+    const { data, error } = await supabase.functions.invoke('sync-hospitals-nationwide', {
+      body: regions ? { regions } : {},
+    });
+
+    if (error) {
+      console.error('Error syncing nationwide:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, stats: data.stats };
+  } catch (err) {
+    console.error('Error in syncNationwideHospitals:', err);
+    return { success: false, error: 'Nationwide sync failed' };
+  }
+}
+
+/**
  * Get hospital count from database
  */
 export async function getHospitalCount(): Promise<number> {

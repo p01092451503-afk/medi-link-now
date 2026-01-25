@@ -60,7 +60,10 @@ async function fetchRegionHospitals(
   
   try {
     const baseUrl = 'http://apis.data.go.kr/B552657/ErmctInfoInqireService';
-    const url = `${baseUrl}/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${serviceKey}&STAGE1=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=200`;
+    // Handle API key encoding - check if already encoded
+    const isAlreadyEncoded = serviceKey.includes('%');
+    const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
+    const url = `${baseUrl}/getEmrrmRltmUsefulSckbdInfoInqire?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(region.code)}&pageNo=1&numOfRows=200`;
     
     console.log(`Fetching hospitals for ${region.code}...`);
     
@@ -82,19 +85,20 @@ async function fetchRegionHospitals(
       const hpid = getValue(item, 'hpid');
       if (!hpid) continue;
       
-      const lat = parseFloat(getValue(item, 'wgs84Lat'));
-      const lng = parseFloat(getValue(item, 'wgs84Lon'));
+      const lat = parseFloat(getValue(item, 'wgs84Lat')) || 0;
+      const lng = parseFloat(getValue(item, 'wgs84Lon')) || 0;
       
-      // Skip invalid coordinates
-      if (!lat || !lng || lat === 0 || lng === 0) continue;
+      // Use default Seoul coordinates if missing (will be updated later)
+      const finalLat = lat !== 0 ? lat : 37.5665;
+      const finalLng = lng !== 0 ? lng : 126.978;
       
       const hospital: HospitalData = {
         hpid,
         name: getValue(item, 'dutyName'),
         address: getValue(item, 'dutyAddr'),
         phone: getValue(item, 'dutyTel3') || getValue(item, 'dutyTel1') || null,
-        lat,
-        lng,
+        lat: finalLat,
+        lng: finalLng,
         category: getValue(item, 'dutyEmclsName') || '응급의료기관',
         region: region.id,
         is_trauma_center: false,
@@ -122,7 +126,10 @@ async function fetchTraumaCenters(serviceKey: string): Promise<Set<string>> {
   const traumaCenters = new Set<string>();
   
   try {
-    const url = `http://apis.data.go.kr/B552657/ErmctInfoInqireService/getStrmListInfoInqire?serviceKey=${serviceKey}&pageNo=1&numOfRows=100`;
+    // Handle API key encoding
+    const isAlreadyEncoded = serviceKey.includes('%');
+    const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
+    const url = `http://apis.data.go.kr/B552657/ErmctInfoInqireService/getStrmListInfoInqire?serviceKey=${encodedKey}&pageNo=1&numOfRows=100`;
     
     const response = await fetch(url);
     if (!response.ok) return traumaCenters;
