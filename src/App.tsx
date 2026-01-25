@@ -10,6 +10,7 @@ import MapPage from "./pages/MapPage";
 import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
 import FamilyPage from "./pages/FamilyPage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/family" element={<FamilyPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/driver" element={<DriverDashboard />} />
+          <Route path="/admin" element={<AdminPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
