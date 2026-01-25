@@ -19,6 +19,7 @@ interface DbHospital {
   is_trauma_center: boolean | null;
   has_pediatric: boolean | null;
   equipment: string[] | null;
+  emergency_grade: string | null;
 }
 
 interface HospitalStatusCache {
@@ -51,6 +52,7 @@ function dbToHospital(dbHospital: DbHospital): Hospital {
     equipment: dbHospital.equipment || [],
     region: dbHospital.region,
     isTraumaCenter: dbHospital.is_trauma_center || false,
+    emergencyGrade: dbHospital.emergency_grade as Hospital['emergencyGrade'] || null,
   };
 }
 
