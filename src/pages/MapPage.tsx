@@ -578,6 +578,23 @@ const MapPage = () => {
                   </div>
                   <span className="text-xs text-muted-foreground">만실 (0병상)</span>
                 </div>
+                
+                {/* Badge Legend Section */}
+                <div className="border-t border-gray-100 pt-2 mt-1">
+                  <p className="text-[10px] text-muted-foreground font-medium mb-1.5">병원 특수 표시</p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-sm">
+                      <span className="text-white text-[10px] font-bold">+</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">권역외상센터</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-300 to-yellow-500 flex items-center justify-center shadow-sm">
+                      <span className="text-[10px]">👶</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">소아 진료 가능</span>
+                  </div>
+                </div>
               </div>
               <p className="text-[10px] text-primary mt-2 pt-2 border-t border-gray-100">
                 📍 위치를 켜면 주변 현황 확인
