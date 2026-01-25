@@ -70,75 +70,63 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="w-full max-w-sm mb-6"
+          className="w-full max-w-xs mb-5"
         >
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-blue-600 px-4 py-3 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white animate-pulse" />
+            <div className="bg-gradient-to-r from-primary to-blue-600 px-3 py-2 flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                <Activity className="w-3 h-3 text-white animate-pulse" />
               </div>
               <div className="flex-1">
-                <span className="text-sm font-bold text-white">실시간 전국 현황</span>
-                <p className="text-[10px] text-white/70">
-                  {isLoading ? "데이터 로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
+                <span className="text-xs font-bold text-white">실시간 전국 현황</span>
+                <p className="text-[9px] text-white/70">
+                  {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
                 </p>
               </div>
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             </div>
             
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-3 p-4">
-              {/* Total Hospitals */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Hospital className="w-4 h-4 text-primary" />
-                  </div>
+            <div className="grid grid-cols-4 gap-1 p-2">
+              <div className="bg-white rounded-xl p-2 text-center">
+                <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-1">
+                  <Hospital className="w-3 h-3 text-primary" />
                 </div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-lg font-bold text-foreground leading-none">
                   {stats?.totalHospitals || "---"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">전국 응급실</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
               </div>
               
-              {/* Available Beds */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center">
-                    <Bed className="w-4 h-4 text-green-600" />
-                  </div>
+              <div className="bg-white rounded-xl p-2 text-center">
+                <div className="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
+                  <Bed className="w-3 h-3 text-green-600" />
                 </div>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-lg font-bold text-green-600 leading-none">
                   {stats?.totalBeds || "---"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">가용 병상</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
               </div>
               
-              {/* Available Hospitals */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-blue-600" />
-                  </div>
+              <div className="bg-white rounded-xl p-2 text-center">
+                <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
+                  <TrendingUp className="w-3 h-3 text-blue-600" />
                 </div>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-lg font-bold text-blue-600 leading-none">
                   {stats?.availableHospitals || "---"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">여유 병원</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5">여유</p>
               </div>
               
-              {/* Pediatric Beds */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-pink-100 flex items-center justify-center">
-                    <Users className="w-4 h-4 text-pink-600" />
-                  </div>
+              <div className="bg-white rounded-xl p-2 text-center">
+                <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
+                  <Users className="w-3 h-3 text-pink-600" />
                 </div>
-                <p className="text-2xl font-bold text-pink-600">
+                <p className="text-lg font-bold text-pink-600 leading-none">
                   {stats?.pediatricBeds || "---"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">소아 병상</p>
+                <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
               </div>
             </div>
           </div>
