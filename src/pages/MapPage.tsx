@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,6 +55,7 @@ const MapPage = () => {
   const [selectedDriver, setSelectedDriver] = useState<DriverPresence | null>(null);
   const [distanceRange, setDistanceRange] = useState(10); // km
   const [showNearbyNotice, setShowNearbyNotice] = useState(false);
+  const [excludeFullHospitals, setExcludeFullHospitals] = useState(false);
 
   // Fetch holiday pharmacies when filter is set to 'pharmacy'
 
@@ -75,6 +76,14 @@ const MapPage = () => {
       result = result.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
     }
     
+    // Exclude full hospitals (total beds = 0)
+    if (excludeFullHospitals) {
+      result = result.filter((h) => {
+        const totalBeds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
+        return totalBeds > 0;
+      });
+    }
+    
     // If no hospitals found in region but user location is available,
     // include hospitals within distanceRange regardless of region
     if (result.length === 0 && userLocation && activeRegion !== "all") {
@@ -82,6 +91,13 @@ const MapPage = () => {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         nearbyResult = nearbyResult.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
+      }
+      // Also apply exclude full filter to nearby results
+      if (excludeFullHospitals) {
+        nearbyResult = nearbyResult.filter((h) => {
+          const totalBeds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
+          return totalBeds > 0;
+        });
       }
       nearbyResult = nearbyResult
         .map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }))
@@ -95,7 +111,7 @@ const MapPage = () => {
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
     return { filteredHospitals: result, isShowingNearbyFallback: false };
-  }, [activeFilter, activeRegion, searchQuery, userLocation, hospitalData, distanceRange]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, distanceRange]);
 
   // Auto-hide nearby notice after 5 seconds
   useEffect(() => {
@@ -316,8 +332,8 @@ const MapPage = () => {
           hospitalCount={filteredHospitals.length}
         />
 
-        {/* Bed Type Filter Chips + Special Filters (요양병원) */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {/* Bed Type Filter Chips + Special Filters (요양병원) + Exclude Full Toggle */}
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide items-center">
           {filterOptions
             .filter((f) => f.category === "bed" || f.category === "special")
             .map((f) => (
@@ -341,6 +357,22 @@ const MapPage = () => {
                 {f.labelKr}
               </button>
             ))}
+          
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300 flex-shrink-0" />
+          
+          {/* Exclude Full Hospitals Toggle */}
+          <button
+            onClick={() => setExcludeFullHospitals(!excludeFullHospitals)}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-full shadow-md transition-all flex-shrink-0 ${
+              excludeFullHospitals 
+                ? "bg-red-500 text-white shadow-red-500/30" 
+                : "bg-white text-muted-foreground hover:bg-gray-50 border border-red-200"
+            }`}
+          >
+            <EyeOff className="w-4 h-4" />
+            <span className="text-sm font-medium whitespace-nowrap">만실 제외</span>
+          </button>
         </div>
 
         {/* Procedure Availability Filter Chips */}
