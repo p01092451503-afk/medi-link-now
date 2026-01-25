@@ -60,7 +60,7 @@ export const useRealtimeHospitals = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const isMounted = useRef(true);
 
-  // Fetch hospitals from database and merge with bed status
+  // Fetch hospitals - merge DB data with static data for fallback
   const fetchHospitalData = useCallback(async () => {
     if (!isMounted.current) return;
     
@@ -72,14 +72,44 @@ export const useRealtimeHospitals = () => {
         .from('hospitals')
         .select('*');
 
-      let baseHospitals: Hospital[];
+      // Start with static hospitals
+      let mergedHospitals = [...staticHospitals];
       
-      if (dbError || !dbHospitals || dbHospitals.length === 0) {
-        console.log('Using static hospitals data');
-        baseHospitals = staticHospitals;
-      } else {
+      // If we have DB hospitals, merge them
+      if (!dbError && dbHospitals && dbHospitals.length > 0) {
         console.log(`Fetched ${dbHospitals.length} hospitals from database`);
-        baseHospitals = dbHospitals.map((h: DbHospital) => dbToHospital(h));
+        
+        const dbConverted = dbHospitals.map((h: DbHospital) => dbToHospital(h));
+        
+        // Create a map of existing hospitals by name for matching
+        const staticByName = new Map(staticHospitals.map(h => [h.nameKr, h]));
+        const dbByName = new Map(dbConverted.map(h => [h.nameKr, h]));
+        
+        // Merge: use DB data but supplement with static data if coordinates are missing
+        mergedHospitals = dbConverted.map(dbHosp => {
+          const staticMatch = staticByName.get(dbHosp.nameKr);
+          
+          // If DB hospital has invalid coordinates, use static if available
+          if ((!dbHosp.lat || !dbHosp.lng || dbHosp.lat === 37.5665) && staticMatch) {
+            return {
+              ...dbHosp,
+              lat: staticMatch.lat,
+              lng: staticMatch.lng,
+              entrance_lat: staticMatch.entrance_lat,
+              entrance_lng: staticMatch.entrance_lng,
+            };
+          }
+          return dbHosp;
+        });
+        
+        // Add static hospitals that aren't in DB
+        staticHospitals.forEach(staticHosp => {
+          if (!dbByName.has(staticHosp.nameKr)) {
+            mergedHospitals.push(staticHosp);
+          }
+        });
+        
+        console.log(`Merged total: ${mergedHospitals.length} hospitals`);
       }
 
       // Fetch bed status
@@ -93,7 +123,7 @@ export const useRealtimeHospitals = () => {
         const statusMap = new Map<number, HospitalStatusCache>();
         statusData.forEach((s: HospitalStatusCache) => statusMap.set(s.hospital_id, s));
 
-        const merged = baseHospitals.map(hospital => {
+        const withBedStatus = mergedHospitals.map(hospital => {
           const status = statusMap.get(hospital.id);
           if (status) {
             return {
@@ -108,9 +138,9 @@ export const useRealtimeHospitals = () => {
           return hospital;
         });
 
-        setHospitals(merged);
+        setHospitals(withBedStatus);
       } else {
-        setHospitals(baseHospitals);
+        setHospitals(mergedHospitals);
       }
       
       setLastUpdated(new Date());
