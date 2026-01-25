@@ -740,8 +740,8 @@ const MapPage = () => {
                       fever: Math.max(0, hospital.beds.fever),
                     };
                     const totalBeds = normalizedBeds.general + normalizedBeds.pediatric + normalizedBeds.fever;
-                    const statusColor = status === 'available' ? 'bg-green-500' : status === 'limited' ? 'bg-yellow-500' : 'bg-red-500';
-                    const statusBg = status === 'available' ? 'bg-green-50 border-green-200' : status === 'limited' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
+                    const statusColor = status === 'available' ? 'bg-success' : status === 'limited' ? 'bg-warning' : 'bg-danger';
+                    const statusBg = status === 'available' ? 'bg-success-light border-success/20' : status === 'limited' ? 'bg-warning/15 border-warning/30' : 'bg-danger-light border-danger/20';
                     
                     return (
                       <motion.button
@@ -827,30 +827,35 @@ const MapPage = () => {
               <div className="px-5 pb-8">
                 <div className="flex justify-between items-start mb-4">
                   <div>
+                      {(() => {
+                        const selectedStatus = getHospitalStatus(selectedHospital);
+                        return (
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold mb-2 ${
-                        getHospitalStatus(selectedHospital) === "unavailable"
-                          ? "bg-red-100 text-red-600"
-                          : getHospitalStatus(selectedHospital) === "limited"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-green-100 text-green-600"
+                          selectedStatus === "unavailable"
+                            ? "bg-danger-light text-danger"
+                            : selectedStatus === "limited"
+                            ? "bg-warning/15 text-warning"
+                            : "bg-success-light text-success"
                       }`}
                     >
                       <span
                         className={`w-2 h-2 rounded-full animate-pulse ${
-                          getHospitalStatus(selectedHospital) === "unavailable"
-                            ? "bg-red-500"
-                            : getHospitalStatus(selectedHospital) === "limited"
-                            ? "bg-yellow-500"
-                            : "bg-green-500"
+                            selectedStatus === "unavailable"
+                              ? "bg-danger"
+                              : selectedStatus === "limited"
+                              ? "bg-warning"
+                              : "bg-success"
                         }`}
                       />
-                      {getHospitalStatus(selectedHospital) === "unavailable"
+                        {selectedStatus === "unavailable"
                         ? "만실"
-                        : getHospitalStatus(selectedHospital) === "limited"
+                          : selectedStatus === "limited"
                         ? "혼잡"
                         : "여유"}
                     </span>
+                        );
+                      })()}
                     <h2 className="text-xl font-bold text-foreground">{selectedHospital.nameKr}</h2>
                     <p className="text-sm text-muted-foreground">{selectedHospital.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">{selectedHospital.category}</p>
@@ -869,20 +874,53 @@ const MapPage = () => {
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 mb-5">
+                  {/**
+                   * 만실(병원 전체 0)일 때만 빨강.
+                   * 개별 병상이 0이거나 음수(데이터 이상)는 0으로 표시하고, 만실이 아니면 회색으로 구분.
+                   */}
+                  {(() => {
+                    const selectedStatus = getHospitalStatus(selectedHospital);
+                    const isHospitalFull = selectedStatus === "unavailable";
+
+                    const getTileClasses = (rawCount: number) => {
+                      const displayCount = Math.max(0, rawCount);
+                      if (displayCount > 0) {
+                        return {
+                          displayCount,
+                          bg: "bg-success-light",
+                          text: "text-success",
+                        };
+                      }
+                      if (isHospitalFull) {
+                        return {
+                          displayCount,
+                          bg: "bg-danger-light",
+                          text: "text-danger",
+                        };
+                      }
+                      return {
+                        displayCount,
+                        bg: "bg-muted",
+                        text: "text-muted-foreground",
+                      };
+                    };
+
+                    return (
                   {[
                     { label: "성인", count: selectedHospital.beds.general, Icon: Stethoscope, showInfo: false },
                     { label: "소아", count: selectedHospital.beds.pediatric, Icon: Baby, showInfo: false },
                     { label: "열/감염", count: selectedHospital.beds.fever, Icon: Thermometer, showInfo: true },
                   ].map(({ label, count, Icon, showInfo }) => (
+                    (() => {
+                      const { displayCount, bg, text } = getTileClasses(count);
+                      return (
                     <div
                       key={label}
-                      className={`flex flex-col items-center p-3 rounded-xl ${
-                        count > 0 ? "bg-green-50" : "bg-red-50"
-                      }`}
+                      className={`flex flex-col items-center p-3 rounded-xl ${bg}`}
                     >
-                      <Icon className={`w-5 h-5 mb-1 ${count > 0 ? "text-green-600" : "text-red-600"}`} />
-                      <span className={`text-xl font-bold ${count > 0 ? "text-green-600" : "text-red-600"}`}>
-                        {count}
+                      <Icon className={`w-5 h-5 mb-1 ${text}`} />
+                      <span className={`text-xl font-bold ${text}`}>
+                        {displayCount}
                       </span>
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-muted-foreground">{label}</span>
@@ -893,7 +931,11 @@ const MapPage = () => {
                         )}
                       </div>
                     </div>
+                      );
+                    })()
                   ))}
+                    );
+                  })()}
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">
