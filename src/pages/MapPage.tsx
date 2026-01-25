@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff, Clock, Building2, Activity } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Heart, Search, MapPin, SlidersHorizontal, ChevronUp, ChevronDown, EyeOff, Clock, Building2, Activity, Plus, Minus } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -267,6 +267,24 @@ const MapPage = () => {
         onCallDriver={handleCallDriver}
         holidayPharmacies={isPharmacyFilter ? holidayPharmacies : []}
       />
+
+      {/* Zoom Controls */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000] flex flex-col gap-1">
+        <button
+          onClick={() => setMapZoom(prev => Math.min(prev + 1, 18))}
+          className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100"
+          aria-label="확대"
+        >
+          <Plus className="w-5 h-5 text-gray-700" />
+        </button>
+        <button
+          onClick={() => setMapZoom(prev => Math.max(prev - 1, 5))}
+          className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100"
+          aria-label="축소"
+        >
+          <Minus className="w-5 h-5 text-gray-700" />
+        </button>
+      </div>
 
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
