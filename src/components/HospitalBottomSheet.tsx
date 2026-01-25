@@ -167,7 +167,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            transition={{ type: "spring", damping: 30, stiffness: 500 }}
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
           >
             {/* Handle */}
