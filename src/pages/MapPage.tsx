@@ -684,6 +684,57 @@ const MapPage = () => {
       )}
 
 
+      {/* Nearby Hospitals Horizontal Cards - shown when user location is available */}
+      {userLocation && nearbyHospitals.length > 0 && !selectedHospital && (
+        <div className="fixed bottom-20 left-0 right-0 z-[999] px-4">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+            {nearbyHospitals.map((hospital) => {
+              const status = getHospitalStatus(hospital);
+              const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
+              const statusColor = status === 'available' ? 'bg-green-500' : status === 'limited' ? 'bg-yellow-500' : 'bg-red-500';
+              const statusBg = status === 'available' ? 'bg-green-50 border-green-200' : status === 'limited' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
+              
+              return (
+                <motion.button
+                  key={hospital.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onClick={() => handleHospitalClick(hospital)}
+                  className={`flex-shrink-0 snap-start w-[200px] ${statusBg} border rounded-2xl p-3 shadow-lg hover:shadow-xl transition-all text-left`}
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-2.5 h-2.5 rounded-full ${statusColor} animate-pulse`} />
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        {hospital.distance?.toFixed(1)}km
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 px-2 py-0.5 bg-white/80 rounded-full">
+                      <Stethoscope className="w-3 h-3 text-primary" />
+                      <span className="text-xs font-bold text-primary">{totalBeds}</span>
+                    </div>
+                  </div>
+                  <h4 className="text-sm font-bold text-foreground truncate mb-1">
+                    {hospital.nameKr}
+                  </h4>
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-0.5">
+                      <Stethoscope className="w-3 h-3" /> {hospital.beds.general}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <Baby className="w-3 h-3" /> {hospital.beds.pediatric}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <Thermometer className="w-3 h-3" /> {hospital.beds.fever}
+                    </span>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Location FAB */}
       <button
         onClick={handleMyLocation}
