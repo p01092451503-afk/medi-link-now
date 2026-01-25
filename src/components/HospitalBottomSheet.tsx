@@ -34,11 +34,13 @@ const BedStatusCard = ({
   showTooltip?: boolean;
   tooltipText?: string;
 }) => {
+  // 음수 병상은 0으로 표시 (API 데이터 이상값 처리)
+  const displayCount = Math.max(0, count);
+  
   // 0보다 크면 여유, 0이면 "없음" (회색으로 표시)
-  const isAvailable = count > 0;
-  const isEmpty = count === 0;
+  const isAvailable = displayCount > 0;
 
-  // 색상 결정: 여유 = 초록, 없음 = 회색 (빨간색은 전체 만실일 때만 의미있음)
+  // 색상 결정: 여유 = 초록, 없음 = 회색
   const bgColor = isAvailable ? "bg-green-50" : "bg-gray-50";
   const textColor = isAvailable ? "text-green-600" : "text-gray-400";
 
@@ -52,7 +54,7 @@ const BedStatusCard = ({
       <span
         className={`text-xl font-bold ${textColor}`}
       >
-        {count}
+        {displayCount}
       </span>
       <div className="flex items-center gap-1">
         <span className="text-xs text-muted-foreground text-center">{label}</span>

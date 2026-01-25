@@ -91,16 +91,27 @@ export function useHospitalsHybrid(regionId: string = 'seoul'): UseHospitalsHybr
 
     return dbHospitals.map(dbHospital => {
       const realtimeData = realtimeMap.get(dbHospital.nameKr);
+      
+      // 음수 병상 값을 0으로 정규화하는 헬퍼 함수
+      const normalizeBeds = (beds: { general: number; pediatric: number; fever: number }) => ({
+        general: Math.max(0, beds.general),
+        pediatric: Math.max(0, beds.pediatric),
+        fever: Math.max(0, beds.fever),
+      });
+      
       if (realtimeData) {
         return {
           ...dbHospital,
-          beds: realtimeData.beds,
+          beds: normalizeBeds(realtimeData.beds),
           acceptance: realtimeData.acceptance,
           alertMessage: realtimeData.alertMessage,
           isTraumaCenter: realtimeData.isTraumaCenter || dbHospital.isTraumaCenter,
         };
       }
-      return dbHospital;
+      return {
+        ...dbHospital,
+        beds: normalizeBeds(dbHospital.beds),
+      };
     });
   }, [dbResult, realtimeResult, regionId]);
 
