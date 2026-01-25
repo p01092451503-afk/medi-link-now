@@ -192,17 +192,15 @@ const MapPage = () => {
         setUserLocation(newLocation);
         setMapCenter(newLocation);
         
-        // Auto-select closest MAJOR region only (not sub-region)
-        // This ensures all hospitals in the major region are still visible
-        const { majorRegion, subRegionData } = findClosestRegion(pos.coords.latitude, pos.coords.longitude);
-        setActiveMajorRegion(majorRegion);
-        // Set activeRegion to major region (not sub-region) to show all hospitals in that province
-        setActiveRegion(majorRegion);
+        // Set to nationwide view - don't filter by region
+        // User can still zoom in and see all hospitals
+        setActiveMajorRegion("all");
+        setActiveRegion("all");
         
         setIsLocating(false);
         toast({ 
           title: "현재 위치를 찾았습니다!",
-          description: `${subRegionData.labelKr} 주변 병원을 표시합니다.`
+          description: "전국 병원이 표시됩니다. 가까운 순으로 정렬됩니다."
         });
       },
       () => {
@@ -211,7 +209,7 @@ const MapPage = () => {
       },
       { enableHighAccuracy: true, timeout: 5000 }
     );
-  }, [findClosestRegion]);
+  }, []);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
