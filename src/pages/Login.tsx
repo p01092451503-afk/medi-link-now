@@ -18,8 +18,10 @@ const Login = () => {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  
+  // Pre-fill test credentials for driver mode
+  const [email, setEmail] = useState(mode === "driver" ? "p01092451503@gmail.com" : "");
+  const [password, setPassword] = useState(mode === "driver" ? "111111" : "");
 
   // Redirect if already logged in
   useEffect(() => {
