@@ -288,19 +288,49 @@ const MapPage = () => {
         {/* Divider */}
         <div className="w-6 h-px bg-gray-200 mx-auto" />
         
-        {/* My Location Button */}
-        <button
-          onClick={handleMyLocation}
-          disabled={isLocating}
-          className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100 disabled:opacity-70"
-          aria-label="내 위치"
-        >
-          {isLocating ? (
-            <Loader2 className="w-5 h-5 text-primary animate-spin" />
-          ) : (
-            <Crosshair className="w-5 h-5 text-primary" />
-          )}
-        </button>
+        {/* My Location Button with Tooltip */}
+        <HoverCard openDelay={100} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <motion.button
+              onClick={handleMyLocation}
+              disabled={isLocating}
+              className="relative bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100 disabled:opacity-70 group"
+              aria-label="내 위치에서 가까운 병원 찾기"
+              whileTap={{ scale: 0.95 }}
+            >
+              {/* Pulse ring when not yet located */}
+              {!userLocation && !isLocating && (
+                <motion.span
+                  className="absolute inset-0 rounded-lg bg-primary/20"
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+              )}
+              {isLocating ? (
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              ) : (
+                <Crosshair className="w-5 h-5 text-primary" />
+              )}
+            </motion.button>
+          </HoverCardTrigger>
+          <HoverCardContent 
+            side="left" 
+            sideOffset={12}
+            className="w-auto max-w-[180px] p-3 bg-white/95 backdrop-blur-sm shadow-xl border border-gray-100"
+          >
+            <div className="flex items-start gap-2">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4 h-4 text-primary" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-sm font-semibold text-foreground">내 주변 병원 찾기</p>
+                <p className="text-xs text-muted-foreground leading-tight">
+                  가까운 응급실을 거리순으로 안내합니다
+                </p>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
       </div>
 
       {/* Header */}
