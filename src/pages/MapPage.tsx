@@ -294,38 +294,52 @@ const MapPage = () => {
             <motion.button
               onClick={handleMyLocation}
               disabled={isLocating}
-              className="relative bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100 disabled:opacity-70 group"
+              className="relative bg-gradient-to-br from-primary to-primary/80 w-12 h-12 rounded-xl shadow-xl flex items-center justify-center hover:shadow-2xl active:scale-95 transition-all border-2 border-white disabled:opacity-70 group"
               aria-label="내 위치에서 가까운 병원 찾기"
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.9 }}
+              animate={!userLocation && !isLocating ? { scale: [1, 1.05, 1] } : {}}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              {/* Pulse ring when not yet located */}
+              {/* Multiple pulse rings when not yet located */}
               {!userLocation && !isLocating && (
-                <motion.span
-                  className="absolute inset-0 rounded-lg bg-primary/20"
-                  animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
+                <>
+                  <motion.span
+                    className="absolute inset-0 rounded-xl bg-primary"
+                    animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
+                  />
+                  <motion.span
+                    className="absolute inset-0 rounded-xl bg-primary"
+                    animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
+                  />
+                  <motion.span
+                    className="absolute inset-0 rounded-xl bg-primary"
+                    animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
+                  />
+                </>
               )}
               {isLocating ? (
-                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                <Loader2 className="w-6 h-6 text-white animate-spin" />
               ) : (
-                <Crosshair className="w-5 h-5 text-primary" />
+                <Crosshair className="w-6 h-6 text-white" />
               )}
             </motion.button>
           </HoverCardTrigger>
           <HoverCardContent 
             side="left" 
-            sideOffset={12}
-            className="w-auto max-w-[180px] p-3 bg-white/95 backdrop-blur-sm shadow-xl border border-gray-100"
+            sideOffset={16}
+            className="w-auto max-w-[200px] p-3.5 bg-white shadow-2xl border-0 rounded-xl"
           >
-            <div className="flex items-start gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-4 h-4 text-primary" />
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0 shadow-md">
+                <MapPin className="w-5 h-5 text-white" />
               </div>
-              <div className="space-y-0.5">
-                <p className="text-sm font-semibold text-foreground">내 주변 병원 찾기</p>
-                <p className="text-xs text-muted-foreground leading-tight">
-                  가까운 응급실을 거리순으로 안내합니다
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-foreground">내 주변 병원 찾기</p>
+                <p className="text-xs text-muted-foreground leading-snug">
+                  탭하면 가까운 응급실을<br/>거리순으로 안내합니다
                 </p>
               </div>
             </div>
