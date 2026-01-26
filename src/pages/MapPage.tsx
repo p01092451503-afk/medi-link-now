@@ -294,7 +294,11 @@ const MapPage = () => {
             <motion.button
               onClick={handleMyLocation}
               disabled={isLocating}
-              className="relative bg-gradient-to-br from-primary to-primary/80 w-12 h-12 rounded-xl shadow-xl flex items-center justify-center hover:shadow-2xl active:scale-95 transition-all border-2 border-white disabled:opacity-70 group"
+              className={`relative w-12 h-12 rounded-xl shadow-xl flex items-center justify-center hover:shadow-2xl active:scale-95 transition-all border-2 border-white disabled:opacity-70 group ${
+                userLocation 
+                  ? "bg-gradient-to-br from-emerald-500 to-emerald-600" 
+                  : "bg-gradient-to-br from-primary to-primary/80"
+              }`}
               aria-label="내 위치에서 가까운 병원 찾기"
               whileTap={{ scale: 0.9 }}
               animate={!userLocation && !isLocating ? { scale: [1, 1.05, 1] } : {}}
@@ -320,6 +324,17 @@ const MapPage = () => {
                   />
                 </>
               )}
+              {/* Success indicator when located */}
+              {userLocation && !isLocating && (
+                <motion.span
+                  className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-md"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                >
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />
+                </motion.span>
+              )}
               {isLocating ? (
                 <Loader2 className="w-6 h-6 text-white animate-spin" />
               ) : (
@@ -333,13 +348,21 @@ const MapPage = () => {
             className="w-auto max-w-[200px] p-3.5 bg-white shadow-2xl border-0 rounded-xl"
           >
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0 shadow-md">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-md ${
+                userLocation 
+                  ? "bg-gradient-to-br from-emerald-500 to-emerald-600" 
+                  : "bg-gradient-to-br from-primary to-primary/70"
+              }`}>
                 <MapPin className="w-5 h-5 text-white" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-bold text-foreground">내 주변 병원 찾기</p>
+                <p className="text-sm font-bold text-foreground">
+                  {userLocation ? "위치 확인됨" : "내 주변 병원 찾기"}
+                </p>
                 <p className="text-xs text-muted-foreground leading-snug">
-                  탭하면 가까운 응급실을<br/>거리순으로 안내합니다
+                  {userLocation 
+                    ? "탭하여 현재 위치로\n다시 이동합니다" 
+                    : "탭하면 가까운 응급실을\n거리순으로 안내합니다"}
                 </p>
               </div>
             </div>
