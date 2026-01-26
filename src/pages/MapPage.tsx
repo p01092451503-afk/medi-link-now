@@ -26,6 +26,7 @@ import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LiveReportFAB from "@/components/LiveReportFAB";
 import SymptomSearchBar from "@/components/SymptomSearchBar";
+import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 
 import NearbyDriversCard from "@/components/NearbyDriversCard";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
@@ -39,6 +40,7 @@ const MapPage = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
   const { reports: liveReports, addReport } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
+  const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
   
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("all");
@@ -253,6 +255,8 @@ const MapPage = () => {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden">
+      {/* Location Coachmark - shows on first visit */}
+      <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} />
       
       {/* Leaflet Map */}
       <MapView
