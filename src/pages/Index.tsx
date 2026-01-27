@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, EyeOff } from "lucide-react";
+import MapLegendPopup from "@/components/map/MapLegendPopup";
 import { motion, AnimatePresence } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -256,18 +257,27 @@ const Index = () => {
         )}
       </div>
 
-      {/* Location FAB */}
-      <button
-        onClick={handleMyLocation}
-        disabled={isLocating}
-        className="fixed bottom-6 right-4 z-[1000] rounded-full shadow-lg p-4 bg-white border border-gray-100 hover:bg-gray-50 transition-colors disabled:opacity-70"
-      >
-        {isLocating ? (
-          <Loader2 className="w-6 h-6 text-primary animate-spin" />
-        ) : (
-          <Crosshair className="w-6 h-6 text-primary" />
-        )}
-      </button>
+      {/* Right Side Controls */}
+      <div className="fixed bottom-6 right-4 z-[1000] flex flex-col gap-2 items-center">
+        {/* Map Legend Help Button */}
+        <MapLegendPopup />
+        
+        {/* Spacer */}
+        <div className="h-2" />
+        
+        {/* Location FAB */}
+        <button
+          onClick={handleMyLocation}
+          disabled={isLocating}
+          className="rounded-full shadow-lg p-4 bg-white border border-gray-100 hover:bg-gray-50 transition-colors disabled:opacity-70"
+        >
+          {isLocating ? (
+            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+          ) : (
+            <Crosshair className="w-6 h-6 text-primary" />
+          )}
+        </button>
+      </div>
 
       {/* Bottom Sheet */}
       <AnimatePresence>
