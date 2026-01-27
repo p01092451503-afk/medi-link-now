@@ -148,18 +148,53 @@ const MapPage = () => {
     });
   }, [isPharmacyFilter, holidayPharmacies, activeRegion]);
 
-  // Show message when no trauma centers in selected region
+  // Show message when no trauma centers in selected region and recommend nearest one
   useEffect(() => {
     if (activeFilter === "traumaCenter" && filteredHospitals.length === 0 && activeRegion !== "all") {
       const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
       const regionName = selectedRegion?.labelKr || activeRegion;
-      toast({
-        title: "외상센터 없음",
-        description: `${regionName}에는 권역외상센터가 없습니다.`,
-        variant: "destructive",
-      });
+      const regionCenter = selectedRegion?.center || mapCenter;
+      
+      // Find nearest trauma center from all hospitals
+      const allTraumaCenters = hospitalData.filter((h) => h.isTraumaCenter === true);
+      
+      if (allTraumaCenters.length > 0) {
+        // Calculate distance from region center to each trauma center
+        const traumaCentersWithDistance = allTraumaCenters.map((tc) => ({
+          ...tc,
+          distanceFromRegion: calculateDistance(regionCenter[0], regionCenter[1], tc.lat, tc.lng),
+        }));
+        
+        // Sort by distance and get the nearest one
+        traumaCentersWithDistance.sort((a, b) => a.distanceFromRegion - b.distanceFromRegion);
+        const nearest = traumaCentersWithDistance[0];
+        
+        toast({
+          title: `${regionName}에는 외상센터가 없습니다`,
+          description: `가장 가까운 외상센터: ${nearest.nameKr} (약 ${nearest.distanceFromRegion.toFixed(1)}km)`,
+          action: (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setMapCenter([nearest.lat, nearest.lng]);
+                setMapZoom(14);
+                setSelectedHospital(nearest);
+              }}
+            >
+              바로가기
+            </Button>
+          ),
+        });
+      } else {
+        toast({
+          title: "외상센터 없음",
+          description: `${regionName}에는 권역외상센터가 없습니다.`,
+          variant: "destructive",
+        });
+      }
     }
-  }, [activeFilter, filteredHospitals.length, activeRegion]);
+  }, [activeFilter, filteredHospitals.length, activeRegion, hospitalData, mapCenter]);
 
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
