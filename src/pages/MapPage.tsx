@@ -68,7 +68,7 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
   const [isListExpanded, setIsListExpanded] = useState(false);
-  const [showDataSource, setShowDataSource] = useState(false);
+  const [showDataSource, setShowDataSource] = useState(true);
 
   // Fetch holiday pharmacies when filter is set to 'pharmacy'
   const isPharmacyFilter = activeFilter === "pharmacy";
