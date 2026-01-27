@@ -383,6 +383,27 @@ const Landing = () => {
             </div>
           </button>
         </motion.div>
+
+        {/* Trust Indicators */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="flex items-center justify-center gap-6 mt-10 text-muted-foreground"
+        >
+          <div className="flex items-center gap-1.5">
+            <Hospital className="w-4 h-4 text-primary" />
+            <span className="text-xs font-medium">전국 400+</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Activity className="w-4 h-4 text-green-500" />
+            <span className="text-xs font-medium">30초 업데이트</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-blue-500" />
+            <span className="text-xs font-medium">24시간</span>
+          </div>
+        </motion.div>
       </main>
 
       {/* Footer */}
