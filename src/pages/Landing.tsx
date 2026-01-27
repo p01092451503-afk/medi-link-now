@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
@@ -100,6 +100,30 @@ const Landing = () => {
     }
 
     return { nationalStats: national, localStats: local };
+  }, [hospitals, userLocation]);
+
+  // Calculate 3 nearest hospitals from user location
+  const nearestHospitals = useMemo(() => {
+    if (!userLocation || !hospitals.length) return [];
+
+    const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+      const R = 6371; // km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    };
+
+    return hospitals
+      .map(h => ({
+        ...h,
+        distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng)
+      }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 3);
   }, [hospitals, userLocation]);
 
   // Get current stats based on active tab
@@ -248,6 +272,63 @@ const Landing = () => {
                     <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
                   </div>
                 </motion.div>
+            </AnimatePresence>
+
+            {/* Nearest Hospitals Preview - Only in Local Tab */}
+            <AnimatePresence>
+              {activeTab === "local" && nearestHospitals.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-t border-gray-100"
+                >
+                  <div className="p-2 space-y-1.5">
+                    <p className="text-[10px] font-medium text-muted-foreground px-1">가까운 응급실</p>
+                    {nearestHospitals.map((hospital, index) => {
+                      const status = getHospitalStatus(hospital);
+                      const statusColor = status === "available" ? "bg-green-500" : status === "limited" ? "bg-yellow-500" : "bg-red-500";
+                      const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
+                      
+                      return (
+                        <button
+                          key={hospital.id}
+                          onClick={() => navigate(`/map?hospital=${hospital.id}`)}
+                          className="w-full flex items-center gap-2 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors text-left"
+                        >
+                          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold shrink-0">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
+                              <p className="text-[11px] font-medium text-foreground truncate">
+                                {hospital.name}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5">
+                              <span className="flex items-center gap-0.5">
+                                <MapPin className="w-2.5 h-2.5" />
+                                {hospital.distance.toFixed(1)}km
+                              </span>
+                              <span className="flex items-center gap-0.5">
+                                <Bed className="w-2.5 h-2.5" />
+                                {totalBeds}병상
+                              </span>
+                              <span className="flex items-center gap-0.5">
+                                <Clock className="w-2.5 h-2.5" />
+                                ~{Math.round(hospital.distance / 35 * 60)}분
+                              </span>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </motion.div>
