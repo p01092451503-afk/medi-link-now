@@ -31,7 +31,8 @@ const LocationCoachmark = ({ show, onDismiss }: LocationCoachmarkProps) => {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 20, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="fixed right-20 top-1/2 -translate-y-1/2 z-[1101] w-72"
+            className="fixed right-20 z-[1101] w-64 sm:w-72"
+            style={{ top: 'calc(50% + 60px)', transform: 'translateY(-50%)' }}
           >
             <div className="relative bg-white rounded-2xl shadow-2xl p-5 border border-gray-100">
               {/* Arrow pointing right */}
@@ -82,12 +83,13 @@ const LocationCoachmark = ({ show, onDismiss }: LocationCoachmarkProps) => {
             </div>
           </motion.div>
 
-          {/* Highlight ring around the button area */}
+          {/* Highlight ring around the button area - centered vertically with some offset */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed right-4 top-1/2 translate-y-4 z-[1101] pointer-events-none"
+            className="fixed right-4 z-[1101] pointer-events-none"
+            style={{ top: 'calc(50% + 60px)', transform: 'translateY(-50%)' }}
           >
             <div className="w-16 h-16 rounded-xl border-[3px] border-white shadow-[0_0_0_4px_rgba(59,130,246,0.5)] animate-pulse" />
           </motion.div>
