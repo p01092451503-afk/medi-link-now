@@ -153,6 +153,19 @@ const MapPage = () => {
   }, []);
 
   const handleMyLocation = useCallback(() => {
+    // Toggle off: if location is already set, clear it and show all hospitals
+    if (userLocation) {
+      setUserLocation(null);
+      setActiveRadius("all");
+      setMapCenter([36.5, 127.5]); // Center of Korea
+      setMapZoom(7); // Zoom out to see whole country
+      toast({
+        title: "전국 병원 표시",
+        description: "전국의 모든 병원 마커를 표시합니다.",
+      });
+      return;
+    }
+
     if (!navigator.geolocation) {
       toast({ title: "위치 서비스를 사용할 수 없습니다" });
       return;
@@ -186,7 +199,7 @@ const MapPage = () => {
       },
       { enableHighAccuracy: true, timeout: 5000 }
     );
-  }, [activeRadius]);
+  }, [activeRadius, userLocation]);
 
   const handleRadiusChange = useCallback((radius: number | "all") => {
     setActiveRadius(radius);
@@ -325,7 +338,7 @@ const MapPage = () => {
                   </p>
                   <p className="text-xs text-muted-foreground leading-snug">
                     {userLocation
-                      ? "탭하여 현재 위치로\n다시 이동합니다"
+                      ? "탭하여 해제하면\n전국 병원을 표시합니다"
                       : "탭하면 가까운 응급실을\n거리순으로 안내합니다"}
                   </p>
                 </div>
