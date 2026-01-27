@@ -376,12 +376,12 @@ const MapPage = () => {
         </div>
 
         {/* Data Source Attribution */}
-        <div className="absolute bottom-4 left-4 z-[1000]">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[1000]">
           <a
             href="https://www.data.go.kr/data/15000563/openapi.do"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-md hover:bg-white transition-colors"
+            className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-md hover:bg-white transition-colors"
           >
             <Database className="w-3 h-3 text-primary" />
             <span className="text-[10px] text-muted-foreground">
