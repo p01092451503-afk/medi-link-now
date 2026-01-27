@@ -60,7 +60,7 @@ const RegionSelector = ({
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center gap-1 flex-wrap">
       {/* Major Region Selector */}
       <Select value={majorRegion} onValueChange={handleMajorChange}>
         <SelectTrigger className="w-[140px] bg-white shadow-md border-0 rounded-xl h-10">
@@ -81,7 +81,7 @@ const RegionSelector = ({
       {/* Sub-region Selector (only show if major region selected and has sub-regions) */}
       {majorRegion !== "all" && subRegions.length > 0 && (
         <>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          <ChevronRight className="w-3 h-3 text-muted-foreground" />
           <Select 
             value={subRegion === majorRegion ? "all" : subRegion} 
             onValueChange={(val) => handleSubChange(val === "all" ? majorRegion : val)}
