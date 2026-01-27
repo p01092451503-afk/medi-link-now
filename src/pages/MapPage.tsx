@@ -116,6 +116,38 @@ const MapPage = () => {
     return { filteredHospitals: result };
   }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius]);
 
+  // Filter holiday pharmacies by selected region
+  const filteredPharmacies = useMemo(() => {
+    if (!isPharmacyFilter || holidayPharmacies.length === 0) return [];
+    if (activeRegion === "all") return holidayPharmacies;
+
+    const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
+    if (!selectedRegion) return holidayPharmacies;
+
+    // If it's a sub-region, filter by both parent and sub-region
+    if (selectedRegion.parent) {
+      const parentRegion = regionOptions.find((r) => r.id === selectedRegion.parent);
+      const parentLabel = parentRegion?.labelKr || "";
+      const simplifiedParent = parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
+
+      return holidayPharmacies.filter((p) => {
+        const address = p.address || "";
+        const hasParentRegion = simplifiedParent ? address.includes(simplifiedParent) : true;
+        const hasSubRegion = address.includes(selectedRegion.labelKr);
+        return hasParentRegion && hasSubRegion;
+      });
+    }
+
+    // Major region filtering
+    const majorLabel = selectedRegion.labelKr || "";
+    const simplifiedMajorLabel = majorLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
+
+    return holidayPharmacies.filter((p) => {
+      const address = p.address || "";
+      return address.includes(simplifiedMajorLabel);
+    });
+  }, [isPharmacyFilter, holidayPharmacies, activeRegion]);
+
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
     setActiveRegion(region);
@@ -271,7 +303,7 @@ const MapPage = () => {
           liveReports={liveReports}
           nearbyDrivers={nearbyDrivers}
           onCallDriver={handleCallDriver}
-          holidayPharmacies={isPharmacyFilter ? holidayPharmacies : []}
+          holidayPharmacies={filteredPharmacies}
           onBoundsChange={handleBoundsChange}
         />
 
