@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup, useMapEvents, Marker } from "react-leaflet";
 import L from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { AnimatePresence } from "framer-motion";
 import { Hospital, FilterType, getHospitalStatus, calculateDistance } from "@/data/hospitals";
 import ReportMarker from "../ReportMarker";
 import DriverMarker from "../DriverMarker";
 import PharmacyMarker from "../PharmacyMarker";
+import ClusterPopup from "./ClusterPopup";
 import type { LiveReport } from "../LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
@@ -279,11 +281,15 @@ const ClusteredMapView = ({
     return map;
   }, [hospitals]);
 
-  // Create custom cluster icon
-  const createClusterCustomIcon = useCallback((cluster: any) => {
+  // State for cluster popup
+  const [clusterPopup, setClusterPopup] = useState<{
+    hospitals: Hospital[];
+    position: { x: number; y: number };
+  } | null>(null);
+
+  // Get hospitals from cluster markers
+  const getHospitalsFromCluster = useCallback((cluster: any): Hospital[] => {
     const markers = cluster.getAllChildMarkers();
-    
-    // Match hospitals by their coordinates
     const clusterHospitals: Hospital[] = [];
     markers.forEach((m: any) => {
       const latlng = m.getLatLng();
@@ -293,10 +299,29 @@ const ClusteredMapView = ({
         clusterHospitals.push(hospital);
       }
     });
-    
+    return clusterHospitals;
+  }, [hospitalByCoords]);
+
+  // Create custom cluster icon
+  const createClusterCustomIcon = useCallback((cluster: any) => {
+    const clusterHospitals = getHospitalsFromCluster(cluster);
     const stats = calculateClusterStats(clusterHospitals);
     return createDonutClusterIcon(stats, clusterHospitals.length);
-  }, [hospitalByCoords]);
+  }, [getHospitalsFromCluster]);
+
+  // Handle cluster click
+  const handleClusterClick = useCallback((cluster: any, event: L.LeafletMouseEvent) => {
+    const clusterHospitals = getHospitalsFromCluster(cluster);
+    if (clusterHospitals.length > 0) {
+      setClusterPopup({
+        hospitals: clusterHospitals,
+        position: {
+          x: event.originalEvent.clientX,
+          y: event.originalEvent.clientY,
+        },
+      });
+    }
+  }, [getHospitalsFromCluster]);
 
   return (
     <div className="absolute inset-0" style={{ height: "100%", width: "100%" }}>
@@ -337,8 +362,13 @@ const ClusteredMapView = ({
           maxClusterRadius={60}
           spiderfyOnMaxZoom={true}
           showCoverageOnHover={false}
-          zoomToBoundsOnClick={true}
+          zoomToBoundsOnClick={false}
           disableClusteringAtZoom={14}
+          eventHandlers={{
+            clusterclick: (e: any) => {
+              handleClusterClick(e.layer, e);
+            },
+          }}
         >
           {sortedHospitals.map((hospital) => {
             const opacity = getMarkerOpacity(hospital);
@@ -393,6 +423,19 @@ const ClusteredMapView = ({
           <PharmacyMarker key={`pharmacy-${pharmacy.id}`} pharmacy={pharmacy} />
         ))}
       </MapContainer>
+
+      {/* Cluster Popup */}
+      <AnimatePresence>
+        {clusterPopup && (
+          <ClusterPopup
+            hospitals={clusterPopup.hospitals}
+            userLocation={userLocation}
+            onHospitalClick={onHospitalClick}
+            onClose={() => setClusterPopup(null)}
+            position={clusterPopup.position}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
