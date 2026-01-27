@@ -357,6 +357,7 @@ const ClusteredMapView = ({
 
         {/* Clustered Hospital markers with donut charts */}
         <MarkerClusterGroup
+          key={`cluster-${hospitals.length}-${activeFilter}`}
           chunkedLoading
           iconCreateFunction={createClusterCustomIcon}
           maxClusterRadius={60}
@@ -364,6 +365,8 @@ const ClusteredMapView = ({
           showCoverageOnHover={false}
           zoomToBoundsOnClick={false}
           disableClusteringAtZoom={14}
+          removeOutsideVisibleBounds={false}
+          animate={false}
           eventHandlers={{
             clusterclick: (e: any) => {
               handleClusterClick(e.layer, e);
