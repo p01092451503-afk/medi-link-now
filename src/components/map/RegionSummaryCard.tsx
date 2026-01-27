@@ -10,9 +10,10 @@ interface RegionSummaryCardProps {
 const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) => {
   const summary = useMemo(() => {
     const totalHospitals = hospitals.length;
-    const totalGeneral = hospitals.reduce((sum, h) => sum + (h.beds?.general || 0), 0);
-    const totalPediatric = hospitals.reduce((sum, h) => sum + (h.beds?.pediatric || 0), 0);
-    const totalFever = hospitals.reduce((sum, h) => sum + (h.beds?.fever || 0), 0);
+    // Normalize negative values to 0
+    const totalGeneral = hospitals.reduce((sum, h) => sum + Math.max(0, h.beds?.general || 0), 0);
+    const totalPediatric = hospitals.reduce((sum, h) => sum + Math.max(0, h.beds?.pediatric || 0), 0);
+    const totalFever = hospitals.reduce((sum, h) => sum + Math.max(0, h.beds?.fever || 0), 0);
     const totalBeds = totalGeneral + totalPediatric + totalFever;
     
     // Count hospitals by status
