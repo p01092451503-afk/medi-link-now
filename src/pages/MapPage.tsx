@@ -437,18 +437,6 @@ const MapPage = () => {
                 );
               })}
 
-            {/* Exclude Full Toggle */}
-            <button
-              onClick={() => setExcludeFullHospitals(!excludeFullHospitals)}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex-shrink-0 ${
-                excludeFullHospitals
-                  ? "bg-red-500 text-white border-red-500"
-                  : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              <EyeOff className="w-3 h-3" />
-              만실 제외
-            </button>
           </div>
         </div>
 
