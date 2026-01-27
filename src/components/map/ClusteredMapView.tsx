@@ -271,10 +271,16 @@ const ClusteredMapView = ({
     });
   }, [hospitals]);
 
-  // Generate a stable hash for cluster key to force remount on any data change
+  // Generate a stable hash for cluster key to force complete remount on data changes
+  // This prevents the "removeObject" error by ensuring clean cluster state
   const clusterKey = useMemo(() => {
-    const ids = hospitals.map(h => h.id).sort().join(',');
-    return `cluster-${ids.length > 0 ? ids.slice(0, 100) : 'empty'}-${activeFilter}`;
+    if (hospitals.length === 0) return `cluster-empty-${activeFilter}`;
+    
+    const firstId = hospitals[0]?.id || 0;
+    const lastId = hospitals[hospitals.length - 1]?.id || 0;
+    const idSum = hospitals.reduce((acc, h) => acc + h.id, 0);
+    
+    return `cluster-${hospitals.length}-${firstId}-${lastId}-${idSum}-${activeFilter}`;
   }, [hospitals, activeFilter]);
 
   // Create hospital lookup by coordinates for cluster matching
