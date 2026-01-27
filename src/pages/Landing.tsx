@@ -383,6 +383,41 @@ const Landing = () => {
             </div>
           </button>
         </motion.div>
+
+        {/* Service Features */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="w-full max-w-sm mt-8"
+        >
+          <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-primary" />
+              </div>
+              <span className="text-[10px] text-muted-foreground">전국 커버</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <Activity className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-[10px] text-muted-foreground">실시간 업데이트</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-blue-600" />
+              </div>
+              <span className="text-[10px] text-muted-foreground">24시간 운영</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-orange-600" />
+              </div>
+              <span className="text-[10px] text-muted-foreground">안전 최우선</span>
+            </div>
+          </div>
+        </motion.div>
       </main>
 
       {/* Footer */}
