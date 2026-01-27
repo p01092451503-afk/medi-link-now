@@ -174,23 +174,6 @@ const Index = () => {
               </button>
             ))}
           
-          {/* Exclude Full Hospitals Toggle */}
-          <div 
-            className={`flex items-center gap-2 px-3 py-2 rounded-full shadow-md transition-all cursor-pointer flex-shrink-0 ${
-              excludeFullHospitals 
-                ? "bg-red-500 text-white" 
-                : "bg-white text-muted-foreground hover:bg-gray-50"
-            }`}
-            onClick={() => setExcludeFullHospitals(!excludeFullHospitals)}
-          >
-            <EyeOff className="w-4 h-4" />
-            <span className="text-sm font-medium whitespace-nowrap">만실 제외</span>
-            <Switch 
-              checked={excludeFullHospitals} 
-              onCheckedChange={setExcludeFullHospitals}
-              className="data-[state=checked]:bg-white data-[state=checked]:text-red-500 scale-75"
-            />
-          </div>
         </div>
 
         {/* Procedure Availability Filter Chips */}
