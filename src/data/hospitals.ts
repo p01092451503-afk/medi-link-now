@@ -1862,8 +1862,6 @@ export interface RegionOption {
 }
 
 export const regionOptions: RegionOption[] = [
-  // 전체
-  { id: "all", label: "All Regions", labelKr: "전체", center: [36.5, 127.5], zoom: 7 },
   
   // 서울특별시 및 구
   { id: "seoul", label: "Seoul", labelKr: "서울특별시", center: [37.5665, 126.9780], zoom: 12 },

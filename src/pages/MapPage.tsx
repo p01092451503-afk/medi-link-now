@@ -51,8 +51,8 @@ const MapPage = () => {
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
-  const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("all");
-  const [activeRegion, setActiveRegion] = useState<RegionType>("all");
+  const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("seoul");
+  const [activeRegion, setActiveRegion] = useState<RegionType>("seoul");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
@@ -118,15 +118,13 @@ const MapPage = () => {
     setActiveRegion(region);
     
     // Clear user location and radius when manually selecting a region
-    if (region !== "all") {
-      setUserLocation(null);
-      setActiveRadius("all");
-    }
+    setUserLocation(null);
+    setActiveRadius("all");
     
     const regionData = regionOptions.find((r) => r.id === region);
     if (regionData) {
       setMapCenter(regionData.center);
-      setMapZoom(regionData.zoom || (region === "all" ? 7 : 11));
+      setMapZoom(regionData.zoom || 11);
     }
   }, []);
 
@@ -155,8 +153,8 @@ const MapPage = () => {
         setMapCenter(newLocation);
         setActiveRadius(10); // Default 10km radius
         setMapZoom(getZoomForRadius(10));
-        setActiveMajorRegion("all");
-        setActiveRegion("all");
+        setActiveMajorRegion("seoul");
+        setActiveRegion("seoul");
       },
       () => {
         // Silently fail on initial auto-location
@@ -199,8 +197,8 @@ const MapPage = () => {
           setMapZoom(getZoomForRadius(activeRadius as number));
         }
         
-        setActiveMajorRegion("all");
-        setActiveRegion("all");
+        setActiveMajorRegion("seoul");
+        setActiveRegion("seoul");
         setIsLocating(false);
         toast({
           title: "현재 위치를 찾았습니다!",
