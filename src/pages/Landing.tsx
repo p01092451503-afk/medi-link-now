@@ -386,7 +386,12 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="p-4 text-center">
+      <footer className="p-4 text-center space-y-2">
+        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+          <a href="/terms" className="hover:text-foreground transition-colors">이용약관</a>
+          <span className="text-gray-300">|</span>
+          <a href="/privacy" className="hover:text-foreground transition-colors">개인정보처리방침</a>
+        </div>
         <p className="text-xs text-muted-foreground">
           © 2024 Medi-Link. 응급 의료 정보 서비스
         </p>
