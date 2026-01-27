@@ -182,7 +182,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="sticky top-0 bg-gradient-to-r from-primary to-primary/80 p-5 text-white z-10">
@@ -205,7 +205,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
             </div>
 
             {/* Form */}
-            <div className="p-5 space-y-4">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
               {/* Voice Recorder */}
               <VoiceRecorder
                 onTranscript={handleVoiceTranscript}
