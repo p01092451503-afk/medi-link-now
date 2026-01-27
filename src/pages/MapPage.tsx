@@ -115,6 +115,13 @@ const MapPage = () => {
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
     setActiveRegion(region);
+    
+    // Clear user location and radius when manually selecting a region
+    if (region !== "all") {
+      setUserLocation(null);
+      setActiveRadius("all");
+    }
+    
     const regionData = regionOptions.find((r) => r.id === region);
     if (regionData) {
       setMapCenter(regionData.center);
@@ -124,6 +131,11 @@ const MapPage = () => {
 
   const handleSubRegionChange = useCallback((region: RegionType) => {
     setActiveRegion(region);
+    
+    // Clear user location and radius when manually selecting a sub-region
+    setUserLocation(null);
+    setActiveRadius("all");
+    
     const regionData = regionOptions.find((r) => r.id === region);
     if (regionData) {
       setMapCenter(regionData.center);
