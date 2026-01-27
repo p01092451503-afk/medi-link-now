@@ -6,6 +6,7 @@ interface HospitalMarkerProps {
   hospital: Hospital & { distance?: number };
   onClick: (hospital: Hospital) => void;
   activeFilter: FilterType;
+  opacity?: number;
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
@@ -238,7 +239,7 @@ const createMarkerIcon = (
   });
 };
 
-const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps) => {
+const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1 }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   
@@ -276,6 +277,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter }: HospitalMarkerProps
     <Marker
       position={[hospital.lat, hospital.lng]}
       icon={icon}
+      opacity={opacity}
       eventHandlers={{
         click: () => onClick(hospital),
       }}
