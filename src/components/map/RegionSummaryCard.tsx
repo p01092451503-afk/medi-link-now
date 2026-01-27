@@ -61,11 +61,13 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
           
           <div className="flex items-center gap-1">
             <Baby className="w-4 h-4 text-purple-600 flex-shrink-0" />
+            <span className="text-sm text-muted-foreground">소아</span>
             <span className="text-base font-semibold text-purple-700">{summary.totalPediatric}</span>
           </div>
           
           <div className="flex items-center gap-1">
             <Thermometer className="w-4 h-4 text-orange-600 flex-shrink-0" />
+            <span className="text-sm text-muted-foreground">열감염</span>
             <span className="text-base font-semibold text-orange-700">{summary.totalFever}</span>
           </div>
         </div>
