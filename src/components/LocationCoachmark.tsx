@@ -86,12 +86,12 @@ const LocationCoachmark = ({ show, onDismiss, targetRef }: LocationCoachmarkProp
                 <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[12px] border-l-white drop-shadow-lg" />
               </div>
 
-              {/* Close button */}
+              {/* Close button - larger for mobile touch */}
               <button
                 onClick={onDismiss}
-                className="absolute -top-2 -right-2 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                className="absolute -top-3 -right-3 w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors shadow-md active:scale-95"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-5 h-5 text-gray-600" />
               </button>
 
               {/* Content */}
