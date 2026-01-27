@@ -393,7 +393,7 @@ const Landing = () => {
           <a href="/privacy" className="hover:text-foreground transition-colors">개인정보처리방침</a>
         </div>
         <p className="text-xs text-muted-foreground">
-          © 2024 Medi-Link. 응급 의료 정보 서비스
+          © 2026 Medi-Link. 응급 의료 정보 서비스
         </p>
       </footer>
     </div>
