@@ -468,17 +468,7 @@ const MapPage = () => {
 
                 const handleFilterClick = () => {
                   setActiveFilter(f.id);
-                  // 외상센터 필터 선택 시 전국 뷰로 자동 전환
-                  if (isTraumaCenter) {
-                    setActiveMajorRegion("all");
-                    setActiveRegion("all");
-                    setActiveRadius("all");
-                    const allRegion = regionOptions.find((r) => r.id === "all");
-                    if (allRegion) {
-                      setMapCenter(allRegion.center);
-                      setMapZoom(allRegion.zoom || 7);
-                    }
-                  }
+                  // 외상센터 필터 선택 시 현재 지역 유지 (전국 뷰로 전환하지 않음)
                 };
 
                 return (
