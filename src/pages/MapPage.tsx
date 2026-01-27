@@ -328,7 +328,7 @@ const MapPage = () => {
           liveReports={liveReports}
           nearbyDrivers={nearbyDrivers}
           onCallDriver={handleCallDriver}
-          holidayPharmacies={filteredPharmacies}
+          holidayPharmacies={[]} // 휴일 약국 기능 준비중
           onBoundsChange={handleBoundsChange}
         />
 
@@ -554,6 +554,11 @@ const MapPage = () => {
                       </span>
                     )}
                     {f.labelKr}
+                    {isPharmacy && (
+                      <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-semibold rounded">
+                        준비중
+                      </span>
+                    )}
                   </button>
                 );
               })}
