@@ -6,25 +6,31 @@ interface ClusterStats {
   limited: number;
   unavailable: number;
   total: number;
+  totalBeds: number; // Total bed count across all hospitals
 }
 
 export const calculateClusterStats = (hospitals: Hospital[]): ClusterStats => {
   let available = 0;
   let limited = 0;
   let unavailable = 0;
+  let totalBeds = 0;
 
   hospitals.forEach((h) => {
     const status = getHospitalStatus(h);
     if (status === "available") available++;
     else if (status === "limited") limited++;
     else unavailable++;
+    
+    // Sum up all beds
+    const beds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
+    totalBeds += Math.max(0, beds);
   });
 
-  return { available, limited, unavailable, total: hospitals.length };
+  return { available, limited, unavailable, total: hospitals.length, totalBeds };
 };
 
 export const createDonutClusterIcon = (stats: ClusterStats, count: number) => {
-  const { available, limited, unavailable, total } = stats;
+  const { available, limited, unavailable, total, totalBeds } = stats;
   
   // Calculate percentages for the donut chart
   const availablePercent = (available / total) * 100;
@@ -135,7 +141,7 @@ export const createDonutClusterIcon = (stats: ClusterStats, count: number) => {
             font-size: ${Math.max(12, size / 4)}px;
             font-weight: 700;
             color: ${dominantColor};
-          ">${count}</span>
+          ">${totalBeds}</span>
         </div>
         
         <!-- Small status dots at bottom -->
