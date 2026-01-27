@@ -68,6 +68,7 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
   const [isListExpanded, setIsListExpanded] = useState(false);
+  const [showDataSource, setShowDataSource] = useState(false);
 
   // Fetch holiday pharmacies when filter is set to 'pharmacy'
   const isPharmacyFilter = activeFilter === "pharmacy";
@@ -377,17 +378,50 @@ const MapPage = () => {
 
         {/* Data Source Attribution */}
         <div className="absolute top-4 right-4 z-[1000]">
-          <a
-            href="https://www.data.go.kr/data/15000563/openapi.do"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md hover:bg-white transition-colors"
-          >
-            <Database className="w-3 h-3 text-primary" />
-            <span className="text-[10px] text-muted-foreground leading-tight">
-              공공데이터포털 | 전국 응급의료기관 실시간 가용병상정보
-            </span>
-          </a>
+          <AnimatePresence mode="wait">
+            {showDataSource ? (
+              <motion.a
+                key="expanded"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                href="https://www.data.go.kr/data/15000563/openapi.do"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                onMouseLeave={() => setShowDataSource(false)}
+                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg hover:bg-white transition-colors"
+              >
+                <Database className="w-4 h-4 text-primary flex-shrink-0" />
+                <div className="text-[11px] text-muted-foreground leading-tight">
+                  <div className="font-medium text-foreground">공공데이터포털</div>
+                  <div>전국 응급의료기관 실시간 가용병상정보</div>
+                </div>
+                <X 
+                  className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer flex-shrink-0 ml-1" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowDataSource(false);
+                  }}
+                />
+              </motion.a>
+            ) : (
+              <motion.button
+                key="collapsed"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                onClick={() => setShowDataSource(true)}
+                className="flex items-center justify-center w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-colors"
+                aria-label="데이터 출처 보기"
+              >
+                <Database className="w-4 h-4 text-primary" />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Header */}
