@@ -1,36 +1,88 @@
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
-import { useMemo } from "react";
-import { getHospitalStatus } from "@/data/hospitals";
+import { useMemo, useState, useEffect } from "react";
+import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
+import { toast } from "@/hooks/use-toast";
 
 
 const Landing = () => {
   const navigate = useNavigate();
   const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
+  const [activeTab, setActiveTab] = useState<"national" | "local">("national");
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [userRegion, setUserRegion] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+
+  // Get user location when switching to local tab
+  const handleLocalTab = () => {
+    if (activeTab === "local") return;
+    
+    if (!userLocation) {
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+          setUserLocation(coords);
+          
+          // Find nearest region
+          const majorRegion = findNearestMajorRegion(coords[0], coords[1]);
+          const subRegion = findNearestSubRegion(coords[0], coords[1], majorRegion);
+          
+          // Get region display name
+          const subRegionOption = regionOptions.find(r => r.id === subRegion);
+          const majorRegionOption = regionOptions.find(r => r.id === majorRegion);
+          setUserRegion(subRegionOption?.labelKr || majorRegionOption?.labelKr || "내 지역");
+          
+          setIsLocating(false);
+          setActiveTab("local");
+        },
+        (error) => {
+          toast({
+            title: "위치 권한 필요",
+            description: "내 지역 현황을 보려면 위치 권한을 허용해주세요.",
+            variant: "destructive",
+          });
+          setIsLocating(false);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
+      setActiveTab("local");
+    }
+  };
 
   // Calculate real-time statistics
   const stats = useMemo(() => {
     if (!hospitals.length) return null;
 
-    const totalBeds = hospitals.reduce(
+    let filteredHospitals = hospitals;
+
+    // Filter by local region if in local mode
+    if (activeTab === "local" && userLocation) {
+      const majorRegion = findNearestMajorRegion(userLocation[0], userLocation[1]);
+      const subRegion = findNearestSubRegion(userLocation[0], userLocation[1], majorRegion);
+      filteredHospitals = filterHospitalsByRegion(hospitals, subRegion);
+    }
+
+    const totalBeds = filteredHospitals.reduce(
       (sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever,
       0
     );
-    const availableHospitals = hospitals.filter(
+    const availableHospitals = filteredHospitals.filter(
       (h) => getHospitalStatus(h) === "available"
     ).length;
-    const pediatricBeds = hospitals.reduce((sum, h) => sum + h.beds.pediatric, 0);
+    const pediatricBeds = filteredHospitals.reduce((sum, h) => sum + h.beds.pediatric, 0);
 
     return {
-      totalHospitals: hospitals.length,
+      totalHospitals: filteredHospitals.length,
       totalBeds,
       availableHospitals,
       pediatricBeds,
     };
-  }, [hospitals]);
+  }, [hospitals, activeTab, userLocation]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 flex flex-col">
@@ -73,62 +125,109 @@ const Landing = () => {
           className="w-full max-w-sm mb-5"
         >
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-blue-600 px-3 py-2 flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                <Activity className="w-3 h-3 text-white animate-pulse" />
+            {/* Tab Header */}
+            <div className="bg-gradient-to-r from-primary to-blue-600 p-1">
+              <div className="flex gap-1">
+                {/* National Tab */}
+                <button
+                  onClick={() => setActiveTab("national")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    activeTab === "national"
+                      ? "bg-white text-primary shadow-sm"
+                      : "text-white/90 hover:bg-white/10"
+                  }`}
+                >
+                  <Hospital className="w-3.5 h-3.5" />
+                  <span>전국 현황</span>
+                </button>
+                
+                {/* Local Tab */}
+                <button
+                  onClick={handleLocalTab}
+                  disabled={isLocating}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    activeTab === "local"
+                      ? "bg-white text-primary shadow-sm"
+                      : "text-white/90 hover:bg-white/10"
+                  } disabled:opacity-50`}
+                >
+                  {isLocating ? (
+                    <div className="w-3.5 h-3.5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Navigation className="w-3.5 h-3.5" />
+                  )}
+                  <span>내 지역</span>
+                </button>
               </div>
-              <div className="flex-1">
-                <span className="text-xs font-bold text-white">실시간 전국 현황</span>
-                <p className="text-[9px] text-white/70">
+            </div>
+
+            {/* Info Bar */}
+            <div className="bg-gradient-to-r from-primary/10 to-blue-500/10 px-3 py-1.5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className="w-3 h-3 text-primary animate-pulse" />
+                <span className="text-[10px] font-medium text-foreground">
+                  {activeTab === "national" ? "실시간 전국 현황" : `실시간 ${userRegion || "내 지역"} 현황`}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-muted-foreground">
                   {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
-                </p>
+                </span>
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
               </div>
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             </div>
             
             {/* Stats Grid */}
-            <div className="grid grid-cols-4 gap-1 p-2">
-              <div className="bg-white rounded-xl p-2 text-center">
-                <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-1">
-                  <Hospital className="w-3 h-3 text-primary" />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="grid grid-cols-4 gap-1 p-2"
+              >
+                <div className="bg-white rounded-xl p-2 text-center">
+                  <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-1">
+                    <Hospital className="w-3 h-3 text-primary" />
+                  </div>
+                  <p className="text-lg font-bold text-foreground leading-none">
+                    {stats?.totalHospitals || "---"}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
                 </div>
-                <p className="text-lg font-bold text-foreground leading-none">
-                  {stats?.totalHospitals || "---"}
-                </p>
-                <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
-              </div>
-              
-              <div className="bg-white rounded-xl p-2 text-center">
-                <div className="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
-                  <Bed className="w-3 h-3 text-green-600" />
+                
+                <div className="bg-white rounded-xl p-2 text-center">
+                  <div className="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
+                    <Bed className="w-3 h-3 text-green-600" />
+                  </div>
+                  <p className="text-lg font-bold text-green-600 leading-none">
+                    {stats?.totalBeds || "---"}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
                 </div>
-                <p className="text-lg font-bold text-green-600 leading-none">
-                  {stats?.totalBeds || "---"}
-                </p>
-                <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
-              </div>
-              
-              <div className="bg-white rounded-xl p-2 text-center">
-                <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                  <TrendingUp className="w-3 h-3 text-blue-600" />
+                
+                <div className="bg-white rounded-xl p-2 text-center">
+                  <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
+                    <TrendingUp className="w-3 h-3 text-blue-600" />
+                  </div>
+                  <p className="text-lg font-bold text-blue-600 leading-none">
+                    {stats?.availableHospitals || "---"}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground mt-0.5">여유</p>
                 </div>
-                <p className="text-lg font-bold text-blue-600 leading-none">
-                  {stats?.availableHospitals || "---"}
-                </p>
-                <p className="text-[9px] text-muted-foreground mt-0.5">여유</p>
-              </div>
-              
-              <div className="bg-white rounded-xl p-2 text-center">
-                <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
-                  <Users className="w-3 h-3 text-pink-600" />
+                
+                <div className="bg-white rounded-xl p-2 text-center">
+                  <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
+                    <Users className="w-3 h-3 text-pink-600" />
+                  </div>
+                  <p className="text-lg font-bold text-pink-600 leading-none">
+                    {stats?.pediatricBeds || "---"}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
                 </div>
-                <p className="text-lg font-bold text-pink-600 leading-none">
-                  {stats?.pediatricBeds || "---"}
-                </p>
-                <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
-              </div>
-            </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </motion.div>
 
