@@ -153,31 +153,36 @@ const MapPage = () => {
     if (activeFilter === "traumaCenter" && filteredHospitals.length === 0 && activeRegion !== "all") {
       const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
       const regionName = selectedRegion?.labelKr || activeRegion;
-      const regionCenter = selectedRegion?.center || mapCenter;
+      
+      // Use user location if available, otherwise fall back to region center
+      const referencePoint = userLocation || selectedRegion?.center || mapCenter;
+      const isUserLocationBased = !!userLocation;
       
       // Find nearest trauma center from all hospitals
       const allTraumaCenters = hospitalData.filter((h) => h.isTraumaCenter === true);
       
       if (allTraumaCenters.length > 0) {
-        // Calculate distance from region center to each trauma center
+        // Calculate distance from reference point to each trauma center
         const traumaCentersWithDistance = allTraumaCenters.map((tc) => ({
           ...tc,
-          distanceFromRegion: calculateDistance(regionCenter[0], regionCenter[1], tc.lat, tc.lng),
+          distanceFromRef: calculateDistance(referencePoint[0], referencePoint[1], tc.lat, tc.lng),
         }));
         
         // Sort by distance and get the nearest one
-        traumaCentersWithDistance.sort((a, b) => a.distanceFromRegion - b.distanceFromRegion);
+        traumaCentersWithDistance.sort((a, b) => a.distanceFromRef - b.distanceFromRef);
         const nearest = traumaCentersWithDistance[0];
         
         // Calculate estimated arrival time (average city speed: 35 km/h)
-        const estimatedMinutes = Math.round((nearest.distanceFromRegion / 35) * 60);
+        const estimatedMinutes = Math.round((nearest.distanceFromRef / 35) * 60);
         const timeDisplay = estimatedMinutes < 60 
           ? `약 ${estimatedMinutes}분` 
           : `약 ${Math.floor(estimatedMinutes / 60)}시간 ${estimatedMinutes % 60}분`;
         
+        const locationLabel = isUserLocationBased ? "내 위치에서" : `${regionName}에서`;
+        
         toast({
           title: `${regionName}에는 외상센터가 없습니다`,
-          description: `가장 가까운 외상센터: ${nearest.nameKr} (${nearest.distanceFromRegion.toFixed(1)}km, ${timeDisplay})`,
+          description: `${locationLabel} 가장 가까운 외상센터: ${nearest.nameKr} (${nearest.distanceFromRef.toFixed(1)}km, ${timeDisplay})`,
           action: (
             <Button
               variant="outline"
@@ -200,7 +205,7 @@ const MapPage = () => {
         });
       }
     }
-  }, [activeFilter, filteredHospitals.length, activeRegion, hospitalData, mapCenter]);
+  }, [activeFilter, filteredHospitals.length, activeRegion, hospitalData, mapCenter, userLocation]);
 
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
