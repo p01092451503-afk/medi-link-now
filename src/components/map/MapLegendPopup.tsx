@@ -37,7 +37,7 @@ const MapLegendPopup = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed left-4 right-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-white rounded-2xl shadow-2xl z-[2001] overflow-hidden"
+                className="fixed left-4 right-4 top-16 bottom-16 max-w-md mx-auto bg-white rounded-2xl shadow-2xl z-[2001] overflow-hidden flex flex-col"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-primary/10 to-primary/5">
@@ -54,7 +54,7 @@ const MapLegendPopup = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-4 space-y-5 max-h-[60vh] overflow-y-auto">
+                <div className="p-4 space-y-5 overflow-y-auto flex-1">
                   {/* Traffic Light Colors */}
                   <section>
                     <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
