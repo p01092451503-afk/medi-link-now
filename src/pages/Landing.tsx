@@ -346,7 +346,9 @@ const Landing = () => {
                 <Hospital className="w-6 h-6 text-primary" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold text-foreground">400+</p>
+                <p className="text-sm font-bold text-foreground">
+                  {isLoading ? "---" : `${hospitals.length}+`}
+                </p>
                 <p className="text-[10px] text-muted-foreground">전국 응급실</p>
               </div>
             </div>
