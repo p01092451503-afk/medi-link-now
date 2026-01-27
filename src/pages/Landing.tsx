@@ -528,15 +528,52 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="p-4 text-center space-y-2">
-        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
-          <a href="/terms" className="hover:text-foreground transition-colors">이용약관</a>
-          <span className="text-gray-300">|</span>
-          <a href="/privacy" className="hover:text-foreground transition-colors">개인정보처리방침</a>
+      <footer className="relative mt-auto">
+        {/* Gradient divider */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        
+        <div className="px-6 py-6 space-y-4">
+          {/* Brand + Social */}
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Ambulance className="w-4 h-4 text-primary" />
+            </div>
+            <span className="text-sm font-semibold text-foreground">Medi-Link</span>
+          </div>
+          
+          {/* Links */}
+          <div className="flex items-center justify-center gap-6">
+            <a 
+              href="/terms" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              이용약관
+            </a>
+            <a 
+              href="/privacy" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              개인정보처리방침
+            </a>
+            <a 
+              href="tel:119" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 flex items-center gap-1"
+            >
+              <Phone className="w-3 h-3" />
+              119
+            </a>
+          </div>
+          
+          {/* Copyright */}
+          <div className="pt-3 border-t border-border/50">
+            <p className="text-[10px] text-muted-foreground/70 text-center">
+              © 2026 Medi-Link · 실시간 응급실 병상 정보 서비스
+            </p>
+            <p className="text-[9px] text-muted-foreground/50 text-center mt-1">
+              본 서비스는 정보 제공 목적이며, 응급 시 119에 신고하세요
+            </p>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">
-          © 2026 Medi-Link. 실시간 응급실 병상 정보
-        </p>
       </footer>
     </div>
   );
