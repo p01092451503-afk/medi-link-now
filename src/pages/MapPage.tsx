@@ -16,6 +16,8 @@ import {
   MajorRegionType,
   regionOptions,
   filterHospitalsByRegion,
+  findNearestMajorRegion,
+  findNearestSubRegion,
 } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import ClusteredMapView from "@/components/map/ClusteredMapView";
@@ -153,8 +155,12 @@ const MapPage = () => {
         setMapCenter(newLocation);
         setActiveRadius(10); // Default 10km radius
         setMapZoom(getZoomForRadius(10));
-        setActiveMajorRegion("seoul");
-        setActiveRegion("seoul");
+        
+        // Detect nearest major region and sub-region from coordinates
+        const nearestMajor = findNearestMajorRegion(pos.coords.latitude, pos.coords.longitude);
+        const nearestSub = findNearestSubRegion(pos.coords.latitude, pos.coords.longitude, nearestMajor);
+        setActiveMajorRegion(nearestMajor);
+        setActiveRegion(nearestSub);
       },
       () => {
         // Silently fail on initial auto-location
@@ -169,6 +175,8 @@ const MapPage = () => {
     if (userLocation) {
       setUserLocation(null);
       setActiveRadius("all");
+      setActiveMajorRegion("all");
+      setActiveRegion("all");
       setMapCenter([36.5, 127.5]); // Center of Korea
       setMapZoom(7); // Zoom out to see whole country
       toast({
@@ -197,8 +205,12 @@ const MapPage = () => {
           setMapZoom(getZoomForRadius(activeRadius as number));
         }
         
-        setActiveMajorRegion("seoul");
-        setActiveRegion("seoul");
+        // Detect nearest major region and sub-region from coordinates
+        const nearestMajor = findNearestMajorRegion(pos.coords.latitude, pos.coords.longitude);
+        const nearestSub = findNearestSubRegion(pos.coords.latitude, pos.coords.longitude, nearestMajor);
+        setActiveMajorRegion(nearestMajor);
+        setActiveRegion(nearestSub);
+        
         setIsLocating(false);
         toast({
           title: "현재 위치를 찾았습니다!",
