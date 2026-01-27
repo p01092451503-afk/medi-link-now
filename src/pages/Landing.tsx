@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast";
 const Landing = () => {
   const navigate = useNavigate();
   const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
-  const [activeTab, setActiveTab] = useState<"national" | "local">("national");
+  const [activeTab, setActiveTab] = useState<"national" | "local" | "compare">("national");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [userRegion, setUserRegion] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
@@ -54,35 +54,56 @@ const Landing = () => {
     }
   };
 
-  // Calculate real-time statistics
-  const stats = useMemo(() => {
-    if (!hospitals.length) return null;
+  // Calculate real-time statistics for both national and local
+  const { nationalStats, localStats } = useMemo(() => {
+    if (!hospitals.length) return { nationalStats: null, localStats: null };
 
-    let filteredHospitals = hospitals;
-
-    // Filter by local region if in local mode
-    if (activeTab === "local" && userLocation) {
-      const majorRegion = findNearestMajorRegion(userLocation[0], userLocation[1]);
-      const subRegion = findNearestSubRegion(userLocation[0], userLocation[1], majorRegion);
-      filteredHospitals = filterHospitalsByRegion(hospitals, subRegion);
-    }
-
-    const totalBeds = filteredHospitals.reduce(
+    // National stats
+    const nationalTotalBeds = hospitals.reduce(
       (sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever,
       0
     );
-    const availableHospitals = filteredHospitals.filter(
+    const nationalAvailableHospitals = hospitals.filter(
       (h) => getHospitalStatus(h) === "available"
     ).length;
-    const pediatricBeds = filteredHospitals.reduce((sum, h) => sum + h.beds.pediatric, 0);
+    const nationalPediatricBeds = hospitals.reduce((sum, h) => sum + h.beds.pediatric, 0);
 
-    return {
-      totalHospitals: filteredHospitals.length,
-      totalBeds,
-      availableHospitals,
-      pediatricBeds,
+    const national = {
+      totalHospitals: hospitals.length,
+      totalBeds: nationalTotalBeds,
+      availableHospitals: nationalAvailableHospitals,
+      pediatricBeds: nationalPediatricBeds,
     };
-  }, [hospitals, activeTab, userLocation]);
+
+    // Local stats (only if user location is available)
+    let local = null;
+    if (userLocation) {
+      const majorRegion = findNearestMajorRegion(userLocation[0], userLocation[1]);
+      const subRegion = findNearestSubRegion(userLocation[0], userLocation[1], majorRegion);
+      const localHospitals = filterHospitalsByRegion(hospitals, subRegion);
+
+      const localTotalBeds = localHospitals.reduce(
+        (sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever,
+        0
+      );
+      const localAvailableHospitals = localHospitals.filter(
+        (h) => getHospitalStatus(h) === "available"
+      ).length;
+      const localPediatricBeds = localHospitals.reduce((sum, h) => sum + h.beds.pediatric, 0);
+
+      local = {
+        totalHospitals: localHospitals.length,
+        totalBeds: localTotalBeds,
+        availableHospitals: localAvailableHospitals,
+        pediatricBeds: localPediatricBeds,
+      };
+    }
+
+    return { nationalStats: national, localStats: local };
+  }, [hospitals, userLocation]);
+
+  // Get current stats based on active tab
+  const stats = activeTab === "local" ? localStats : nationalStats;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 flex flex-col">
@@ -131,32 +152,51 @@ const Landing = () => {
                 {/* National Tab */}
                 <button
                   onClick={() => setActiveTab("national")}
-                  className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                     activeTab === "national"
                       ? "bg-white text-primary shadow-sm"
                       : "text-white/90 hover:bg-white/10"
                   }`}
                 >
-                  <Hospital className="w-3.5 h-3.5" />
-                  <span>전국 현황</span>
+                  <Hospital className="w-3 h-3" />
+                  <span>전국</span>
                 </button>
                 
                 {/* Local Tab */}
                 <button
                   onClick={handleLocalTab}
                   disabled={isLocating}
-                  className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
                     activeTab === "local"
                       ? "bg-white text-primary shadow-sm"
                       : "text-white/90 hover:bg-white/10"
                   } disabled:opacity-50`}
                 >
                   {isLocating ? (
-                    <div className="w-3.5 h-3.5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                    <div className="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin" />
                   ) : (
-                    <Navigation className="w-3.5 h-3.5" />
+                    <Navigation className="w-3 h-3" />
                   )}
                   <span>내 지역</span>
+                </button>
+
+                {/* Compare Tab */}
+                <button
+                  onClick={() => {
+                    if (!userLocation) {
+                      handleLocalTab();
+                    }
+                    setActiveTab("compare");
+                  }}
+                  disabled={isLocating}
+                  className={`flex-1 flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                    activeTab === "compare"
+                      ? "bg-white text-primary shadow-sm"
+                      : "text-white/90 hover:bg-white/10"
+                  } disabled:opacity-50`}
+                >
+                  <BarChart3 className="w-3 h-3" />
+                  <span>비교</span>
                 </button>
               </div>
             </div>
@@ -166,7 +206,9 @@ const Landing = () => {
               <div className="flex items-center gap-2">
                 <Activity className="w-3 h-3 text-primary animate-pulse" />
                 <span className="text-[10px] font-medium text-foreground">
-                  {activeTab === "national" ? "실시간 전국 현황" : `실시간 ${userRegion || "내 지역"} 현황`}
+                  {activeTab === "national" && "실시간 전국 현황"}
+                  {activeTab === "local" && `실시간 ${userRegion || "내 지역"} 현황`}
+                  {activeTab === "compare" && "전국 vs 내 지역 비교"}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -179,54 +221,143 @@ const Landing = () => {
             
             {/* Stats Grid */}
             <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="grid grid-cols-4 gap-1 p-2"
-              >
-                <div className="bg-white rounded-xl p-2 text-center">
-                  <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-1">
-                    <Hospital className="w-3 h-3 text-primary" />
+              {activeTab === "compare" ? (
+                <motion.div
+                  key="compare"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-2 space-y-2"
+                >
+                  {/* Comparison Header */}
+                  <div className="grid grid-cols-3 gap-1 text-[9px] font-medium text-muted-foreground px-1">
+                    <div></div>
+                    <div className="text-center">전국</div>
+                    <div className="text-center text-primary">{userRegion || "내 지역"}</div>
                   </div>
-                  <p className="text-lg font-bold text-foreground leading-none">
-                    {stats?.totalHospitals || "---"}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
-                </div>
-                
-                <div className="bg-white rounded-xl p-2 text-center">
-                  <div className="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
-                    <Bed className="w-3 h-3 text-green-600" />
+
+                  {/* Hospitals Row */}
+                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                        <Hospital className="w-2.5 h-2.5 text-primary" />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">응급실</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-foreground">{nationalStats?.totalHospitals || "---"}</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-primary">{localStats?.totalHospitals || "---"}</span>
+                    </div>
                   </div>
-                  <p className="text-lg font-bold text-green-600 leading-none">
-                    {stats?.totalBeds || "---"}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
-                </div>
-                
-                <div className="bg-white rounded-xl p-2 text-center">
-                  <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                    <TrendingUp className="w-3 h-3 text-blue-600" />
+
+                  {/* Beds Row */}
+                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-md bg-green-100 flex items-center justify-center">
+                        <Bed className="w-2.5 h-2.5 text-green-600" />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">병상</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-green-600">{nationalStats?.totalBeds || "---"}</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-primary">{localStats?.totalBeds || "---"}</span>
+                    </div>
                   </div>
-                  <p className="text-lg font-bold text-blue-600 leading-none">
-                    {stats?.availableHospitals || "---"}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground mt-0.5">여유</p>
-                </div>
-                
-                <div className="bg-white rounded-xl p-2 text-center">
-                  <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
-                    <Users className="w-3 h-3 text-pink-600" />
+
+                  {/* Available Row */}
+                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center">
+                        <TrendingUp className="w-2.5 h-2.5 text-blue-600" />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">여유</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-blue-600">{nationalStats?.availableHospitals || "---"}</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-primary">{localStats?.availableHospitals || "---"}</span>
+                    </div>
                   </div>
-                  <p className="text-lg font-bold text-pink-600 leading-none">
-                    {stats?.pediatricBeds || "---"}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
-                </div>
-              </motion.div>
+
+                  {/* Pediatric Row */}
+                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-md bg-pink-100 flex items-center justify-center">
+                        <Users className="w-2.5 h-2.5 text-pink-600" />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">소아</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-pink-600">{nationalStats?.pediatricBeds || "---"}</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-bold text-primary">{localStats?.pediatricBeds || "---"}</span>
+                    </div>
+                  </div>
+
+                  {/* Local percentage indicator */}
+                  {localStats && nationalStats && (
+                    <div className="text-center text-[9px] text-muted-foreground pt-1">
+                      내 지역은 전국 병상의 <span className="font-bold text-primary">{((localStats.totalBeds / nationalStats.totalBeds) * 100).toFixed(1)}%</span>를 보유
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid grid-cols-4 gap-1 p-2"
+                >
+                  <div className="bg-white rounded-xl p-2 text-center">
+                    <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-1">
+                      <Hospital className="w-3 h-3 text-primary" />
+                    </div>
+                    <p className="text-lg font-bold text-foreground leading-none">
+                      {stats?.totalHospitals || "---"}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
+                  </div>
+                  
+                  <div className="bg-white rounded-xl p-2 text-center">
+                    <div className="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
+                      <Bed className="w-3 h-3 text-green-600" />
+                    </div>
+                    <p className="text-lg font-bold text-green-600 leading-none">
+                      {stats?.totalBeds || "---"}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
+                  </div>
+                  
+                  <div className="bg-white rounded-xl p-2 text-center">
+                    <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
+                      <TrendingUp className="w-3 h-3 text-blue-600" />
+                    </div>
+                    <p className="text-lg font-bold text-blue-600 leading-none">
+                      {stats?.availableHospitals || "---"}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">여유</p>
+                  </div>
+                  
+                  <div className="bg-white rounded-xl p-2 text-center">
+                    <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
+                      <Users className="w-3 h-3 text-pink-600" />
+                    </div>
+                    <p className="text-lg font-bold text-pink-600 leading-none">
+                      {stats?.pediatricBeds || "---"}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </motion.div>
