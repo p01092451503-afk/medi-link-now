@@ -1,6 +1,6 @@
-import { Marker, Popup, Tooltip } from "react-leaflet";
+import { Marker } from "react-leaflet";
 import L from "leaflet";
-import { Hospital, getHospitalStatus, FilterType } from "@/data/hospitals";
+import { Hospital, FilterType } from "@/data/hospitals";
 
 interface HospitalMarkerProps {
   hospital: Hospital & { distance?: number };
@@ -9,12 +9,18 @@ interface HospitalMarkerProps {
   opacity?: number;
 }
 
+// 상태 기반 색상 (수용 가능 여부만 반영)
+const STATUS_COLORS = {
+  available: { bg: "#22C55E", border: "#16A34A", text: "#FFFFFF" },
+  limited: { bg: "#EAB308", border: "#CA8A04", text: "#FFFFFF" },
+  unavailable: { bg: "#9CA3AF", border: "#6B7280", text: "#FFFFFF" },
+};
+
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
-  // 음수 병상은 0으로 처리
   const general = Math.max(0, hospital.beds.general);
   const pediatric = Math.max(0, hospital.beds.pediatric);
   const fever = Math.max(0, hospital.beds.fever);
-  
+
   switch (filter) {
     case "adult":
       return general;
@@ -27,178 +33,25 @@ const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
   }
 };
 
-const getFilterLabel = (filter: FilterType): string => {
-  switch (filter) {
-    case "adult":
-      return "성인";
-    case "pediatric":
-      return "소아";
-    case "fever":
-      return "열/감염";
-    default:
-      return "전체";
-  }
-};
-
 const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" => {
   if (beds === 0) return "unavailable";
   if (beds <= 2) return "limited";
   return "available";
 };
 
-// 등급별 마커 색상 정의
-const getGradeColors = (emergencyGrade?: string | null) => {
-  switch (emergencyGrade) {
-    case 'regional_center': // 권역응급의료센터 - 빨간색 계열
-      return {
-        available: { bg: "#DC2626", border: "#B91C1C", text: "#FFFFFF" },
-        limited: { bg: "#DC2626", border: "#B91C1C", text: "#FFFFFF" },
-        unavailable: { bg: "#991B1B", border: "#7F1D1D", text: "#FFFFFF" },
-      };
-    case 'local_center': // 지역응급의료센터 - 주황색 계열
-      return {
-        available: { bg: "#F97316", border: "#EA580C", text: "#FFFFFF" },
-        limited: { bg: "#F97316", border: "#EA580C", text: "#FFFFFF" },
-        unavailable: { bg: "#C2410C", border: "#9A3412", text: "#FFFFFF" },
-      };
-    case 'local_institution': // 지역응급의료기관 - 파란색 계열
-      return {
-        available: { bg: "#2563EB", border: "#1D4ED8", text: "#FFFFFF" },
-        limited: { bg: "#2563EB", border: "#1D4ED8", text: "#FFFFFF" },
-        unavailable: { bg: "#1E40AF", border: "#1E3A8A", text: "#FFFFFF" },
-      };
-    default: // 등급 없음 - 기존 상태 기반 색상
-      return {
-        available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
-        limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
-        unavailable: { bg: "#EF4444", border: "#DC2626", text: "#FFFFFF" },
-      };
-  }
-};
-
-// 등급 라벨 반환
-const getGradeLabel = (emergencyGrade?: string | null): string => {
-  switch (emergencyGrade) {
-    case 'regional_center':
-      return '권역';
-    case 'local_center':
-      return '지역센터';
-    case 'local_institution':
-      return '지역기관';
-    default:
-      return '';
-  }
-};
-
-const createMarkerIcon = (
-  status: "available" | "limited" | "unavailable",
-  beds: number,
-  hasPediatric: boolean,
-  isTraumaCenter?: boolean,
-  isPediatricFilter?: boolean,
-  emergencyGrade?: string | null
-) => {
-  const colors = getGradeColors(emergencyGrade);
-  const color = colors[status];
-  const gradeLabel = getGradeLabel(emergencyGrade);
-  
-  const pulseAnimation = isPediatricFilter ? "animation: pediatric-pulse 1.5s ease-in-out infinite;" : "";
-  const childBadge = hasPediatric
-    ? `<div style="
-        position: absolute; 
-        top: -12px; 
-        right: -12px; 
-        width: 26px; 
-        height: 26px; 
-        background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
-        border: 2px solid white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
-        ${pulseAnimation}
-      ">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Baby face -->
-          <circle cx="12" cy="12" r="10" fill="#FFE4C9"/>
-          <!-- Hair tuft -->
-          <path d="M12 2C12 2 14 4 14 6C14 6 13 5 12 5C11 5 10 6 10 6C10 4 12 2 12 2Z" fill="#8B5A2B"/>
-          <!-- Left eye -->
-          <circle cx="8.5" cy="11" r="1.5" fill="#1a1a1a"/>
-          <circle cx="8" cy="10.5" r="0.5" fill="white"/>
-          <!-- Right eye -->
-          <circle cx="15.5" cy="11" r="1.5" fill="#1a1a1a"/>
-          <circle cx="15" cy="10.5" r="0.5" fill="white"/>
-          <!-- Cheeks -->
-          <circle cx="6" cy="14" r="1.5" fill="#FECACA" opacity="0.7"/>
-          <circle cx="18" cy="14" r="1.5" fill="#FECACA" opacity="0.7"/>
-          <!-- Smile -->
-          <path d="M9 15.5C9 15.5 10.5 17 12 17C13.5 17 15 15.5 15 15.5" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>`
-    : "";
-  const traumaBadge = isTraumaCenter
-    ? `<div style="
-        position: absolute; 
-        top: -12px; 
-        left: -12px; 
-        width: 26px; 
-        height: 26px; 
-        background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
-        border: 2px solid white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.5);
-      ">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Cross/Plus symbol for trauma -->
-          <rect x="10" y="4" width="4" height="16" rx="1" fill="white"/>
-          <rect x="4" y="10" width="16" height="4" rx="1" fill="white"/>
-        </svg>
-      </div>`
-    : "";
-  
-  // 등급 표시 뱃지 (왼쪽 하단)
-  const gradeBadge = gradeLabel 
-    ? `<div style="
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.75);
-        color: white;
-        font-size: 9px;
-        font-weight: 600;
-        padding: 2px 6px;
-        border-radius: 4px;
-        white-space: nowrap;
-      ">${gradeLabel}</div>`
-    : "";
+const createMarkerIcon = (status: "available" | "limited" | "unavailable", beds: number) => {
+  const color = STATUS_COLORS[status];
 
   return L.divIcon({
     className: "custom-marker",
     html: `
-      <style>
-        @keyframes pediatric-pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.3); opacity: 0.8; }
-        }
-        .marker-container {
-          transition: transform 0.2s ease-out;
-        }
-        .marker-container:hover {
-          transform: scale(1.15);
-        }
-      </style>
       <div class="marker-container" style="
         position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         cursor: pointer;
+        transition: transform 0.15s ease-out;
       ">
         <div style="
           position: relative;
@@ -214,64 +67,36 @@ const createMarkerIcon = (
           color: ${color.text};
           font-weight: 700;
           font-size: 16px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          box-shadow: 0 3px 10px rgba(0,0,0,0.25);
           cursor: pointer;
-          transition: transform 0.2s;
         ">
           ${beds}
-          ${childBadge}
-          ${traumaBadge}
         </div>
         <div style="
           width: 0;
           height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-top: 10px solid ${color.border};
+          border-left: 7px solid transparent;
+          border-right: 7px solid transparent;
+          border-top: 9px solid ${color.border};
           margin-top: -2px;
         "></div>
-        ${gradeBadge}
       </div>
+      <style>
+        .marker-container:hover {
+          transform: scale(1.15);
+        }
+      </style>
     `,
-    iconSize: [44, 62],
-    iconAnchor: [22, 52],
-    popupAnchor: [0, -52],
+    iconSize: [44, 54],
+    iconAnchor: [22, 48],
+    popupAnchor: [0, -48],
   });
 };
 
 const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1 }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
-  
-  // 음수 병상을 0으로 정규화
-  const normalizedBeds = {
-    general: Math.max(0, hospital.beds.general),
-    pediatric: Math.max(0, hospital.beds.pediatric),
-    fever: Math.max(0, hospital.beds.fever),
-  };
-  
-  const hasPediatric = normalizedBeds.pediatric > 0;
-  const isPediatricFilter = activeFilter === "pediatric";
-  const icon = createMarkerIcon(
-    status, 
-    displayBeds, 
-    hasPediatric, 
-    hospital.isTraumaCenter, 
-    isPediatricFilter,
-    hospital.emergencyGrade
-  );
-
-  // 등급 한글명 표시
-  const getGradeKoreanName = (grade?: string | null): string => {
-    switch (grade) {
-      case 'regional_center': return '권역응급의료센터';
-      case 'local_center': return '지역응급의료센터';
-      case 'local_institution': return '지역응급의료기관';
-      default: return '';
-    }
-  };
-
-  const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
+  const icon = createMarkerIcon(status, displayBeds);
 
   return (
     <Marker
@@ -281,126 +106,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1 }: Hospit
       eventHandlers={{
         click: () => onClick(hospital),
       }}
-    >
-      <Tooltip 
-        direction="top" 
-        offset={[0, -55]} 
-        opacity={1}
-        sticky={true}
-        className="!bg-white !border-gray-200 !shadow-xl !rounded-xl !p-0 !text-sm !text-gray-800 !min-w-[260px]"
-      >
-        <div className="p-3 space-y-2.5">
-          {/* 거리 및 예상 도착 시간 */}
-          {hospital.distance !== undefined && (
-            <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
-              <div className="flex items-center gap-1.5">
-                <span className="text-blue-600 font-bold text-sm">{hospital.distance.toFixed(1)}km</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span className="font-bold text-sm">
-                  {(() => {
-                    const avgSpeed = 35;
-                    const timeInMinutes = Math.ceil((hospital.distance / avgSpeed) * 60);
-                    if (timeInMinutes < 60) {
-                      return `약 ${timeInMinutes}분`;
-                    } else {
-                      const hours = Math.floor(timeInMinutes / 60);
-                      const mins = timeInMinutes % 60;
-                      return mins > 0 ? `${hours}시간 ${mins}분` : `${hours}시간`;
-                    }
-                  })()}
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* 병원명 및 상태 */}
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1">
-              <span className="font-bold text-foreground block">{hospital.nameKr}</span>
-              {gradeKoreanName && (
-                <span className="text-[10px] text-blue-600 font-medium">{gradeKoreanName}</span>
-              )}
-            </div>
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold flex-shrink-0 ${
-              status === 'available' ? 'bg-green-100 text-green-700' : 
-              status === 'limited' ? 'bg-yellow-100 text-yellow-700' : 
-              'bg-red-100 text-red-700'
-            }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${
-                status === 'available' ? 'bg-green-500' : 
-                status === 'limited' ? 'bg-yellow-500' : 
-                'bg-red-500'
-              }`} />
-              {status === 'available' ? '여유' : status === 'limited' ? '혼잡' : '만실'}
-            </span>
-          </div>
-          
-          {/* 병상 정보 그리드 */}
-          <div className="grid grid-cols-3 gap-1.5 text-center">
-            <div className={`p-1.5 rounded-lg ${normalizedBeds.general > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
-              <div className={`font-bold text-sm ${normalizedBeds.general > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                {normalizedBeds.general}
-              </div>
-              <div className="text-[10px] text-gray-500">성인</div>
-            </div>
-            <div className={`p-1.5 rounded-lg ${normalizedBeds.pediatric > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
-              <div className={`font-bold text-sm ${normalizedBeds.pediatric > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                {normalizedBeds.pediatric}
-              </div>
-              <div className="text-[10px] text-gray-500">소아</div>
-            </div>
-            <div className={`p-1.5 rounded-lg ${normalizedBeds.fever > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
-              <div className={`font-bold text-sm ${normalizedBeds.fever > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                {normalizedBeds.fever}
-              </div>
-              <div className="text-[10px] text-gray-500">열/감염</div>
-            </div>
-          </div>
-          
-          {/* 클릭 안내 */}
-          <div className="pt-1.5 border-t border-gray-100 text-center">
-            <span className="text-[10px] text-gray-400">클릭하여 상세정보 보기</span>
-          </div>
-        </div>
-      </Tooltip>
-      <Popup>
-        <div className="text-sm min-w-[180px]">
-          <div className="flex items-center gap-1 mb-1">
-            <strong className="text-base">{hospital.nameKr}</strong>
-            {hasPediatric && <span title="아이 진료 가능">👶</span>}
-          </div>
-          {gradeKoreanName && (
-            <span className="text-xs text-blue-600 font-medium block mb-1">{gradeKoreanName}</span>
-          )}
-          <span className="text-xs text-gray-500 block mb-2">{hospital.category}</span>
-          <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className={`p-1.5 rounded ${activeFilter === "adult" || activeFilter === "all" || activeFilter === "ct" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${normalizedBeds.general > 0 ? "text-green-600" : "text-gray-400"}`}>
-                {normalizedBeds.general}
-              </div>
-              <div className="text-gray-400">성인</div>
-            </div>
-            <div className={`p-1.5 rounded ${activeFilter === "pediatric" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${normalizedBeds.pediatric > 0 ? "text-green-600" : "text-gray-400"}`}>
-                {normalizedBeds.pediatric}
-              </div>
-              <div className="text-gray-400">소아</div>
-            </div>
-            <div className={`p-1.5 rounded ${activeFilter === "fever" ? "bg-blue-50" : ""}`}>
-              <div className={`font-bold ${normalizedBeds.fever > 0 ? "text-green-600" : "text-gray-400"}`}>
-                {normalizedBeds.fever}
-              </div>
-              <div className="text-gray-400">열/감염</div>
-            </div>
-          </div>
-        </div>
-      </Popup>
-    </Marker>
+    />
   );
 };
 
