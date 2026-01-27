@@ -486,10 +486,9 @@ const Landing = () => {
           {/* Guardian Button */}
           <button
             onClick={() => navigate("/map")}
-            className="w-full h-20 px-6 rounded-3xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-600 shadow-xl shadow-teal-500/25 relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/30 hover:scale-[1.02]"
+            className="w-full h-20 px-6 rounded-3xl bg-teal-600 shadow-xl shadow-teal-500/25 relative overflow-hidden group transition-all duration-300 hover:bg-teal-500 hover:shadow-2xl hover:shadow-teal-500/30 hover:scale-[1.02]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
             <div className="relative flex items-center w-full h-full">
               <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Users className="w-6 h-6 text-white" />
@@ -507,10 +506,9 @@ const Landing = () => {
           {/* Ambulance Driver Button */}
           <button
             onClick={() => navigate("/driver-intro")}
-            className="w-full h-20 px-6 rounded-3xl bg-gradient-to-r from-orange-500 via-orange-400 to-amber-500 shadow-xl shadow-orange-500/25 relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/30 hover:scale-[1.02]"
+            className="w-full h-20 px-6 rounded-3xl bg-orange-500 shadow-xl shadow-orange-500/25 relative overflow-hidden group transition-all duration-300 hover:bg-orange-400 hover:shadow-2xl hover:shadow-orange-500/30 hover:scale-[1.02]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-orange-500 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
             <div className="relative flex items-center w-full h-full">
               <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Ambulance className="w-6 h-6 text-white" />
