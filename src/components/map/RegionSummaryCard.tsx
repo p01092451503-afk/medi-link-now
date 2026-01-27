@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Building2, Bed } from "lucide-react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
 
@@ -8,6 +8,10 @@ interface RegionSummaryCardProps {
 }
 
 const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showLeftFade, setShowLeftFade] = useState(false);
+  const [showRightFade, setShowRightFade] = useState(false);
+
   const summary = useMemo(() => {
     const totalHospitals = hospitals.length;
     // Normalize negative values to 0
@@ -33,14 +37,53 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
     };
   }, [hospitals]);
 
+  // Check scroll position to show/hide fade indicators
+  const checkScrollPosition = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    setShowLeftFade(scrollLeft > 4);
+    setShowRightFade(scrollLeft < scrollWidth - clientWidth - 4);
+  };
+
+  useEffect(() => {
+    checkScrollPosition();
+    const scrollEl = scrollRef.current;
+    if (scrollEl) {
+      scrollEl.addEventListener("scroll", checkScrollPosition);
+      // Check on resize too
+      window.addEventListener("resize", checkScrollPosition);
+      return () => {
+        scrollEl.removeEventListener("scroll", checkScrollPosition);
+        window.removeEventListener("resize", checkScrollPosition);
+      };
+    }
+  }, [hospitals]);
+
   if (hospitals.length === 0) return null;
 
   return (
     <section 
       aria-label={`${regionName} 지역 응급실 현황 요약`}
-      className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 max-w-[calc(100vw-2rem)] overflow-hidden"
+      className="relative bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 max-w-[calc(100vw-2rem)] overflow-hidden"
     >
+      {/* Left fade indicator */}
+      {showLeftFade && (
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white/95 to-transparent z-10 pointer-events-none rounded-l-xl"
+          aria-hidden="true"
+        />
+      )}
+      
+      {/* Right fade indicator */}
+      {showRightFade && (
+        <div 
+          className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-white/95 to-transparent z-10 pointer-events-none rounded-r-xl"
+          aria-hidden="true"
+        />
+      )}
+
       <div 
+        ref={scrollRef}
         className="flex items-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-2 md:py-3 overflow-x-auto scrollbar-hide touch-pan-x"
         role="list"
         aria-label="응급실 통계"
@@ -137,7 +180,7 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
 
         {/* Status Indicator - Hidden on very small screens, visible on sm+ */}
         <fieldset 
-          className="hidden sm:flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 border-0 p-0 m-0"
+          className="hidden sm:flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 border-0 p-0 m-0 pr-1"
           role="group"
           aria-label="병원 혼잡도 현황"
         >
