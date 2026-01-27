@@ -486,9 +486,9 @@ const Landing = () => {
           {/* Guardian Button */}
           <button
             onClick={() => navigate("/map")}
-            className="w-full h-20 px-6 rounded-3xl bg-gradient-to-r from-primary via-blue-600 to-primary shadow-xl shadow-primary/25 relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02]"
+            className="w-full h-20 px-6 rounded-3xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-600 shadow-xl shadow-teal-500/25 relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/30 hover:scale-[1.02]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
             <div className="relative flex items-center w-full h-full">
               <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
