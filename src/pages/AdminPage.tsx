@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble } from "lucide-react";
+import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,14 @@ import { useToast } from "@/hooks/use-toast";
 import { syncNationwideHospitals, getHospitalCount } from "@/services/hospitalDbService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
+
+interface RegionUpdateStatus {
+  region: string;
+  lastUpdated: string;
+  hospitalCount: number;
+}
 
 const REGION_BATCHES = [
   { name: "수도권", regions: ["seoul", "incheon", "gyeonggi"] },
@@ -72,6 +80,49 @@ export default function AdminPage() {
         .select("*", { count: "exact", head: true });
       return count || 0;
     },
+  });
+  
+  // Fetch region-wise last update status
+  const { data: regionUpdateStatus = [], refetch: refetchRegionStatus } = useQuery({
+    queryKey: ["region-update-status"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("hospital_status_cache")
+        .select(`
+          hospital_id,
+          last_updated,
+          hospitals!inner(region)
+        `);
+      
+      if (error || !data) return [];
+      
+      // Group by region and find latest update
+      const regionMap = new Map<string, { lastUpdated: string; count: number }>();
+      
+      data.forEach((item: any) => {
+        const region = item.hospitals?.region || "Unknown";
+        const current = regionMap.get(region);
+        const itemDate = new Date(item.last_updated);
+        
+        if (!current) {
+          regionMap.set(region, { lastUpdated: item.last_updated, count: 1 });
+        } else {
+          const currentDate = new Date(current.lastUpdated);
+          if (itemDate > currentDate) {
+            regionMap.set(region, { lastUpdated: item.last_updated, count: current.count + 1 });
+          } else {
+            regionMap.set(region, { ...current, count: current.count + 1 });
+          }
+        }
+      });
+      
+      return Array.from(regionMap.entries()).map(([region, status]) => ({
+        region,
+        lastUpdated: status.lastUpdated,
+        hospitalCount: status.count,
+      })).sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   // Handle bed status sync for all cities
@@ -340,6 +391,98 @@ export default function AdminPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Region Update Status Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              지역별 마지막 업데이트
+            </CardTitle>
+            <CardDescription>각 지역의 병상 데이터 갱신 시간 현황</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {regionUpdateStatus.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                아직 갱신된 데이터가 없습니다
+              </p>
+            ) : (
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {regionUpdateStatus.map((status) => {
+                  const lastUpdatedDate = new Date(status.lastUpdated);
+                  const now = new Date();
+                  const diffMinutes = Math.floor((now.getTime() - lastUpdatedDate.getTime()) / (1000 * 60));
+                  
+                  // Status color based on freshness
+                  const isRecent = diffMinutes < 15;
+                  const isStale = diffMinutes > 30;
+                  
+                  return (
+                    <div 
+                      key={status.region}
+                      className={`flex items-center justify-between p-3 rounded-lg border ${
+                        isRecent 
+                          ? "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900" 
+                          : isStale 
+                            ? "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900"
+                            : "bg-muted/50 border-border"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <MapPin className={`h-4 w-4 ${
+                          isRecent ? "text-green-600" : isStale ? "text-amber-600" : "text-muted-foreground"
+                        }`} />
+                        <div>
+                          <p className="font-medium text-sm">{status.region}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {status.hospitalCount}개 병원
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-xs font-medium ${
+                          isRecent ? "text-green-600" : isStale ? "text-amber-600" : "text-muted-foreground"
+                        }`}>
+                          {formatDistanceToNow(lastUpdatedDate, { addSuffix: true, locale: ko })}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {lastUpdatedDate.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            
+            <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  15분 이내
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+                  15-30분
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                  30분 이상
+                </span>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => refetchRegionStatus()}
+                className="h-7 text-xs"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                새로고침
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Region Batch Cards */}
         <Card>
           <CardHeader>
