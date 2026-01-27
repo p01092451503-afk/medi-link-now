@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -51,6 +51,7 @@ const MapPage = () => {
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
+  const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("seoul");
@@ -350,7 +351,7 @@ const MapPage = () => {
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col">
       {/* Location Coachmark */}
-      <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} />
+      <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
 
       {/* Map Container - 60% height when list expanded, 100% otherwise */}
       <div
@@ -401,6 +402,7 @@ const MapPage = () => {
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
               <motion.button
+                ref={locationButtonRef}
                 onClick={handleMyLocation}
                 disabled={isLocating}
                 className={`relative w-12 h-12 rounded-xl shadow-xl flex items-center justify-center hover:shadow-2xl active:scale-95 transition-all border-2 border-white disabled:opacity-70 group ${
