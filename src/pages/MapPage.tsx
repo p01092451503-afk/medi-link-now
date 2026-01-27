@@ -474,15 +474,15 @@ const MapPage = () => {
           </HoverCard>
         </div>
 
-        {/* Data Source Attribution */}
-        <div className="absolute top-4 right-16 z-[1002]">
+        {/* Data Source Attribution - Bottom left, above radius chips */}
+        <div className="absolute bottom-14 left-4 z-[999]">
           <AnimatePresence mode="wait">
             {showDataSource ? (
               <motion.div
                 key="expanded"
-                initial={{ opacity: 0, scale: 0.9, x: 10 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.9, x: 10 }}
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 className="flex items-center gap-2 bg-white backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg"
               >
                 <Database className="w-4 h-4 text-primary flex-shrink-0" />
@@ -517,7 +517,7 @@ const MapPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 onClick={() => setShowDataSource(true)}
-                className="flex items-center justify-center w-9 h-9 bg-white backdrop-blur-sm rounded-full shadow-lg hover:bg-gray-50 active:scale-95 transition-all border border-gray-100"
+                className="flex items-center justify-center w-10 h-10 bg-white backdrop-blur-sm rounded-xl shadow-lg hover:bg-gray-50 active:scale-95 transition-all border border-gray-200"
                 aria-label="데이터 출처 보기"
               >
                 <Database className="w-4 h-4 text-primary" />
