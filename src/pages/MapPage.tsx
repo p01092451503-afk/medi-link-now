@@ -384,28 +384,6 @@ const MapPage = () => {
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && searchQuery.trim()) {
-                    const matched = filteredHospitals[0];
-                    if (matched) {
-                      handleHospitalClick(matched);
-                      toast({ title: `🏥 ${matched.nameKr}`, description: "검색 결과로 이동합니다." });
-                    } else {
-                      toast({ title: "검색 결과 없음", description: "다른 검색어를 입력해보세요." });
-                    }
-                  }
-                }}
-                placeholder="병원명 검색... (Enter로 검색)"
-                className="w-full bg-white rounded-2xl pl-12 pr-4 py-4 text-base shadow-lg outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              />
-            </div>
           </div>
         </header>
 
