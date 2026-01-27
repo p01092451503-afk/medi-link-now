@@ -477,31 +477,6 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        {/* Feature Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-3 gap-3 mb-6 w-full max-w-sm"
-        >
-          {[
-            { icon: MapPin, label: "전국 커버", sub: "응급실" },
-            { icon: Clock, label: "실시간", sub: "업데이트" },
-            { icon: Shield, label: "안전", sub: "최우선" },
-          ].map(({ icon: Icon, label, sub }) => (
-            <div
-              key={label}
-              className="bg-white rounded-xl p-3 shadow-md flex flex-col items-center gap-1"
-            >
-              <Icon className="w-5 h-5 text-primary" />
-              <div className="text-center">
-                <p className="text-xs font-semibold text-foreground">{label}</p>
-                <p className="text-[10px] text-muted-foreground">{sub}</p>
-              </div>
-            </div>
-          ))}
-        </motion.div>
-
         {/* Role Selection Title */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -553,12 +528,42 @@ const Landing = () => {
           </button>
         </motion.div>
 
+        {/* Sponsor/Feature Cards - Ad Space */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="w-full max-w-sm mt-6"
+        >
+          <div className="border border-dashed border-gray-200 rounded-xl p-3 bg-gray-50/50">
+            <p className="text-[9px] text-muted-foreground text-center mb-2 uppercase tracking-wider">파트너</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { icon: MapPin, label: "전국 커버", sub: "응급실" },
+                { icon: Clock, label: "실시간", sub: "업데이트" },
+                { icon: Shield, label: "안전", sub: "최우선" },
+              ].map(({ icon: Icon, label, sub }) => (
+                <div
+                  key={label}
+                  className="bg-white rounded-lg p-2 shadow-sm flex flex-col items-center gap-0.5"
+                >
+                  <Icon className="w-4 h-4 text-primary/70" />
+                  <div className="text-center">
+                    <p className="text-[10px] font-medium text-foreground">{label}</p>
+                    <p className="text-[8px] text-muted-foreground">{sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
         {/* Emergency Call */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-6"
+          className="mt-4"
         >
           <a
             href="tel:119"
