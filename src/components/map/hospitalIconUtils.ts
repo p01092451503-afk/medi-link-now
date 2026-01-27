@@ -1,17 +1,5 @@
 import L from "leaflet";
-import { Hospital, FilterType } from "@/data/hospitals";
-
-// 다이내믹 컬러 그레이딩 (병상 수에 따른 3단계 초록색)
-const AVAILABILITY_COLORS = {
-  high: { bg: "#15803D", border: "#166534", text: "#FFFFFF" },      // 11+ beds: 진한 에메랄드
-  medium: { bg: "#22C55E", border: "#16A34A", text: "#FFFFFF" },    // 6-10 beds: 표준 초록
-  low: { bg: "#86EFAC", border: "#4ADE80", text: "#166534" },       // 1-5 beds: 연한 연두
-  limited: { bg: "#EAB308", border: "#CA8A04", text: "#FFFFFF" },   // 혼잡 (1-2 beds)
-  unavailable: { bg: "#9CA3AF", border: "#6B7280", text: "#FFFFFF" }, // 만실 (0 beds)
-};
-
-// 골드 테두리 색상 (권역응급센터, 대학병원용)
-const GOLD_STROKE = "#D97706";
+import { Hospital, FilterType, getHospitalStatus } from "@/data/hospitals";
 
 export const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
   const general = Math.max(0, hospital.beds.general);
@@ -36,31 +24,127 @@ export const getMarkerStatus = (beds: number): "available" | "limited" | "unavai
   return "available";
 };
 
-// 병상 수에 따른 색상 등급 반환
-const getAvailabilityGrade = (beds: number): "high" | "medium" | "low" | "limited" | "unavailable" => {
-  if (beds === 0) return "unavailable";
-  if (beds <= 2) return "limited";
-  if (beds <= 5) return "low";
-  if (beds <= 10) return "medium";
-  return "high";
+const getGradeColors = (emergencyGrade?: string | null) => {
+  switch (emergencyGrade) {
+    case "regional_center":
+      return {
+        available: { bg: "#DC2626", border: "#B91C1C", text: "#FFFFFF" },
+        limited: { bg: "#DC2626", border: "#B91C1C", text: "#FFFFFF" },
+        unavailable: { bg: "#991B1B", border: "#7F1D1D", text: "#FFFFFF" },
+      };
+    case "local_center":
+      return {
+        available: { bg: "#F97316", border: "#EA580C", text: "#FFFFFF" },
+        limited: { bg: "#F97316", border: "#EA580C", text: "#FFFFFF" },
+        unavailable: { bg: "#C2410C", border: "#9A3412", text: "#FFFFFF" },
+      };
+    case "local_institution":
+      return {
+        available: { bg: "#2563EB", border: "#1D4ED8", text: "#FFFFFF" },
+        limited: { bg: "#2563EB", border: "#1D4ED8", text: "#FFFFFF" },
+        unavailable: { bg: "#1E40AF", border: "#1E3A8A", text: "#FFFFFF" },
+      };
+    default:
+      return {
+        available: { bg: "#10B981", border: "#059669", text: "#FFFFFF" },
+        limited: { bg: "#F59E0B", border: "#D97706", text: "#FFFFFF" },
+        unavailable: { bg: "#EF4444", border: "#DC2626", text: "#FFFFFF" },
+      };
+  }
+};
+
+const getGradeLabel = (emergencyGrade?: string | null): string => {
+  switch (emergencyGrade) {
+    case "regional_center":
+      return "권역";
+    case "local_center":
+      return "지역센터";
+    case "local_institution":
+      return "지역기관";
+    default:
+      return "";
+  }
 };
 
 export const createHospitalIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
-  category?: string,
-  isTraumaCenter?: boolean
+  hasPediatric: boolean,
+  isTraumaCenter?: boolean,
+  isPediatricFilter?: boolean,
+  emergencyGrade?: string | null
 ) => {
-  // 다이내믹 컬러 그레이딩 적용
-  const grade = getAvailabilityGrade(beds);
-  const color = AVAILABILITY_COLORS[grade];
-  
-  // 권역응급센터/외상센터 여부 확인 (category 기반)
-  const categoryStr = category || "";
-  const isPremium = categoryStr.includes("Regional") || categoryStr.includes("권역") || isTraumaCenter;
-  const borderColor = isPremium ? GOLD_STROKE : color.border;
-  const borderWidth = isPremium ? 4 : 3;
-  const glowEffect = isPremium ? "0 0 12px rgba(217, 119, 6, 0.5)" : "";
+  const colors = getGradeColors(emergencyGrade);
+  const color = colors[status];
+  const gradeLabel = getGradeLabel(emergencyGrade);
+
+  const childBadge = hasPediatric
+    ? `<div class="${isPediatricFilter ? 'pediatric-badge' : ''}" style="
+        position: absolute; 
+        top: -12px; 
+        right: -12px; 
+        width: 26px; 
+        height: 26px; 
+        background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
+      ">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" fill="#FFE4C9"/>
+          <path d="M12 2C12 2 14 4 14 6C14 6 13 5 12 5C11 5 10 6 10 6C10 4 12 2 12 2Z" fill="#8B5A2B"/>
+          <circle cx="8.5" cy="11" r="1.5" fill="#1a1a1a"/>
+          <circle cx="8" cy="10.5" r="0.5" fill="white"/>
+          <circle cx="15.5" cy="11" r="1.5" fill="#1a1a1a"/>
+          <circle cx="15" cy="10.5" r="0.5" fill="white"/>
+          <circle cx="6" cy="14" r="1.5" fill="#FECACA" opacity="0.7"/>
+          <circle cx="18" cy="14" r="1.5" fill="#FECACA" opacity="0.7"/>
+          <path d="M9 15.5C9 15.5 10.5 17 12 17C13.5 17 15 15.5 15 15.5" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>`
+    : "";
+
+  const traumaBadge = isTraumaCenter
+    ? `<div class="trauma-badge" style="
+        position: absolute; 
+        top: -14px; 
+        left: -14px; 
+        width: 32px; 
+        height: 32px; 
+        background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+        border: 3px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 12px rgba(124, 58, 237, 0.6), 0 0 0 3px rgba(124, 58, 237, 0.3);
+        z-index: 10;
+      ">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="4" width="4" height="16" rx="1" fill="white"/>
+          <rect x="4" y="10" width="16" height="4" rx="1" fill="white"/>
+        </svg>
+      </div>`
+    : "";
+
+  const gradeBadge = gradeLabel
+    ? `<div style="
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.75);
+        color: white;
+        font-size: 9px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+      ">${gradeLabel}</div>`
+    : "";
 
   return L.divIcon({
     className: "custom-marker",
@@ -71,56 +155,41 @@ export const createHospitalIcon = (
         flex-direction: column;
         align-items: center;
         cursor: pointer;
-        transition: transform 0.15s ease-out;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
       ">
         <div style="
           position: relative;
-          min-width: 44px;
-          height: 48px;
-          padding: 0 12px;
+          min-width: 36px;
+          height: 36px;
+          padding: 0 10px;
           background: ${color.bg};
-          border: ${borderWidth}px solid ${borderColor};
-          border-radius: 12px 12px 12px 4px;
+          border: 3px solid ${color.border};
+          border-radius: 18px;
           display: flex;
-          flex-direction: column;
           align-items: center;
           justify-content: center;
           color: ${color.text};
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2)${glowEffect ? `, ${glowEffect}` : ""};
+          font-weight: 700;
+          font-size: 16px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
           cursor: pointer;
         ">
-          <span style="
-            font-weight: 800;
-            font-size: 18px;
-            line-height: 1.1;
-          ">${beds}</span>
-          <span style="
-            font-size: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            opacity: 0.85;
-            margin-top: 1px;
-          ">BEDS</span>
+          ${beds}
+          ${childBadge}
+          ${traumaBadge}
         </div>
         <div style="
           width: 0;
           height: 0;
           border-left: 8px solid transparent;
           border-right: 8px solid transparent;
-          border-top: 10px solid ${borderColor};
-          margin-top: -3px;
-          margin-left: -16px;
+          border-top: 10px solid ${color.border};
+          margin-top: -2px;
         "></div>
+        ${gradeBadge}
       </div>
-      <style>
-        .marker-container:hover {
-          transform: scale(1.12);
-        }
-      </style>
     `,
-    iconSize: [52, 62],
-    iconAnchor: [18, 58],
-    popupAnchor: [0, -58],
+    iconSize: [44, 62],
+    iconAnchor: [22, 52],
+    popupAnchor: [0, -52],
   });
 };
