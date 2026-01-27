@@ -188,6 +188,9 @@ const MapPage = () => {
               variant="outline"
               size="sm"
               onClick={() => {
+                // 지역 필터를 전체로 변경하여 외상센터가 표시되도록 함
+                setActiveMajorRegion("all");
+                setActiveRegion("all");
                 setMapCenter([nearest.lat, nearest.lng]);
                 setMapZoom(14);
                 setSelectedHospital(nearest);
