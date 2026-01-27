@@ -111,19 +111,21 @@ export const createHospitalIcon = (
   const traumaBadge = isTraumaCenter
     ? `<div style="
         position: absolute; 
-        top: -12px; 
-        left: -12px; 
-        width: 26px; 
-        height: 26px; 
+        top: -14px; 
+        left: -14px; 
+        width: 32px; 
+        height: 32px; 
         background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
-        border: 2px solid white;
+        border: 3px solid white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.5);
+        box-shadow: 0 3px 12px rgba(124, 58, 237, 0.6), 0 0 0 3px rgba(124, 58, 237, 0.3);
+        animation: trauma-pulse 2s ease-in-out infinite;
+        z-index: 10;
       ">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="10" y="4" width="4" height="16" rx="1" fill="white"/>
           <rect x="4" y="10" width="16" height="4" rx="1" fill="white"/>
         </svg>
@@ -154,7 +156,17 @@ export const createHospitalIcon = (
           0%, 100% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.3); opacity: 0.8; }
         }
+        @keyframes trauma-pulse {
+          0%, 100% { box-shadow: 0 3px 12px rgba(124, 58, 237, 0.6), 0 0 0 3px rgba(124, 58, 237, 0.3); }
+          50% { box-shadow: 0 3px 16px rgba(124, 58, 237, 0.8), 0 0 0 6px rgba(124, 58, 237, 0.2); }
+        }
         .marker-container {
+          transition: transform 0.2s ease-out;
+        }
+        .marker-container:hover {
+          transform: scale(1.15);
+        }
+      </style>
           transition: transform 0.2s ease-out;
         }
         .marker-container:hover {
