@@ -271,6 +271,12 @@ const ClusteredMapView = ({
     });
   }, [hospitals]);
 
+  // Generate a stable hash for cluster key to force remount on any data change
+  const clusterKey = useMemo(() => {
+    const ids = hospitals.map(h => h.id).sort().join(',');
+    return `cluster-${ids.length > 0 ? ids.slice(0, 100) : 'empty'}-${activeFilter}`;
+  }, [hospitals, activeFilter]);
+
   // Create hospital lookup by coordinates for cluster matching
   const hospitalByCoords = useMemo(() => {
     const map = new Map<string, Hospital>();
@@ -357,7 +363,7 @@ const ClusteredMapView = ({
 
         {/* Clustered Hospital markers with donut charts */}
         <MarkerClusterGroup
-          key={`cluster-${hospitals.length}-${activeFilter}`}
+          key={clusterKey}
           chunkedLoading
           iconCreateFunction={createClusterCustomIcon}
           maxClusterRadius={60}
