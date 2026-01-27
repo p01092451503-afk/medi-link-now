@@ -231,80 +231,195 @@ const Landing = () => {
                   className="p-2 space-y-2"
                 >
                   {/* Comparison Header */}
-                  <div className="grid grid-cols-3 gap-1 text-[9px] font-medium text-muted-foreground px-1">
-                    <div></div>
-                    <div className="text-center">전국</div>
-                    <div className="text-center text-primary">{userRegion || "내 지역"}</div>
-                  </div>
-
-                  {/* Hospitals Row */}
-                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
-                        <Hospital className="w-2.5 h-2.5 text-primary" />
+                  <div className="flex items-center justify-between px-1 text-[9px] font-medium text-muted-foreground">
+                    <span>항목</span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 rounded-full bg-gray-300" />
+                        <span>전국</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">응급실</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-foreground">{nationalStats?.totalHospitals || "---"}</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-primary">{localStats?.totalHospitals || "---"}</span>
-                    </div>
-                  </div>
-
-                  {/* Beds Row */}
-                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-md bg-green-100 flex items-center justify-center">
-                        <Bed className="w-2.5 h-2.5 text-green-600" />
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 rounded-full bg-primary" />
+                        <span>{userRegion || "내 지역"}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">병상</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-green-600">{nationalStats?.totalBeds || "---"}</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-primary">{localStats?.totalBeds || "---"}</span>
                     </div>
                   </div>
 
-                  {/* Available Row */}
-                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center">
-                        <TrendingUp className="w-2.5 h-2.5 text-blue-600" />
+                  {/* Hospitals Row with Bar */}
+                  <div className="bg-white rounded-xl p-2 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                          <Hospital className="w-2.5 h-2.5 text-primary" />
+                        </div>
+                        <span className="text-[10px] font-medium text-foreground">응급실</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">여유</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-blue-600">{nationalStats?.availableHospitals || "---"}</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-primary">{localStats?.availableHospitals || "---"}</span>
-                    </div>
-                  </div>
-
-                  {/* Pediatric Row */}
-                  <div className="grid grid-cols-3 gap-1 items-center bg-white rounded-xl p-2">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-md bg-pink-100 flex items-center justify-center">
-                        <Users className="w-2.5 h-2.5 text-pink-600" />
+                      <div className="flex items-center gap-2 text-[10px]">
+                        <span className="text-muted-foreground">{nationalStats?.totalHospitals || 0}</span>
+                        <span className="text-primary font-bold">{localStats?.totalHospitals || 0}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">소아</span>
                     </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-pink-600">{nationalStats?.pediatricBeds || "---"}</span>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-bold text-primary">{localStats?.pediatricBeds || "---"}</span>
+                    <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gray-300 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                      />
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-blue-500 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ 
+                          width: nationalStats?.totalHospitals 
+                            ? `${Math.min(((localStats?.totalHospitals || 0) / nationalStats.totalHospitals) * 100, 100)}%` 
+                            : "0%" 
+                        }}
+                        transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-end pr-1.5">
+                        <span className="text-[8px] font-bold text-white drop-shadow-sm">
+                          {nationalStats?.totalHospitals 
+                            ? `${((localStats?.totalHospitals || 0) / nationalStats.totalHospitals * 100).toFixed(1)}%` 
+                            : "0%"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Local percentage indicator */}
+                  {/* Beds Row with Bar */}
+                  <div className="bg-white rounded-xl p-2 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-md bg-green-100 flex items-center justify-center">
+                          <Bed className="w-2.5 h-2.5 text-green-600" />
+                        </div>
+                        <span className="text-[10px] font-medium text-foreground">병상</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px]">
+                        <span className="text-muted-foreground">{nationalStats?.totalBeds || 0}</span>
+                        <span className="text-green-600 font-bold">{localStats?.totalBeds || 0}</span>
+                      </div>
+                    </div>
+                    <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gray-300 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                      />
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-green-500 to-emerald-400 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ 
+                          width: nationalStats?.totalBeds 
+                            ? `${Math.min(((localStats?.totalBeds || 0) / nationalStats.totalBeds) * 100, 100)}%` 
+                            : "0%" 
+                        }}
+                        transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-end pr-1.5">
+                        <span className="text-[8px] font-bold text-white drop-shadow-sm">
+                          {nationalStats?.totalBeds 
+                            ? `${((localStats?.totalBeds || 0) / nationalStats.totalBeds * 100).toFixed(1)}%` 
+                            : "0%"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Available Row with Bar */}
+                  <div className="bg-white rounded-xl p-2 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center">
+                          <TrendingUp className="w-2.5 h-2.5 text-blue-600" />
+                        </div>
+                        <span className="text-[10px] font-medium text-foreground">여유 병원</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px]">
+                        <span className="text-muted-foreground">{nationalStats?.availableHospitals || 0}</span>
+                        <span className="text-blue-600 font-bold">{localStats?.availableHospitals || 0}</span>
+                      </div>
+                    </div>
+                    <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gray-300 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                      />
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-sky-400 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ 
+                          width: nationalStats?.availableHospitals 
+                            ? `${Math.min(((localStats?.availableHospitals || 0) / nationalStats.availableHospitals) * 100, 100)}%` 
+                            : "0%" 
+                        }}
+                        transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-end pr-1.5">
+                        <span className="text-[8px] font-bold text-white drop-shadow-sm">
+                          {nationalStats?.availableHospitals 
+                            ? `${((localStats?.availableHospitals || 0) / nationalStats.availableHospitals * 100).toFixed(1)}%` 
+                            : "0%"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pediatric Row with Bar */}
+                  <div className="bg-white rounded-xl p-2 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-md bg-pink-100 flex items-center justify-center">
+                          <Users className="w-2.5 h-2.5 text-pink-600" />
+                        </div>
+                        <span className="text-[10px] font-medium text-foreground">소아 병상</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px]">
+                        <span className="text-muted-foreground">{nationalStats?.pediatricBeds || 0}</span>
+                        <span className="text-pink-600 font-bold">{localStats?.pediatricBeds || 0}</span>
+                      </div>
+                    </div>
+                    <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gray-300 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                      />
+                      <motion.div 
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-pink-500 to-rose-400 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ 
+                          width: nationalStats?.pediatricBeds 
+                            ? `${Math.min(((localStats?.pediatricBeds || 0) / nationalStats.pediatricBeds) * 100, 100)}%` 
+                            : "0%" 
+                        }}
+                        transition={{ duration: 0.7, ease: "easeOut", delay: 0.5 }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-end pr-1.5">
+                        <span className="text-[8px] font-bold text-white drop-shadow-sm">
+                          {nationalStats?.pediatricBeds 
+                            ? `${((localStats?.pediatricBeds || 0) / nationalStats.pediatricBeds * 100).toFixed(1)}%` 
+                            : "0%"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Summary */}
                   {localStats && nationalStats && (
-                    <div className="text-center text-[9px] text-muted-foreground pt-1">
-                      내 지역은 전국 병상의 <span className="font-bold text-primary">{((localStats.totalBeds / nationalStats.totalBeds) * 100).toFixed(1)}%</span>를 보유
+                    <div className="bg-primary/5 rounded-lg p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground">
+                        <span className="font-bold text-primary">{userRegion || "내 지역"}</span>은 전국 대비
+                      </p>
+                      <p className="text-xs font-bold text-foreground mt-0.5">
+                        병상 <span className="text-green-600">{((localStats.totalBeds / nationalStats.totalBeds) * 100).toFixed(1)}%</span>
+                        {" · "}
+                        여유 <span className="text-blue-600">{((localStats.availableHospitals / nationalStats.availableHospitals) * 100).toFixed(1)}%</span>
+                      </p>
                     </div>
                   )}
                 </motion.div>
