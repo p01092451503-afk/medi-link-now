@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Search, MapPin, EyeOff, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -373,6 +373,21 @@ const MapPage = () => {
               </div>
             </HoverCardContent>
           </HoverCard>
+        </div>
+
+        {/* Data Source Attribution */}
+        <div className="absolute bottom-4 left-4 z-[1000]">
+          <a
+            href="https://www.data.go.kr/data/15000563/openapi.do"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-md hover:bg-white transition-colors"
+          >
+            <Database className="w-3 h-3 text-primary" />
+            <span className="text-[10px] text-muted-foreground">
+              공공데이터포털 | 전국 응급의료기관 실시간 가용병상정보
+            </span>
+          </a>
         </div>
 
         {/* Header */}
