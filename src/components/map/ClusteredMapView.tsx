@@ -42,12 +42,32 @@ const MapController = ({
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
 }) => {
   const map = useMap();
+  const prevCenterRef = useRef<[number, number]>(center);
+  const prevZoomRef = useRef<number | undefined>(zoom);
 
   // Handle center/zoom changes
   useEffect(() => {
     const minZoom = map.getMinZoom?.() ?? 0;
     const targetZoom = Math.max(zoom ?? map.getZoom(), minZoom);
-    map.flyTo(center, targetZoom, { duration: 1 });
+    
+    const centerChanged = 
+      prevCenterRef.current[0] !== center[0] || 
+      prevCenterRef.current[1] !== center[1];
+    const zoomChanged = prevZoomRef.current !== zoom;
+
+    if (centerChanged && zoomChanged) {
+      // Both changed - use flyTo
+      map.flyTo(center, targetZoom, { duration: 1 });
+    } else if (centerChanged) {
+      // Only center changed
+      map.flyTo(center, targetZoom, { duration: 1 });
+    } else if (zoomChanged) {
+      // Only zoom changed - use setZoom for immediate response
+      map.setZoom(targetZoom);
+    }
+
+    prevCenterRef.current = center;
+    prevZoomRef.current = zoom;
   }, [center, zoom, map]);
 
   // Track bounds changes
