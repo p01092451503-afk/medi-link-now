@@ -71,13 +71,22 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
         </div>
 
         {/* Status Indicator */}
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-          <span className="text-sm font-medium text-foreground">{summary.availableCount}</span>
-          <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
-          <span className="text-sm font-medium text-foreground">{summary.limitedCount}</span>
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-          <span className="text-sm font-medium text-foreground">{summary.fullCount}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+            <span className="text-sm text-muted-foreground">여유</span>
+            <span className="text-sm font-medium text-foreground">{summary.availableCount}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
+            <span className="text-sm text-muted-foreground">보통</span>
+            <span className="text-sm font-medium text-foreground">{summary.limitedCount}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+            <span className="text-sm text-muted-foreground">혼잡</span>
+            <span className="text-sm font-medium text-foreground">{summary.fullCount}</span>
+          </div>
         </div>
       </div>
     </div>
