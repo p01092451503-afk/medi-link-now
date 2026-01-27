@@ -113,15 +113,6 @@ const LocationCoachmark = ({ show, onDismiss, targetRef }: LocationCoachmarkProp
                     <span className="font-semibold text-foreground">이 버튼을 탭하면</span> 현재 위치를 기준으로 가장 가까운 응급실을 거리순으로 안내합니다.
                   </p>
                 </div>
-
-                {/* CTA button */}
-                <button
-                  onClick={onDismiss}
-                  className="w-full bg-gradient-to-r from-primary to-primary/90 text-white py-2.5 sm:py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:shadow-lg transition-shadow text-sm sm:text-base"
-                >
-                  알겠습니다
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </motion.div>
