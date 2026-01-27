@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup, useMapEve
 import L from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { AnimatePresence } from "framer-motion";
-import { Hospital, FilterType, getHospitalStatus, calculateDistance } from "@/data/hospitals";
+import { Hospital, FilterType, calculateDistance } from "@/data/hospitals";
 import ReportMarker from "../ReportMarker";
 import DriverMarker from "../DriverMarker";
 import PharmacyMarker from "../PharmacyMarker";
@@ -255,20 +255,9 @@ const ClusteredMapView = ({
     return 0.2;
   }, [userLocation, activeRadius]);
 
-  // Sort hospitals by status for z-index priority (available first)
-  const sortedHospitals = useMemo(() => {
-    return [...hospitals].sort((a, b) => {
-      const statusA = getHospitalStatus(a);
-      const statusB = getHospitalStatus(b);
-      
-      // Available (green) should have highest z-index (rendered last)
-      if (statusA === "available" && statusB !== "available") return 1;
-      if (statusB === "available" && statusA !== "available") return -1;
-      if (statusA === "limited" && statusB === "unavailable") return 1;
-      if (statusB === "limited" && statusA === "unavailable") return -1;
-      
-      return 0;
-    });
+  // 안정적인 마커 렌더링을 위해 ID 기준 정렬 (상태 기반 정렬 제거)
+  const stableHospitals = useMemo(() => {
+    return [...hospitals].sort((a, b) => a.id - b.id);
   }, [hospitals]);
 
   // Create hospital lookup by coordinates for cluster matching
@@ -364,31 +353,18 @@ const ClusteredMapView = ({
           showCoverageOnHover={false}
           zoomToBoundsOnClick={false}
           disableClusteringAtZoom={14}
+          removeOutsideVisibleBounds={true}
           eventHandlers={{
             clusterclick: (e: any) => {
               handleClusterClick(e.layer, e);
             },
           }}
         >
-          {sortedHospitals.map((hospital) => {
+          {stableHospitals.map((hospital) => {
             const opacity = getMarkerOpacity(hospital);
             const displayBeds = getDisplayBeds(hospital, activeFilter);
             const status = getMarkerStatus(displayBeds);
-            const normalizedBeds = {
-              general: Math.max(0, hospital.beds.general),
-              pediatric: Math.max(0, hospital.beds.pediatric),
-              fever: Math.max(0, hospital.beds.fever),
-            };
-            const hasPediatric = normalizedBeds.pediatric > 0;
-            const isPediatricFilter = activeFilter === "pediatric";
-            const icon = createHospitalIcon(
-              status,
-              displayBeds,
-              hasPediatric,
-              hospital.isTraumaCenter,
-              isPediatricFilter,
-              hospital.emergencyGrade
-            );
+            const icon = createHospitalIcon(status, displayBeds);
 
             return (
               <Marker
