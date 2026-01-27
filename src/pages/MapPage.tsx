@@ -191,7 +191,10 @@ const MapPage = () => {
                 // 지역 필터를 전체로 변경하여 외상센터가 표시되도록 함
                 setActiveMajorRegion("all");
                 setActiveRegion("all");
-                setMapCenter([nearest.lat, nearest.lng]);
+                // 바텀시트가 화면 하단 약 40%를 차지하므로, 마커가 가려지지 않도록
+                // 지도 중심을 마커 위치보다 약간 아래로 이동 (위도 감소)
+                const offsetLat = nearest.lat - 0.015; // 마커를 화면 상단 쪽으로 배치
+                setMapCenter([offsetLat, nearest.lng]);
                 setMapZoom(14);
                 setSelectedHospital(nearest);
               }}
