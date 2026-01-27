@@ -2151,3 +2151,44 @@ export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
+
+// Find the nearest major region based on coordinates
+export const findNearestMajorRegion = (lat: number, lng: number): MajorRegionType => {
+  const majorRegions = regionOptions.filter((r) => !r.parent && r.id !== "all");
+  
+  let nearestRegion: MajorRegionType = "seoul";
+  let minDistance = Infinity;
+  
+  for (const region of majorRegions) {
+    const distance = calculateDistance(lat, lng, region.center[0], region.center[1]);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestRegion = region.id as MajorRegionType;
+    }
+  }
+  
+  return nearestRegion;
+};
+
+// Find the nearest sub-region within a major region based on coordinates
+export const findNearestSubRegion = (lat: number, lng: number, majorRegion: MajorRegionType): RegionType => {
+  const subRegions = regionOptions.filter((r) => r.parent === majorRegion);
+  
+  // If no sub-regions, return the major region itself
+  if (subRegions.length === 0) {
+    return majorRegion;
+  }
+  
+  let nearestRegion: RegionType = majorRegion;
+  let minDistance = Infinity;
+  
+  for (const region of subRegions) {
+    const distance = calculateDistance(lat, lng, region.center[0], region.center[1]);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestRegion = region.id;
+    }
+  }
+  
+  return nearestRegion;
+};
