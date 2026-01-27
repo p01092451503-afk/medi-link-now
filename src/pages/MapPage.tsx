@@ -377,37 +377,41 @@ const MapPage = () => {
         </div>
 
         {/* Data Source Attribution */}
-        <div className="absolute top-4 right-4 z-[1000]">
+        <div className="absolute top-4 right-16 z-[1002]">
           <AnimatePresence mode="wait">
             {showDataSource ? (
-              <motion.a
+              <motion.div
                 key="expanded"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                href="https://www.data.go.kr/data/15000563/openapi.do"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                onMouseLeave={() => setShowDataSource(false)}
-                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg hover:bg-white transition-colors"
+                initial={{ opacity: 0, scale: 0.9, x: 10 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.9, x: 10 }}
+                className="flex items-center gap-2 bg-white backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg"
               >
                 <Database className="w-4 h-4 text-primary flex-shrink-0" />
                 <div className="text-[11px] text-muted-foreground leading-tight">
-                  <div className="font-medium text-foreground">공공데이터포털</div>
+                  <a
+                    href="https://www.data.go.kr/data/15000563/openapi.do"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    공공데이터포털
+                  </a>
                   <div>전국 응급의료기관 실시간 가용병상정보</div>
+                  {lastUpdated && (
+                    <div className="text-[10px] text-primary mt-0.5">
+                      업데이트: {lastUpdated.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  )}
                 </div>
-                <X 
-                  className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer flex-shrink-0 ml-1" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowDataSource(false);
-                  }}
-                />
-              </motion.a>
+                <button
+                  onClick={() => setShowDataSource(false)}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  aria-label="닫기"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </motion.div>
             ) : (
               <motion.button
                 key="collapsed"
@@ -415,7 +419,7 @@ const MapPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 onClick={() => setShowDataSource(true)}
-                className="flex items-center justify-center w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-colors"
+                className="flex items-center justify-center w-9 h-9 bg-white backdrop-blur-sm rounded-full shadow-lg hover:bg-gray-50 active:scale-95 transition-all border border-gray-100"
                 aria-label="데이터 출처 보기"
               >
                 <Database className="w-4 h-4 text-primary" />
