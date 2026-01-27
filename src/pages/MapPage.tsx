@@ -169,9 +169,15 @@ const MapPage = () => {
         traumaCentersWithDistance.sort((a, b) => a.distanceFromRegion - b.distanceFromRegion);
         const nearest = traumaCentersWithDistance[0];
         
+        // Calculate estimated arrival time (average city speed: 35 km/h)
+        const estimatedMinutes = Math.round((nearest.distanceFromRegion / 35) * 60);
+        const timeDisplay = estimatedMinutes < 60 
+          ? `약 ${estimatedMinutes}분` 
+          : `약 ${Math.floor(estimatedMinutes / 60)}시간 ${estimatedMinutes % 60}분`;
+        
         toast({
           title: `${regionName}에는 외상센터가 없습니다`,
-          description: `가장 가까운 외상센터: ${nearest.nameKr} (약 ${nearest.distanceFromRegion.toFixed(1)}km)`,
+          description: `가장 가까운 외상센터: ${nearest.nameKr} (${nearest.distanceFromRegion.toFixed(1)}km, ${timeDisplay})`,
           action: (
             <Button
               variant="outline"
