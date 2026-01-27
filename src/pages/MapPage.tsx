@@ -376,7 +376,6 @@ const MapPage = () => {
             subRegion={activeRegion}
             onMajorRegionChange={handleMajorRegionChange}
             onSubRegionChange={handleSubRegionChange}
-            hospitalCount={filteredHospitals.length}
           />
 
           {/* Region Summary Card */}
