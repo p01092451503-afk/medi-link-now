@@ -235,6 +235,22 @@ const ClusteredMapView = ({
   holidayPharmacies = [],
   onBoundsChange,
 }: ClusteredMapViewProps) => {
+  // react-leaflet's Marker update logic compares position by reference.
+  // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
+  // which triggers marker move events that can crash leaflet.markercluster (removeObject undefined).
+  // Cache tuples by hospital id so the reference stays stable unless the coordinates actually change.
+  const hospitalPositionCacheRef = useRef(
+    new Map<number, { lat: number; lng: number; pos: [number, number] }>(),
+  );
+
+  const getStableHospitalPosition = useCallback((id: number, lat: number, lng: number) => {
+    const cached = hospitalPositionCacheRef.current.get(id);
+    if (cached && cached.lat === lat && cached.lng === lng) return cached.pos;
+    const pos: [number, number] = [lat, lng];
+    hospitalPositionCacheRef.current.set(id, { lat, lng, pos });
+    return pos;
+  }, []);
+
   // Calculate opacity based on distance from user
   const getMarkerOpacity = useCallback((hospital: Hospital): number => {
     if (!userLocation || activeRadius === "all") return 1;
@@ -408,7 +424,7 @@ const ClusteredMapView = ({
             return (
               <Marker
                 key={`hospital-${hospital.id}`}
-                position={[hospital.lat, hospital.lng]}
+                position={getStableHospitalPosition(hospital.id, hospital.lat, hospital.lng)}
                 icon={icon}
                 opacity={opacity}
                 eventHandlers={{
