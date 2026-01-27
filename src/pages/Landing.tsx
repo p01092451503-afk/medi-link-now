@@ -333,6 +333,46 @@ const Landing = () => {
           </div>
         </motion.div>
 
+        {/* Trust Indicators */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full max-w-sm mb-10"
+        >
+          <div className="flex items-center justify-between px-2">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-sm">
+                <Hospital className="w-6 h-6 text-primary" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-foreground">400+</p>
+                <p className="text-[10px] text-muted-foreground">전국 응급실</p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center shadow-sm">
+                <Activity className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-foreground">30초</p>
+                <p className="text-[10px] text-muted-foreground">실시간 업데이트</p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm">
+                <Clock className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-foreground">24시간</p>
+                <p className="text-[10px] text-muted-foreground">연중무휴 운영</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Role Selection Title */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -382,27 +422,6 @@ const Landing = () => {
               <span className="text-xl text-orange-500 shrink-0">→</span>
             </div>
           </button>
-        </motion.div>
-
-        {/* Trust Indicators */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex items-center justify-center gap-6 mt-10 text-muted-foreground"
-        >
-          <div className="flex items-center gap-1.5">
-            <Hospital className="w-4 h-4 text-primary" />
-            <span className="text-xs font-medium">전국 400+</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Activity className="w-4 h-4 text-green-500" />
-            <span className="text-xs font-medium">30초 업데이트</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-blue-500" />
-            <span className="text-xs font-medium">24시간</span>
-          </div>
         </motion.div>
       </main>
 
