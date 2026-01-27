@@ -6,6 +6,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
+import PartnerSection from "@/components/PartnerSection";
 
 
 const Landing = () => {
@@ -528,35 +529,8 @@ const Landing = () => {
           </button>
         </motion.div>
 
-        {/* Sponsor/Feature Cards - Ad Space */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="w-full max-w-sm mt-6"
-        >
-          <div className="border border-dashed border-gray-200 rounded-xl p-3 bg-gray-50/50">
-            <p className="text-[9px] text-muted-foreground text-center mb-2 uppercase tracking-wider">파트너</p>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { icon: MapPin, label: "전국 커버", sub: "응급실" },
-                { icon: Clock, label: "실시간", sub: "업데이트" },
-                { icon: Shield, label: "안전", sub: "최우선" },
-              ].map(({ icon: Icon, label, sub }) => (
-                <div
-                  key={label}
-                  className="bg-white rounded-lg p-2 shadow-sm flex flex-col items-center gap-0.5"
-                >
-                  <Icon className="w-4 h-4 text-primary/70" />
-                  <div className="text-center">
-                    <p className="text-[10px] font-medium text-foreground">{label}</p>
-                    <p className="text-[8px] text-muted-foreground">{sub}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+        {/* Partner Section - Ad Space */}
+        <PartnerSection />
 
         {/* Emergency Call */}
         <motion.div
