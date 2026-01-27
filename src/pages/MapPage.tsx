@@ -30,6 +30,7 @@ import RegionSelector from "@/components/RegionSelector";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
+import RegionSummaryCard from "@/components/map/RegionSummaryCard";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -425,6 +426,12 @@ const MapPage = () => {
             onMajorRegionChange={handleMajorRegionChange}
             onSubRegionChange={handleSubRegionChange}
             hospitalCount={filteredHospitals.length}
+          />
+
+          {/* Region Summary Card */}
+          <RegionSummaryCard
+            hospitals={filteredHospitals}
+            regionName={activeMajorRegion === "all" ? "전국" : activeMajorRegion}
           />
 
           {/* Bed Type Filter Chips */}
