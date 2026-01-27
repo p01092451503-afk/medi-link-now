@@ -417,26 +417,38 @@ const MapPage = () => {
 
           {/* Bed Type Filter Chips */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide items-center">
-            {filterOptions
+{filterOptions
               .filter((f) => f.category === "bed" || f.category === "special")
               .map((f) => {
                 const isActive = activeFilter === f.id;
                 const isPharmacy = f.id === "pharmacy";
+                const isTraumaCenter = f.id === "traumaCenter";
 
                 return (
                   <button
                     key={f.id}
                     onClick={() => setActiveFilter(f.id)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-1.5 ${
                       isActive
                         ? isPharmacy
                           ? "bg-green-500 text-white border-green-500"
-                          : "bg-primary text-white border-primary"
+                          : isTraumaCenter
+                            ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white border-purple-600 shadow-lg shadow-purple-500/30"
+                            : "bg-primary text-white border-primary"
                         : isPharmacy
                           ? "bg-white/90 text-green-600 border-green-200 hover:bg-green-50"
-                          : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
+                          : isTraumaCenter
+                            ? "bg-white/90 text-purple-600 border-purple-200 hover:bg-purple-50"
+                            : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
                     }`}
                   >
+                    {isTraumaCenter && (
+                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                        isActive ? "bg-white/20" : "bg-purple-100"
+                      }`}>
+                        +
+                      </span>
+                    )}
                     {f.labelKr}
                   </button>
                 );

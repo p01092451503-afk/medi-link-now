@@ -1753,7 +1753,7 @@ export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neuro" | "endoscopy" | "dialysis" | "trauma" | "cardio";
 
 // Special facility filters
-export type SpecialFilterType = "pharmacy";
+export type SpecialFilterType = "pharmacy" | "traumaCenter";
 
 // Legal emergency medical institution filters (법정 응급의료기관)
 export type LegalGradeFilterType = "legal_only" | "regional_center" | "local_center" | "local_institution";
@@ -1780,6 +1780,7 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "dialysis", label: "Dialysis", labelKr: "응급투석", category: "procedure" },
   { id: "trauma", label: "Trauma Center", labelKr: "외상센터", category: "procedure" },
   // Special facility types
+  { id: "traumaCenter", label: "Trauma Center Only", labelKr: "외상센터", category: "special" },
   { id: "pharmacy", label: "Holiday Pharmacy", labelKr: "휴일약국", category: "special" },
 ];
 
@@ -1824,6 +1825,9 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
     case "trauma":
       // 외상센터 OR 일반 응급실 (외상 대응 가능)
       return hospitals.filter((h) => h.isTraumaCenter === true || h.beds.general > 0);
+    case "traumaCenter":
+      // 권역외상센터만 표시
+      return hospitals.filter((h) => h.isTraumaCenter === true);
     // Legal emergency medical institution filters (법정 응급의료기관)
     case "legal_only":
       return hospitals.filter((h) => h.emergencyGrade !== null && h.emergencyGrade !== undefined);
