@@ -38,7 +38,7 @@ const RegionSelector = ({
   // Get display label for major region
   const getMajorRegionLabel = (id: MajorRegionType) => {
     const region = majorRegions.find((r) => r.id === id);
-    return region?.labelKr || "전체";
+    return region?.labelKr || "서울특별시";
   };
 
   // Get display label for sub region
