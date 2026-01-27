@@ -340,7 +340,7 @@ const Landing = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="w-full max-w-sm mb-10"
         >
-          <div className="flex items-center justify-between px-2">
+          <div className="flex items-center justify-center gap-8">
             <div className="flex flex-col items-center gap-2 group cursor-pointer">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-primary/20 group-hover:to-primary/10">
                 <Hospital className="w-6 h-6 text-primary transition-transform duration-300 group-hover:scale-110" />
