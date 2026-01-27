@@ -2104,11 +2104,17 @@ export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionTyp
   
   const selectedRegion = regionOptions.find((r) => r.id === region);
   
-  // If it's a sub-region, filter by exact match or address contains the sub-region name
+  // If it's a sub-region, filter by both parent major region AND sub-region name
   if (selectedRegion?.parent) {
+    const parentRegion = regionOptions.find((r) => r.id === selectedRegion.parent);
+    const parentLabel = parentRegion?.labelKr || "";
+    
     return hospitals.filter((h) => {
       const address = h.address || "";
-      return address.includes(selectedRegion.labelKr);
+      // Must contain BOTH parent region (e.g., "인천") AND sub-region (e.g., "동구")
+      const hasParentRegion = parentLabel ? address.includes(parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "")) : true;
+      const hasSubRegion = address.includes(selectedRegion.labelKr);
+      return hasParentRegion && hasSubRegion;
     });
   }
   
@@ -2116,13 +2122,19 @@ export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionTyp
   const childRegions = regionOptions.filter((r) => r.parent === region);
   const childLabels = childRegions.map((r) => r.labelKr);
   
+  // Get the simplified major region name (e.g., "인천" from "인천광역시")
+  const majorLabel = selectedRegion?.labelKr || "";
+  const simplifiedMajorLabel = majorLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
+  
   return hospitals.filter((h) => {
     const hospitalRegion = getRegionFromHospital(h);
     // Direct match with major region
     if (hospitalRegion === region) return true;
-    // Check if hospital is in any child region
+    // Check if hospital address contains the major region name
     const address = h.address || "";
-    return childLabels.some((label) => address.includes(label));
+    if (simplifiedMajorLabel && address.includes(simplifiedMajorLabel)) return true;
+    // Check if hospital is in any child region (with parent context)
+    return childLabels.some((label) => address.includes(label) && address.includes(simplifiedMajorLabel));
   });
 };
 
