@@ -1,17 +1,17 @@
 import { motion } from "framer-motion";
-import { MapPin, Globe } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 interface RadiusChipsProps {
   activeRadius: number | "all";
-  onRadiusChange: (radius: number | "all") => void;
+  onRadiusChange: (radius: number) => void;
   userLocation: [number, number] | null;
 }
 
-const radiusOptions: { value: number | "all"; label: string; km?: number }[] = [
+const radiusOptions: { value: number; label: string; km: number }[] = [
   { value: 5, label: "5km", km: 5 },
   { value: 10, label: "10km", km: 10 },
   { value: 20, label: "20km", km: 20 },
-  { value: "all", label: "전체" },
+  { value: 30, label: "30km", km: 30 },
 ];
 
 const RadiusChips = ({ activeRadius, onRadiusChange, userLocation }: RadiusChipsProps) => {
@@ -21,7 +21,7 @@ const RadiusChips = ({ activeRadius, onRadiusChange, userLocation }: RadiusChips
       <div className="flex gap-1">
         {radiusOptions.map((option) => {
           const isActive = activeRadius === option.value;
-          const isDisabled = option.value !== "all" && !userLocation;
+          const isDisabled = !userLocation;
           
           return (
             <motion.button
@@ -37,14 +37,7 @@ const RadiusChips = ({ activeRadius, onRadiusChange, userLocation }: RadiusChips
               }`}
               whileTap={!isDisabled ? { scale: 0.95 } : {}}
             >
-              {option.value === "all" ? (
-                <span className="flex items-center gap-1">
-                  <Globe className="w-3 h-3" />
-                  {option.label}
-                </span>
-              ) : (
-                option.label
-              )}
+              {option.label}
             </motion.button>
           );
         })}
