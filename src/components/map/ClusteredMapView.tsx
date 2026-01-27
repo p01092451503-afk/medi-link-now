@@ -364,7 +364,12 @@ const ClusteredMapView = ({
             const opacity = getMarkerOpacity(hospital);
             const displayBeds = getDisplayBeds(hospital, activeFilter);
             const status = getMarkerStatus(displayBeds);
-            const icon = createHospitalIcon(status, displayBeds);
+            const icon = createHospitalIcon(
+              status, 
+              displayBeds,
+              hospital.category,
+              hospital.isTraumaCenter
+            );
 
             return (
               <Marker
