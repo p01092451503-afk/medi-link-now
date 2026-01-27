@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
@@ -341,37 +342,119 @@ const Landing = () => {
           className="w-full max-w-sm mb-10"
         >
           <div className="flex items-center justify-center gap-8">
-            <div className="flex flex-col items-center gap-2 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-primary/20 group-hover:to-primary/10">
-                <Hospital className="w-6 h-6 text-primary transition-transform duration-300 group-hover:scale-110" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-bold text-foreground">
-                  {isLoading ? "---" : `${hospitals.length}+`}
-                </p>
-                <p className="text-[10px] text-muted-foreground">전국 응급실</p>
-              </div>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex flex-col items-center gap-2 group cursor-pointer">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-primary/20 group-hover:to-primary/10">
+                    <Hospital className="w-6 h-6 text-primary transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-foreground">
+                      {isLoading ? "---" : `${hospitals.length}+`}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">전국 응급실</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3" side="bottom">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-primary" />
+                    <p className="text-sm font-semibold">전국 응급실 네트워크</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    서울, 경기, 부산 등 전국 17개 시·도의 응급의료기관 정보를 실시간으로 제공합니다. 
+                    권역응급의료센터부터 지역응급의료기관까지 모든 등급의 응급실을 포함합니다.
+                  </p>
+                  <div className="flex items-center gap-4 pt-1 text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-red-500" />
+                      권역센터
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-orange-500" />
+                      지역센터
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-blue-500" />
+                      지역기관
+                    </span>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             
-            <div className="flex flex-col items-center gap-2 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-green-200 group-hover:to-green-100">
-                <Activity className="w-6 h-6 text-green-600 transition-transform duration-300 group-hover:scale-110" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-bold text-foreground">30초</p>
-                <p className="text-[10px] text-muted-foreground">실시간 업데이트</p>
-              </div>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex flex-col items-center gap-2 group cursor-pointer">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-green-200 group-hover:to-green-100">
+                    <Activity className="w-6 h-6 text-green-600 transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-foreground">30초</p>
+                    <p className="text-[10px] text-muted-foreground">실시간 업데이트</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3" side="bottom">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-green-600" />
+                    <p className="text-sm font-semibold">실시간 병상 정보</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    국립중앙의료원 응급의료포털과 직접 연동하여 30초마다 최신 병상 현황을 갱신합니다.
+                    일반병상, 소아병상, 음압격리병상 등 세부 정보까지 확인 가능합니다.
+                  </p>
+                  <div className="flex items-center gap-1 pt-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[10px] text-green-600 font-medium">
+                      {lastUpdated ? `마지막 업데이트: ${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : "연결 중..."}
+                    </span>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             
-            <div className="flex flex-col items-center gap-2 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-blue-200 group-hover:to-blue-100">
-                <Clock className="w-6 h-6 text-blue-600 transition-transform duration-300 group-hover:scale-110" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-bold text-foreground">24시간</p>
-                <p className="text-[10px] text-muted-foreground">연중무휴 운영</p>
-              </div>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex flex-col items-center gap-2 group cursor-pointer">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-blue-200 group-hover:to-blue-100">
+                    <Clock className="w-6 h-6 text-blue-600 transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-foreground">24시간</p>
+                    <p className="text-[10px] text-muted-foreground">연중무휴 운영</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3" side="bottom">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <HeartPulse className="w-4 h-4 text-blue-600" />
+                    <p className="text-sm font-semibold">365일 24시간 서비스</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    응급상황은 시간을 가리지 않습니다. Medi-Link는 새벽, 주말, 공휴일 관계없이 
+                    언제든지 가장 가까운 응급실 정보를 제공합니다.
+                  </p>
+                  <div className="grid grid-cols-3 gap-2 pt-1 text-[10px]">
+                    <div className="text-center p-1.5 bg-blue-50 rounded-lg">
+                      <p className="font-bold text-blue-600">24h</p>
+                      <p className="text-muted-foreground">하루</p>
+                    </div>
+                    <div className="text-center p-1.5 bg-blue-50 rounded-lg">
+                      <p className="font-bold text-blue-600">7일</p>
+                      <p className="text-muted-foreground">주간</p>
+                    </div>
+                    <div className="text-center p-1.5 bg-blue-50 rounded-lg">
+                      <p className="font-bold text-blue-600">365일</p>
+                      <p className="text-muted-foreground">연간</p>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </motion.div>
 
