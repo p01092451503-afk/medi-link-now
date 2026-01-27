@@ -140,9 +140,9 @@ const MapLegendPopup = () => {
                         <span className="text-xs font-medium px-2 py-0.5 bg-orange-500 text-white rounded">지역센터</span>
                         <p className="text-xs text-orange-700 mt-1.5">지역응급의료센터</p>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-center">
-                        <span className="text-lg">👶</span>
-                        <p className="text-xs text-amber-700 mt-0.5">소아 진료 가능</p>
+                      <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-center">
+                        <span className="text-xs font-medium px-2 py-0.5 bg-blue-500 text-white rounded">지역기관</span>
+                        <p className="text-xs text-blue-700 mt-1.5">지역응급의료기관</p>
                       </div>
                       <div className="p-2.5 rounded-lg bg-purple-50 border border-purple-200 text-center">
                         <span className="text-lg">➕</span>
