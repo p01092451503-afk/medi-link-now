@@ -41,9 +41,14 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
       className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 max-w-[calc(100vw-2rem)] overflow-hidden"
     >
       <div 
-        className="flex items-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-2 md:py-3 overflow-x-auto scrollbar-hide"
+        className="flex items-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-3 md:px-4 py-2 md:py-3 overflow-x-auto scrollbar-hide touch-pan-x"
         role="list"
         aria-label="응급실 통계"
+        style={{ 
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
       >
         {/* Region & Hospital Count */}
         <div 
