@@ -29,6 +29,7 @@ import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
+import MapLegendPopup from "@/components/map/MapLegendPopup";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -345,6 +346,9 @@ const MapPage = () => {
               </div>
             </HoverCardContent>
           </HoverCard>
+
+          {/* Map Legend Help Button */}
+          <MapLegendPopup />
         </div>
 
         {/* Header */}
