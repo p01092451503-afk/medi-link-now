@@ -14,6 +14,7 @@ interface RegionSelectorProps {
   subRegion: RegionType;
   onMajorRegionChange: (region: MajorRegionType) => void;
   onSubRegionChange: (region: RegionType) => void;
+  hospitalCount: number;
 }
 
 const RegionSelector = ({
@@ -21,6 +22,7 @@ const RegionSelector = ({
   subRegion,
   onMajorRegionChange,
   onSubRegionChange,
+  hospitalCount,
 }: RegionSelectorProps) => {
   // Get major regions (no parent)
   const majorRegions = useMemo(() => {
@@ -102,6 +104,11 @@ const RegionSelector = ({
           </Select>
         </>
       )}
+
+      {/* Hospital Count Badge */}
+      <span className="text-xs text-white bg-primary/80 px-2.5 py-1.5 rounded-full font-medium whitespace-nowrap">
+        {hospitalCount}개 병원
+      </span>
     </div>
   );
 };

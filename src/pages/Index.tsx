@@ -154,6 +154,7 @@ const Index = () => {
           subRegion={activeRegion}
           onMajorRegionChange={handleMajorRegionChange}
           onSubRegionChange={handleSubRegionChange}
+          hospitalCount={filteredHospitals.length}
         />
 
         {/* Bed Type Filter Chips with Exclude Full Toggle */}
