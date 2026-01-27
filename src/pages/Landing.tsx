@@ -486,7 +486,7 @@ const Landing = () => {
           {/* Guardian Button */}
           <button
             onClick={() => navigate("/map")}
-            className="w-full h-20 px-6 rounded-3xl bg-teal-600 shadow-xl shadow-teal-500/25 relative overflow-hidden group transition-all duration-300 hover:bg-teal-500 hover:shadow-2xl hover:shadow-teal-500/30 hover:scale-[1.02]"
+            className="w-full h-20 px-6 rounded-3xl bg-[hsl(173,65%,35%)] shadow-xl shadow-teal-500/20 relative overflow-hidden group transition-all duration-300 hover:bg-[hsl(173,65%,40%)] hover:shadow-2xl hover:shadow-teal-500/25 hover:scale-[1.02]"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
             <div className="relative flex items-center w-full h-full">
@@ -506,7 +506,7 @@ const Landing = () => {
           {/* Ambulance Driver Button */}
           <button
             onClick={() => navigate("/driver-intro")}
-            className="w-full h-20 px-6 rounded-3xl bg-orange-500 shadow-xl shadow-orange-500/25 relative overflow-hidden group transition-all duration-300 hover:bg-orange-400 hover:shadow-2xl hover:shadow-orange-500/30 hover:scale-[1.02]"
+            className="w-full h-20 px-6 rounded-3xl bg-[hsl(30,75%,55%)] shadow-xl shadow-orange-500/20 relative overflow-hidden group transition-all duration-300 hover:bg-[hsl(30,75%,60%)] hover:shadow-2xl hover:shadow-orange-500/25 hover:scale-[1.02]"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
             <div className="relative flex items-center w-full h-full">
