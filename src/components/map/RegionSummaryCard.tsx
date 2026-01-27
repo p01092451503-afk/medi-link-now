@@ -178,9 +178,9 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
           </div>
         </fieldset>
 
-        {/* Status Indicator - Hidden on very small screens, visible on sm+ */}
+        {/* Status Indicator - Always visible */}
         <fieldset 
-          className="hidden sm:flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0 border-0 p-0 m-0 pr-1"
+          className="flex items-center gap-1 sm:gap-1.5 md:gap-3 flex-shrink-0 border-0 p-0 m-0 pr-1"
           role="group"
           aria-label="병원 혼잡도 현황"
         >
