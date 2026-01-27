@@ -483,31 +483,30 @@ const MapPage = () => {
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                className="flex items-center gap-2 bg-white backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg"
+                className="flex items-center gap-2 bg-white backdrop-blur-sm rounded-xl px-2.5 py-1.5 shadow-lg max-w-[200px]"
               >
-                <Database className="w-4 h-4 text-primary flex-shrink-0" />
-                <div className="text-[11px] text-muted-foreground leading-tight">
+                <Database className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                <div className="text-[10px] text-muted-foreground leading-tight min-w-0">
                   <a
                     href="https://www.data.go.kr/data/15000563/openapi.do"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-foreground hover:text-primary transition-colors"
+                    className="font-medium text-foreground hover:text-primary transition-colors block truncate"
                   >
                     공공데이터포털
                   </a>
-                  <div>전국 응급의료기관 실시간 가용병상정보</div>
                   {lastUpdated && (
-                    <div className="text-[10px] text-primary mt-0.5">
-                      업데이트: {lastUpdated.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
+                    <div className="text-[9px] text-primary">
+                      {lastUpdated.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
                     </div>
                   )}
                 </div>
                 <button
                   onClick={() => setShowDataSource(false)}
-                  className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  className="p-0.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                   aria-label="닫기"
                 >
-                  <X className="w-4 h-4 text-muted-foreground" />
+                  <X className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
               </motion.div>
             ) : (
