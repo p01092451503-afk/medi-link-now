@@ -481,36 +481,46 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-full max-w-sm space-y-3"
+          className="w-full max-w-sm space-y-4"
         >
           {/* Guardian Button */}
           <button
             onClick={() => navigate("/map")}
-            className="w-full h-[72px] px-5 rounded-2xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 relative overflow-hidden group transition-colors"
+            className="w-full h-20 px-6 rounded-3xl bg-gradient-to-r from-primary via-blue-600 to-primary shadow-xl shadow-primary/25 relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
             <div className="relative flex items-center w-full h-full">
-              <Users className="w-7 h-7 text-white shrink-0" />
-              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
-                <p className="text-base font-semibold text-white leading-tight">보호자 / 환자</p>
-                <p className="text-xs font-normal text-white/80 leading-tight mt-0.5">응급실 찾기, 가족 건강관리</p>
+              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
+                <Users className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl text-white shrink-0">→</span>
+              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
+                <p className="text-lg font-bold text-white leading-tight tracking-tight">보호자 / 환자</p>
+                <p className="text-xs font-medium text-white/75 leading-tight mt-1">응급실 찾기 · 가족 건강관리</p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                <ChevronRight className="w-5 h-5 text-white" />
+              </div>
             </div>
           </button>
 
           {/* Ambulance Driver Button */}
           <button
             onClick={() => navigate("/driver-intro")}
-            className="w-full h-[72px] px-5 rounded-2xl border-2 border-orange-400 bg-white hover:bg-orange-50 relative overflow-hidden group transition-colors"
+            className="w-full h-20 px-6 rounded-3xl bg-gradient-to-br from-white via-gray-50 to-orange-50/50 border-2 border-orange-200/80 shadow-lg shadow-orange-500/10 relative overflow-hidden group transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/15 hover:border-orange-300 hover:scale-[1.02]"
           >
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-amber-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative flex items-center w-full h-full">
-              <Ambulance className="w-7 h-7 text-orange-500 shrink-0" />
-              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
-                <p className="text-base font-semibold text-orange-600 leading-tight">구급대원 / 기사님</p>
-                <p className="text-xs font-normal text-orange-500/70 leading-tight mt-0.5">수익 최적화, 자동 운행일지</p>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center shrink-0 border border-orange-200/50">
+                <Ambulance className="w-6 h-6 text-orange-600" />
               </div>
-              <span className="text-xl text-orange-500 shrink-0">→</span>
+              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
+                <p className="text-lg font-bold text-gray-800 leading-tight tracking-tight">구급대원 / 기사님</p>
+                <p className="text-xs font-medium text-gray-500 leading-tight mt-1">수익 최적화 · 자동 운행일지</p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-orange-100/50 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                <ChevronRight className="w-5 h-5 text-orange-500" />
+              </div>
             </div>
           </button>
         </motion.div>
