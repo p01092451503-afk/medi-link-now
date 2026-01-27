@@ -35,8 +35,8 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
   if (hospitals.length === 0) return null;
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-md px-2 py-1.5 border border-gray-100">
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+    <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-md px-2 py-1.5 border border-gray-100 w-fit">
+      <div className="flex items-center gap-2">
         {/* Region & Hospital Count */}
         <div className="flex items-center gap-1 pr-2 border-r border-gray-200">
           <Building2 className="w-3.5 h-3.5 text-primary flex-shrink-0" />
