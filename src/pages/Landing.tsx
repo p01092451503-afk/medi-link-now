@@ -341,9 +341,9 @@ const Landing = () => {
           className="w-full max-w-sm mb-10"
         >
           <div className="flex items-center justify-between px-2">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-sm">
-                <Hospital className="w-6 h-6 text-primary" />
+            <div className="flex flex-col items-center gap-2 group cursor-pointer">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-primary/20 group-hover:to-primary/10">
+                <Hospital className="w-6 h-6 text-primary transition-transform duration-300 group-hover:scale-110" />
               </div>
               <div className="text-center">
                 <p className="text-sm font-bold text-foreground">
@@ -353,9 +353,9 @@ const Landing = () => {
               </div>
             </div>
             
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center shadow-sm">
-                <Activity className="w-6 h-6 text-green-600" />
+            <div className="flex flex-col items-center gap-2 group cursor-pointer">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-green-200 group-hover:to-green-100">
+                <Activity className="w-6 h-6 text-green-600 transition-transform duration-300 group-hover:scale-110" />
               </div>
               <div className="text-center">
                 <p className="text-sm font-bold text-foreground">30초</p>
@@ -363,9 +363,9 @@ const Landing = () => {
               </div>
             </div>
             
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm">
-                <Clock className="w-6 h-6 text-blue-600" />
+            <div className="flex flex-col items-center gap-2 group cursor-pointer">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-hover:from-blue-200 group-hover:to-blue-100">
+                <Clock className="w-6 h-6 text-blue-600 transition-transform duration-300 group-hover:scale-110" />
               </div>
               <div className="text-center">
                 <p className="text-sm font-bold text-foreground">24시간</p>
