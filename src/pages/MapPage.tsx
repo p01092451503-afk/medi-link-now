@@ -148,6 +148,31 @@ const MapPage = () => {
     });
   }, [isPharmacyFilter, holidayPharmacies, activeRegion]);
 
+  // Show message when no trauma centers in selected region
+  useEffect(() => {
+    if (activeFilter === "traumaCenter" && filteredHospitals.length === 0 && activeRegion !== "all") {
+      const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
+      const regionName = selectedRegion?.labelKr || activeRegion;
+      toast({
+        title: "외상센터 없음",
+        description: `${regionName}에는 권역외상센터가 없습니다.`,
+        variant: "destructive",
+      });
+    }
+  }, [activeFilter, filteredHospitals.length, activeRegion]);
+
+  // Show message when no pharmacies in selected region
+  useEffect(() => {
+    if (isPharmacyFilter && filteredPharmacies.length === 0 && activeRegion !== "all") {
+      const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
+      const regionName = selectedRegion?.labelKr || activeRegion;
+      toast({
+        title: "휴일 약국 없음",
+        description: `${regionName}에는 휴일 약국 정보가 없습니다.`,
+      });
+    }
+  }, [isPharmacyFilter, filteredPharmacies.length, activeRegion]);
+
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
     setActiveRegion(region);
