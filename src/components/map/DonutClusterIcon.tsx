@@ -38,7 +38,8 @@ export const createDonutClusterIcon = (stats: ClusterStats, count: number) => {
   const unavailablePercent = (unavailable / total) * 100;
   
   // SVG donut chart with conic gradient effect using stroke-dasharray
-  const size = Math.min(60, 40 + count * 2);
+  // Dynamic size based on total beds: min 44px, max 80px
+  const size = Math.min(80, Math.max(44, 44 + Math.sqrt(totalBeds) * 2));
   const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
