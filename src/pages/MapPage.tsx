@@ -417,32 +417,17 @@ const MapPage = () => {
 
           {/* Bed Type Filter Chips */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide items-center">
-            {filterOptions
+{filterOptions
               .filter((f) => f.category === "bed" || f.category === "special")
               .map((f) => {
                 const isActive = activeFilter === f.id;
                 const isPharmacy = f.id === "pharmacy";
                 const isTraumaCenter = f.id === "traumaCenter";
 
-                const handleFilterClick = () => {
-                  setActiveFilter(f.id);
-                  // 외상센터 필터 선택 시 전국 뷰로 자동 전환
-                  if (isTraumaCenter) {
-                    setActiveMajorRegion("all");
-                    setActiveRegion("all");
-                    setActiveRadius("all");
-                    const allRegion = regionOptions.find((r) => r.id === "all");
-                    if (allRegion) {
-                      setMapCenter(allRegion.center);
-                      setMapZoom(allRegion.zoom || 7);
-                    }
-                  }
-                };
-
                 return (
                   <button
                     key={f.id}
-                    onClick={handleFilterClick}
+                    onClick={() => setActiveFilter(f.id)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-1.5 ${
                       isActive
                         ? isPharmacy
@@ -468,6 +453,7 @@ const MapPage = () => {
                   </button>
                 );
               })}
+
           </div>
         </div>
 
