@@ -383,23 +383,6 @@ const Landing = () => {
             </div>
           </button>
         </motion.div>
-
-
-        {/* Emergency Call */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-4"
-        >
-          <a
-            href="tel:119"
-            className="flex items-center gap-2 text-destructive font-semibold hover:underline"
-          >
-            <Phone className="w-4 h-4" />
-            긴급 상황? 119 바로 전화
-          </a>
-        </motion.div>
       </main>
 
       {/* Footer */}
