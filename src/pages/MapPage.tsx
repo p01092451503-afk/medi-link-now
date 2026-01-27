@@ -251,8 +251,9 @@ const MapPage = () => {
           onBoundsChange={handleBoundsChange}
         />
 
-        {/* Map Controls (Zoom + Location) */}
+        {/* Map Controls (Zoom + Legend + Location) */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000] flex flex-col gap-2">
+          {/* Zoom Controls */}
           <button
             onClick={() => setMapZoom((prev) => Math.min(prev + 1, 18))}
             className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100"
@@ -268,8 +269,11 @@ const MapPage = () => {
             <Minus className="w-5 h-5 text-gray-700" />
           </button>
 
-          {/* Divider */}
-          <div className="w-6 h-px bg-gray-200 mx-auto" />
+          {/* Map Legend Help Button */}
+          <MapLegendPopup />
+
+          {/* Spacer for separation */}
+          <div className="h-4" />
 
           {/* My Location Button */}
           <HoverCard openDelay={100} closeDelay={100}>
@@ -346,9 +350,6 @@ const MapPage = () => {
               </div>
             </HoverCardContent>
           </HoverCard>
-
-          {/* Map Legend Help Button */}
-          <MapLegendPopup />
         </div>
 
         {/* Header */}
