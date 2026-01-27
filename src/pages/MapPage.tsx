@@ -181,7 +181,7 @@ const MapPage = () => {
         
         const locationLabel = isUserLocationBased ? "내 위치에서" : `${regionName}에서`;
         
-        toast({
+        const { dismiss } = toast({
           title: `${regionName}에는 외상센터가 없습니다`,
           description: `${locationLabel} 가장 가까운 외상센터: ${nearest.nameKr} (${nearest.distanceFromRef.toFixed(1)}km, ${timeDisplay})`,
           action: (
@@ -189,6 +189,8 @@ const MapPage = () => {
               variant="outline"
               size="sm"
               onClick={() => {
+                // 토스트 즉시 닫기
+                dismiss();
                 // 지역 필터를 전체로 변경하여 외상센터가 표시되도록 함
                 setActiveMajorRegion("all");
                 setActiveRegion("all");
