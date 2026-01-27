@@ -7,6 +7,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
+import appMockup from "@/assets/app-mockup.png";
 
 
 const Landing = () => {
@@ -147,21 +148,39 @@ const Landing = () => {
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center px-6 py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8"
-        >
-          <h2 className="text-3xl font-bold text-foreground mb-3">
-            응급상황,<br />
-            <span className="text-primary">가장 가까운 병상</span>을<br />
-            찾아드립니다
-          </h2>
-          <p className="text-muted-foreground max-w-sm mx-auto">
-            전국 응급실 실시간 병상 현황을 확인하고 가장 빠른 경로를 안내받으세요
-          </p>
-        </motion.div>
+        <div className="flex flex-col lg:flex-row items-center gap-8 mb-8 w-full max-w-4xl">
+          {/* Text Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center lg:text-left flex-1"
+          >
+            <h2 className="text-3xl font-bold text-foreground mb-3">
+              응급상황,<br />
+              <span className="text-primary">가장 가까운 병상</span>을<br />
+              찾아드립니다
+            </h2>
+            <p className="text-muted-foreground max-w-sm mx-auto lg:mx-0">
+              전국 응급실 실시간 병상 현황을 확인하고 가장 빠른 경로를 안내받으세요
+            </p>
+          </motion.div>
+
+          {/* App Mockup */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-teal-500/20 blur-3xl rounded-full scale-75" />
+            <img 
+              src={appMockup} 
+              alt="Medi-Link 앱 미리보기" 
+              className="relative w-48 lg:w-56 drop-shadow-2xl"
+            />
+          </motion.div>
+        </div>
 
         {/* Live Statistics Section */}
         <motion.div
