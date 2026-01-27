@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, Search, MapPin, EyeOff, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, EyeOff, Plus, Minus } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ const MapPage = () => {
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(10);
   const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
@@ -79,11 +79,6 @@ const MapPage = () => {
   const { filteredHospitals } = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
     result = filterHospitalsByRegion(result, activeRegion);
-    
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
-    }
 
     // Exclude full hospitals (total beds = 0)
     if (excludeFullHospitals) {
@@ -111,7 +106,7 @@ const MapPage = () => {
     }
 
     return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius]);
+  }, [activeFilter, activeRegion, excludeFullHospitals, userLocation, hospitalData, activeRadius]);
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
@@ -365,36 +360,12 @@ const MapPage = () => {
 
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/")}
-              className="bg-white rounded-xl p-2.5 shadow-lg hover:bg-gray-50 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && searchQuery.trim()) {
-                    const matched = filteredHospitals[0];
-                    if (matched) {
-                      handleHospitalClick(matched);
-                      toast({ title: `🏥 ${matched.nameKr}`, description: "검색 결과로 이동합니다." });
-                    } else {
-                      toast({ title: "검색 결과 없음", description: "다른 검색어를 입력해보세요." });
-                    }
-                  }
-                }}
-                placeholder="병원명 검색... (Enter로 검색)"
-                className="w-full bg-white rounded-2xl pl-12 pr-4 py-4 text-base shadow-lg outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              />
-            </div>
-          </div>
+          <button
+            onClick={() => navigate("/")}
+            className="bg-white rounded-xl p-2.5 shadow-lg hover:bg-gray-50 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
         </header>
 
         {/* Filter Section */}
