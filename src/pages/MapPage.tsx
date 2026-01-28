@@ -34,9 +34,7 @@ import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCo
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
 import RegionSummaryCard from "@/components/map/RegionSummaryCard";
-import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
-import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
-import SafeArrivalScore from "@/components/hospital/SafeArrivalScore";
+import CompactAIPrediction from "@/components/hospital/CompactAIPrediction";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -724,28 +722,11 @@ const MapPage = () => {
 
                   return (
                     <>
-                      {/* AI Predictive Features Section */}
-                      <div className="space-y-3 mb-5 p-3 bg-gradient-to-br from-primary/5 to-blue-50 rounded-xl border border-primary/10">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-primary">🤖 AI 예측 분석</span>
-                            <span className="text-[10px] text-white bg-primary/80 px-1.5 py-0.5 rounded">Beta</span>
-                          </div>
-                          <BedTrendIndicator hospitalId={selectedHospital.id?.toString() || selectedHospital.name} />
-                        </div>
-                        
-                        {/* Safe Arrival Score */}
-                        <SafeArrivalScore 
-                          hospitalId={selectedHospital.id?.toString() || selectedHospital.name}
-                          officialBeds={totalBeds}
-                        />
-                        
-                        {/* Shadow Demand Visualization */}
-                        <ShadowDemandCard 
-                          hospitalId={selectedHospital.id?.toString() || selectedHospital.name}
-                          officialBeds={totalBeds}
-                        />
-                      </div>
+                      {/* Compact AI Prediction Bar */}
+                      <CompactAIPrediction 
+                        hospitalId={selectedHospital.id?.toString() || selectedHospital.name}
+                        officialBeds={totalBeds}
+                      />
 
                       {/* Official Bed Status */}
                       <div className="flex items-center justify-between mb-3">
