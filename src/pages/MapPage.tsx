@@ -33,6 +33,9 @@ import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCo
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
 import RegionSummaryCard from "@/components/map/RegionSummaryCard";
+import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
+import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
+import SafeArrivalScore from "@/components/hospital/SafeArrivalScore";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -714,26 +717,59 @@ const MapPage = () => {
                     { label: "열/감염", count: selectedHospital.beds.fever, Icon: Thermometer, showInfo: true },
                   ];
 
+                  const totalBeds = Math.max(0, selectedHospital.beds.general) + 
+                                   Math.max(0, selectedHospital.beds.pediatric) + 
+                                   Math.max(0, selectedHospital.beds.fever);
+
                   return (
-                    <div className="grid grid-cols-3 gap-3 mb-5">
-                      {bedItems.map(({ label, count, Icon, showInfo }) => {
-                        const { displayCount, bg, text } = getBedTileStyles(count);
-                        return (
-                          <div key={label} className={`flex flex-col items-center p-3 rounded-xl ${bg}`}>
-                            <Icon className={`w-5 h-5 mb-1 ${text}`} />
-                            <span className={`text-xl font-bold ${text}`}>{displayCount}</span>
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs text-muted-foreground">{label}</span>
-                              {showInfo && (
-                                <span title="고열(38℃+) 및 감염 환자 전용">
-                                  <Info className="w-3 h-3 text-muted-foreground" />
-                                </span>
-                              )}
-                            </div>
+                    <>
+                      {/* AI Predictive Features Section */}
+                      <div className="space-y-3 mb-5 p-3 bg-gradient-to-br from-primary/5 to-blue-50 rounded-xl border border-primary/10">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-primary">🤖 AI 예측 분석</span>
+                            <span className="text-[10px] text-white bg-primary/80 px-1.5 py-0.5 rounded">Beta</span>
                           </div>
-                        );
-                      })}
-                    </div>
+                          <BedTrendIndicator hospitalId={selectedHospital.id?.toString() || selectedHospital.name} />
+                        </div>
+                        
+                        {/* Safe Arrival Score */}
+                        <SafeArrivalScore 
+                          hospitalId={selectedHospital.id?.toString() || selectedHospital.name}
+                          officialBeds={totalBeds}
+                        />
+                        
+                        {/* Shadow Demand Visualization */}
+                        <ShadowDemandCard 
+                          hospitalId={selectedHospital.id?.toString() || selectedHospital.name}
+                          officialBeds={totalBeds}
+                        />
+                      </div>
+
+                      {/* Official Bed Status */}
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-sm font-medium text-foreground">공식 병상 현황</h3>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 mb-5">
+                        {bedItems.map(({ label, count, Icon, showInfo }) => {
+                          const { displayCount, bg, text } = getBedTileStyles(count);
+                          return (
+                            <div key={label} className={`flex flex-col items-center p-3 rounded-xl ${bg}`}>
+                              <Icon className={`w-5 h-5 mb-1 ${text}`} />
+                              <span className={`text-xl font-bold ${text}`}>{displayCount}</span>
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-muted-foreground">{label}</span>
+                                {showInfo && (
+                                  <span title="고열(38℃+) 및 감염 환자 전용">
+                                    <Info className="w-3 h-3 text-muted-foreground" />
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
                   );
                 })()}
 
