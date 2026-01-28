@@ -32,40 +32,43 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
   const estimatedBeds = Math.max(0, officialBeds - ambulancesEnRoute);
   const trend = useMemo(() => getMockTrend(hospitalId), [hospitalId]);
   
-  // Calculate safety status
+  // Calculate safety status - Using purple/blue theme to differentiate from bed status (green)
   const getSafetyStatus = () => {
     if (estimatedBeds > 5) {
       return { 
         score: 95, 
         label: "여유", 
-        message: "🟢 도착 시 병상 확보 가능성 높음",
-        bgColor: "bg-emerald-50",
-        borderColor: "border-emerald-200",
-        textColor: "text-emerald-700",
-        badgeBg: "bg-emerald-100",
-        progressColor: "bg-emerald-500"
+        message: "✅ 도착 시 병상 확보 가능성 높음",
+        bgColor: "bg-violet-50",
+        borderColor: "border-violet-200",
+        textColor: "text-violet-700",
+        badgeBg: "bg-violet-100",
+        progressColor: "bg-violet-500",
+        statusIcon: "🟢"
       };
     } else if (estimatedBeds >= 2) {
       return { 
         score: 70, 
         label: "보통", 
-        message: "🟡 도착 전 전화 확인 권장",
-        bgColor: "bg-amber-50",
-        borderColor: "border-amber-200",
-        textColor: "text-amber-700",
+        message: "⚠️ 도착 전 전화 확인 권장",
+        bgColor: "bg-indigo-50",
+        borderColor: "border-indigo-200",
+        textColor: "text-indigo-700",
         badgeBg: "bg-amber-100",
-        progressColor: "bg-amber-500"
+        progressColor: "bg-indigo-400",
+        statusIcon: "🟡"
       };
     }
     return { 
       score: 30, 
       label: "부족", 
-      message: "🔴 다른 병원도 함께 확인하세요",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200",
-      textColor: "text-red-700",
+      message: "🚨 다른 병원도 함께 확인하세요",
+      bgColor: "bg-slate-100",
+      borderColor: "border-slate-300",
+      textColor: "text-slate-700",
       badgeBg: "bg-red-100",
-      progressColor: "bg-red-500"
+      progressColor: "bg-red-500",
+      statusIcon: "🔴"
     };
   };
   
@@ -173,14 +176,14 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                 {/* Equals sign */}
                 <div className="text-slate-400 font-bold">=</div>
                 
-                {/* Estimated beds */}
+                {/* Estimated beds - Using purple/blue to match AI theme */}
                 <div className={`flex-1 text-center p-2 rounded-lg border-2 ${
-                  estimatedBeds > 5 ? "bg-emerald-50 border-emerald-300" :
-                  estimatedBeds > 0 ? "bg-amber-50 border-amber-300" : "bg-red-50 border-red-300"
+                  estimatedBeds > 5 ? "bg-violet-50 border-violet-300" :
+                  estimatedBeds > 0 ? "bg-indigo-50 border-indigo-300" : "bg-slate-100 border-slate-300"
                 }`}>
                   <p className={`text-xl font-bold ${
-                    estimatedBeds > 5 ? "text-emerald-600" :
-                    estimatedBeds > 0 ? "text-amber-600" : "text-red-600"
+                    estimatedBeds > 5 ? "text-violet-600" :
+                    estimatedBeds > 0 ? "text-indigo-600" : "text-slate-600"
                   }`}>{estimatedBeds}</p>
                   <p className="text-[10px] text-slate-600">예상 병상</p>
                 </div>
