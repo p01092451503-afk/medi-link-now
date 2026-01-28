@@ -12,7 +12,7 @@ import type { LiveReport } from "../LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
 import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIcon";
-import { createHospitalIcon, getDisplayBeds, getMarkerStatus } from "./hospitalIconUtils";
+import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName } from "./hospitalIconUtils";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -335,6 +335,12 @@ const ClusteredMapView = ({
     position: { x: number; y: number };
   } | null>(null);
 
+  // State for hospital hover tooltip
+  const [hoverTooltip, setHoverTooltip] = useState<{
+    hospital: Hospital;
+    position: { x: number; y: number };
+  } | null>(null);
+
   // Get hospitals from cluster markers
   const getHospitalsFromCluster = useCallback((cluster: any): Hospital[] => {
     const markers = cluster.getAllChildMarkers();
@@ -441,6 +447,8 @@ const ClusteredMapView = ({
               hospital.emergencyGrade
             );
 
+            const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
+
             return (
               <Marker
                 key={`hospital-${hospital.id}`}
@@ -449,6 +457,16 @@ const ClusteredMapView = ({
                 opacity={opacity}
                 eventHandlers={{
                   click: () => onHospitalClick(hospital),
+                  mouseover: (e) => {
+                    const { clientX, clientY } = e.originalEvent as MouseEvent;
+                    setHoverTooltip({
+                      hospital: { ...hospital, gradeKoreanName } as any,
+                      position: { x: clientX, y: clientY },
+                    });
+                  },
+                  mouseout: () => {
+                    setHoverTooltip(null);
+                  },
                 }}
               />
             );
@@ -474,6 +492,37 @@ const ClusteredMapView = ({
           <PharmacyMarker key={`pharmacy-${pharmacy.id}`} pharmacy={pharmacy} />
         ))}
       </MapContainer>
+
+      {/* Hospital Hover Tooltip */}
+      {hoverTooltip && (
+        <div
+          className="fixed z-[1000] pointer-events-none"
+          style={{
+            left: hoverTooltip.position.x,
+            top: hoverTooltip.position.y - 70,
+            transform: 'translateX(-50%)',
+          }}
+        >
+          <div className="bg-white border border-gray-200 shadow-lg rounded-lg px-3 py-2 text-sm text-gray-800">
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="font-semibold">{hoverTooltip.hospital.nameKr}</span>
+              {(hoverTooltip.hospital as any).gradeKoreanName && (
+                <span className="text-xs text-blue-600 font-medium">
+                  {(hoverTooltip.hospital as any).gradeKoreanName}
+                </span>
+              )}
+            </div>
+          </div>
+          <div 
+            className="w-0 h-0 mx-auto"
+            style={{
+              borderLeft: '6px solid transparent',
+              borderRight: '6px solid transparent',
+              borderTop: '6px solid white',
+            }}
+          />
+        </div>
+      )}
 
       {/* Cluster Popup */}
       <AnimatePresence>
