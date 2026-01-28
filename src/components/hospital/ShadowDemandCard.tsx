@@ -1,19 +1,14 @@
-import { Ambulance, AlertTriangle, Users } from "lucide-react";
-import { useMemo } from "react";
+import { Ambulance, AlertTriangle, Users, Loader2 } from "lucide-react";
+import { useHospitalEnRouteCount } from "@/hooks/useAmbulanceTrips";
 
 interface ShadowDemandCardProps {
   hospitalId: string;
   officialBeds: number;
 }
 
-// Mock function to simulate ambulances en route
-const getMockAmbulancesEnRoute = (hospitalId: string): number => {
-  const hash = hospitalId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return hash % 4; // 0-3 ambulances
-};
-
 const ShadowDemandCard = ({ hospitalId, officialBeds }: ShadowDemandCardProps) => {
-  const ambulancesEnRoute = useMemo(() => getMockAmbulancesEnRoute(hospitalId), [hospitalId]);
+  // Real-time ambulance count from database
+  const { count: ambulancesEnRoute, isLoading } = useHospitalEnRouteCount(hospitalId);
   const estimatedBeds = Math.max(0, officialBeds - ambulancesEnRoute);
   const hasConflict = ambulancesEnRoute > 0 && estimatedBeds < officialBeds;
 
@@ -35,7 +30,11 @@ const ShadowDemandCard = ({ hospitalId, officialBeds }: ShadowDemandCardProps) =
           <div className="flex items-center justify-center gap-1 mb-1">
             <Users className="w-3.5 h-3.5 text-orange-500" />
           </div>
-          <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 mx-auto text-orange-500 animate-spin" />
+          ) : (
+            <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
+          )}
           <p className="text-[10px] text-muted-foreground">이동 중</p>
         </div>
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle } from "lucide-react";
+import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle, Loader2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Tooltip,
@@ -7,18 +7,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useHospitalEnRouteCount } from "@/hooks/useAmbulanceTrips";
 
 interface CompactAIPredictionProps {
   hospitalId: string;
   officialBeds: number;
 }
 
-// Mock functions
-const getMockAmbulancesEnRoute = (hospitalId: string): number => {
-  const hash = hospitalId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return hash % 4;
-};
-
+// Trend is still mock - would need historical data to calculate
 const getMockTrend = (hospitalId: string): "decreasing" | "stable" | "increasing" => {
   const hash = hospitalId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const trends: ("decreasing" | "stable" | "increasing")[] = ["decreasing", "stable", "increasing"];
@@ -28,7 +24,8 @@ const getMockTrend = (hospitalId: string): "decreasing" | "stable" | "increasing
 const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   
-  const ambulancesEnRoute = useMemo(() => getMockAmbulancesEnRoute(hospitalId), [hospitalId]);
+  // Real-time ambulance count from database
+  const { count: ambulancesEnRoute, isLoading } = useHospitalEnRouteCount(hospitalId);
   const estimatedBeds = Math.max(0, officialBeds - ambulancesEnRoute);
   const trend = useMemo(() => getMockTrend(hospitalId), [hospitalId]);
   
@@ -168,7 +165,11 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                 <div className="flex-1 text-center p-2 bg-orange-50 rounded-lg border border-orange-100">
                   <div className="flex items-center justify-center gap-1">
                     <Ambulance className="w-3.5 h-3.5 text-orange-500" />
-                    <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
+                    ) : (
+                      <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
+                    )}
                   </div>
                   <p className="text-[10px] text-orange-600">이동 중</p>
                 </div>

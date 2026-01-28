@@ -14,6 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      active_ambulance_trips: {
+        Row: {
+          created_at: string
+          current_lat: number | null
+          current_lng: number | null
+          destination_hospital_id: number
+          destination_hospital_name: string
+          driver_id: string
+          driver_name: string | null
+          ended_at: string | null
+          estimated_arrival_minutes: number | null
+          id: string
+          origin_lat: number | null
+          origin_lng: number | null
+          patient_condition: string | null
+          started_at: string
+          status: Database["public"]["Enums"]["ambulance_trip_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_lat?: number | null
+          current_lng?: number | null
+          destination_hospital_id: number
+          destination_hospital_name: string
+          driver_id: string
+          driver_name?: string | null
+          ended_at?: string | null
+          estimated_arrival_minutes?: number | null
+          id?: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          patient_condition?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["ambulance_trip_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_lat?: number | null
+          current_lng?: number | null
+          destination_hospital_id?: number
+          destination_hospital_name?: string
+          driver_id?: string
+          driver_name?: string | null
+          ended_at?: string | null
+          estimated_arrival_minutes?: number | null
+          id?: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          patient_condition?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["ambulance_trip_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "active_ambulance_trips_destination_hospital_id_fkey"
+            columns: ["destination_hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ambulance_dispatch_requests: {
         Row: {
           created_at: string
@@ -333,7 +398,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      ambulance_trip_status: "en_route" | "arrived" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -460,6 +525,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      ambulance_trip_status: ["en_route", "arrived", "cancelled"],
+    },
   },
 } as const
