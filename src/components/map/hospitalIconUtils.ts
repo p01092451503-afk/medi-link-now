@@ -66,6 +66,15 @@ const getGradeLabel = (emergencyGrade?: string | null): string => {
   }
 };
 
+export const getGradeKoreanName = (grade?: string | null): string => {
+  switch (grade) {
+    case 'regional_center': return '권역응급의료센터';
+    case 'local_center': return '지역응급의료센터';
+    case 'local_institution': return '지역응급의료기관';
+    default: return '';
+  }
+};
+
 export const createHospitalIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
