@@ -12,6 +12,9 @@ import {
 import { useHotlines } from "@/components/HotlineManager";
 import { toast } from "@/hooks/use-toast";
 import ERRoadviewModal from "@/components/ERRoadviewModal";
+import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
+import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
+import SafeArrivalScore from "@/components/hospital/SafeArrivalScore";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -249,7 +252,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 </button>
               </div>
 
-              {/* Bed Status Grid */}
+              {/* Bed Status Grid with Trend Indicator */}
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-foreground">병상 현황</h3>
+                <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
+              </div>
               <div className="grid grid-cols-3 gap-3 mb-5">
                 <BedStatusCard
                   label="성인"
@@ -273,6 +280,28 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   showTooltip={true}
                   tooltipText="고열(38℃+) 및 감염 환자 전용"
                   isHospitalFull={status === "unavailable"}
+                />
+              </div>
+
+              {/* AI Predictive Features Section */}
+              <div className="space-y-4 mb-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                    🤖 AI 예측
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">Beta</span>
+                </div>
+                
+                {/* Shadow Demand Visualization */}
+                <ShadowDemandCard 
+                  hospitalId={hospital.id?.toString() || hospital.name}
+                  officialBeds={totalBeds}
+                />
+                
+                {/* Safe Arrival Score */}
+                <SafeArrivalScore 
+                  hospitalId={hospital.id?.toString() || hospital.name}
+                  officialBeds={totalBeds}
                 />
               </div>
 
