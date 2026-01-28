@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
-import { Sparkles, TrendingDown, TrendingUp, Minus, Users, ChevronDown, Ambulance } from "lucide-react";
+import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CompactAIPredictionProps {
   hospitalId: string;
@@ -81,6 +87,34 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/80 border border-slate-200">
                   <Sparkles className="w-3.5 h-3.5 text-violet-500" />
                   <span className="text-xs font-semibold text-slate-700">AI 예측</span>
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button 
+                          type="button" 
+                          onClick={(e) => e.stopPropagation()}
+                          className="ml-0.5"
+                        >
+                          <HelpCircle className="w-3.5 h-3.5 text-slate-400 hover:text-violet-500 transition-colors" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-[280px] p-3 z-[2000]">
+                        <div className="space-y-2">
+                          <p className="font-semibold text-sm">🤖 AI 예측이란?</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            현재 이 병원으로 이동 중인 구급차 수와 병상 변화 추세를 분석하여, 
+                            <span className="font-medium text-foreground"> 도착 시점의 예상 가용 병상</span>을 계산합니다.
+                          </p>
+                          <div className="pt-1 border-t border-slate-100">
+                            <p className="text-[10px] text-slate-400">
+                              ⚠️ 참고용 예측 지표이며, 실제 상황과 다를 수 있습니다. 
+                              중요한 결정 전 반드시 병원에 전화 확인하세요.
+                            </p>
+                          </div>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 
                 {/* Trend indicator */}
