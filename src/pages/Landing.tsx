@@ -523,6 +523,27 @@ const Landing = () => {
             </div>
           </button>
         </motion.div>
+
+        {/* 119 Emergency Call Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="w-full max-w-sm mt-6"
+        >
+          <a
+            href="tel:119"
+            className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-destructive/10 border-2 border-destructive/30 hover:bg-destructive/15 hover:border-destructive/50 transition-all duration-300 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-destructive/20 flex items-center justify-center group-hover:bg-destructive/30 transition-colors">
+              <Phone className="w-5 h-5 text-destructive" />
+            </div>
+            <div className="text-left">
+              <p className="text-lg font-bold text-destructive">119</p>
+              <p className="text-xs text-destructive/70">생명이 위급할 땐 즉시 신고</p>
+            </div>
+          </a>
+        </motion.div>
       </main>
 
       {/* Footer */}
