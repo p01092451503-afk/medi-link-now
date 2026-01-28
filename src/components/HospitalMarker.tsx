@@ -286,6 +286,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1 }: Hospit
         direction="top" 
         offset={[0, -55]} 
         opacity={1}
+        sticky={true}
         className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-2 !text-sm !text-gray-800"
       >
         <div className="flex flex-col items-center gap-0.5">
