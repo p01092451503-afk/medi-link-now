@@ -796,7 +796,7 @@ const MapPage = () => {
                     <Phone className="w-4 h-4 mr-2" />
                     응급실 전화
                   </Button>
-                  <Popover>
+                  <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -806,7 +806,12 @@ const MapPage = () => {
                         길안내
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-56 p-2" align="center">
+                    <PopoverContent 
+                      className="w-56 p-2 z-[2000]" 
+                      align="center"
+                      side="top"
+                      sideOffset={8}
+                    >
                       <div className="flex flex-col gap-2">
                         <button
                           onClick={() => {
@@ -841,7 +846,6 @@ const MapPage = () => {
                           onClick={() => {
                             // 티맵 앱 딥링크
                             const tmapAppUrl = `tmap://route?goalx=${selectedHospital.lng}&goaly=${selectedHospital.lat}&goalname=${encodeURIComponent(selectedHospital.nameKr)}`;
-                            const tmapWebUrl = `https://apis.openapi.sk.com/tmap/app/routes?appKey=&goalx=${selectedHospital.lng}&goaly=${selectedHospital.lat}&goalname=${encodeURIComponent(selectedHospital.nameKr)}`;
                             
                             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
                             const isAndroid = /Android/i.test(navigator.userAgent);
