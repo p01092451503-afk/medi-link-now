@@ -252,10 +252,32 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 </button>
               </div>
 
-              {/* Bed Status Grid with Trend Indicator */}
+              {/* AI Predictive Features Section - Placed prominently at top */}
+              <div className="space-y-3 mb-5 p-3 bg-gradient-to-br from-primary/5 to-blue-50 rounded-xl border border-primary/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-primary">🤖 AI 예측 분석</span>
+                    <span className="text-[10px] text-white bg-primary/80 px-1.5 py-0.5 rounded">Beta</span>
+                  </div>
+                  <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
+                </div>
+                
+                {/* Safe Arrival Score */}
+                <SafeArrivalScore 
+                  hospitalId={hospital.id?.toString() || hospital.name}
+                  officialBeds={totalBeds}
+                />
+                
+                {/* Shadow Demand Visualization */}
+                <ShadowDemandCard 
+                  hospitalId={hospital.id?.toString() || hospital.name}
+                  officialBeds={totalBeds}
+                />
+              </div>
+
+              {/* Bed Status Grid */}
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-foreground">병상 현황</h3>
-                <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
+                <h3 className="text-sm font-medium text-foreground">공식 병상 현황</h3>
               </div>
               <div className="grid grid-cols-3 gap-3 mb-5">
                 <BedStatusCard
@@ -280,28 +302,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   showTooltip={true}
                   tooltipText="고열(38℃+) 및 감염 환자 전용"
                   isHospitalFull={status === "unavailable"}
-                />
-              </div>
-
-              {/* AI Predictive Features Section */}
-              <div className="space-y-4 mb-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                    🤖 AI 예측
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">Beta</span>
-                </div>
-                
-                {/* Shadow Demand Visualization */}
-                <ShadowDemandCard 
-                  hospitalId={hospital.id?.toString() || hospital.name}
-                  officialBeds={totalBeds}
-                />
-                
-                {/* Safe Arrival Score */}
-                <SafeArrivalScore 
-                  hospitalId={hospital.id?.toString() || hospital.name}
-                  officialBeds={totalBeds}
                 />
               </div>
 
