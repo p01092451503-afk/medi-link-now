@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import L from "leaflet";
@@ -795,19 +796,83 @@ const MapPage = () => {
                     <Phone className="w-4 h-4 mr-2" />
                     응급실 전화
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      window.open(
-                        `https://www.google.com/maps/dir/?api=1&destination=${selectedHospital.lat},${selectedHospital.lng}`,
-                        "_blank"
-                      )
-                    }
-                    className="py-6 rounded-xl border-primary text-primary hover:bg-primary/5"
-                  >
-                    <Navigation className="w-4 h-4 mr-2" />
-                    길안내
-                  </Button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="py-6 rounded-xl border-primary text-primary hover:bg-primary/5"
+                      >
+                        <Navigation className="w-4 h-4 mr-2" />
+                        길안내
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56 p-2" align="center">
+                      <div className="flex flex-col gap-2">
+                        <button
+                          onClick={() => {
+                            // 카카오맵 앱 딥링크
+                            const kakaoAppUrl = `kakaomap://route?ep=${selectedHospital.lat},${selectedHospital.lng}&by=CAR`;
+                            const kakaoWebUrl = `https://map.kakao.com/link/to/${encodeURIComponent(selectedHospital.nameKr)},${selectedHospital.lat},${selectedHospital.lng}`;
+                            
+                            // 모바일에서 앱 열기 시도, 실패 시 웹으로
+                            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                            const isAndroid = /Android/i.test(navigator.userAgent);
+                            
+                            if (isIOS || isAndroid) {
+                              window.location.href = kakaoAppUrl;
+                              setTimeout(() => {
+                                window.open(kakaoWebUrl, "_blank");
+                              }, 1500);
+                            } else {
+                              window.open(kakaoWebUrl, "_blank");
+                            }
+                          }}
+                          className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-yellow-50 transition-colors text-left"
+                        >
+                          <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center">
+                            <span className="text-lg font-bold text-yellow-900">K</span>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm">카카오맵</p>
+                            <p className="text-xs text-muted-foreground">Kakao Map</p>
+                          </div>
+                        </button>
+                        <button
+                          onClick={() => {
+                            // 티맵 앱 딥링크
+                            const tmapAppUrl = `tmap://route?goalx=${selectedHospital.lng}&goaly=${selectedHospital.lat}&goalname=${encodeURIComponent(selectedHospital.nameKr)}`;
+                            const tmapWebUrl = `https://apis.openapi.sk.com/tmap/app/routes?appKey=&goalx=${selectedHospital.lng}&goaly=${selectedHospital.lat}&goalname=${encodeURIComponent(selectedHospital.nameKr)}`;
+                            
+                            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                            const isAndroid = /Android/i.test(navigator.userAgent);
+                            
+                            if (isIOS || isAndroid) {
+                              window.location.href = tmapAppUrl;
+                              // 앱 스토어로 리다이렉트 (앱 미설치 시)
+                              setTimeout(() => {
+                                if (isIOS) {
+                                  window.open("https://apps.apple.com/kr/app/tmap/id431589174", "_blank");
+                                } else {
+                                  window.open("https://play.google.com/store/apps/details?id=com.skt.tmap.ku", "_blank");
+                                }
+                              }, 1500);
+                            } else {
+                              window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedHospital.lat},${selectedHospital.lng}`, "_blank");
+                            }
+                          }}
+                          className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-red-50 transition-colors text-left"
+                        >
+                          <div className="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center">
+                            <span className="text-lg font-bold text-white">T</span>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm">티맵</p>
+                            <p className="text-xs text-muted-foreground">T Map</p>
+                          </div>
+                        </button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
                 {/* Call Ambulance Button */}
