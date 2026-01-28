@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
@@ -461,6 +461,98 @@ const Landing = () => {
                 </div>
               </PopoverContent>
             </Popover>
+          </div>
+        </motion.div>
+
+        {/* AI Prediction Feature Promotion */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="w-full max-w-sm mb-10"
+        >
+          <div className="relative bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 rounded-2xl p-5 border border-purple-100 overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-200/30 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
+            
+            {/* Header */}
+            <div className="relative flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-foreground">AI 예측 분석</h3>
+                  <span className="px-1.5 py-0.5 text-[9px] font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-500 rounded">Beta</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">공식 데이터를 넘어선 스마트 분석</p>
+              </div>
+            </div>
+
+            {/* Feature Cards */}
+            <div className="relative space-y-2.5">
+              {/* Safe Arrival Score */}
+              <div className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center shrink-0">
+                  <Target className="w-4.5 h-4.5 text-emerald-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">안전 도착 확률</p>
+                  <p className="text-[10px] text-muted-foreground">병상 확보 가능성을 % 로 예측</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-lg font-bold text-emerald-600">95%</p>
+                  <p className="text-[9px] text-emerald-600/70">🟢 안전</p>
+                </div>
+              </div>
+
+              {/* Shadow Demand */}
+              <div className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center shrink-0">
+                  <Ambulance className="w-4.5 h-4.5 text-blue-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">실시간 이동 현황</p>
+                  <p className="text-[10px] text-muted-foreground">이동 중인 구급차를 반영한 예상 가용 병상</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-lg font-bold text-blue-600">-2</p>
+                  <p className="text-[9px] text-blue-600/70">이동 중</p>
+                </div>
+              </div>
+
+              {/* Bed Trend */}
+              <div className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center shrink-0">
+                  <TrendingDown className="w-4.5 h-4.5 text-amber-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">병상 소진 트렌드</p>
+                  <p className="text-[10px] text-muted-foreground">시간당 병상 변화율 AI 분석</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-lg font-bold text-amber-600">-3</p>
+                  <p className="text-[9px] text-amber-600/70">/시간</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom CTA */}
+            <div className="relative mt-4 pt-3 border-t border-purple-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-500" />
+                  <p className="text-[11px] text-purple-700 font-medium">
+                    병원 상세정보에서 확인하세요
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 text-[10px] text-purple-500">
+                  <span>지도에서 확인</span>
+                  <ChevronRight className="w-3 h-3" />
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
 
