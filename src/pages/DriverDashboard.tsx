@@ -32,6 +32,7 @@ import PatientInfoModal from "@/components/PatientInfoModal";
 import HotlineManager, { useHotlines } from "@/components/HotlineManager";
 import { useDriverPresence } from "@/hooks/useDriverPresence";
 import { useDispatchRequests } from "@/hooks/useDispatchRequests";
+import TripManagementWidget from "@/components/TripManagementWidget";
 
 // Mock call data
 const mockCalls = [
@@ -375,6 +376,9 @@ const DriverDashboard = () => {
           </motion.div>
         )}
       </main>
+
+      {/* Trip Management Widget */}
+      <TripManagementWidget />
 
       {/* Driving Log Widget */}
       <DrivingLogWidget 
