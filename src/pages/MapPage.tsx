@@ -29,9 +29,6 @@ import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
-import { useUserRole } from "@/hooks/useUserRole";
-import { useGuardianAmbulanceTracking } from "@/hooks/useGuardianAmbulanceTracking";
-import { useAuth } from "@/hooks/useAuth";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
@@ -39,9 +36,6 @@ import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
 import RegionSummaryCard from "@/components/map/RegionSummaryCard";
 import CompactAIPrediction from "@/components/hospital/CompactAIPrediction";
-import RoleSelectionModal from "@/components/RoleSelectionModal";
-import GuardianAmbulanceTracker from "@/components/map/GuardianAmbulanceTracker";
-import DriverOnlyFeatures from "@/components/map/DriverOnlyFeatures";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -62,36 +56,6 @@ const MapPage = () => {
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const locationButtonRef = useRef<HTMLButtonElement>(null);
-  
-  // Role-based features
-  const { isAuthenticated } = useAuth();
-  const { role, isLoading: isRoleLoading, setRole } = useUserRole();
-  const { trackedAmbulance } = useGuardianAmbulanceTracking();
-  const [showRoleModal, setShowRoleModal] = useState(false);
-
-  // Show role selection modal for authenticated users without a role
-  // Only show after role is fully loaded and confirmed null
-  useEffect(() => {
-    if (isAuthenticated && !isRoleLoading && role === null) {
-      setShowRoleModal(true);
-    } else if (role !== null) {
-      // Role exists, make sure modal is closed
-      setShowRoleModal(false);
-    }
-  }, [isAuthenticated, isRoleLoading, role]);
-
-  const handleRoleSelect = async (selectedRole: "guardian" | "driver") => {
-    const { error } = await setRole(selectedRole);
-    if (!error) {
-      setShowRoleModal(false);
-      toast({
-        title: selectedRole === "guardian" ? "보호자 모드로 설정됨" : "구급대원 모드로 설정됨",
-        description: selectedRole === "guardian" 
-          ? "호출한 구급차의 실시간 위치를 확인할 수 있습니다."
-          : "환자 정보 공유 및 실시간 리포트 기능을 사용할 수 있습니다.",
-      });
-    }
-  };
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("seoul");
@@ -936,34 +900,6 @@ const MapPage = () => {
         selectedDriver={selectedDriver}
         userLocation={userLocation}
       />
-
-      {/* Role Selection Modal - for authenticated users without a role */}
-      <RoleSelectionModal
-        isOpen={showRoleModal}
-        onSelectRole={handleRoleSelect}
-        isLoading={isRoleLoading}
-      />
-
-      {/* Guardian-only: Real-time ambulance tracking */}
-      {role === "guardian" && trackedAmbulance && (
-        <GuardianAmbulanceTracker
-          ambulance={trackedAmbulance}
-          onLocate={() => {
-            if (trackedAmbulance.current_lat && trackedAmbulance.current_lng) {
-              setMapCenter([trackedAmbulance.current_lat, trackedAmbulance.current_lng]);
-              setMapZoom(15);
-            }
-          }}
-        />
-      )}
-
-      {/* Driver-only features */}
-      {role === "driver" && (
-        <DriverOnlyFeatures
-          selectedHospital={selectedHospital}
-          nearbyDrivers={nearbyDrivers}
-        />
-      )}
     </div>
   );
 };
