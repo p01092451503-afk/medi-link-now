@@ -390,15 +390,46 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
     }
     Enums: {
       ambulance_trip_status: "en_route" | "arrived" | "cancelled"
+      user_role: "guardian" | "driver"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -527,6 +558,7 @@ export const Constants = {
   public: {
     Enums: {
       ambulance_trip_status: ["en_route", "arrived", "cancelled"],
+      user_role: ["guardian", "driver"],
     },
   },
 } as const
