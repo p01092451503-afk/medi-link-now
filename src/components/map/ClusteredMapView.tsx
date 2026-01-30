@@ -7,10 +7,12 @@ import { Hospital, FilterType, getHospitalStatus, calculateDistance } from "@/da
 import ReportMarker from "../ReportMarker";
 import DriverMarker from "../DriverMarker";
 import PharmacyMarker from "../PharmacyMarker";
+import AmbulanceTripMarker from "./AmbulanceTripMarker";
 import ClusterPopup from "./ClusterPopup";
 import type { LiveReport } from "../LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
+import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIcon";
 import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName } from "./hospitalIconUtils";
 
@@ -26,6 +28,7 @@ interface ClusteredMapViewProps {
   nearbyDrivers?: DriverPresence[];
   onCallDriver?: (driver: DriverPresence) => void;
   holidayPharmacies?: HolidayPharmacy[];
+  activeAmbulanceTrips?: AmbulanceTrip[];
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
 }
 
@@ -253,6 +256,7 @@ const ClusteredMapView = ({
   nearbyDrivers = [],
   onCallDriver,
   holidayPharmacies = [],
+  activeAmbulanceTrips = [],
   onBoundsChange,
 }: ClusteredMapViewProps) => {
   // react-leaflet's Marker update logic compares position by reference.
@@ -490,6 +494,11 @@ const ClusteredMapView = ({
         {/* Holiday Pharmacy Markers */}
         {holidayPharmacies.map((pharmacy) => (
           <PharmacyMarker key={`pharmacy-${pharmacy.id}`} pharmacy={pharmacy} />
+        ))}
+
+        {/* Active Ambulance Trip Markers */}
+        {activeAmbulanceTrips.map((trip) => (
+          <AmbulanceTripMarker key={`trip-${trip.id}`} trip={trip} />
         ))}
       </MapContainer>
 
