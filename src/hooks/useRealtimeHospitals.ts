@@ -95,9 +95,18 @@ export const useRealtimeHospitals = () => {
         // Create a map of existing hospitals by name for matching
         const staticByName = new Map(staticHospitals.map(h => [h.nameKr, h]));
         
+        // Get trauma center names from static data for matching
+        const traumaCenterNames = new Set(
+          staticHospitals
+            .filter(h => h.isTraumaCenter === true)
+            .map(h => h.nameKr)
+        );
+        
         // Use DB data but supplement with static data if coordinates are missing
+        // Also inherit trauma center status from static data
         mergedHospitals = dbConverted.map(dbHosp => {
           const staticMatch = staticByName.get(dbHosp.nameKr);
+          const isTraumaCenter = traumaCenterNames.has(dbHosp.nameKr) || dbHosp.isTraumaCenter;
           
           // If DB hospital has invalid coordinates, use static if available
           if ((!dbHosp.lat || !dbHosp.lng || dbHosp.lat === 37.5665) && staticMatch) {
@@ -107,12 +116,17 @@ export const useRealtimeHospitals = () => {
               lng: staticMatch.lng,
               entrance_lat: staticMatch.entrance_lat,
               entrance_lng: staticMatch.entrance_lng,
+              isTraumaCenter,
             };
           }
-          return dbHosp;
+          return {
+            ...dbHosp,
+            isTraumaCenter,
+          };
         });
         
         console.log(`Final total: ${mergedHospitals.length} legally designated hospitals`);
+        console.log(`Trauma centers found: ${mergedHospitals.filter(h => h.isTraumaCenter).length}`);
       }
 
       // Fetch bed status
