@@ -25,7 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import RevenueTab from "@/components/RevenueTab";
-import DrivingLogWidget, { type DrivingLog } from "@/components/DrivingLogWidget";
+import { type DrivingLog } from "@/components/TripManagementWidget";
 import DrivingLogHistory from "@/components/DrivingLogHistory";
 import DrivingStatsWidget from "@/components/DrivingStatsWidget";
 import PatientInfoModal from "@/components/PatientInfoModal";
@@ -377,11 +377,8 @@ const DriverDashboard = () => {
         )}
       </main>
 
-      {/* Trip Management Widget */}
-      <TripManagementWidget />
-
-      {/* Driving Log Widget */}
-      <DrivingLogWidget 
+      {/* Trip Management Widget - 통합된 이송/운행 관리 */}
+      <TripManagementWidget 
         onLogComplete={handleLogComplete}
         isSimulateMode={isSimulateMode}
       />
