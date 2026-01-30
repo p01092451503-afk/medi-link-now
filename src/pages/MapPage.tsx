@@ -70,9 +70,13 @@ const MapPage = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
 
   // Show role selection modal for authenticated users without a role
+  // Only show after role is fully loaded and confirmed null
   useEffect(() => {
     if (isAuthenticated && !isRoleLoading && role === null) {
       setShowRoleModal(true);
+    } else if (role !== null) {
+      // Role exists, make sure modal is closed
+      setShowRoleModal(false);
     }
   }, [isAuthenticated, isRoleLoading, role]);
 
