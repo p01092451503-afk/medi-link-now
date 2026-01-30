@@ -98,16 +98,37 @@ export const useRealtimeHospitals = () => {
         // Get trauma centers from static data
         const staticTraumaCenters = staticHospitals.filter(h => h.isTraumaCenter === true);
         
+        // Extract core hospital name for matching (remove common prefixes/suffixes)
+        const extractCoreName = (name: string): string => {
+          return name
+            .replace(/의료법인|재단법인|학교법인|사회복지|의과대학|부속|의료재단/g, '')
+            .replace(/[^가-힣]/g, ''); // Keep only Korean characters
+        };
+        
         // Helper function to check if DB hospital name matches a trauma center
-        // Uses partial matching since DB names can be longer (e.g., "재단법인아산사회복지재단서울아산병원" vs "서울아산병원")
+        // Uses flexible matching for various naming conventions
         const matchesTraumaCenter = (dbName: string): boolean => {
+          const dbCore = extractCoreName(dbName);
+          
           return staticTraumaCenters.some(tc => {
+            const tcCore = extractCoreName(tc.nameKr);
+            
             // Exact match
             if (dbName === tc.nameKr) return true;
-            // DB name contains static name (e.g., "재단법인...서울아산병원" contains "서울아산병원")
+            // DB name contains static name
             if (dbName.includes(tc.nameKr)) return true;
             // Static name contains DB name
             if (tc.nameKr.includes(dbName)) return true;
+            // Core name matching (e.g., "인하대학교병원" core = "인하대학교병원", "인하대학교의과대학부속병원" core = "인하대학교병원")
+            if (dbCore.includes(tcCore) || tcCore.includes(dbCore)) return true;
+            // Check if both contain the same key institution name
+            const keyNames = ['인하', '아산', '서울대', '세브란스', '성모', '을지', '길병원', '부산대', '경북대', '충남대', '전남대', '전북대', '조선대', '원주', '강원대', '제주대', '경상대'];
+            for (const key of keyNames) {
+              if (dbName.includes(key) && tc.nameKr.includes(key)) {
+                // Additional check: both should be major hospitals (regional centers typically)
+                if (dbName.includes('병원') && tc.nameKr.includes('병원')) return true;
+              }
+            }
             return false;
           });
         };
