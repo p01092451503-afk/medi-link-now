@@ -7,7 +7,6 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
-import logoImage from "@/assets/logo.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -135,11 +134,16 @@ const Landing = () => {
       {/* Header */}
       <header className="p-4 flex items-center justify-center">
         <div className="flex items-center gap-3">
-          <img 
-            src={logoImage} 
-            alt="Find-ER 파인더" 
-            className="h-10 object-contain"
-          />
+          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+            <Ambulance className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-2xl font-bold text-foreground">Find-ER</h1>
+              <span className="text-2xl font-bold text-primary">파인더</span>
+            </div>
+            <p className="text-xs text-muted-foreground">실시간 응급실 병상 정보</p>
+          </div>
         </div>
       </header>
 
