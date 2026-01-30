@@ -11,6 +11,7 @@ import {
   Ambulance,
   Clock,
   Building2,
+  Square,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,13 +34,31 @@ interface HospitalOption {
   region: string;
 }
 
-const TripManagementWidget = () => {
+export interface DrivingLog {
+  id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  startLocation: string;
+  endLocation: string;
+  distance: number;
+  patientName: string;
+}
+
+interface TripManagementWidgetProps {
+  onLogComplete?: (log: DrivingLog) => void;
+  isSimulateMode?: boolean;
+}
+
+const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripManagementWidgetProps) => {
   const { myActiveTrip, startTrip, completeTrip, cancelTrip, isLoading } = useAmbulanceTrips();
   const [isSelectingHospital, setIsSelectingHospital] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hospitals, setHospitals] = useState<HospitalOption[]>([]);
   const [isLoadingHospitals, setIsLoadingHospitals] = useState(false);
   const [tripDuration, setTripDuration] = useState<string>("");
+  const [tripStartTime, setTripStartTime] = useState<Date | null>(null);
+  const [startLocation, setStartLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // Fetch hospitals from Supabase
   useEffect(() => {
@@ -92,7 +111,42 @@ const TripManagementWidget = () => {
       h.region.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getLocation = (): Promise<{ lat: number; lng: number }> => {
+    return new Promise((resolve) => {
+      if (isSimulateMode) {
+        resolve({ lat: 37.5665 + Math.random() * 0.1, lng: 126.978 + Math.random() * 0.1 });
+        return;
+      }
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
+          },
+          () => resolve({ lat: 37.5665, lng: 126.978 })
+        );
+      } else {
+        resolve({ lat: 37.5665, lng: 126.978 });
+      }
+    });
+  };
+
+  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
   const handleSelectHospital = async (hospital: HospitalOption) => {
+    const location = await getLocation();
+    setStartLocation(location);
+    setTripStartTime(new Date());
+    
     const result = await startTrip(hospital.id, hospital.name);
     if (result) {
       setIsSelectingHospital(false);
@@ -101,11 +155,37 @@ const TripManagementWidget = () => {
   };
 
   const handleCompleteTrip = async () => {
+    // Generate driving log when completing trip
+    if (tripStartTime && startLocation && onLogComplete) {
+      const endLocation = await getLocation();
+      const endTime = new Date();
+      const distance = calculateDistance(
+        startLocation.lat, startLocation.lng,
+        endLocation.lat, endLocation.lng
+      );
+
+      const log: DrivingLog = {
+        id: Date.now().toString(),
+        date: tripStartTime.toLocaleDateString("ko-KR"),
+        startTime: tripStartTime.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+        endTime: endTime.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+        startLocation: `${startLocation.lat.toFixed(4)}, ${startLocation.lng.toFixed(4)}`,
+        endLocation: `${endLocation.lat.toFixed(4)}, ${endLocation.lng.toFixed(4)}`,
+        distance: isSimulateMode ? Math.round(Math.random() * 20 + 5) : Math.round(distance * 10) / 10,
+        patientName: myActiveTrip?.patient_condition || "환자명 미입력",
+      };
+      onLogComplete(log);
+    }
+
     await completeTrip();
+    setTripStartTime(null);
+    setStartLocation(null);
   };
 
   const handleCancelTrip = async () => {
     await cancelTrip();
+    setTripStartTime(null);
+    setStartLocation(null);
   };
 
   if (isLoading) {
