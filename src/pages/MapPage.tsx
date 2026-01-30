@@ -28,6 +28,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
+import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
@@ -53,6 +54,7 @@ const MapPage = () => {
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
+  const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -375,6 +377,7 @@ const MapPage = () => {
           nearbyDrivers={nearbyDrivers}
           onCallDriver={handleCallDriver}
           holidayPharmacies={[]} // 휴일 약국 기능 준비중
+          activeAmbulanceTrips={activeAmbulanceTrips}
           onBoundsChange={handleBoundsChange}
         />
 
