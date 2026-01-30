@@ -287,7 +287,7 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
           >
             <Sheet open={isSelectingHospital} onOpenChange={setIsSelectingHospital}>
               <SheetTrigger asChild>
-                <Button className="w-full rounded-2xl py-6 text-base shadow-lg">
+                <Button className="w-full rounded-2xl py-6 text-base shadow-lg bg-slate-800 hover:bg-slate-700">
                   <Play className="w-5 h-5 mr-2" />
                   이송 시작하기
                 </Button>

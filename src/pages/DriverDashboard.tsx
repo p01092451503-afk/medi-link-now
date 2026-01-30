@@ -141,7 +141,7 @@ const DriverDashboard = () => {
   const completedCalls = mockCalls.filter((c) => c.status === "completed");
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-32">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
