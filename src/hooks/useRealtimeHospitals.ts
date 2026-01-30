@@ -95,18 +95,28 @@ export const useRealtimeHospitals = () => {
         // Create a map of existing hospitals by name for matching
         const staticByName = new Map(staticHospitals.map(h => [h.nameKr, h]));
         
-        // Get trauma center names from static data for matching
-        const traumaCenterNames = new Set(
-          staticHospitals
-            .filter(h => h.isTraumaCenter === true)
-            .map(h => h.nameKr)
-        );
+        // Get trauma centers from static data
+        const staticTraumaCenters = staticHospitals.filter(h => h.isTraumaCenter === true);
+        
+        // Helper function to check if DB hospital name matches a trauma center
+        // Uses partial matching since DB names can be longer (e.g., "재단법인아산사회복지재단서울아산병원" vs "서울아산병원")
+        const matchesTraumaCenter = (dbName: string): boolean => {
+          return staticTraumaCenters.some(tc => {
+            // Exact match
+            if (dbName === tc.nameKr) return true;
+            // DB name contains static name (e.g., "재단법인...서울아산병원" contains "서울아산병원")
+            if (dbName.includes(tc.nameKr)) return true;
+            // Static name contains DB name
+            if (tc.nameKr.includes(dbName)) return true;
+            return false;
+          });
+        };
         
         // Use DB data but supplement with static data if coordinates are missing
-        // Also inherit trauma center status from static data
+        // Also inherit trauma center status from static data using partial matching
         mergedHospitals = dbConverted.map(dbHosp => {
           const staticMatch = staticByName.get(dbHosp.nameKr);
-          const isTraumaCenter = traumaCenterNames.has(dbHosp.nameKr) || dbHosp.isTraumaCenter;
+          const isTraumaCenter = matchesTraumaCenter(dbHosp.nameKr) || dbHosp.isTraumaCenter;
           
           // If DB hospital has invalid coordinates, use static if available
           if ((!dbHosp.lat || !dbHosp.lng || dbHosp.lat === 37.5665) && staticMatch) {
