@@ -122,7 +122,8 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
           (position) => {
             resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
           },
-          () => resolve({ lat: 37.5665, lng: 126.978 })
+          () => resolve({ lat: 37.5665, lng: 126.978 }),
+          { timeout: 5000, enableHighAccuracy: false }
         );
       } else {
         resolve({ lat: 37.5665, lng: 126.978 });
@@ -143,14 +144,20 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
   };
 
   const handleSelectHospital = async (hospital: HospitalOption) => {
-    const location = await getLocation();
-    setStartLocation(location);
-    setTripStartTime(new Date());
-    
-    const result = await startTrip(hospital.id, hospital.name);
-    if (result) {
-      setIsSelectingHospital(false);
-      setSearchQuery("");
+    try {
+      // Start trip first, then get location in background
+      const result = await startTrip(hospital.id, hospital.name);
+      if (result) {
+        setTripStartTime(new Date());
+        setIsSelectingHospital(false);
+        setSearchQuery("");
+        
+        // Get location in background for logging purposes
+        getLocation().then(setStartLocation);
+      }
+    } catch (error) {
+      console.error("Error starting trip:", error);
+      toast.error("이송 시작에 실패했습니다");
     }
   };
 
