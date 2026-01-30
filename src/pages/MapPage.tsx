@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database } from "lucide-react";
-import logoImage from "@/assets/logo.png";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
@@ -540,14 +539,13 @@ const MapPage = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/")}
-              className="bg-white rounded-xl p-2 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+              className="bg-white rounded-xl p-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
-              <ArrowLeft className="w-5 h-5 shrink-0" />
-              <img 
-                src={logoImage} 
-                alt="Find-ER 파인더" 
-                className="h-5 object-contain"
-              />
+              <ArrowLeft className="w-5 h-5" />
+              <div className="flex items-center gap-1.5 pr-1">
+                <span className="font-bold text-foreground text-sm">Find-ER</span>
+                <span className="font-bold text-primary text-sm">파인더</span>
+              </div>
             </button>
           </div>
         </header>
