@@ -542,7 +542,10 @@ const Landing = () => {
             </div>
 
             {/* Bottom CTA */}
-            <div className="relative mt-4 pt-3 border-t border-purple-100">
+            <button 
+              onClick={() => navigate("/map")}
+              className="relative mt-4 pt-3 border-t border-purple-100 w-full text-left hover:bg-purple-50/50 -mx-1 px-1 rounded-lg transition-colors"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-purple-500" />
@@ -550,12 +553,12 @@ const Landing = () => {
                     병원 상세정보에서 확인하세요
                   </p>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-purple-500">
+                <div className="flex items-center gap-1 text-[10px] text-purple-500 font-medium">
                   <span>지도에서 확인</span>
                   <ChevronRight className="w-3 h-3" />
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </motion.div>
 
