@@ -579,45 +579,39 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-full max-w-sm space-y-4"
+          className="w-full max-w-sm space-y-3"
         >
           {/* Guardian Button */}
           <button
             onClick={() => navigate("/map")}
-            className="w-full h-20 px-6 rounded-3xl bg-[hsl(173,65%,35%)] shadow-xl shadow-teal-500/20 relative overflow-hidden group transition-all duration-300 hover:bg-[hsl(173,65%,40%)] hover:shadow-2xl hover:shadow-teal-500/25 hover:scale-[1.02]"
+            className="w-full py-4 px-5 rounded-2xl bg-slate-700 border border-slate-600 relative overflow-hidden group transition-all duration-300 hover:bg-slate-600"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
-            <div className="relative flex items-center w-full h-full">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                <Users className="w-6 h-6 text-white" />
+            <div className="flex items-center w-full">
+              <div className="w-10 h-10 rounded-xl bg-slate-600 flex items-center justify-center shrink-0">
+                <Users className="w-5 h-5 text-slate-300" />
               </div>
-              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
-                <p className="text-lg font-bold text-white leading-tight tracking-tight">보호자 / 환자</p>
-                <p className="text-xs font-medium text-white/75 leading-tight mt-1">응급실 찾기 · 가족 건강관리</p>
+              <div className="text-left flex-1 ml-3">
+                <p className="text-base font-semibold text-white leading-tight">보호자 / 환자</p>
+                <p className="text-xs text-slate-400 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:translate-x-1">
-                <ChevronRight className="w-5 h-5 text-white" />
-              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
             </div>
           </button>
 
           {/* Ambulance Driver Button */}
           <button
             onClick={() => navigate("/driver-intro")}
-            className="w-full h-20 px-6 rounded-3xl bg-[hsl(30,75%,55%)] shadow-xl shadow-orange-500/20 relative overflow-hidden group transition-all duration-300 hover:bg-[hsl(30,75%,60%)] hover:shadow-2xl hover:shadow-orange-500/25 hover:scale-[1.02]"
+            className="w-full py-4 px-5 rounded-2xl bg-slate-100 border border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-200"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
-            <div className="relative flex items-center w-full h-full">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                <Ambulance className="w-6 h-6 text-white" />
+            <div className="flex items-center w-full">
+              <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center shrink-0">
+                <Ambulance className="w-5 h-5 text-slate-600" />
               </div>
-              <div className="text-left flex-1 ml-4 flex flex-col justify-center">
-                <p className="text-lg font-bold text-white leading-tight tracking-tight">구급대원 / 기사님</p>
-                <p className="text-xs font-medium text-white/75 leading-tight mt-1">수익 최적화 · 자동 운행일지</p>
+              <div className="text-left flex-1 ml-3">
+                <p className="text-base font-semibold text-slate-800 leading-tight">구급대원 / 기사님</p>
+                <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:translate-x-1">
-                <ChevronRight className="w-5 h-5 text-white" />
-              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
             </div>
           </button>
         </motion.div>
