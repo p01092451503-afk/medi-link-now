@@ -601,7 +601,7 @@ const Landing = () => {
           {/* Ambulance Driver Button */}
           <button
             onClick={() => navigate("/driver-intro")}
-            className="w-full py-4 px-5 rounded-2xl bg-slate-100 border border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-200"
+            className="w-full py-4 px-5 rounded-2xl bg-slate-200 border border-slate-300 relative overflow-hidden group transition-all duration-300 hover:bg-slate-300"
           >
             <div className="flex items-center w-full">
               <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center shrink-0">
