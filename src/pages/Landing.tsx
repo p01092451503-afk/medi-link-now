@@ -139,8 +139,8 @@ const Landing = () => {
             <Ambulance className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Find-ER</h1>
-            <p className="text-xs text-muted-foreground">실시간 응급실 병상 정보</p>
+            <h1 className="text-2xl font-bold text-foreground leading-tight">Find-ER</h1>
+            <p className="text-[10px] text-muted-foreground -mt-0.5">파인더 · 실시간 응급실 병상 정보</p>
           </div>
         </div>
       </header>
@@ -628,7 +628,10 @@ const Landing = () => {
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
               <Ambulance className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-sm font-semibold text-foreground">Find-ER</span>
+            <div className="text-center">
+              <span className="text-sm font-semibold text-foreground">Find-ER</span>
+              <span className="text-[10px] text-muted-foreground ml-1">파인더</span>
+            </div>
           </div>
           
           {/* Links */}
