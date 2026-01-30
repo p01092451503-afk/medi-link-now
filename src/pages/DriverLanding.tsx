@@ -73,7 +73,7 @@ const DriverLanding = () => {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center">
             <Ambulance className="w-5 h-5 text-white" />
           </div>
-          <span className="font-semibold text-foreground">Medi-Link Pro</span>
+          <span className="font-semibold text-foreground">Find-ER Pro</span>
         </div>
       </header>
 
