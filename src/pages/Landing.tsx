@@ -8,6 +8,7 @@ import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 
+
 const Landing = () => {
   const navigate = useNavigate();
   const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
