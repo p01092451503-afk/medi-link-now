@@ -29,7 +29,7 @@ const PrivacyPage = () => {
           <section className="mb-8">
             <h2 className="text-base font-semibold mb-3">제1조 (개인정보의 수집 및 이용 목적)</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              Medi-Link(이하 "회사")는 다음의 목적을 위하여 개인정보를 처리합니다.
+              Find-ER(이하 "회사")는 다음의 목적을 위하여 개인정보를 처리합니다.
             </p>
             <ul className="text-sm text-muted-foreground leading-relaxed space-y-2 list-disc pl-5">
               <li>서비스 제공: 응급실 정보 제공, 경로 안내, 가족 건강정보 관리</li>
@@ -119,7 +119,7 @@ const PrivacyPage = () => {
             <h2 className="text-base font-semibold mb-3">제9조 (개인정보 보호책임자)</h2>
             <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
               <p><strong>개인정보 보호책임자</strong></p>
-              <p className="mt-2">이메일: privacy@medi-link.kr</p>
+              <p className="mt-2">이메일: privacy@find-er.kr</p>
             </div>
           </section>
 

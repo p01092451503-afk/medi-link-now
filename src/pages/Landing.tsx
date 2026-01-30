@@ -139,7 +139,7 @@ const Landing = () => {
             <Ambulance className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Medi-Link</h1>
+            <h1 className="text-2xl font-bold text-foreground">Find-ER</h1>
             <p className="text-xs text-muted-foreground">실시간 응급실 병상 정보</p>
           </div>
         </div>
@@ -628,7 +628,7 @@ const Landing = () => {
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
               <Ambulance className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-sm font-semibold text-foreground">Medi-Link</span>
+            <span className="text-sm font-semibold text-foreground">Find-ER</span>
           </div>
           
           {/* Links */}
@@ -657,7 +657,7 @@ const Landing = () => {
           {/* Copyright */}
           <div className="pt-3 border-t border-border/50">
             <p className="text-[10px] text-muted-foreground/70 text-center">
-              © 2026 Medi-Link · 실시간 응급실 병상 정보 서비스
+              © 2026 Find-ER · 실시간 응급실 병상 정보 서비스
             </p>
             <p className="text-[9px] text-muted-foreground/50 text-center mt-1">
               본 서비스는 정보 제공 목적이며, 응급 시 119에 신고하세요
