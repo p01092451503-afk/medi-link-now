@@ -66,9 +66,9 @@ const GuardianLanding = () => {
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
             <Ambulance className="w-5 h-5 text-white" />
           </div>
-          <div>
+          <div className="flex items-baseline gap-1.5">
             <span className="font-semibold text-foreground">Find-ER</span>
-            <span className="text-[10px] text-muted-foreground ml-1">파인더</span>
+            <span className="text-sm font-medium text-primary">파인더</span>
           </div>
         </div>
       </header>
