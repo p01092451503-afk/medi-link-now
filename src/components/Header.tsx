@@ -22,7 +22,10 @@ const Header = ({ onSearch }: HeaderProps) => {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">F</span>
           </div>
-          <span className="font-semibold text-foreground hidden sm:block">Find-ER</span>
+          <div className="hidden sm:flex items-baseline gap-1.5">
+            <span className="font-bold text-foreground">Find-ER</span>
+            <span className="font-bold text-primary">파인더</span>
+          </div>
         </div>
 
         {/* Search Bar */}
