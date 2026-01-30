@@ -285,10 +285,19 @@ const MapPage = () => {
       setActiveRegion("all");
       setMapCenter([36.5, 127.5]); // Center of Korea
       setMapZoom(7); // Zoom out to see whole country
-      toast({
-        title: "전국 병원 표시",
-        description: "전국의 모든 병원 마커를 표시합니다.",
-      });
+      
+      // Show appropriate message based on active filter
+      if (activeFilter === "traumaCenter") {
+        toast({
+          title: "전국 외상센터 표시",
+          description: "전국의 모든 권역외상센터를 표시합니다.",
+        });
+      } else {
+        toast({
+          title: "전국 병원 표시",
+          description: "전국의 모든 병원 마커를 표시합니다.",
+        });
+      }
       return;
     }
 
