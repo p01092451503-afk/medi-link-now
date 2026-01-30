@@ -396,7 +396,7 @@ const Landing = () => {
                     <Activity className="w-8 h-8 text-emerald-600 transition-all duration-300 group-hover:scale-110" />
                   </div>
                   <div className="text-center">
-                    <p className="text-lg font-bold text-foreground tracking-tight">30초</p>
+                    <p className="text-lg font-bold text-foreground tracking-tight">60초</p>
                     <p className="text-[11px] text-muted-foreground font-medium">실시간 업데이트</p>
                   </div>
                 </div>
@@ -410,7 +410,7 @@ const Landing = () => {
                     <p className="text-sm font-bold">실시간 병상 정보</p>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    국립중앙의료원 응급의료포털과 직접 연동하여 30초마다 최신 병상 현황을 갱신합니다.
+                    국립중앙의료원 응급의료포털과 직접 연동하여 60초마다 최신 병상 현황을 갱신합니다.
                     일반병상, 소아병상, 음압격리병상 등 세부 정보까지 확인 가능합니다.
                   </p>
                   <div className="flex items-center gap-1.5 pt-1">
