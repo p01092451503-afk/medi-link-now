@@ -141,7 +141,7 @@ const Landing = () => {
           <div>
             <div className="flex items-baseline gap-2">
               <h1 className="text-2xl font-bold text-foreground">Find-ER</h1>
-              <span className="text-base font-medium text-primary">파인더</span>
+              <span className="text-2xl font-bold text-primary">파인더</span>
             </div>
             <p className="text-xs text-muted-foreground">실시간 응급실 병상 정보</p>
           </div>
