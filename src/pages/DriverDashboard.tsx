@@ -255,7 +255,13 @@ const DriverDashboard = () => {
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setActiveTab(id as typeof activeTab)}
+              onClick={() => {
+                if (id === "map") {
+                  navigate("/map?mode=driver");
+                } else {
+                  setActiveTab(id as typeof activeTab);
+                }
+              }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
                 activeTab === id
                   ? "text-primary border-b-2 border-primary"
