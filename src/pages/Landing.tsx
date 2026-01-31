@@ -132,38 +132,40 @@ const Landing = () => {
   const stats = activeTab === "local" ? localStats : nationalStats;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 flex flex-col">
       {/* Header */}
-      <header className="p-4 flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-            <Ambulance className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl font-bold text-foreground">Find-ER</h1>
-              <span className="text-2xl font-bold text-primary">파인더</span>
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+        <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/25">
+              <Ambulance className="w-5 h-5 text-white" />
             </div>
-            <p className="text-xs text-muted-foreground">실시간 응급실 병상 정보</p>
+            <div>
+              <div className="flex items-baseline gap-1.5">
+                <h1 className="text-xl font-bold text-slate-800">Find-ER</h1>
+                <span className="text-xl font-bold text-primary">파인더</span>
+              </div>
+              <p className="text-[10px] text-slate-500">실시간 응급실 병상 정보</p>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center px-6 py-6">
+      <main className="flex-1 flex flex-col items-center px-5 py-6 max-w-lg mx-auto w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-8"
         >
-          <h2 className="text-3xl font-bold text-foreground mb-3">
+          <h2 className="text-[1.75rem] leading-tight font-extrabold text-slate-900 mb-3 tracking-tight">
             응급상황,<br />
-            <span className="text-primary">가장 가까운 병상</span>을<br />
+            <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">가장 가까운 병상</span>을<br />
             찾아드립니다
           </h2>
-          <p className="text-muted-foreground max-w-sm mx-auto">
-            전국 응급실 실시간 병상 현황을 확인하고 가장 빠른 경로를 안내받으세요
+          <p className="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">
+            전국 응급실 실시간 병상 현황을 확인하고<br />가장 빠른 경로를 안내받으세요
           </p>
         </motion.div>
 
@@ -171,10 +173,10 @@ const Landing = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="w-full max-w-sm mb-10"
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="w-full mb-8"
         >
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
             {/* Tab Header */}
             <div className="bg-gradient-to-r from-primary to-blue-600 p-1.5">
               <div className="flex gap-1">
@@ -345,10 +347,10 @@ const Landing = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="w-full max-w-sm mb-10"
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="w-full mb-8"
         >
-          <div className="flex items-center justify-center gap-8">
+          <div className="flex items-center justify-center gap-6">
             <Popover>
               <PopoverTrigger asChild>
                 <div className="flex flex-col items-center gap-3 group cursor-pointer">
@@ -467,10 +469,10 @@ const Landing = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="w-full max-w-sm mb-6"
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full mb-8"
         >
-          <div className="relative bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 rounded-2xl p-4 border border-purple-100 overflow-hidden">
+          <div className="relative bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 rounded-2xl p-4 border border-purple-100/50 overflow-hidden">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
             
@@ -605,75 +607,67 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        {/* Role Selection Title */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-4"
-        >
-          <p className="text-sm font-medium text-muted-foreground text-center">
-            어떤 서비스가 필요하신가요?
-          </p>
-        </motion.div>
-
-        {/* User Segmentation Buttons */}
+        {/* Role Selection */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-full max-w-sm space-y-3"
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="w-full"
         >
-          {/* Guardian Button */}
-          <button
-            onClick={() => navigate("/guardian")}
-            className="w-full py-4 px-5 rounded-2xl bg-slate-700 border border-slate-600 relative overflow-hidden group transition-all duration-300 hover:bg-slate-600"
-          >
-            <div className="flex items-center w-full">
-              <div className="w-10 h-10 rounded-xl bg-slate-600 flex items-center justify-center shrink-0">
-                <Users className="w-5 h-5 text-slate-300" />
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-5 rounded-full bg-gradient-to-b from-primary to-blue-600" />
+            <p className="text-sm font-bold text-slate-700">어떤 서비스가 필요하신가요?</p>
+          </div>
+          
+          <div className="space-y-3">
+            {/* Guardian Button */}
+            <button
+              onClick={() => navigate("/guardian")}
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-700 to-slate-800 border border-slate-600 relative overflow-hidden group transition-all duration-300 hover:from-slate-600 hover:to-slate-700 shadow-lg shadow-slate-900/20"
+            >
+              <div className="flex items-center w-full">
+                <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
+                  <p className="text-xs text-slate-300 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
-              <div className="text-left flex-1 ml-3">
-                <p className="text-base font-semibold text-white leading-tight">보호자 / 환자</p>
-                <p className="text-xs text-slate-400 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-            </div>
-          </button>
+            </button>
 
-          {/* Ambulance Driver Button */}
-          <button
-            onClick={() => navigate("/driver-intro")}
-            className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-300 relative overflow-hidden group transition-all duration-300 hover:bg-blue-50 hover:border-blue-200"
-          >
-            <div className="flex items-center w-full">
-              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
-                <Ambulance className="w-5 h-5 text-slate-600 group-hover:text-primary transition-colors" />
+            {/* Ambulance Driver Button */}
+            <button
+              onClick={() => navigate("/driver-intro")}
+              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 hover:border-orange-200 shadow-sm hover:shadow-md"
+            >
+              <div className="flex items-center w-full">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-orange-100 group-hover:to-red-100 transition-all">
+                  <Ambulance className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                </div>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원 / 기사님</p>
+                  <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-orange-500" />
               </div>
-              <div className="text-left flex-1 ml-3">
-                <p className="text-base font-semibold text-slate-700 leading-tight">구급대원 / 기사님</p>
-                <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-primary shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-            </div>
-          </button>
+            </button>
+          </div>
         </motion.div>
       </main>
 
       {/* Footer */}
-      <footer className="relative mt-auto">
-        {/* Gradient divider */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-        
-        <div className="px-6 py-6 space-y-4">
-          {/* Brand + Social */}
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+      <footer className="relative mt-auto bg-white border-t border-slate-100">
+        <div className="px-5 py-6 space-y-4 max-w-lg mx-auto">
+          {/* Brand */}
+          <div className="flex items-center justify-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 flex items-center justify-center">
               <Ambulance className="w-4 h-4 text-primary" />
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-sm font-semibold text-foreground">Find-ER</span>
-              <span className="text-sm font-medium text-primary">파인더</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm font-bold text-slate-700">Find-ER</span>
+              <span className="text-sm font-bold text-primary">파인더</span>
             </div>
           </div>
           
@@ -681,19 +675,19 @@ const Landing = () => {
           <div className="flex items-center justify-center gap-6">
             <a 
               href="/terms" 
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200"
+              className="text-xs text-slate-400 hover:text-primary transition-colors duration-200"
             >
               이용약관
             </a>
             <a 
               href="/privacy" 
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200"
+              className="text-xs text-slate-400 hover:text-primary transition-colors duration-200"
             >
               개인정보처리방침
             </a>
             <a 
               href="tel:119" 
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-red-500 transition-colors duration-200 flex items-center gap-1"
             >
               <Phone className="w-3 h-3" />
               119
@@ -701,12 +695,12 @@ const Landing = () => {
           </div>
           
           {/* Copyright */}
-          <div className="pt-3 border-t border-border/50">
+          <div className="pt-3 border-t border-slate-100">
             <p className="text-[10px] text-slate-400 text-center">
               © 2026 Find-ER · 실시간 응급실 병상 정보 서비스
             </p>
             <p className="text-[9px] text-slate-400/70 text-center mt-1">
-              본 서비스는 정보 제공 목적이며, 응급 시 <span className="font-bold text-red-400">119에 신고</span>하세요
+              본 서비스는 정보 제공 목적이며, 응급 시 <span className="font-bold text-red-500">119에 신고</span>하세요
             </p>
           </div>
         </div>
