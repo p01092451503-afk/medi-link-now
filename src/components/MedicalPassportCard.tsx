@@ -46,7 +46,7 @@ const getCardGradient = (gender: FamilyMember["gender"], bloodType: FamilyMember
   if (gender === "male") {
     return "from-blue-600 via-blue-500 to-cyan-400";
   } else if (gender === "female") {
-    return "from-pink-500 via-rose-500 to-red-400";
+    return "from-pink-400 via-pink-500 to-fuchsia-400";
   }
   
   // Default/unknown: use blood type colors as fallback
