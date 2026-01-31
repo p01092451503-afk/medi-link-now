@@ -597,17 +597,17 @@ const Landing = () => {
           {/* Ambulance Driver Button */}
           <button
             onClick={() => navigate("/driver-intro")}
-            className="w-full py-4 px-5 rounded-2xl bg-slate-200 border border-slate-300 relative overflow-hidden group transition-all duration-300 hover:bg-slate-300"
+            className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-300 relative overflow-hidden group transition-all duration-300 hover:bg-blue-50 hover:border-blue-200"
           >
             <div className="flex items-center w-full">
-              <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center shrink-0">
-                <Ambulance className="w-5 h-5 text-slate-600" />
+              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
+                <Ambulance className="w-5 h-5 text-slate-600 group-hover:text-primary transition-colors" />
               </div>
               <div className="text-left flex-1 ml-3">
-                <p className="text-base font-semibold text-slate-800 leading-tight">구급대원 / 기사님</p>
+                <p className="text-base font-semibold text-slate-700 leading-tight">구급대원 / 기사님</p>
                 <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+              <ChevronRight className="w-5 h-5 text-primary shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
             </div>
           </button>
         </motion.div>
@@ -655,11 +655,11 @@ const Landing = () => {
           
           {/* Copyright */}
           <div className="pt-3 border-t border-border/50">
-            <p className="text-[10px] text-muted-foreground/70 text-center">
+            <p className="text-[10px] text-slate-400 text-center">
               © 2026 Find-ER · 실시간 응급실 병상 정보 서비스
             </p>
-            <p className="text-[9px] text-muted-foreground/50 text-center mt-1">
-              본 서비스는 정보 제공 목적이며, 응급 시 119에 신고하세요
+            <p className="text-[9px] text-slate-400/70 text-center mt-1">
+              본 서비스는 정보 제공 목적이며, 응급 시 <span className="font-bold text-red-400">119에 신고</span>하세요
             </p>
           </div>
         </div>
