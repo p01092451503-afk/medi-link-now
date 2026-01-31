@@ -69,7 +69,6 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   const [acceptedDispatch, setAcceptedDispatch] = useState<DispatchRequest | null>(null);
   const geofenceWatchIdRef = useRef<number | null>(null);
   const hasShownArrivalModalRef = useRef(false);
-  const hasAutoStartedRef = useRef<string | null>(null);
 
   // Fetch hospitals from Supabase (including lat/lng for geofencing)
   useEffect(() => {
@@ -115,40 +114,14 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
     return () => clearInterval(interval);
   }, [myActiveTrip]);
 
-  // Watch for accepted dispatch requests and auto-start trip
+  // Watch for accepted dispatch requests (user will manually start trip)
   useEffect(() => {
     // Find the most recent accepted dispatch request that I'm the driver for
     const accepted = myRequests.find(
-      (r) => r.status === "accepted" && r.destination
+      (r) => r.status === "accepted"
     );
-    
     setAcceptedDispatch(accepted || null);
-    
-    // Auto-start trip if we have an accepted dispatch with destination and no active trip
-    if (
-      accepted && 
-      accepted.destination && 
-      !myActiveTrip && 
-      hasAutoStartedRef.current !== accepted.id
-    ) {
-      // Mark as auto-started to prevent duplicate starts
-      hasAutoStartedRef.current = accepted.id;
-      
-      // Find the hospital that matches the destination
-      const matchingHospital = hospitals.find(
-        (h) => h.name === accepted.destination || 
-               h.address.includes(accepted.destination || "")
-      );
-      
-      if (matchingHospital) {
-        // Auto-start with the matching hospital
-        handleAutoStartTrip(matchingHospital, accepted);
-      } else if (accepted.destination_lat && accepted.destination_lng) {
-        // Create a custom destination from dispatch info
-        handleAutoStartCustomDestination(accepted);
-      }
-    }
-  }, [myRequests, myActiveTrip, hospitals]);
+  }, [myRequests]);
 
   // Geofencing: Watch location and check proximity to destination
   useEffect(() => {
@@ -261,11 +234,9 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
     }
   };
 
-  // Auto-start trip from accepted dispatch request with matching hospital
+  // Start trip from accepted dispatch request with matching hospital
   const handleAutoStartTrip = async (hospital: HospitalOption, dispatch: DispatchRequest) => {
     try {
-      toast.info(`${hospital.name}(으)로 자동 이송 시작...`);
-      
       const result = await startTrip(hospital.id, hospital.name, undefined, dispatch.patient_condition || undefined);
       if (result) {
         setTripStartTime(new Date());
@@ -287,19 +258,16 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
         toast.success(`${hospital.name}(으)로 이송을 시작합니다`);
       }
     } catch (error) {
-      console.error("Error auto-starting trip:", error);
-      toast.error("자동 이송 시작에 실패했습니다");
-      hasAutoStartedRef.current = null; // Reset so user can try again
+      console.error("Error starting trip:", error);
+      toast.error("이송 시작에 실패했습니다");
     }
   };
 
-  // Auto-start trip with custom destination coordinates from dispatch
+  // Start trip with custom destination coordinates from dispatch
   const handleAutoStartCustomDestination = async (dispatch: DispatchRequest) => {
     if (!dispatch.destination_lat || !dispatch.destination_lng || !dispatch.destination) return;
     
     try {
-      toast.info(`${dispatch.destination}(으)로 자동 이송 시작...`);
-      
       // Use a placeholder hospital ID (0) for custom destinations
       const result = await startTrip(0, dispatch.destination, undefined, dispatch.patient_condition || undefined);
       if (result) {
@@ -319,9 +287,8 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
         toast.success(`${dispatch.destination}(으)로 이송을 시작합니다`);
       }
     } catch (error) {
-      console.error("Error auto-starting trip:", error);
-      toast.error("자동 이송 시작에 실패했습니다");
-      hasAutoStartedRef.current = null;
+      console.error("Error starting trip:", error);
+      toast.error("이송 시작에 실패했습니다");
     }
   };
 
@@ -491,7 +458,62 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
               </div>
             </div>
           </motion.div>
+        ) : acceptedDispatch ? (
+          // 수락한 호출이 있을 때: 바로 이송 시작 버튼
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-20 left-4 right-4 z-40"
+          >
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-green-500 p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">호출 수락됨</p>
+                  <p className="text-xs text-muted-foreground">
+                    {acceptedDispatch.patient_name || "환자"} · {acceptedDispatch.pickup_location}
+                  </p>
+                </div>
+              </div>
+              
+              {acceptedDispatch.destination && (
+                <div className="bg-muted/50 rounded-xl p-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Navigation className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">{acceptedDispatch.destination}</span>
+                  </div>
+                </div>
+              )}
+              
+              <Button 
+                className="w-full rounded-xl py-5 text-base bg-green-600 hover:bg-green-700"
+                onClick={() => {
+                  // Find matching hospital or use custom destination
+                  const matchingHospital = hospitals.find(
+                    (h) => h.name === acceptedDispatch.destination || 
+                           h.address.includes(acceptedDispatch.destination || "")
+                  );
+                  
+                  if (matchingHospital) {
+                    handleAutoStartTrip(matchingHospital, acceptedDispatch);
+                  } else if (acceptedDispatch.destination_lat && acceptedDispatch.destination_lng) {
+                    handleAutoStartCustomDestination(acceptedDispatch);
+                  } else {
+                    // No destination info, open hospital selection
+                    setIsSelectingHospital(true);
+                  }
+                }}
+              >
+                <Play className="w-5 h-5 mr-2" />
+                {acceptedDispatch.destination ? `${acceptedDispatch.destination}(으)로 이송 시작` : "이송 시작하기"}
+              </Button>
+            </div>
+          </motion.div>
         ) : (
+          // 수락한 호출이 없을 때: 병원 선택 Sheet
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
