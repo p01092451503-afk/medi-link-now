@@ -85,26 +85,30 @@ const RegionSelector = ({
 
       {/* Sub-region Selector (only show if major region selected and has sub-regions) */}
       {majorRegion !== "all" && subRegions.length > 0 && (
-        <Select 
-          value={subRegion === majorRegion ? "all" : subRegion} 
-          onValueChange={(val) => handleSubChange(val === "all" ? majorRegion : val)}
-        >
-          <SelectTrigger className="w-[120px] bg-white/50 backdrop-blur-sm shadow-md border border-white/30 rounded-r-xl rounded-l-none h-10">
-            <SelectValue placeholder="시/군/구">
-              {getSubRegionLabel(subRegion)}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent className="bg-white/90 backdrop-blur-sm z-[1001] max-h-[300px]">
-            <SelectItem value="all" className="font-medium text-primary">
-              전체
-            </SelectItem>
-            {subRegions.map((r) => (
-              <SelectItem key={r.id} value={r.id}>
-                {r.labelKr}
+        <>
+          {/* Divider */}
+          <div className="h-6 w-px bg-gray-300/50" />
+          <Select 
+            value={subRegion === majorRegion ? "all" : subRegion} 
+            onValueChange={(val) => handleSubChange(val === "all" ? majorRegion : val)}
+          >
+            <SelectTrigger className="w-[120px] bg-white/50 backdrop-blur-sm shadow-md border border-white/30 rounded-r-xl rounded-l-none border-l-0 h-10">
+              <SelectValue placeholder="시/군/구">
+                {getSubRegionLabel(subRegion)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-white/90 backdrop-blur-sm z-[1001] max-h-[300px]">
+              <SelectItem value="all" className="font-medium text-primary">
+                전체
               </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              {subRegions.map((r) => (
+                <SelectItem key={r.id} value={r.id}>
+                  {r.labelKr}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </>
       )}
     </div>
   );
