@@ -101,30 +101,39 @@ const MedicalPassportCard = ({ member, onEdit, onDelete, onViewDetail }: Medical
               </p>
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <button className="p-2 hover:bg-white/20 rounded-full transition-colors">
-                <MoreVertical className="w-5 h-5 text-white" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onViewDetail(member); }}>
-                <Eye className="w-4 h-4 mr-2" />
-                상세 보기
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(member); }}>
-                <Edit className="w-4 h-4 mr-2" />
-                수정
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={(e) => { e.stopPropagation(); onDelete(member.id); }}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                삭제
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-1">
+            {/* Edit Button - More Visible */}
+            <button 
+              onClick={(e) => { e.stopPropagation(); onEdit(member); }}
+              className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
+            >
+              <Edit className="w-4 h-4 text-white" />
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <button className="p-2 hover:bg-white/20 rounded-full transition-colors">
+                  <MoreVertical className="w-5 h-5 text-white" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onViewDetail(member); }}>
+                  <Eye className="w-4 h-4 mr-2" />
+                  상세 보기
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(member); }}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  수정
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => { e.stopPropagation(); onDelete(member.id); }}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  삭제
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Blood Type Badge - Large */}
