@@ -223,7 +223,10 @@ const Landing = () => {
                 <span className="text-[9px] text-muted-foreground">
                   {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
                 </span>
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                <div className="relative flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <div className="absolute w-2 h-2 rounded-full bg-green-500 animate-ping" />
+                </div>
               </div>
             </div>
             
@@ -257,14 +260,14 @@ const Landing = () => {
                     <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
                   </div>
                   
-                  <div className="bg-white rounded-xl p-2 text-center">
+                  <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-2 text-center ring-1 ring-blue-200/50">
                     <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                      <TrendingUp className="w-3 h-3 text-blue-600" />
+                      <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
                     </div>
-                    <p className="text-lg font-bold text-blue-600 leading-none">
+                    <p className="text-xl font-extrabold text-blue-600 leading-none">
                       {stats?.availableHospitals || "---"}
                     </p>
-                    <p className="text-[9px] text-muted-foreground mt-0.5">여유</p>
+                    <p className="text-[9px] font-medium text-blue-600/70 mt-0.5">여유</p>
                   </div>
                   
                   <div className="bg-white rounded-xl p-2 text-center">
