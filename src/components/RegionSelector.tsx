@@ -64,13 +64,13 @@ const RegionSelector = ({
     <div className="flex items-center gap-1 flex-wrap">
       {/* Major Region Selector */}
       <Select value={majorRegion} onValueChange={handleMajorChange}>
-        <SelectTrigger className="w-[140px] bg-white shadow-md border-0 rounded-xl h-10">
+        <SelectTrigger className="w-[140px] bg-white/70 backdrop-blur-md shadow-md border border-white/50 rounded-xl h-10">
           <MapPin className="w-4 h-4 mr-1 text-primary flex-shrink-0" />
           <SelectValue placeholder="광역시/도">
             {getMajorRegionLabel(majorRegion)}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-white z-[1001] max-h-[350px]">
+        <SelectContent className="bg-white/95 backdrop-blur-md z-[1001] max-h-[350px]">
           {majorRegions.map((r) => (
             <SelectItem key={r.id} value={r.id} className="font-medium">
               {r.labelKr}
@@ -87,12 +87,12 @@ const RegionSelector = ({
             value={subRegion === majorRegion ? "all" : subRegion} 
             onValueChange={(val) => handleSubChange(val === "all" ? majorRegion : val)}
           >
-            <SelectTrigger className="w-[120px] bg-white shadow-md border-0 rounded-xl h-10">
+            <SelectTrigger className="w-[120px] bg-white/70 backdrop-blur-md shadow-md border border-white/50 rounded-xl h-10">
               <SelectValue placeholder="시/군/구">
                 {getSubRegionLabel(subRegion)}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-white z-[1001] max-h-[300px]">
+            <SelectContent className="bg-white/95 backdrop-blur-md z-[1001] max-h-[300px]">
               <SelectItem value="all" className="font-medium text-primary">
                 전체
               </SelectItem>
