@@ -28,7 +28,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import GeofenceArrivalModal from "@/components/GeofenceArrivalModal";
 import NavigationSelector from "@/components/NavigationSelector";
-import { type CreateDrivingLogInput } from "@/hooks/useDrivingLogs";
+import FareInputModal, { type PaymentMethod } from "@/components/FareInputModal";
+import { type CreateDrivingLogInput, type UpdateRevenueInput } from "@/hooks/useDrivingLogs";
 
 interface HospitalOption {
   id: number;
@@ -40,13 +41,14 @@ interface HospitalOption {
 }
 
 interface TripManagementWidgetProps {
-  onLogComplete?: (input: CreateDrivingLogInput) => void;
+  onLogComplete?: (input: CreateDrivingLogInput) => Promise<string | null>;
+  onRevenueUpdate?: (logId: string, data: UpdateRevenueInput) => void;
   isSimulateMode?: boolean;
 }
 
 const GEOFENCE_RADIUS_KM = 0.5; // 500m
 
-const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripManagementWidgetProps) => {
+const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode = false }: TripManagementWidgetProps) => {
   const { myActiveTrip, startTrip, completeTrip, cancelTrip, isLoading } = useAmbulanceTrips();
   const { updateStatus } = useDriverPresence();
   const [isSelectingHospital, setIsSelectingHospital] = useState(false);
@@ -59,6 +61,9 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
   const [showArrivalModal, setShowArrivalModal] = useState(false);
   const [destinationCoords, setDestinationCoords] = useState<{ lat: number; lng: number; name: string } | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<HospitalOption | null>(null);
+  const [showFareModal, setShowFareModal] = useState(false);
+  const [pendingLogId, setPendingLogId] = useState<string | null>(null);
+  const [completedHospitalName, setCompletedHospitalName] = useState<string>("");
   const geofenceWatchIdRef = useRef<number | null>(null);
   const hasShownArrivalModalRef = useRef(false);
 
@@ -218,6 +223,9 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
   };
 
   const handleCompleteTrip = async () => {
+    const hospitalName = selectedHospital?.name || myActiveTrip?.destination_hospital_name || "";
+    setCompletedHospitalName(hospitalName);
+    
     if (tripStartTime && startLocation && onLogComplete) {
       const endLocation = await getLocation();
       const endTime = new Date();
@@ -233,10 +241,15 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
         endLocation: { lat: endLocation.lat, lng: endLocation.lng },
         distanceKm: isSimulateMode ? Math.round(Math.random() * 20 + 5) : distance,
         patientName: myActiveTrip?.patient_condition || undefined,
-        hospitalName: selectedHospital?.name || myActiveTrip?.destination_hospital_name,
+        hospitalName: hospitalName,
         hospitalId: selectedHospital?.id || myActiveTrip?.destination_hospital_id,
       };
-      onLogComplete(logInput);
+      
+      const logId = await onLogComplete(logInput);
+      if (logId) {
+        setPendingLogId(logId);
+        setShowFareModal(true);
+      }
     }
 
     await completeTrip();
@@ -248,6 +261,21 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
     setDestinationCoords(null);
     setSelectedHospital(null);
     setShowArrivalModal(false);
+  };
+
+  const handleFareSubmit = (data: { revenueAmount: number; paymentMethod: PaymentMethod; revenueMemo?: string }) => {
+    if (pendingLogId && onRevenueUpdate) {
+      onRevenueUpdate(pendingLogId, data);
+    }
+    setShowFareModal(false);
+    setPendingLogId(null);
+    setCompletedHospitalName("");
+  };
+
+  const handleFareClose = () => {
+    setShowFareModal(false);
+    setPendingLogId(null);
+    setCompletedHospitalName("");
   };
 
   const handleCancelTrip = async () => {
@@ -425,6 +453,14 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Fare Input Modal */}
+      <FareInputModal
+        isOpen={showFareModal}
+        onClose={handleFareClose}
+        onSubmit={handleFareSubmit}
+        hospitalName={completedHospitalName}
+      />
     </>
   );
 };
