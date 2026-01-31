@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -9,20 +9,28 @@ import {
   Shield,
   Loader2,
   LogIn,
-  AlertCircle
+  AlertCircle,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFamilyMembers } from "@/hooks/useFamilyMembers";
 import { useFamilyMembersSupabase, FamilyMemberDB } from "@/hooks/useFamilyMembersSupabase";
 import { useAuth } from "@/hooks/useAuth";
-import FamilyMemberCard from "@/components/FamilyMemberCard";
+import MedicalPassportCard from "@/components/MedicalPassportCard";
+import MedicalPassportDetailModal from "@/components/MedicalPassportDetailModal";
 import FamilyMemberForm from "@/components/FamilyMemberForm";
+import { PinEntryScreen, PinSettingsModal, usePinLock } from "@/components/FamilyPinLock";
 import { FamilyMember } from "@/types/familyMember";
 import { toast } from "@/hooks/use-toast";
 
 const FamilyPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { isPinEnabled } = usePinLock();
+  
+  // PIN lock state
+  const [isPinVerified, setIsPinVerified] = useState(false);
+  const [showPinSettings, setShowPinSettings] = useState(false);
   
   // Use Supabase if authenticated, otherwise use localStorage
   const localMembers = useFamilyMembers();
@@ -39,18 +47,23 @@ const FamilyPage = () => {
   // Normalize members to FamilyMember type
   const members: FamilyMember[] = rawMembers.map((m: FamilyMember | FamilyMemberDB) => {
     if ('chronic_diseases' in m) {
-      // Supabase format
+      // Supabase format - map snake_case to camelCase
+      const dbMember = m as FamilyMemberDB;
       return {
-        id: m.id,
-        name: m.name,
-        age: m.age,
-        relation: m.relation as FamilyMember["relation"],
-        bloodType: m.blood_type as FamilyMember["bloodType"],
-        chronicDiseases: m.chronic_diseases || [],
-        allergies: m.allergies || [],
-        notes: m.notes || undefined,
-        createdAt: m.created_at,
-        updatedAt: m.updated_at,
+        id: dbMember.id,
+        name: dbMember.name,
+        age: dbMember.age,
+        relation: dbMember.relation as FamilyMember["relation"],
+        bloodType: dbMember.blood_type as FamilyMember["bloodType"],
+        chronicDiseases: dbMember.chronic_diseases || [],
+        allergies: dbMember.allergies || [],
+        notes: dbMember.notes || undefined,
+        birthDate: dbMember.birth_date || undefined,
+        weightKg: dbMember.weight_kg || undefined,
+        medications: dbMember.medications || undefined,
+        guardianContact: dbMember.guardian_contact || undefined,
+        createdAt: dbMember.created_at,
+        updatedAt: dbMember.updated_at,
       };
     }
     return m as FamilyMember;
@@ -58,10 +71,18 @@ const FamilyPage = () => {
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
+  const [detailMember, setDetailMember] = useState<FamilyMember | null>(null);
+
+  // Check if PIN is required
+  useEffect(() => {
+    if (!isPinEnabled) {
+      setIsPinVerified(true);
+    }
+  }, [isPinEnabled]);
 
   const handleAddMember = async (data: Omit<FamilyMember, "id" | "createdAt" | "updatedAt">) => {
     if (isAuthenticated) {
-      // Supabase format
+      // Supabase format - map camelCase to snake_case
       await supabaseMembers.addMember({
         name: data.name,
         age: data.age,
@@ -70,6 +91,10 @@ const FamilyPage = () => {
         chronic_diseases: data.chronicDiseases,
         allergies: data.allergies,
         notes: data.notes || null,
+        birth_date: data.birthDate || null,
+        weight_kg: data.weightKg || null,
+        medications: data.medications || null,
+        guardian_contact: data.guardianContact || null,
       });
     } else {
       localMembers.addMember(data);
@@ -93,6 +118,10 @@ const FamilyPage = () => {
           chronic_diseases: data.chronicDiseases,
           allergies: data.allergies,
           notes: data.notes || null,
+          birth_date: data.birthDate || null,
+          weight_kg: data.weightKg || null,
+          medications: data.medications || null,
+          guardian_contact: data.guardianContact || null,
         });
       } else {
         localMembers.updateMember(editingMember.id, data);
@@ -120,6 +149,7 @@ const FamilyPage = () => {
       title: `🚑 ${member.name}님 환자 정보 선택됨`,
       description: "병원을 선택하면 자동으로 정보가 전달됩니다",
     });
+    setDetailMember(null);
     navigate("/map");
   };
 
@@ -128,6 +158,16 @@ const FamilyPage = () => {
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </div>
+    );
+  }
+
+  // Show PIN entry screen if PIN is enabled and not verified
+  if (isPinEnabled && !isPinVerified) {
+    return (
+      <PinEntryScreen 
+        onSuccess={() => setIsPinVerified(true)}
+        onCancel={() => navigate("/")}
+      />
     );
   }
 
@@ -143,9 +183,15 @@ const FamilyPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">가족 관리</h1>
-            <p className="text-xs text-muted-foreground">응급 상황시 빠른 정보 전달</p>
+            <h1 className="text-xl font-bold text-foreground">가족 응급 카드</h1>
+            <p className="text-xs text-muted-foreground">Medical Passport</p>
           </div>
+          <button
+            onClick={() => setShowPinSettings(true)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <Settings className="w-5 h-5 text-muted-foreground" />
+          </button>
           <Button
             onClick={() => {
               setEditingMember(null);
@@ -202,9 +248,10 @@ const FamilyPage = () => {
               <Shield className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-1">가족 의료 카드</h3>
+              <h3 className="font-bold text-lg mb-1">가족 응급 카드</h3>
               <p className="text-sm opacity-90">
-                가족의 혈액형, 기저질환, 알레르기 정보를 미리 저장해두면 응급 상황에서 빠르게 전달할 수 있습니다.
+                카드를 터치하면 의료진에게 보여줄 수 있는 큰 글씨 화면이 나타납니다.
+                119 전달용 텍스트를 한 번에 복사할 수 있습니다.
               </p>
             </div>
           </div>
@@ -244,7 +291,7 @@ const FamilyPage = () => {
           </motion.div>
         )}
 
-        {/* Family Member Cards */}
+        {/* Family Member Cards - Credit Card Style */}
         {!isLoading && members.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -257,12 +304,12 @@ const FamilyPage = () => {
               )}
             </div>
             {members.map((member) => (
-              <FamilyMemberCard
+              <MedicalPassportCard
                 key={member.id}
                 member={member}
                 onEdit={handleEditMember}
                 onDelete={handleDeleteMember}
-                onCallAmbulance={handleCallAmbulance}
+                onViewDetail={setDetailMember}
               />
             ))}
           </div>
@@ -278,6 +325,20 @@ const FamilyPage = () => {
         }}
         onSave={editingMember ? handleUpdateMember : handleAddMember}
         initialData={editingMember || undefined}
+      />
+
+      {/* Detail Modal */}
+      <MedicalPassportDetailModal
+        member={detailMember}
+        isOpen={!!detailMember}
+        onClose={() => setDetailMember(null)}
+        onCallAmbulance={handleCallAmbulance}
+      />
+
+      {/* PIN Settings Modal */}
+      <PinSettingsModal
+        isOpen={showPinSettings}
+        onClose={() => setShowPinSettings(false)}
       />
     </div>
   );

@@ -31,6 +31,9 @@ export const useFamilyMembers = () => {
     const newMember: FamilyMember = {
       ...member,
       id: crypto.randomUUID(),
+      chronicDiseases: member.chronicDiseases || [],
+      allergies: member.allergies || [],
+      medications: member.medications || [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

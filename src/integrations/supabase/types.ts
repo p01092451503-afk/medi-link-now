@@ -223,41 +223,53 @@ export type Database = {
         Row: {
           age: number
           allergies: string[] | null
+          birth_date: string | null
           blood_type: string
           chronic_diseases: string[] | null
           created_at: string
+          guardian_contact: string | null
           id: string
+          medications: string[] | null
           name: string
           notes: string | null
           relation: string
           updated_at: string
           user_id: string
+          weight_kg: number | null
         }
         Insert: {
           age: number
           allergies?: string[] | null
+          birth_date?: string | null
           blood_type?: string
           chronic_diseases?: string[] | null
           created_at?: string
+          guardian_contact?: string | null
           id?: string
+          medications?: string[] | null
           name: string
           notes?: string | null
           relation: string
           updated_at?: string
           user_id: string
+          weight_kg?: number | null
         }
         Update: {
           age?: number
           allergies?: string[] | null
+          birth_date?: string | null
           blood_type?: string
           chronic_diseases?: string[] | null
           created_at?: string
+          guardian_contact?: string | null
           id?: string
+          medications?: string[] | null
           name?: string
           notes?: string | null
           relation?: string
           updated_at?: string
           user_id?: string
+          weight_kg?: number | null
         }
         Relationships: []
       }
