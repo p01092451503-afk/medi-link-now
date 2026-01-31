@@ -406,7 +406,7 @@ const DriverDashboard = () => {
             <p className="text-sm text-muted-foreground mb-6">
               환자 위치와 최적 경로를 확인하세요
             </p>
-            <Button onClick={() => navigate("/map")} className="rounded-xl">
+            <Button onClick={() => navigate("/map?mode=driver")} className="rounded-xl">
               전체 지도 보기
             </Button>
           </motion.div>
