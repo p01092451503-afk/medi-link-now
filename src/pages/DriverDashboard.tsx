@@ -39,39 +39,19 @@ import RejectionLoggerFAB from "@/components/RejectionLoggerFAB";
 import RejectionTimeline from "@/components/RejectionTimeline";
 import { useRejectionLogs } from "@/hooks/useRejectionLogs";
 
-// Mock call data
-const mockCalls = [
-  {
-    id: "1",
-    patientName: "김OO",
-    location: "서울시 강남구 테헤란로 123",
-    hospital: "삼성서울병원 응급실",
-    distance: "3.2km",
-    status: "pending",
-    estimatedFee: 75000,
-    time: "5분 전",
-  },
-  {
-    id: "2",
-    patientName: "박OO",
-    location: "서울시 서초구 반포대로 45",
-    hospital: "세브란스병원 응급실",
-    distance: "7.8km",
-    status: "pending",
-    estimatedFee: 120000,
-    time: "12분 전",
-  },
-  {
-    id: "3",
-    patientName: "이OO",
-    location: "서울시 송파구 올림픽로 300",
-    hospital: "서울아산병원 응급실",
-    distance: "2.1km",
-    status: "completed",
-    estimatedFee: 65000,
-    time: "1시간 전",
-  },
-];
+// Helper function to format time ago
+const formatTimeAgo = (dateString: string) => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  
+  if (diffMins < 1) return "방금 전";
+  if (diffMins < 60) return `${diffMins}분 전`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}시간 전`;
+  return `${Math.floor(diffHours / 24)}일 전`;
+};
 
 const DriverDashboard = () => {
   const navigate = useNavigate();
@@ -95,7 +75,7 @@ const DriverDashboard = () => {
   
   const { hotlines, toggleFavorite, removeHotline } = useHotlines();
   const { isTracking, startTracking, stopTracking, nearbyDrivers } = useDriverPresence();
-  const { pendingRequests, acceptRequest } = useDispatchRequests();
+  const { pendingRequests, myRequests, acceptRequest, isLoading: isDispatchLoading } = useDispatchRequests();
   const { logs: rejectionLogs } = useRejectionLogs();
 
   useEffect(() => {
@@ -127,8 +107,12 @@ const DriverDashboard = () => {
     navigate("/");
   };
 
-  const handleAcceptCall = (callId: string) => {
-    toast({ title: "호출을 수락했습니다!", description: "환자에게 연락 중..." });
+  // Real dispatch request acceptance
+  const handleAcceptCall = async (requestId: string) => {
+    const success = await acceptRequest(requestId);
+    if (success) {
+      toast({ title: "호출을 수락했습니다!", description: "이송 시작 버튼을 눌러주세요." });
+    }
   };
 
   const handleLogComplete = async (input: CreateDrivingLogInput): Promise<string | null> => {
@@ -144,12 +128,8 @@ const DriverDashboard = () => {
     deleteLog(id);
   };
 
-  const todayRevenue = mockCalls
-    .filter((c) => c.status === "completed")
-    .reduce((sum, c) => sum + c.estimatedFee, 0);
-
-  const pendingCalls = mockCalls.filter((c) => c.status === "pending");
-  const completedCalls = mockCalls.filter((c) => c.status === "completed");
+  // Get completed requests from myRequests
+  const completedRequests = myRequests.filter((r) => r.status === "completed");
 
   // Convert DB logs to stats widget format
   const statsLogs = drivingLogs.map(log => ({
@@ -293,72 +273,103 @@ const DriverDashboard = () => {
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-orange-500" />
-                대기 중인 호출 ({pendingCalls.length})
+                대기 중인 호출 ({pendingRequests.length})
               </h3>
-              <div className="space-y-3">
-                {pendingCalls.map((call) => (
-                  <div
-                    key={call.id}
-                    className="bg-white rounded-2xl p-4 shadow-sm border border-border"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className="font-semibold text-foreground">{call.patientName}</p>
-                        <p className="text-xs text-muted-foreground">{call.time}</p>
-                      </div>
-                      <span className="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-medium rounded-full">
-                        대기 중
-                      </span>
-                    </div>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <span className="text-muted-foreground">{call.location}</span>
-                      </div>
-                      <div className="flex items-start gap-2 text-sm">
-                        <Navigation className="w-4 h-4 text-primary mt-0.5" />
-                        <span className="text-foreground font-medium">{call.hospital}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">예상 거리: {call.distance}</span>
-                        <span className="text-lg font-bold text-primary">
-                          ₩{call.estimatedFee.toLocaleString()}
+              {pendingRequests.length === 0 ? (
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-border text-center">
+                  <Phone className="w-10 h-10 text-muted-foreground mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground text-sm">대기 중인 호출이 없습니다</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {pendingRequests.map((request) => (
+                    <div
+                      key={request.id}
+                      className="bg-white rounded-2xl p-4 shadow-sm border border-border"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {request.patient_name || "환자"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatTimeAgo(request.created_at)}
+                          </p>
+                        </div>
+                        <span className="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-medium rounded-full">
+                          대기 중
                         </span>
                       </div>
-                    </div>
 
-                    <Button
-                      onClick={() => handleAcceptCall(call.id)}
-                      className="w-full rounded-xl"
-                    >
-                      호출 수락
-                    </Button>
-                  </div>
-                ))}
-              </div>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-start gap-2 text-sm">
+                          <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <span className="text-muted-foreground">{request.pickup_location}</span>
+                        </div>
+                        {request.destination && (
+                          <div className="flex items-start gap-2 text-sm">
+                            <Navigation className="w-4 h-4 text-primary mt-0.5" />
+                            <span className="text-foreground font-medium">{request.destination}</span>
+                          </div>
+                        )}
+                        {request.patient_condition && (
+                          <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-2 py-1">
+                            환자 상태: {request.patient_condition}
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">
+                            {request.estimated_distance_km 
+                              ? `예상 거리: ${request.estimated_distance_km.toFixed(1)}km` 
+                              : "거리 미정"}
+                          </span>
+                          {request.estimated_fee && (
+                            <span className="text-lg font-bold text-primary">
+                              ₩{request.estimated_fee.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => handleAcceptCall(request.id)}
+                        disabled={isDispatchLoading}
+                        className="w-full rounded-xl"
+                      >
+                        호출 수락
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Completed Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-green-500" />
-                완료된 운행 ({completedCalls.length})
+                완료된 운행 ({completedRequests.length})
               </h3>
               <div className="space-y-3">
-                {completedCalls.map((call) => (
+                {completedRequests.map((request) => (
                   <div
-                    key={call.id}
+                    key={request.id}
                     className="bg-gray-50 rounded-2xl p-4 border border-border opacity-75"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium text-foreground">{call.patientName}</p>
-                        <p className="text-xs text-muted-foreground">{call.hospital}</p>
+                        <p className="font-medium text-foreground">
+                          {request.patient_name || "환자"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {request.destination || request.pickup_location}
+                        </p>
                       </div>
-                      <span className="text-green-600 font-semibold">
-                        +₩{call.estimatedFee.toLocaleString()}
-                      </span>
+                      {request.estimated_fee && (
+                        <span className="text-green-600 font-semibold">
+                          +₩{request.estimated_fee.toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
