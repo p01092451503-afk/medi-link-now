@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart,
   Bar,
@@ -13,7 +13,8 @@ import {
   Tooltip,
 } from "recharts";
 import { DrivingLog } from "@/hooks/useDrivingLogs";
-import { TrendingUp, AlertCircle, Banknote, CreditCard, Building2 } from "lucide-react";
+import { TrendingUp, AlertCircle, Banknote, CreditCard, ChevronDown, ChevronUp, BarChart3 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   ChartContainer,
   ChartTooltip,
@@ -64,6 +65,8 @@ const chartConfig: ChartConfig = {
 };
 
 const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => {
+  const [showCharts, setShowCharts] = useState(false);
+
   // Calculate monthly total revenue
   const monthlyTotalRevenue = useMemo(() => {
     return logs.reduce((sum, log) => sum + (log.revenue_amount || 0), 0);
@@ -133,7 +136,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="space-y-4"
     >
       {/* Monthly Total Revenue Card */}
       <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-6 text-white">
@@ -158,107 +161,134 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
         </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Daily Revenue Bar Chart */}
-        <div className="bg-white rounded-2xl p-5 border border-border">
-          <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Banknote className="w-5 h-5 text-primary" />
-            일별 매출
-          </h3>
-          <div className="h-[200px]">
-            {dailyRevenueData.some(d => d.revenue > 0) ? (
-              <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dailyRevenueData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="day"
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fontSize: 10 }}
-                      tickFormatter={(value) => `${value}일`}
-                      interval="preserveStartEnd"
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fontSize: 10 }}
-                      tickFormatter={(value) => `${(value / 10000).toFixed(0)}만`}
-                      width={40}
-                    />
-                    <ChartTooltip
-                      content={<ChartTooltipContent />}
-                      formatter={(value: number) => [formatCurrency(value), "매출"]}
-                    />
-                    <Bar
-                      dataKey="revenue"
-                      fill="hsl(var(--primary))"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                매출 데이터가 없습니다
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Toggle Button for Charts */}
+      <Button
+        variant="outline"
+        onClick={() => setShowCharts(!showCharts)}
+        className="w-full rounded-xl py-5 flex items-center justify-center gap-2"
+      >
+        <BarChart3 className="w-5 h-5 text-primary" />
+        <span>상세 통계 보기</span>
+        {showCharts ? (
+          <ChevronUp className="w-4 h-4 ml-1" />
+        ) : (
+          <ChevronDown className="w-4 h-4 ml-1" />
+        )}
+      </Button>
 
-        {/* Payment Method Pie Chart */}
-        <div className="bg-white rounded-2xl p-5 border border-border">
-          <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-primary" />
-            결제 수단별 비율
-          </h3>
-          <div className="h-[200px]">
-            {paymentMethodData.length > 0 ? (
-              <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={paymentMethodData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {paymentMethodData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value: number) => formatCurrency(value)}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                결제 데이터가 없습니다
-              </div>
-            )}
-          </div>
-          {/* Legend */}
-          {paymentMethodData.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 mt-2">
-              {paymentMethodData.map((item) => (
-                <div key={item.method} className="flex items-center gap-1.5 text-xs">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: item.fill }}
-                  />
-                  <span className="text-muted-foreground">{item.name}</span>
+      {/* Charts Section - Collapsible */}
+      <AnimatePresence>
+        {showCharts && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+              {/* Daily Revenue Bar Chart */}
+              <div className="bg-white rounded-2xl p-5 border border-border">
+                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Banknote className="w-5 h-5 text-primary" />
+                  일별 매출
+                </h3>
+                <div className="h-[200px]">
+                  {dailyRevenueData.some(d => d.revenue > 0) ? (
+                    <ChartContainer config={chartConfig}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={dailyRevenueData}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                          <XAxis
+                            dataKey="day"
+                            tickLine={false}
+                            axisLine={false}
+                            tick={{ fontSize: 10 }}
+                            tickFormatter={(value) => `${value}일`}
+                            interval="preserveStartEnd"
+                          />
+                          <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            tick={{ fontSize: 10 }}
+                            tickFormatter={(value) => `${(value / 10000).toFixed(0)}만`}
+                            width={40}
+                          />
+                          <ChartTooltip
+                            content={<ChartTooltipContent />}
+                            formatter={(value: number) => [formatCurrency(value), "매출"]}
+                          />
+                          <Bar
+                            dataKey="revenue"
+                            fill="hsl(var(--primary))"
+                            radius={[4, 4, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+                      매출 데이터가 없습니다
+                    </div>
+                  )}
                 </div>
-              ))}
+              </div>
+
+              {/* Payment Method Pie Chart */}
+              <div className="bg-white rounded-2xl p-5 border border-border">
+                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-primary" />
+                  결제 수단별 비율
+                </h3>
+                <div className="h-[200px]">
+                  {paymentMethodData.length > 0 ? (
+                    <ChartContainer config={chartConfig}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={paymentMethodData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={80}
+                            paddingAngle={2}
+                            dataKey="value"
+                          >
+                            {paymentMethodData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            formatter={(value: number) => formatCurrency(value)}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+                      결제 데이터가 없습니다
+                    </div>
+                  )}
+                </div>
+                {/* Legend */}
+                {paymentMethodData.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-3 mt-2">
+                    {paymentMethodData.map((item) => (
+                      <div key={item.method} className="flex items-center gap-1.5 text-xs">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: item.fill }}
+                        />
+                        <span className="text-muted-foreground">{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Unpaid List */}
       {unpaidLogs.length > 0 && (
