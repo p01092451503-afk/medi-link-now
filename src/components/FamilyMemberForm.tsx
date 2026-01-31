@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   FamilyMember,
+  Gender,
+  GENDER_LABELS,
   RELATION_LABELS,
   BLOOD_TYPE_LABELS,
   COMMON_CHRONIC_DISEASES,
@@ -34,6 +36,7 @@ interface FamilyMemberFormProps {
 const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMemberFormProps) => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
+  const [gender, setGender] = useState<Gender>("unknown");
   const [relation, setRelation] = useState<FamilyMember["relation"]>("self");
   const [bloodType, setBloodType] = useState<FamilyMember["bloodType"]>("unknown");
   const [chronicDiseases, setChronicDiseases] = useState<string[]>([]);
@@ -50,6 +53,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
     if (initialData) {
       setName(initialData.name || "");
       setAge(initialData.age?.toString() || "");
+      setGender(initialData.gender || "unknown");
       setRelation(initialData.relation || "self");
       setBloodType(initialData.bloodType || "unknown");
       setChronicDiseases(initialData.chronicDiseases || []);
@@ -63,6 +67,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
       // Reset to defaults
       setName("");
       setAge("");
+      setGender("unknown");
       setRelation("self");
       setBloodType("unknown");
       setChronicDiseases([]);
@@ -99,6 +104,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
     onSave({
       name: name.trim(),
       age: parseInt(age),
+      gender,
       relation,
       bloodType,
       chronicDiseases,
@@ -181,6 +187,29 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       placeholder="45"
                       className="text-lg py-6 rounded-xl"
                     />
+                  </div>
+                  <div>
+                    <Label className="text-base font-medium mb-2 block">성별</Label>
+                    <div className="flex gap-2">
+                      {Object.entries(GENDER_LABELS).map(([key, label]) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setGender(key as Gender)}
+                          className={`flex-1 py-3 px-2 rounded-xl text-sm font-medium transition-all ${
+                            gender === key
+                              ? key === "male" 
+                                ? "bg-blue-500 text-white" 
+                                : key === "female"
+                                  ? "bg-pink-500 text-white"
+                                  : "bg-gray-500 text-white"
+                              : "bg-gray-100 text-foreground hover:bg-gray-200"
+                          }`}
+                        >
+                          {key === "male" ? "👨 " : key === "female" ? "👩 " : ""}{label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label className="text-base font-medium mb-2 block">관계</Label>
