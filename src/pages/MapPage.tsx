@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database, Heart } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database, Heart, Moon, Calendar, Pill } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +28,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
+import { useNearbyPharmacies, NearbyPharmacy, PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
@@ -38,6 +39,7 @@ import RegionSummaryCard from "@/components/map/RegionSummaryCard";
 import CompactAIPrediction from "@/components/hospital/CompactAIPrediction";
 import OfflineBanner from "@/components/OfflineBanner";
 import NavigationSelector from "@/components/NavigationSelector";
+import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 
 
 // Map default center (Seoul)
@@ -79,10 +81,30 @@ const MapPage = () => {
   const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [showDataSource, setShowDataSource] = useState(true);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
 
-  // Fetch holiday pharmacies when filter is set to 'pharmacy'
+  // Determine pharmacy filter type
+  const isPharmacyMode = activeFilter === "openPharmacy" || activeFilter === "nightPharmacy" || activeFilter === "holidayPharmacy";
+  const pharmacyFilterType: PharmacyFilterType = activeFilter === "nightPharmacy" 
+    ? "nightPharmacy" 
+    : activeFilter === "holidayPharmacy" 
+      ? "holidayPharmacy" 
+      : "all";
+
+  // Fetch holiday pharmacies when filter is set to 'pharmacy' (legacy)
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
+
+  // Fetch nearby pharmacies when in pharmacy mode
+  const { 
+    pharmacies: nearbyPharmacies, 
+    isLoading: isLoadingNearbyPharmacies,
+    refetch: refetchPharmacies 
+  } = useNearbyPharmacies({
+    enabled: isPharmacyMode,
+    userLocation,
+    filter: pharmacyFilterType,
+  });
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
@@ -384,7 +406,7 @@ const MapPage = () => {
 
         {/* Leaflet Map with Clustering */}
         <ClusteredMapView
-          hospitals={isPharmacyFilter ? [] : filteredHospitals}
+          hospitals={isPharmacyFilter || isPharmacyMode ? [] : filteredHospitals}
           onHospitalClick={handleHospitalClick}
           userLocation={userLocation}
           center={mapCenter}
@@ -394,7 +416,9 @@ const MapPage = () => {
           liveReports={liveReports}
           nearbyDrivers={nearbyDrivers}
           onCallDriver={handleCallDriver}
-          holidayPharmacies={[]} // 휴일 약국 기능 준비중
+          holidayPharmacies={[]}
+          nearbyPharmacies={isPharmacyMode ? nearbyPharmacies : []}
+          onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
           activeAmbulanceTrips={activeAmbulanceTrips}
           onBoundsChange={handleBoundsChange}
           isMoonlightMode={activeFilter === "moonlight"}
@@ -602,15 +626,28 @@ const MapPage = () => {
           <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide items-center">
             {filterOptions
               .filter((f) => f.category === "bed" || f.category === "special")
+              .filter((f) => f.id !== "pharmacy") // Hide legacy pharmacy filter
               .map((f) => {
                 const isActive = activeFilter === f.id;
-                const isPharmacy = f.id === "pharmacy";
+                const isPharmacyType = f.id === "openPharmacy" || f.id === "nightPharmacy" || f.id === "holidayPharmacy";
                 const isTraumaCenter = f.id === "traumaCenter";
                 const isMoonlight = f.id === "moonlight";
+                const isNightPharmacy = f.id === "nightPharmacy";
+                const isHolidayPharmacy = f.id === "holidayPharmacy";
 
                 const handleFilterClick = () => {
+                  // When switching to pharmacy mode, require location
+                  if (isPharmacyType && !userLocation) {
+                    toast({
+                      title: "위치 정보가 필요합니다",
+                      description: "영업 중인 약국을 찾으려면 먼저 위치 버튼을 눌러주세요",
+                    });
+                    return;
+                  }
                   setActiveFilter(f.id);
-                  // 외상센터 필터 선택 시 현재 지역 유지 (전국 뷰로 전환하지 않음)
+                  // Clear selected hospital/pharmacy when switching filters
+                  setSelectedHospital(null);
+                  setSelectedPharmacy(null);
                 };
 
                 return (
@@ -619,14 +656,14 @@ const MapPage = () => {
                     onClick={handleFilterClick}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-1.5 ${
                       isActive
-                        ? isPharmacy
-                          ? "bg-green-500 text-white border-green-500"
+                        ? isPharmacyType
+                          ? "bg-green-500 text-white border-green-500 shadow-lg shadow-green-500/30"
                           : isTraumaCenter
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white border-purple-600 shadow-lg shadow-purple-500/30"
                             : isMoonlight
                               ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
                               : "bg-primary text-white border-primary"
-                        : isPharmacy
+                        : isPharmacyType
                           ? "bg-white/90 text-green-600 border-green-200 hover:bg-green-50"
                           : isTraumaCenter
                             ? "bg-white/90 text-purple-600 border-purple-200 hover:bg-purple-50"
@@ -646,9 +683,12 @@ const MapPage = () => {
                       </span>
                     )}
                     {f.labelKr}
-                    {isPharmacy && (
-                      <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-semibold rounded">
-                        준비중
+                    {isPharmacyType && isActive && isLoadingNearbyPharmacies && (
+                      <Loader2 className="w-3 h-3 animate-spin ml-1" />
+                    )}
+                    {isPharmacyType && isActive && !isLoadingNearbyPharmacies && nearbyPharmacies.length > 0 && (
+                      <span className="ml-1 px-1.5 py-0.5 bg-white/30 text-[10px] font-semibold rounded">
+                        {nearbyPharmacies.length}
                       </span>
                     )}
                   </button>
@@ -866,6 +906,13 @@ const MapPage = () => {
         }}
         selectedDriver={selectedDriver}
         userLocation={userLocation}
+      />
+
+      {/* Pharmacy Bottom Sheet */}
+      <PharmacyBottomSheet
+        pharmacy={selectedPharmacy}
+        isOpen={!!selectedPharmacy}
+        onClose={() => setSelectedPharmacy(null)}
       />
     </div>
   );

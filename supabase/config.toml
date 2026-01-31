@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.fetch-holiday-pharmacies]
 verify_jwt = false
+
+[functions.fetch-nearby-pharmacies]
+verify_jwt = false
