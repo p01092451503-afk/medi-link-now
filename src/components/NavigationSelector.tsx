@@ -64,7 +64,7 @@ const NavigationSelector = ({
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant={variant}
@@ -77,7 +77,7 @@ const NavigationSelector = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-56 p-2 rounded-xl border-0 shadow-xl" 
+        className="w-56 p-2 rounded-xl border-0 shadow-xl z-[2000]" 
         align="center"
         side="top"
         sideOffset={8}
