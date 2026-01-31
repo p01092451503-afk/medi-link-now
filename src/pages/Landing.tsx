@@ -7,6 +7,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
+import DataFreshnessTimer from "@/components/DataFreshnessTimer";
 
 
 const Landing = () => {
@@ -391,15 +392,7 @@ const Landing = () => {
             
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-3 group cursor-pointer">
-                  <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-emerald-100 via-green-50 to-emerald-50/50 flex items-center justify-center shadow-lg shadow-green-500/10 border border-green-200/50 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl group-hover:shadow-green-500/20 group-hover:border-green-300/50">
-                    <Activity className="w-8 h-8 text-emerald-600 transition-all duration-300 group-hover:scale-110" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-foreground tracking-tight">60초</p>
-                    <p className="text-[11px] text-muted-foreground font-medium">실시간 업데이트</p>
-                  </div>
-                </div>
+                <DataFreshnessTimer lastUpdated={lastUpdated} isLoading={isLoading} />
               </PopoverTrigger>
               <PopoverContent className="w-72 p-4 rounded-2xl border-0 shadow-xl" side="bottom">
                 <div className="space-y-3">

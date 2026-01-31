@@ -14,7 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import ERRoadviewModal from "@/components/ERRoadviewModal";
 import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
-import SafeArrivalScore from "@/components/hospital/SafeArrivalScore";
+import CongestionForecast from "@/components/hospital/CongestionForecast";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -262,8 +262,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
                 </div>
                 
-                {/* Safe Arrival Score */}
-                <SafeArrivalScore 
+                {/* Congestion Forecast */}
+                <CongestionForecast 
                   hospitalId={hospital.id?.toString() || hospital.name}
                   officialBeds={totalBeds}
                 />

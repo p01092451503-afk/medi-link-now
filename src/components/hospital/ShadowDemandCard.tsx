@@ -86,6 +86,11 @@ const ShadowDemandCard = ({ hospitalId, officialBeds }: ShadowDemandCardProps) =
           </p>
         </div>
       )}
+
+      {/* 119 Disclaimer */}
+      <p className="text-[10px] text-muted-foreground text-center mt-2 opacity-70">
+        * 119 이송 정보는 포함되지 않았습니다.
+      </p>
     </div>
   );
 };

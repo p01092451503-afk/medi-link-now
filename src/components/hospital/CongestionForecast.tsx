@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { ShieldCheck, AlertTriangle, XCircle } from "lucide-react";
+import { TrendingUp, AlertTriangle, TrendingDown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-interface SafeArrivalScoreProps {
+interface CongestionForecastProps {
   hospitalId: string;
   officialBeds: number;
 }
@@ -16,7 +16,7 @@ const getMockAmbulancesEnRoute = (hospitalId: string): number => {
 interface ScoreData {
   score: number;
   label: string;
-  status: "safe" | "caution" | "danger";
+  status: "smooth" | "moderate" | "congested";
   message: string;
   emoji: string;
 }
@@ -25,38 +25,38 @@ const calculateScore = (estimatedBeds: number): ScoreData => {
   if (estimatedBeds > 5) {
     return {
       score: 95,
-      label: "안전",
-      status: "safe",
-      message: "지금 출발해도 안전합니다",
+      label: "원활",
+      status: "smooth",
+      message: "현재 병원 혼잡도가 낮습니다",
       emoji: "🟢",
     };
   } else if (estimatedBeds >= 2 && estimatedBeds <= 5) {
     return {
       score: 70,
-      label: "주의",
-      status: "caution",
+      label: "보통",
+      status: "moderate",
       message: "도착 전 전화 확인을 권장합니다",
       emoji: "🟡",
     };
   } else {
     return {
       score: 30,
-      label: "위험",
-      status: "danger",
-      message: "다른 병원도 확인하세요. 전환 위험 높음",
+      label: "혼잡",
+      status: "congested",
+      message: "다른 병원도 함께 확인해보세요",
       emoji: "🔴",
     };
   }
 };
 
-const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) => {
+const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProps) => {
   const ambulancesEnRoute = useMemo(() => getMockAmbulancesEnRoute(hospitalId), [hospitalId]);
   const estimatedBeds = Math.max(0, officialBeds - ambulancesEnRoute);
   const scoreData = useMemo(() => calculateScore(estimatedBeds), [estimatedBeds]);
 
   const getStatusStyles = () => {
     switch (scoreData.status) {
-      case "safe":
+      case "smooth":
         return {
           bg: "from-green-50 to-emerald-50",
           border: "border-green-200",
@@ -64,9 +64,9 @@ const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) =
           progressFill: "[&>div]:bg-green-500",
           text: "text-green-700",
           iconBg: "bg-green-100",
-          icon: ShieldCheck,
+          icon: TrendingUp,
         };
-      case "caution":
+      case "moderate":
         return {
           bg: "from-yellow-50 to-amber-50",
           border: "border-yellow-200",
@@ -76,7 +76,7 @@ const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) =
           iconBg: "bg-yellow-100",
           icon: AlertTriangle,
         };
-      case "danger":
+      case "congested":
         return {
           bg: "from-red-50 to-orange-50",
           border: "border-red-200",
@@ -84,7 +84,7 @@ const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) =
           progressFill: "[&>div]:bg-red-500",
           text: "text-red-700",
           iconBg: "bg-red-100",
-          icon: XCircle,
+          icon: TrendingDown,
         };
     }
   };
@@ -100,8 +100,8 @@ const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) =
             <Icon className={`w-4 h-4 ${styles.text}`} />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-foreground">안전 도착 확률</h4>
-            <p className="text-[10px] text-muted-foreground">Safe Arrival Score</p>
+            <h4 className="text-sm font-semibold text-foreground">병원 혼잡도 예측</h4>
+            <p className="text-[10px] text-muted-foreground">Congestion Forecast</p>
           </div>
         </div>
         <div className="text-right">
@@ -120,16 +120,16 @@ const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) =
           className={`h-3 ${styles.progressBg} ${styles.progressFill}`}
         />
         <div className="flex justify-between mt-1">
-          <span className="text-[10px] text-muted-foreground">위험</span>
-          <span className="text-[10px] text-muted-foreground">안전</span>
+          <span className="text-[10px] text-muted-foreground">혼잡</span>
+          <span className="text-[10px] text-muted-foreground">원활</span>
         </div>
       </div>
 
       {/* Dynamic Message */}
       <div className={`p-2.5 rounded-lg ${
-        scoreData.status === "safe" 
+        scoreData.status === "smooth" 
           ? "bg-green-100/50" 
-          : scoreData.status === "caution" 
+          : scoreData.status === "moderate" 
           ? "bg-yellow-100/50" 
           : "bg-red-100/50"
       }`}>
@@ -139,11 +139,11 @@ const SafeArrivalScore = ({ hospitalId, officialBeds }: SafeArrivalScoreProps) =
       </div>
 
       {/* AI Disclaimer */}
-      <p className="text-[10px] text-muted-foreground text-center mt-2 opacity-70">
-        * AI 예측 기반 참고 지표입니다
+      <p className="text-[10px] text-muted-foreground text-center mt-2 opacity-70 leading-relaxed">
+        * 이 수치는 사설 구급차 이동 현황 기반의 예측값이며, 실제 병원 상황과 다를 수 있습니다.
       </p>
     </div>
   );
 };
 
-export default SafeArrivalScore;
+export default CongestionForecast;
