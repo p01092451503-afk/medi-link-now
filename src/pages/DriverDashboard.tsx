@@ -35,6 +35,8 @@ import HotlineManager, { useHotlines } from "@/components/HotlineManager";
 import { useDriverPresence } from "@/hooks/useDriverPresence";
 import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import TripManagementWidget from "@/components/TripManagementWidget";
+import RejectionLoggerFAB from "@/components/RejectionLoggerFAB";
+import RejectionTimeline from "@/components/RejectionTimeline";
 
 // Mock call data
 const mockCalls = [
@@ -387,7 +389,11 @@ const DriverDashboard = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            className="space-y-4"
           >
+            {/* Rejection Timeline */}
+            <RejectionTimeline />
+            
             <DrivingLogHistory 
               logs={drivingLogs} 
               isLoading={isLogsLoading}
@@ -418,6 +424,9 @@ const DriverDashboard = () => {
           </motion.div>
         )}
       </main>
+
+      {/* Rejection Logger FAB */}
+      <RejectionLoggerFAB />
 
       {/* Trip Management Widget - 통합된 이송/운행 관리 */}
       <TripManagementWidget 
