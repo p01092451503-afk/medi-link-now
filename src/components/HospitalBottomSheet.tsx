@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Pill } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,8 @@ import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 import NavigationSelector from "@/components/NavigationSelector";
+import NearbyPharmacySheet from "@/components/NearbyPharmacySheet";
+import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -121,6 +123,10 @@ const AcceptanceBadge = ({
 const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const [showRoadview, setShowRoadview] = useState(false);
+  const [showPharmacySheet, setShowPharmacySheet] = useState(false);
+  
+  // Fetch pharmacies when pharmacy sheet is requested
+  const { pharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(showPharmacySheet);
   
   if (!hospital) return null;
 
@@ -397,10 +403,20 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               <Button
                 onClick={() => setShowRoadview(true)}
                 variant="outline"
-                className="w-full mb-4 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 font-medium"
+                className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 font-medium"
               >
                 <Ambulance className="w-5 h-5 mr-2" />
                 🚑 응급실 입구 로드뷰 (ER Entrance View)
+              </Button>
+
+              {/* Nearby Pharmacy Button - Sticky style */}
+              <Button
+                onClick={() => setShowPharmacySheet(true)}
+                variant="outline"
+                className="w-full mb-4 py-5 rounded-xl border-green-500 text-green-600 hover:bg-green-50 font-medium"
+              >
+                <Pill className="w-5 h-5 mr-2" />
+                💊 근처 문 연 약국 보기
               </Button>
 
               {/* Action Buttons */}
@@ -434,6 +450,15 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             entranceLng={hospital.entrance_lng}
             hospitalLat={hospital.lat}
             hospitalLng={hospital.lng}
+          />
+
+          {/* Nearby Pharmacy Sheet */}
+          <NearbyPharmacySheet
+            isOpen={showPharmacySheet}
+            onClose={() => setShowPharmacySheet(false)}
+            hospital={hospital}
+            pharmacies={pharmacies}
+            isLoading={isLoadingPharmacies}
           />
         </>
       )}

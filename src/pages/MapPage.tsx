@@ -395,6 +395,7 @@ const MapPage = () => {
           holidayPharmacies={[]} // 휴일 약국 기능 준비중
           activeAmbulanceTrips={activeAmbulanceTrips}
           onBoundsChange={handleBoundsChange}
+          isMoonlightMode={activeFilter === "moonlight"}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
@@ -591,6 +592,7 @@ const MapPage = () => {
                 const isActive = activeFilter === f.id;
                 const isPharmacy = f.id === "pharmacy";
                 const isTraumaCenter = f.id === "traumaCenter";
+                const isMoonlight = f.id === "moonlight";
 
                 const handleFilterClick = () => {
                   setActiveFilter(f.id);
@@ -607,14 +609,21 @@ const MapPage = () => {
                           ? "bg-green-500 text-white border-green-500"
                           : isTraumaCenter
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white border-purple-600 shadow-lg shadow-purple-500/30"
-                            : "bg-primary text-white border-primary"
+                            : isMoonlight
+                              ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
+                              : "bg-primary text-white border-primary"
                         : isPharmacy
                           ? "bg-white/90 text-green-600 border-green-200 hover:bg-green-50"
                           : isTraumaCenter
                             ? "bg-white/90 text-purple-600 border-purple-200 hover:bg-purple-50"
-                            : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
+                            : isMoonlight
+                              ? "bg-white/90 text-amber-600 border-amber-200 hover:bg-amber-50"
+                              : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
                     }`}
                   >
+                    {isMoonlight && (
+                      <span className="text-sm">🌙</span>
+                    )}
                     {isTraumaCenter && (
                       <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
                         isActive ? "bg-white/20" : "bg-purple-100"

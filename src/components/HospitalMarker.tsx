@@ -7,6 +7,7 @@ interface HospitalMarkerProps {
   onClick: (hospital: Hospital) => void;
   activeFilter: FilterType;
   opacity?: number;
+  isMoonlightMode?: boolean;
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
@@ -90,15 +91,24 @@ const getGradeLabel = (emergencyGrade?: string | null): string => {
   }
 };
 
+// Moonlight (야간 소아진료) marker colors - pastel yellow theme
+const getMoonlightColors = () => ({
+  available: { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E" },
+  limited: { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E" },
+  unavailable: { bg: "#FDE68A", border: "#D97706", text: "#78350F" },
+});
+
 const createMarkerIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
   hasPediatric: boolean,
   isTraumaCenter?: boolean,
   isPediatricFilter?: boolean,
-  emergencyGrade?: string | null
+  emergencyGrade?: string | null,
+  isMoonlightMode?: boolean
 ) => {
-  const colors = getGradeColors(emergencyGrade);
+  // Use moonlight colors if in moonlight mode, otherwise use grade colors
+  const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
   
@@ -160,9 +170,30 @@ const createMarkerIcon = (
         </svg>
       </div>`
     : "";
+
+  // Moonlight badge (displayed when in moonlight mode)
+  const moonlightBadge = isMoonlightMode
+    ? `<div style="
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.5);
+        z-index: 10;
+      ">
+        <span style="font-size: 14px;">🌙</span>
+      </div>`
+    : "";
   
-  // 등급 표시 뱃지 (왼쪽 하단)
-  const gradeBadge = gradeLabel 
+  // 등급 표시 뱃지 (왼쪽 하단) - don't show in moonlight mode
+  const gradeBadge = (gradeLabel && !isMoonlightMode)
     ? `<div style="
         position: absolute;
         bottom: -8px;
@@ -220,7 +251,7 @@ const createMarkerIcon = (
         ">
           ${beds}
           ${childBadge}
-          ${traumaBadge}
+          ${isMoonlightMode ? moonlightBadge : traumaBadge}
         </div>
         <div style="
           width: 0;
@@ -239,7 +270,7 @@ const createMarkerIcon = (
   });
 };
 
-const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1 }: HospitalMarkerProps) => {
+const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   
@@ -251,14 +282,15 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1 }: Hospit
   };
   
   const hasPediatric = normalizedBeds.pediatric > 0;
-  const isPediatricFilter = activeFilter === "pediatric";
+  const isPediatricFilter = activeFilter === "pediatric" || activeFilter === "moonlight";
   const icon = createMarkerIcon(
     status, 
     displayBeds, 
     hasPediatric, 
     hospital.isTraumaCenter, 
     isPediatricFilter,
-    hospital.emergencyGrade
+    hospital.emergencyGrade,
+    isMoonlightMode
   );
 
   // 등급 한글명 표시

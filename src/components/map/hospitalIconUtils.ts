@@ -75,15 +75,24 @@ export const getGradeKoreanName = (grade?: string | null): string => {
   }
 };
 
+// Moonlight (야간 소아진료) marker colors - pastel yellow theme
+const getMoonlightColors = () => ({
+  available: { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E" },
+  limited: { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E" },
+  unavailable: { bg: "#FDE68A", border: "#D97706", text: "#78350F" },
+});
+
 export const createHospitalIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
   hasPediatric: boolean,
   isTraumaCenter?: boolean,
   isPediatricFilter?: boolean,
-  emergencyGrade?: string | null
+  emergencyGrade?: string | null,
+  isMoonlightMode?: boolean
 ) => {
-  const colors = getGradeColors(emergencyGrade);
+  // Use moonlight colors if in moonlight mode, otherwise use grade colors
+  const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
 
@@ -139,7 +148,27 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
-  const gradeBadge = gradeLabel
+  const moonlightBadge = isMoonlightMode
+    ? `<div style="
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.5);
+        z-index: 10;
+      ">
+        <span style="font-size: 14px;">🌙</span>
+      </div>`
+    : "";
+
+  const gradeBadge = (gradeLabel && !isMoonlightMode)
     ? `<div style="
         position: absolute;
         bottom: -8px;
@@ -184,7 +213,7 @@ export const createHospitalIcon = (
         ">
           ${beds}
           ${childBadge}
-          ${traumaBadge}
+          ${isMoonlightMode ? moonlightBadge : traumaBadge}
         </div>
         <div style="
           width: 0;
