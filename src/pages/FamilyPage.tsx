@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -10,7 +10,8 @@ import {
   Loader2,
   LogIn,
   AlertCircle,
-  Settings
+  Settings,
+  Cloud
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFamilyMembers } from "@/hooks/useFamilyMembers";
@@ -20,6 +21,7 @@ import MedicalPassportCard from "@/components/MedicalPassportCard";
 import MedicalPassportDetailModal from "@/components/MedicalPassportDetailModal";
 import FamilyMemberForm from "@/components/FamilyMemberForm";
 import { PinEntryScreen, PinSettingsModal, usePinLock } from "@/components/FamilyPinLock";
+import CloudSyncStatusModal from "@/components/CloudSyncStatusModal";
 import { FamilyMember } from "@/types/familyMember";
 import { toast } from "@/hooks/use-toast";
 
@@ -73,6 +75,22 @@ const FamilyPage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
   const [detailMember, setDetailMember] = useState<FamilyMember | null>(null);
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+
+  // Track last sync time when data loads
+  useEffect(() => {
+    if (!isLoading && members.length >= 0 && isAuthenticated) {
+      setLastSyncTime(new Date());
+    }
+  }, [isLoading, members.length, isAuthenticated]);
+
+  const handleRefreshSync = async () => {
+    if (isAuthenticated && supabaseMembers.refetch) {
+      await supabaseMembers.refetch();
+      setLastSyncTime(new Date());
+    }
+  };
 
   // Check if PIN is required
   useEffect(() => {
@@ -301,9 +319,13 @@ const FamilyPage = () => {
               <Heart className="w-4 h-4 text-primary" />
               <span>등록된 가족 {members.length}명</span>
               {isAuthenticated && (
-                <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
-                  ☁️ 클라우드 저장
-                </span>
+                <button
+                  onClick={() => setShowSyncModal(true)}
+                  className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full hover:bg-green-200 transition-colors flex items-center gap-1"
+                >
+                  <Cloud className="w-3 h-3" />
+                  클라우드 저장
+                </button>
               )}
             </div>
             {members.map((member) => (
@@ -346,6 +368,16 @@ const FamilyPage = () => {
       <PinSettingsModal
         isOpen={showPinSettings}
         onClose={() => setShowPinSettings(false)}
+      />
+
+      {/* Cloud Sync Status Modal */}
+      <CloudSyncStatusModal
+        isOpen={showSyncModal}
+        onClose={() => setShowSyncModal(false)}
+        lastSyncTime={lastSyncTime || undefined}
+        itemCount={members.length}
+        isLoading={isLoading}
+        onRefresh={handleRefreshSync}
       />
     </div>
   );
