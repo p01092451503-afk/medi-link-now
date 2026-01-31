@@ -582,7 +582,7 @@ const MapPage = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/")}
-              className="bg-white rounded-xl p-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+              className="bg-white/70 backdrop-blur-md rounded-xl p-2.5 shadow-lg border border-white/50 hover:bg-white/80 transition-colors flex items-center gap-2"
             >
               <ArrowLeft className="w-5 h-5" />
               <div className="flex items-center gap-1.5 pr-1">
@@ -595,7 +595,7 @@ const MapPage = () => {
             {!isDriverMode && (
               <motion.button
                 onClick={() => navigate("/family")}
-                className="bg-white rounded-xl px-3 py-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                className="bg-white/70 backdrop-blur-md rounded-xl px-3 py-2.5 shadow-lg border border-white/50 hover:bg-white/80 transition-colors flex items-center gap-2"
                 whileTap={{ scale: 0.95 }}
               >
                 <Heart className="w-5 h-5 text-pink-500" />
@@ -654,22 +654,22 @@ const MapPage = () => {
                   <button
                     key={f.id}
                     onClick={handleFilterClick}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border backdrop-blur-md flex items-center gap-1.5 ${
                       isActive
                         ? isPharmacyType
-                          ? "bg-green-500 text-white border-green-500 shadow-lg shadow-green-500/30"
+                          ? "bg-green-500/90 text-white border-green-500 shadow-lg shadow-green-500/30"
                           : isTraumaCenter
-                            ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white border-purple-600 shadow-lg shadow-purple-500/30"
+                            ? "bg-gradient-to-r from-purple-600/90 to-violet-600/90 text-white border-purple-600 shadow-lg shadow-purple-500/30"
                             : isMoonlight
-                              ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
-                              : "bg-primary text-white border-primary"
+                              ? "bg-gradient-to-r from-amber-400/90 to-yellow-500/90 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
+                              : "bg-primary/90 text-white border-primary"
                         : isPharmacyType
-                          ? "bg-white/90 text-green-600 border-green-200 hover:bg-green-50"
+                          ? "bg-white/60 text-green-600 border-green-200/70 hover:bg-white/80"
                           : isTraumaCenter
-                            ? "bg-white/90 text-purple-600 border-purple-200 hover:bg-purple-50"
+                            ? "bg-white/60 text-purple-600 border-purple-200/70 hover:bg-white/80"
                             : isMoonlight
-                              ? "bg-white/90 text-amber-600 border-amber-200 hover:bg-amber-50"
-                              : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-50"
+                              ? "bg-white/60 text-amber-600 border-amber-200/70 hover:bg-white/80"
+                              : "bg-white/60 text-gray-600 border-gray-200/70 hover:bg-white/80"
                     }`}
                   >
                     {isMoonlight && (
