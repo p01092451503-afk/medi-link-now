@@ -84,12 +84,10 @@ const MapPage = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
 
   // Determine pharmacy filter type
-  const isPharmacyMode = activeFilter === "openPharmacy" || activeFilter === "nightPharmacy" || activeFilter === "holidayPharmacy";
+  const isPharmacyMode = activeFilter === "openPharmacy" || activeFilter === "nightPharmacy";
   const pharmacyFilterType: PharmacyFilterType = activeFilter === "nightPharmacy" 
     ? "nightPharmacy" 
-    : activeFilter === "holidayPharmacy" 
-      ? "holidayPharmacy" 
-      : "all";
+    : "all";
 
   // Fetch holiday pharmacies when filter is set to 'pharmacy' (legacy)
   const isPharmacyFilter = activeFilter === "pharmacy";
@@ -629,11 +627,10 @@ const MapPage = () => {
               .filter((f) => f.id !== "pharmacy") // Hide legacy pharmacy filter
               .map((f) => {
                 const isActive = activeFilter === f.id;
-                const isPharmacyType = f.id === "openPharmacy" || f.id === "nightPharmacy" || f.id === "holidayPharmacy";
+                const isPharmacyType = f.id === "openPharmacy" || f.id === "nightPharmacy";
                 const isTraumaCenter = f.id === "traumaCenter";
                 const isMoonlight = f.id === "moonlight";
                 const isNightPharmacy = f.id === "nightPharmacy";
-                const isHolidayPharmacy = f.id === "holidayPharmacy";
 
                 const handleFilterClick = () => {
                   // When switching to pharmacy mode, require location
