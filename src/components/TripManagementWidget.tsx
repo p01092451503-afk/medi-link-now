@@ -28,6 +28,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import GeofenceArrivalModal from "@/components/GeofenceArrivalModal";
 import NavigationSelector from "@/components/NavigationSelector";
+import { type CreateDrivingLogInput } from "@/hooks/useDrivingLogs";
 
 interface HospitalOption {
   id: number;
@@ -38,19 +39,8 @@ interface HospitalOption {
   lng?: number;
 }
 
-export interface DrivingLog {
-  id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  startLocation: string;
-  endLocation: string;
-  distance: number;
-  patientName: string;
-}
-
 interface TripManagementWidgetProps {
-  onLogComplete?: (log: DrivingLog) => void;
+  onLogComplete?: (input: CreateDrivingLogInput) => void;
   isSimulateMode?: boolean;
 }
 
@@ -68,6 +58,7 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
   const [startLocation, setStartLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showArrivalModal, setShowArrivalModal] = useState(false);
   const [destinationCoords, setDestinationCoords] = useState<{ lat: number; lng: number; name: string } | null>(null);
+  const [selectedHospital, setSelectedHospital] = useState<HospitalOption | null>(null);
   const geofenceWatchIdRef = useRef<number | null>(null);
   const hasShownArrivalModalRef = useRef(false);
 
@@ -121,7 +112,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
       return;
     }
 
-    // Reset the modal shown flag when starting a new trip
     hasShownArrivalModalRef.current = false;
 
     const checkGeofence = (position: GeolocationPosition) => {
@@ -135,7 +125,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
 
       console.log(`Distance to destination: ${distance.toFixed(2)}km`);
 
-      // If within 500m and modal hasn't been shown yet
       if (distance <= GEOFENCE_RADIUS_KM && !hasShownArrivalModalRef.current) {
         hasShownArrivalModalRef.current = true;
         setShowArrivalModal(true);
@@ -203,17 +192,15 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
 
   const handleSelectHospital = async (hospital: HospitalOption) => {
     try {
-      // Start trip first, then get location in background
       const result = await startTrip(hospital.id, hospital.name);
       if (result) {
         setTripStartTime(new Date());
+        setSelectedHospital(hospital);
         setIsSelectingHospital(false);
         setSearchQuery("");
         
-        // Update driver status to busy
         updateStatus("busy");
         
-        // Store destination coordinates for geofencing
         if (hospital.lat && hospital.lng) {
           setDestinationCoords({
             lat: hospital.lat,
@@ -222,7 +209,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
           });
         }
         
-        // Get location in background for logging purposes
         getLocation().then(setStartLocation);
       }
     } catch (error) {
@@ -232,7 +218,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
   };
 
   const handleCompleteTrip = async () => {
-    // Generate driving log when completing trip
     if (tripStartTime && startLocation && onLogComplete) {
       const endLocation = await getLocation();
       const endTime = new Date();
@@ -241,46 +226,44 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
         endLocation.lat, endLocation.lng
       );
 
-      const log: DrivingLog = {
-        id: Date.now().toString(),
-        date: tripStartTime.toLocaleDateString("ko-KR"),
-        startTime: tripStartTime.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
-        endTime: endTime.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
-        startLocation: `${startLocation.lat.toFixed(4)}, ${startLocation.lng.toFixed(4)}`,
-        endLocation: `${endLocation.lat.toFixed(4)}, ${endLocation.lng.toFixed(4)}`,
-        distance: isSimulateMode ? Math.round(Math.random() * 20 + 5) : Math.round(distance * 10) / 10,
-        patientName: myActiveTrip?.patient_condition || "환자명 미입력",
+      const logInput: CreateDrivingLogInput = {
+        startTime: tripStartTime,
+        endTime: endTime,
+        startLocation: { lat: startLocation.lat, lng: startLocation.lng },
+        endLocation: { lat: endLocation.lat, lng: endLocation.lng },
+        distanceKm: isSimulateMode ? Math.round(Math.random() * 20 + 5) : distance,
+        patientName: myActiveTrip?.patient_condition || undefined,
+        hospitalName: selectedHospital?.name || myActiveTrip?.destination_hospital_name,
+        hospitalId: selectedHospital?.id || myActiveTrip?.destination_hospital_id,
       };
-      onLogComplete(log);
+      onLogComplete(logInput);
     }
 
     await completeTrip();
     
-    // Update driver status back to available
     updateStatus("available");
     
     setTripStartTime(null);
     setStartLocation(null);
     setDestinationCoords(null);
+    setSelectedHospital(null);
     setShowArrivalModal(false);
   };
 
   const handleCancelTrip = async () => {
     await cancelTrip();
     
-    // Update driver status back to available
     updateStatus("available");
     
     setTripStartTime(null);
     setStartLocation(null);
     setDestinationCoords(null);
+    setSelectedHospital(null);
     setShowArrivalModal(false);
   };
 
   const handleArrivalModalCancel = () => {
     setShowArrivalModal(false);
-    // Allow the modal to be shown again if they leave the geofence and re-enter
-    // hasShownArrivalModalRef.current = false; // Uncomment if you want to allow re-trigger
   };
 
   if (isLoading) {
@@ -296,7 +279,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
 
   return (
     <>
-      {/* Geofence Arrival Modal */}
       <GeofenceArrivalModal
         isOpen={showArrivalModal}
         hospitalName={destinationCoords?.name || myActiveTrip?.destination_hospital_name || ""}
@@ -304,7 +286,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
         onCancel={handleArrivalModalCancel}
       />
 
-      {/* Active Trip Card */}
       <AnimatePresence>
         {myActiveTrip ? (
           <motion.div
@@ -314,7 +295,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
             className="fixed bottom-20 left-4 right-4 z-40"
           >
             <div className="bg-white rounded-2xl shadow-lg border-2 border-primary p-4">
-              {/* Trip Status Header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -334,7 +314,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                 </span>
               </div>
 
-              {/* Destination Info */}
               <div className="bg-muted/50 rounded-xl p-3 mb-4">
                 <div className="flex items-start gap-2">
                   <Navigation className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -348,7 +327,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                       </p>
                     )}
                   </div>
-                  {/* Quick Navigation Button */}
                   {destinationCoords && (
                     <NavigationSelector
                       destination={destinationCoords}
@@ -361,7 +339,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -384,7 +361,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
             </div>
           </motion.div>
         ) : (
-          /* Start Trip Button */
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -406,7 +382,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                   </SheetTitle>
                 </SheetHeader>
 
-                {/* Search Input */}
                 <div className="relative mb-4">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -417,7 +392,6 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                   />
                 </div>
 
-                {/* Hospital List */}
                 <ScrollArea className="h-[calc(80vh-180px)]">
                   {isLoadingHospitals ? (
                     <div className="flex items-center justify-center py-12">
