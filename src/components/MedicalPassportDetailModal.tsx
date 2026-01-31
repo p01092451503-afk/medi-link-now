@@ -106,58 +106,58 @@ const MedicalPassportDetailModal = ({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg bg-white rounded-3xl shadow-2xl z-[2001] overflow-hidden flex flex-col max-h-[90vh]"
+            className="fixed top-6 left-4 right-4 bottom-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg bg-white rounded-3xl shadow-2xl z-[2001] overflow-hidden flex flex-col max-h-[calc(100vh-2.5rem)]"
           >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-5 text-white">
+            {/* Header - More compact */}
+            <div className="bg-gradient-to-r from-primary to-primary/80 px-5 py-4 text-white shrink-0">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold">{member.name}</h2>
-                  <p className="text-white/80">
+                  <h2 className="text-xl font-bold">{member.name}</h2>
+                  <p className="text-white/80 text-sm">
                     {RELATION_LABELS[member.relation]} · {displayAge}세
                     {member.weightKg && ` · ${member.weightKg}kg`}
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  className="p-2 hover:bg-white/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 >
                   <X className="w-6 h-6" />
                 </button>
               </div>
             </div>
 
-            {/* Content - Large Text for Medical Staff */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {/* Blood Type - Very Large */}
-              <div className="bg-red-50 rounded-2xl p-6 text-center">
-                <Droplets className="w-10 h-10 text-red-500 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground mb-1">혈액형</p>
-                <p className="text-4xl font-black text-red-600">
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Blood Type - Large but not too big */}
+              <div className="bg-red-50 rounded-2xl p-4 text-center">
+                <Droplets className="w-8 h-8 text-red-500 mx-auto mb-1" />
+                <p className="text-xs text-muted-foreground mb-0.5">혈액형</p>
+                <p className="text-3xl font-black text-red-600">
                   {BLOOD_TYPE_LABELS[member.bloodType]}
                 </p>
               </div>
 
               {/* Birth Date & Weight */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 {member.birthDate && (
-                  <div className="bg-blue-50 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Calendar className="w-5 h-5 text-blue-500" />
-                      <span className="text-sm text-muted-foreground">생년월일</span>
+                  <div className="bg-blue-50 rounded-xl p-3">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Calendar className="w-4 h-4 text-blue-500" />
+                      <span className="text-xs text-muted-foreground">생년월일</span>
                     </div>
-                    <p className="text-xl font-bold text-blue-700">
+                    <p className="text-lg font-bold text-blue-700">
                       {new Date(member.birthDate).toLocaleDateString("ko-KR")}
                     </p>
                   </div>
                 )}
                 {member.weightKg && (
-                  <div className="bg-green-50 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Weight className="w-5 h-5 text-green-500" />
-                      <span className="text-sm text-muted-foreground">체중</span>
+                  <div className="bg-green-50 rounded-xl p-3">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Weight className="w-4 h-4 text-green-500" />
+                      <span className="text-xs text-muted-foreground">체중</span>
                     </div>
-                    <p className="text-xl font-bold text-green-700">
+                    <p className="text-lg font-bold text-green-700">
                       {member.weightKg} kg
                     </p>
                   </div>
@@ -166,16 +166,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Allergies - Warning Style */}
               {member.allergies.length > 0 && (
-                <div className="bg-orange-50 border-2 border-orange-300 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <AlertTriangle className="w-6 h-6 text-orange-500" />
-                    <span className="text-lg font-bold text-orange-700">⚠️ 알레르기</span>
+                <div className="bg-orange-50 border-2 border-orange-300 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className="w-5 h-5 text-orange-500" />
+                    <span className="text-base font-bold text-orange-700">⚠️ 알레르기</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.allergies.map((allergy) => (
                       <span
                         key={allergy}
-                        className="px-4 py-2 bg-orange-200 text-orange-800 text-lg font-bold rounded-full"
+                        className="px-3 py-1.5 bg-orange-200 text-orange-800 text-base font-bold rounded-full"
                       >
                         {allergy}
                       </span>
@@ -186,16 +186,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Chronic Diseases */}
               {member.chronicDiseases.length > 0 && (
-                <div className="bg-primary/5 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Heart className="w-6 h-6 text-primary" />
-                    <span className="text-lg font-bold text-foreground">기저질환</span>
+                <div className="bg-primary/5 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Heart className="w-5 h-5 text-primary" />
+                    <span className="text-base font-bold text-foreground">기저질환</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.chronicDiseases.map((disease) => (
                       <span
                         key={disease}
-                        className="px-4 py-2 bg-primary/20 text-primary text-lg font-semibold rounded-full"
+                        className="px-3 py-1.5 bg-primary/20 text-primary text-base font-semibold rounded-full"
                       >
                         {disease}
                       </span>
@@ -206,16 +206,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Medications */}
               {member.medications && member.medications.length > 0 && (
-                <div className="bg-purple-50 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Pill className="w-6 h-6 text-purple-500" />
-                    <span className="text-lg font-bold text-purple-700">복용 중인 약물</span>
+                <div className="bg-purple-50 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Pill className="w-5 h-5 text-purple-500" />
+                    <span className="text-base font-bold text-purple-700">복용 중인 약물</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.medications.map((med) => (
                       <span
                         key={med}
-                        className="px-4 py-2 bg-purple-200 text-purple-800 text-lg font-semibold rounded-full"
+                        className="px-3 py-1.5 bg-purple-200 text-purple-800 text-base font-semibold rounded-full"
                       >
                         {med}
                       </span>
@@ -226,14 +226,14 @@ const MedicalPassportDetailModal = ({
 
               {/* Guardian Contact */}
               {member.guardianContact && (
-                <div className="bg-gray-50 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Phone className="w-6 h-6 text-gray-600" />
-                    <span className="text-lg font-bold text-foreground">보호자 연락처</span>
+                <div className="bg-gray-50 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Phone className="w-5 h-5 text-gray-600" />
+                    <span className="text-base font-bold text-foreground">보호자 연락처</span>
                   </div>
                   <a 
                     href={`tel:${member.guardianContact}`}
-                    className="text-2xl font-bold text-primary hover:underline"
+                    className="text-xl font-bold text-primary hover:underline"
                   >
                     {member.guardianContact}
                   </a>
@@ -242,34 +242,34 @@ const MedicalPassportDetailModal = ({
 
               {/* Notes */}
               {member.notes && (
-                <div className="bg-gray-50 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileText className="w-6 h-6 text-gray-600" />
-                    <span className="text-lg font-bold text-foreground">특이사항</span>
+                <div className="bg-gray-50 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FileText className="w-5 h-5 text-gray-600" />
+                    <span className="text-base font-bold text-foreground">특이사항</span>
                   </div>
-                  <p className="text-lg text-foreground whitespace-pre-wrap">
+                  <p className="text-base text-foreground whitespace-pre-wrap">
                     {member.notes}
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Bottom Actions */}
-            <div className="border-t border-border p-4 space-y-3 bg-gray-50">
+            {/* Bottom Actions - Compact */}
+            <div className="border-t border-border p-3 space-y-2 bg-gray-50 shrink-0">
               {/* Copy for 119 Button */}
               <Button
                 onClick={handleCopy}
                 variant="outline"
-                className="w-full py-5 rounded-xl text-base font-semibold border-2"
+                className="w-full py-4 rounded-xl text-sm font-semibold border-2"
               >
                 {copied ? (
                   <>
-                    <Check className="w-5 h-5 mr-2 text-green-500" />
+                    <Check className="w-4 h-4 mr-2 text-green-500" />
                     복사됨!
                   </>
                 ) : (
                   <>
-                    <Copy className="w-5 h-5 mr-2" />
+                    <Copy className="w-4 h-4 mr-2" />
                     📞 119 전달용 텍스트 복사
                   </>
                 )}
@@ -278,9 +278,9 @@ const MedicalPassportDetailModal = ({
               {/* Call Ambulance Button */}
               <Button
                 onClick={() => onCallAmbulance(member)}
-                className="w-full py-5 rounded-xl text-base font-semibold bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                className="w-full py-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
               >
-                <Ambulance className="w-5 h-5 mr-2" />
+                <Ambulance className="w-4 h-4 mr-2" />
                 🚑 이 환자로 호출
               </Button>
             </div>
