@@ -30,6 +30,7 @@ interface ClusteredMapViewProps {
   holidayPharmacies?: HolidayPharmacy[];
   activeAmbulanceTrips?: AmbulanceTrip[];
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
+  isMoonlightMode?: boolean;
 }
 
 // Component to handle map center changes and bounds
@@ -258,6 +259,7 @@ const ClusteredMapView = ({
   holidayPharmacies = [],
   activeAmbulanceTrips = [],
   onBoundsChange,
+  isMoonlightMode = false,
 }: ClusteredMapViewProps) => {
   // react-leaflet's Marker update logic compares position by reference.
   // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
@@ -441,14 +443,15 @@ const ClusteredMapView = ({
               fever: Math.max(0, hospital.beds.fever),
             };
             const hasPediatric = normalizedBeds.pediatric > 0;
-            const isPediatricFilter = activeFilter === "pediatric";
+            const isPediatricFilter = activeFilter === "pediatric" || activeFilter === "moonlight";
             const icon = createHospitalIcon(
               status,
               displayBeds,
               hasPediatric,
               hospital.isTraumaCenter,
               isPediatricFilter,
-              hospital.emergencyGrade
+              hospital.emergencyGrade,
+              isMoonlightMode
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
