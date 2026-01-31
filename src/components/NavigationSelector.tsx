@@ -21,30 +21,65 @@ interface NavigationSelectorProps {
   showLabel?: boolean;
 }
 
+// SVG icons for each map app
+const KakaoMapIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+    <rect x="3" y="5" width="18" height="14" rx="2" fill="#3B2A1A" />
+    <path d="M7 9h10M7 12h6M7 15h8" stroke="#FFE812" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="17" cy="14" r="2" fill="#FFE812" />
+  </svg>
+);
+
+const NaverMapIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+    <circle cx="12" cy="12" r="8" stroke="white" strokeWidth="1.5" />
+    <path d="M12 6v12M6 12h12" stroke="white" strokeWidth="1.5" />
+    <path d="M12 4l1 2h-2l1-2z" fill="#FF3D00" />
+    <circle cx="12" cy="12" r="2" fill="white" />
+  </svg>
+);
+
+const TMapIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+    <rect x="4" y="8" width="16" height="8" rx="2" fill="white" />
+    <circle cx="7" cy="16" r="2" fill="#333" />
+    <circle cx="17" cy="16" r="2" fill="#333" />
+    <path d="M6 10h4v2H6z" fill="#333" />
+    <path d="M14 8h2v4h-2z" fill="#333" />
+  </svg>
+);
+
+const GoogleMapIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="white" />
+    <circle cx="12" cy="9" r="2.5" fill="#EA4335" />
+  </svg>
+);
+
 const navApps = [
   { 
     id: "kakao" as NavigationApp, 
     name: "카카오맵", 
-    icon: "🗺️",
-    color: "from-yellow-400 to-yellow-500"
+    Icon: KakaoMapIcon,
+    bgColor: "bg-[#FFE812]"
   },
   { 
     id: "naver" as NavigationApp, 
     name: "네이버지도", 
-    icon: "🧭",
-    color: "from-green-500 to-green-600"
+    Icon: NaverMapIcon,
+    bgColor: "bg-[#03C75A]"
   },
   { 
     id: "tmap" as NavigationApp, 
     name: "티맵", 
-    icon: "🚗",
-    color: "from-blue-500 to-blue-600"
+    Icon: TMapIcon,
+    bgColor: "bg-[#0064FF]"
   },
   { 
     id: "google" as NavigationApp, 
     name: "구글맵", 
-    icon: "📍",
-    color: "from-red-500 to-red-600"
+    Icon: GoogleMapIcon,
+    bgColor: "bg-[#EA4335]"
   },
 ];
 
@@ -90,10 +125,10 @@ const NavigationSelector = ({
             <button
               key={app.id}
               onClick={() => handleSelectApp(app.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left"
             >
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${app.color} flex items-center justify-center text-white text-sm`}>
-                {app.icon}
+              <div className={`w-10 h-10 rounded-xl ${app.bgColor} flex items-center justify-center shadow-sm`}>
+                <app.Icon />
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">{app.name}</p>
