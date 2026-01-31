@@ -54,11 +54,14 @@ const DataFreshnessTimer = ({ lastUpdated, isLoading }: DataFreshnessTimerProps)
         }`}>
           {getDisplayText()}
         </p>
-        <p className={`text-[11px] font-medium ${
-          isStale ? "text-red-500" : "text-muted-foreground"
+        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold mt-1 ${
+          isStale 
+            ? "bg-red-100 text-red-600" 
+            : "bg-green-100 text-green-700"
         }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${isStale ? "bg-red-500" : "bg-green-500 animate-pulse"}`} />
           {isStale ? "데이터 지연됨" : "실시간 업데이트"}
-        </p>
+        </span>
       </div>
     </div>
   );
