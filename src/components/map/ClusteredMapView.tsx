@@ -7,11 +7,13 @@ import { Hospital, FilterType, getHospitalStatus, calculateDistance } from "@/da
 import ReportMarker from "../ReportMarker";
 import DriverMarker from "../DriverMarker";
 import PharmacyMarker from "../PharmacyMarker";
+import OpenPharmacyMarker from "./OpenPharmacyMarker";
 import AmbulanceTripMarker from "./AmbulanceTripMarker";
 import ClusterPopup from "./ClusterPopup";
 import type { LiveReport } from "../LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
+import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIcon";
 import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName } from "./hospitalIconUtils";
@@ -28,6 +30,8 @@ interface ClusteredMapViewProps {
   nearbyDrivers?: DriverPresence[];
   onCallDriver?: (driver: DriverPresence) => void;
   holidayPharmacies?: HolidayPharmacy[];
+  nearbyPharmacies?: NearbyPharmacy[];
+  onPharmacyClick?: (pharmacy: NearbyPharmacy) => void;
   activeAmbulanceTrips?: AmbulanceTrip[];
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
   isMoonlightMode?: boolean;
@@ -257,6 +261,8 @@ const ClusteredMapView = ({
   nearbyDrivers = [],
   onCallDriver,
   holidayPharmacies = [],
+  nearbyPharmacies = [],
+  onPharmacyClick,
   activeAmbulanceTrips = [],
   onBoundsChange,
   isMoonlightMode = false,
@@ -497,6 +503,15 @@ const ClusteredMapView = ({
         {/* Holiday Pharmacy Markers */}
         {holidayPharmacies.map((pharmacy) => (
           <PharmacyMarker key={`pharmacy-${pharmacy.id}`} pharmacy={pharmacy} />
+        ))}
+
+        {/* Nearby Open Pharmacy Markers */}
+        {nearbyPharmacies.map((pharmacy) => (
+          <OpenPharmacyMarker 
+            key={`open-pharmacy-${pharmacy.id}`} 
+            pharmacy={pharmacy}
+            onClick={onPharmacyClick || (() => {})}
+          />
         ))}
 
         {/* Active Ambulance Trip Markers */}
