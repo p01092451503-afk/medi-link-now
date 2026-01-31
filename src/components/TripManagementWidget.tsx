@@ -24,6 +24,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import { useDriverPresence } from "@/hooks/useDriverPresence";
+import { useDispatchRequests, type DispatchRequest } from "@/hooks/useDispatchRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import GeofenceArrivalModal from "@/components/GeofenceArrivalModal";
@@ -51,6 +52,7 @@ const GEOFENCE_RADIUS_KM = 0.5; // 500m
 const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode = false }: TripManagementWidgetProps) => {
   const { myActiveTrip, startTrip, completeTrip, cancelTrip, isLoading } = useAmbulanceTrips();
   const { updateStatus } = useDriverPresence();
+  const { myRequests, updateStatus: updateDispatchStatus } = useDispatchRequests();
   const [isSelectingHospital, setIsSelectingHospital] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hospitals, setHospitals] = useState<HospitalOption[]>([]);
@@ -64,8 +66,10 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   const [showFareModal, setShowFareModal] = useState(false);
   const [pendingLogId, setPendingLogId] = useState<string | null>(null);
   const [completedHospitalName, setCompletedHospitalName] = useState<string>("");
+  const [acceptedDispatch, setAcceptedDispatch] = useState<DispatchRequest | null>(null);
   const geofenceWatchIdRef = useRef<number | null>(null);
   const hasShownArrivalModalRef = useRef(false);
+  const hasAutoStartedRef = useRef<string | null>(null);
 
   // Fetch hospitals from Supabase (including lat/lng for geofencing)
   useEffect(() => {
@@ -110,6 +114,41 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
     const interval = setInterval(updateDuration, 1000);
     return () => clearInterval(interval);
   }, [myActiveTrip]);
+
+  // Watch for accepted dispatch requests and auto-start trip
+  useEffect(() => {
+    // Find the most recent accepted dispatch request that I'm the driver for
+    const accepted = myRequests.find(
+      (r) => r.status === "accepted" && r.destination
+    );
+    
+    setAcceptedDispatch(accepted || null);
+    
+    // Auto-start trip if we have an accepted dispatch with destination and no active trip
+    if (
+      accepted && 
+      accepted.destination && 
+      !myActiveTrip && 
+      hasAutoStartedRef.current !== accepted.id
+    ) {
+      // Mark as auto-started to prevent duplicate starts
+      hasAutoStartedRef.current = accepted.id;
+      
+      // Find the hospital that matches the destination
+      const matchingHospital = hospitals.find(
+        (h) => h.name === accepted.destination || 
+               h.address.includes(accepted.destination || "")
+      );
+      
+      if (matchingHospital) {
+        // Auto-start with the matching hospital
+        handleAutoStartTrip(matchingHospital, accepted);
+      } else if (accepted.destination_lat && accepted.destination_lng) {
+        // Create a custom destination from dispatch info
+        handleAutoStartCustomDestination(accepted);
+      }
+    }
+  }, [myRequests, myActiveTrip, hospitals]);
 
   // Geofencing: Watch location and check proximity to destination
   useEffect(() => {
@@ -219,6 +258,70 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
     } catch (error) {
       console.error("Error starting trip:", error);
       toast.error("이송 시작에 실패했습니다");
+    }
+  };
+
+  // Auto-start trip from accepted dispatch request with matching hospital
+  const handleAutoStartTrip = async (hospital: HospitalOption, dispatch: DispatchRequest) => {
+    try {
+      toast.info(`${hospital.name}(으)로 자동 이송 시작...`);
+      
+      const result = await startTrip(hospital.id, hospital.name, undefined, dispatch.patient_condition || undefined);
+      if (result) {
+        setTripStartTime(new Date());
+        setSelectedHospital(hospital);
+        updateStatus("busy");
+        
+        // Update dispatch status to en_route
+        await updateDispatchStatus(dispatch.id, "en_route");
+        
+        if (hospital.lat && hospital.lng) {
+          setDestinationCoords({
+            lat: hospital.lat,
+            lng: hospital.lng,
+            name: hospital.name,
+          });
+        }
+        
+        getLocation().then(setStartLocation);
+        toast.success(`${hospital.name}(으)로 이송을 시작합니다`);
+      }
+    } catch (error) {
+      console.error("Error auto-starting trip:", error);
+      toast.error("자동 이송 시작에 실패했습니다");
+      hasAutoStartedRef.current = null; // Reset so user can try again
+    }
+  };
+
+  // Auto-start trip with custom destination coordinates from dispatch
+  const handleAutoStartCustomDestination = async (dispatch: DispatchRequest) => {
+    if (!dispatch.destination_lat || !dispatch.destination_lng || !dispatch.destination) return;
+    
+    try {
+      toast.info(`${dispatch.destination}(으)로 자동 이송 시작...`);
+      
+      // Use a placeholder hospital ID (0) for custom destinations
+      const result = await startTrip(0, dispatch.destination, undefined, dispatch.patient_condition || undefined);
+      if (result) {
+        setTripStartTime(new Date());
+        updateStatus("busy");
+        
+        // Update dispatch status to en_route
+        await updateDispatchStatus(dispatch.id, "en_route");
+        
+        setDestinationCoords({
+          lat: dispatch.destination_lat,
+          lng: dispatch.destination_lng,
+          name: dispatch.destination,
+        });
+        
+        getLocation().then(setStartLocation);
+        toast.success(`${dispatch.destination}(으)로 이송을 시작합니다`);
+      }
+    } catch (error) {
+      console.error("Error auto-starting trip:", error);
+      toast.error("자동 이송 시작에 실패했습니다");
+      hasAutoStartedRef.current = null;
     }
   };
 
