@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Navigation,
@@ -11,7 +11,6 @@ import {
   Ambulance,
   Clock,
   Building2,
-  Square,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,14 +23,19 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
+import { useDriverPresence } from "@/hooks/useDriverPresence";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import GeofenceArrivalModal from "@/components/GeofenceArrivalModal";
+import NavigationSelector from "@/components/NavigationSelector";
 
 interface HospitalOption {
   id: number;
   name: string;
   address: string;
   region: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface DrivingLog {
@@ -50,8 +54,11 @@ interface TripManagementWidgetProps {
   isSimulateMode?: boolean;
 }
 
+const GEOFENCE_RADIUS_KM = 0.5; // 500m
+
 const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripManagementWidgetProps) => {
   const { myActiveTrip, startTrip, completeTrip, cancelTrip, isLoading } = useAmbulanceTrips();
+  const { updateStatus } = useDriverPresence();
   const [isSelectingHospital, setIsSelectingHospital] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hospitals, setHospitals] = useState<HospitalOption[]>([]);
@@ -59,15 +66,19 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
   const [tripDuration, setTripDuration] = useState<string>("");
   const [tripStartTime, setTripStartTime] = useState<Date | null>(null);
   const [startLocation, setStartLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [showArrivalModal, setShowArrivalModal] = useState(false);
+  const [destinationCoords, setDestinationCoords] = useState<{ lat: number; lng: number; name: string } | null>(null);
+  const geofenceWatchIdRef = useRef<number | null>(null);
+  const hasShownArrivalModalRef = useRef(false);
 
-  // Fetch hospitals from Supabase
+  // Fetch hospitals from Supabase (including lat/lng for geofencing)
   useEffect(() => {
     const fetchHospitals = async () => {
       setIsLoadingHospitals(true);
       try {
         const { data, error } = await supabase
           .from("hospitals")
-          .select("id, name, address, region")
+          .select("id, name, address, region, lat, lng")
           .order("name");
 
         if (error) throw error;
@@ -103,6 +114,53 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
     const interval = setInterval(updateDuration, 1000);
     return () => clearInterval(interval);
   }, [myActiveTrip]);
+
+  // Geofencing: Watch location and check proximity to destination
+  useEffect(() => {
+    if (!myActiveTrip || !destinationCoords || isSimulateMode) {
+      return;
+    }
+
+    // Reset the modal shown flag when starting a new trip
+    hasShownArrivalModalRef.current = false;
+
+    const checkGeofence = (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
+      const distance = calculateDistance(
+        latitude,
+        longitude,
+        destinationCoords.lat,
+        destinationCoords.lng
+      );
+
+      console.log(`Distance to destination: ${distance.toFixed(2)}km`);
+
+      // If within 500m and modal hasn't been shown yet
+      if (distance <= GEOFENCE_RADIUS_KM && !hasShownArrivalModalRef.current) {
+        hasShownArrivalModalRef.current = true;
+        setShowArrivalModal(true);
+      }
+    };
+
+    if (navigator.geolocation) {
+      geofenceWatchIdRef.current = navigator.geolocation.watchPosition(
+        checkGeofence,
+        (error) => console.error("Geofence watch error:", error),
+        {
+          enableHighAccuracy: true,
+          maximumAge: 5000,
+          timeout: 10000,
+        }
+      );
+    }
+
+    return () => {
+      if (geofenceWatchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(geofenceWatchIdRef.current);
+        geofenceWatchIdRef.current = null;
+      }
+    };
+  }, [myActiveTrip, destinationCoords, isSimulateMode]);
 
   const filteredHospitals = hospitals.filter(
     (h) =>
@@ -152,6 +210,18 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
         setIsSelectingHospital(false);
         setSearchQuery("");
         
+        // Update driver status to busy
+        updateStatus("busy");
+        
+        // Store destination coordinates for geofencing
+        if (hospital.lat && hospital.lng) {
+          setDestinationCoords({
+            lat: hospital.lat,
+            lng: hospital.lng,
+            name: hospital.name,
+          });
+        }
+        
         // Get location in background for logging purposes
         getLocation().then(setStartLocation);
       }
@@ -185,14 +255,32 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
     }
 
     await completeTrip();
+    
+    // Update driver status back to available
+    updateStatus("available");
+    
     setTripStartTime(null);
     setStartLocation(null);
+    setDestinationCoords(null);
+    setShowArrivalModal(false);
   };
 
   const handleCancelTrip = async () => {
     await cancelTrip();
+    
+    // Update driver status back to available
+    updateStatus("available");
+    
     setTripStartTime(null);
     setStartLocation(null);
+    setDestinationCoords(null);
+    setShowArrivalModal(false);
+  };
+
+  const handleArrivalModalCancel = () => {
+    setShowArrivalModal(false);
+    // Allow the modal to be shown again if they leave the geofence and re-enter
+    // hasShownArrivalModalRef.current = false; // Uncomment if you want to allow re-trigger
   };
 
   if (isLoading) {
@@ -208,6 +296,14 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
 
   return (
     <>
+      {/* Geofence Arrival Modal */}
+      <GeofenceArrivalModal
+        isOpen={showArrivalModal}
+        hospitalName={destinationCoords?.name || myActiveTrip?.destination_hospital_name || ""}
+        onConfirm={handleCompleteTrip}
+        onCancel={handleArrivalModalCancel}
+      />
+
       {/* Active Trip Card */}
       <AnimatePresence>
         {myActiveTrip ? (
@@ -232,9 +328,9 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                     </div>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full flex items-center gap-1">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  진행 중
+                <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                  운행 중 (Busy)
                 </span>
               </div>
 
@@ -242,7 +338,7 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
               <div className="bg-muted/50 rounded-xl p-3 mb-4">
                 <div className="flex items-start gap-2">
                   <Navigation className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">
                       {myActiveTrip.destination_hospital_name}
                     </p>
@@ -252,6 +348,16 @@ const TripManagementWidget = ({ onLogComplete, isSimulateMode = false }: TripMan
                       </p>
                     )}
                   </div>
+                  {/* Quick Navigation Button */}
+                  {destinationCoords && (
+                    <NavigationSelector
+                      destination={destinationCoords}
+                      variant="ghost"
+                      size="sm"
+                      showLabel={false}
+                      className="h-8 w-8 p-0"
+                    />
+                  )}
                 </div>
               </div>
 

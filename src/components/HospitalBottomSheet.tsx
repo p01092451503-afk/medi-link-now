@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Navigation, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Eye } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import ERRoadviewModal from "@/components/ERRoadviewModal";
 import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
+import NavigationSelector from "@/components/NavigationSelector";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -130,13 +131,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
 
   const handleCall = () => {
     window.location.href = `tel:${hospital.phone}`;
-  };
-
-  const handleNavigate = () => {
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`,
-      "_blank"
-    );
   };
 
   const handleToggleHotline = () => {
@@ -418,14 +412,15 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   <Phone className="w-4 h-4 mr-2" />
                   응급실 전화
                 </Button>
-                <Button
-                  onClick={handleNavigate}
+                <NavigationSelector
+                  destination={{
+                    lat: hospital.lat,
+                    lng: hospital.lng,
+                    name: hospital.nameKr,
+                  }}
                   variant="outline"
-                  className="border-primary text-primary hover:bg-primary/5 font-semibold py-6 rounded-xl"
-                >
-                  <Navigation className="w-4 h-4 mr-2" />
-                  길안내
-                </Button>
+                  className="border-primary text-primary hover:bg-primary/5 font-semibold py-6 rounded-xl h-auto"
+                />
               </div>
             </div>
           </motion.div>
