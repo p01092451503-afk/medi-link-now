@@ -13,6 +13,11 @@ export interface FamilyMemberDB {
   chronic_diseases: string[];
   allergies: string[];
   notes: string | null;
+  // New fields for Medical Passport
+  birth_date: string | null;
+  weight_kg: number | null;
+  medications: string[] | null;
+  guardian_contact: string | null;
   created_at: string;
   updated_at: string;
 }

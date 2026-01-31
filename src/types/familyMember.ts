@@ -7,6 +7,11 @@ export interface FamilyMember {
   chronicDiseases: string[];
   allergies: string[];
   notes?: string;
+  // New fields for Medical Passport
+  birthDate?: string;
+  weightKg?: number;
+  medications?: string[];
+  guardianContact?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,4 +57,15 @@ export const COMMON_ALLERGIES = [
   "우유",
   "조영제",
   "라텍스",
+];
+
+export const COMMON_MEDICATIONS = [
+  "아스피린",
+  "혈압약",
+  "당뇨약",
+  "혈전용해제",
+  "스테로이드",
+  "항생제",
+  "진통제",
+  "수면제",
 ];

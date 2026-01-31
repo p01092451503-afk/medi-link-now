@@ -1,6 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, UserPlus, Droplets, Heart, AlertTriangle, Check } from "lucide-react";
+import { 
+  X, 
+  UserPlus, 
+  Droplets, 
+  Heart, 
+  AlertTriangle, 
+  Check,
+  Calendar,
+  Weight,
+  Pill,
+  Phone
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +21,7 @@ import {
   BLOOD_TYPE_LABELS,
   COMMON_CHRONIC_DISEASES,
   COMMON_ALLERGIES,
+  COMMON_MEDICATIONS,
 } from "@/types/familyMember";
 
 interface FamilyMemberFormProps {
@@ -20,13 +32,48 @@ interface FamilyMemberFormProps {
 }
 
 const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMemberFormProps) => {
-  const [name, setName] = useState(initialData?.name || "");
-  const [age, setAge] = useState(initialData?.age?.toString() || "");
-  const [relation, setRelation] = useState<FamilyMember["relation"]>(initialData?.relation || "self");
-  const [bloodType, setBloodType] = useState<FamilyMember["bloodType"]>(initialData?.bloodType || "unknown");
-  const [chronicDiseases, setChronicDiseases] = useState<string[]>(initialData?.chronicDiseases || []);
-  const [allergies, setAllergies] = useState<string[]>(initialData?.allergies || []);
-  const [notes, setNotes] = useState(initialData?.notes || "");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [relation, setRelation] = useState<FamilyMember["relation"]>("self");
+  const [bloodType, setBloodType] = useState<FamilyMember["bloodType"]>("unknown");
+  const [chronicDiseases, setChronicDiseases] = useState<string[]>([]);
+  const [allergies, setAllergies] = useState<string[]>([]);
+  const [notes, setNotes] = useState("");
+  // New fields
+  const [birthDate, setBirthDate] = useState("");
+  const [weightKg, setWeightKg] = useState("");
+  const [medications, setMedications] = useState<string[]>([]);
+  const [guardianContact, setGuardianContact] = useState("");
+
+  // Reset form when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || "");
+      setAge(initialData.age?.toString() || "");
+      setRelation(initialData.relation || "self");
+      setBloodType(initialData.bloodType || "unknown");
+      setChronicDiseases(initialData.chronicDiseases || []);
+      setAllergies(initialData.allergies || []);
+      setNotes(initialData.notes || "");
+      setBirthDate(initialData.birthDate || "");
+      setWeightKg(initialData.weightKg?.toString() || "");
+      setMedications(initialData.medications || []);
+      setGuardianContact(initialData.guardianContact || "");
+    } else {
+      // Reset to defaults
+      setName("");
+      setAge("");
+      setRelation("self");
+      setBloodType("unknown");
+      setChronicDiseases([]);
+      setAllergies([]);
+      setNotes("");
+      setBirthDate("");
+      setWeightKg("");
+      setMedications([]);
+      setGuardianContact("");
+    }
+  }, [initialData, isOpen]);
 
   const toggleChronicDisease = (disease: string) => {
     setChronicDiseases((prev) =>
@@ -37,6 +84,12 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
   const toggleAllergy = (allergy: string) => {
     setAllergies((prev) =>
       prev.includes(allergy) ? prev.filter((a) => a !== allergy) : [...prev, allergy]
+    );
+  };
+
+  const toggleMedication = (med: string) => {
+    setMedications((prev) =>
+      prev.includes(med) ? prev.filter((m) => m !== med) : [...prev, med]
     );
   };
 
@@ -51,16 +104,12 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
       chronicDiseases,
       allergies,
       notes: notes.trim() || undefined,
+      birthDate: birthDate || undefined,
+      weightKg: weightKg ? parseFloat(weightKg) : undefined,
+      medications: medications.length > 0 ? medications : undefined,
+      guardianContact: guardianContact.trim() || undefined,
     });
 
-    // Reset form
-    setName("");
-    setAge("");
-    setRelation("self");
-    setBloodType("unknown");
-    setChronicDiseases([]);
-    setAllergies([]);
-    setNotes("");
     onClose();
   };
 
@@ -84,7 +133,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between">
+            <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <UserPlus className="w-5 h-5 text-primary" />
@@ -115,7 +164,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <Label className="text-base font-medium mb-2 block">이름</Label>
+                    <Label className="text-base font-medium mb-2 block">이름 *</Label>
                     <Input
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -124,7 +173,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                     />
                   </div>
                   <div>
-                    <Label className="text-base font-medium mb-2 block">나이</Label>
+                    <Label className="text-base font-medium mb-2 block">나이 *</Label>
                     <Input
                       type="number"
                       value={age}
@@ -148,6 +197,56 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                 </div>
               </div>
 
+              {/* Additional Info - Birth Date, Weight, Contact */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center">2</span>
+                  추가 정보
+                </h4>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 flex items-center gap-1">
+                      <Calendar className="w-4 h-4 text-blue-500" />
+                      생년월일
+                    </Label>
+                    <Input
+                      type="date"
+                      value={birthDate}
+                      onChange={(e) => setBirthDate(e.target.value)}
+                      className="py-5 rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium mb-2 flex items-center gap-1">
+                      <Weight className="w-4 h-4 text-green-500" />
+                      체중 (kg)
+                    </Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={weightKg}
+                      onChange={(e) => setWeightKg(e.target.value)}
+                      placeholder="60.5"
+                      className="py-5 rounded-xl"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label className="text-sm font-medium mb-2 flex items-center gap-1">
+                      <Phone className="w-4 h-4 text-gray-500" />
+                      보호자 연락처
+                    </Label>
+                    <Input
+                      type="tel"
+                      value={guardianContact}
+                      onChange={(e) => setGuardianContact(e.target.value)}
+                      placeholder="010-1234-5678"
+                      className="py-5 rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Blood Type */}
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
@@ -158,6 +257,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                   {Object.entries(BLOOD_TYPE_LABELS).map(([key, label]) => (
                     <button
                       key={key}
+                      type="button"
                       onClick={() => setBloodType(key as FamilyMember["bloodType"])}
                       className={`py-3 px-2 rounded-xl text-sm font-medium transition-all ${
                         bloodType === key
@@ -181,6 +281,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                   {COMMON_CHRONIC_DISEASES.map((disease) => (
                     <button
                       key={disease}
+                      type="button"
                       onClick={() => toggleChronicDisease(disease)}
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         chronicDiseases.includes(disease)
@@ -205,6 +306,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                   {COMMON_ALLERGIES.map((allergy) => (
                     <button
                       key={allergy}
+                      type="button"
                       onClick={() => toggleAllergy(allergy)}
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         allergies.includes(allergy)
@@ -219,13 +321,38 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                 </div>
               </div>
 
+              {/* Medications */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Pill className="w-5 h-5 text-purple-500" />
+                  복용 중인 약물
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {COMMON_MEDICATIONS.map((med) => (
+                    <button
+                      key={med}
+                      type="button"
+                      onClick={() => toggleMedication(med)}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
+                        medications.includes(med)
+                          ? "bg-purple-500 text-white"
+                          : "bg-gray-100 text-foreground hover:bg-gray-200"
+                      }`}
+                    >
+                      {medications.includes(med) && <Check className="w-4 h-4" />}
+                      {med}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Notes */}
               <div className="space-y-4">
                 <Label className="text-base font-medium">특이사항 (선택)</Label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="복용 중인 약물, 기타 특이사항..."
+                  placeholder="기타 특이사항, 복용 중인 약물 상세 정보..."
                   className="w-full min-h-[100px] p-4 rounded-xl border border-input bg-background text-base resize-none"
                 />
               </div>
