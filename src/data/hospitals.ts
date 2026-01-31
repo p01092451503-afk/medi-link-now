@@ -1753,7 +1753,7 @@ export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neuro" | "endoscopy" | "dialysis" | "trauma" | "cardio";
 
 // Special facility filters
-export type SpecialFilterType = "pharmacy" | "traumaCenter" | "moonlight" | "openPharmacy" | "nightPharmacy" | "holidayPharmacy";
+export type SpecialFilterType = "pharmacy" | "traumaCenter" | "moonlight" | "openPharmacy" | "nightPharmacy";
 
 // Legal emergency medical institution filters (법정 응급의료기관)
 export type LegalGradeFilterType = "legal_only" | "regional_center" | "local_center" | "local_institution";
@@ -1784,7 +1784,6 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "moonlight", label: "Night Pediatric", labelKr: "야간소아", category: "special" },
   { id: "openPharmacy", label: "Open Pharmacy", labelKr: "💊 영업약국", category: "special" },
   { id: "nightPharmacy", label: "Night Pharmacy", labelKr: "🌙 심야약국", category: "special" },
-  { id: "holidayPharmacy", label: "Holiday Pharmacy", labelKr: "📅 휴일지킴이", category: "special" },
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {
