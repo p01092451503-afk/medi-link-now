@@ -98,11 +98,11 @@ const UserLocationMarker = ({ position }: { position: [number, number] }) => {
 
 type KoreaBoundsLiteral = [L.LatLngTuple, L.LatLngTuple];
 
-// South Korea bounds
+// South Korea bounds (includes Dokdo at ~131.87° E)
 const KOREA_BOUNDS: KoreaBoundsLiteral = [
-  // Roughly South Korea (+ Jeju, Ulleung); intentionally avoids far-neighbor regions
+  // Roughly South Korea (+ Jeju, Ulleung, Dokdo)
   [33.0, 124.0], // Southwest corner
-  [38.8, 131.0], // Northeast corner
+  [38.8, 132.0], // Northeast corner (extended for Dokdo)
 ];
 
 const computeMinZoomToContainViewportInBounds = (map: L.Map, bounds: L.LatLngBounds) => {
