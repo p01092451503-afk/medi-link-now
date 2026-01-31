@@ -488,33 +488,36 @@ const Landing = () => {
               </div>
             </div>
 
-            {/* Feature Cards - Horizontal compact layout */}
+            {/* Feature Cards - Horizontal compact layout with descriptions */}
             <div className="relative grid grid-cols-3 gap-2">
               {/* Safe Arrival Score */}
               <div className="flex flex-col items-center p-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-white text-center">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center mb-1.5">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center mb-1">
                   <Target className="w-3.5 h-3.5 text-emerald-600" />
                 </div>
+                <p className="text-[8px] text-muted-foreground mb-0.5">병상 확보</p>
                 <p className="text-lg font-bold text-emerald-600 leading-tight">95%</p>
-                <p className="text-[9px] text-muted-foreground leading-tight">안전 도착</p>
+                <p className="text-[8px] text-emerald-600/80 leading-tight">예상 확률</p>
               </div>
 
               {/* Shadow Demand */}
               <div className="flex flex-col items-center p-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-white text-center">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center mb-1.5">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center mb-1">
                   <Ambulance className="w-3.5 h-3.5 text-blue-600" />
                 </div>
-                <p className="text-lg font-bold text-blue-600 leading-tight">-2</p>
-                <p className="text-[9px] text-muted-foreground leading-tight">이동 중</p>
+                <p className="text-[8px] text-muted-foreground mb-0.5">이동 중</p>
+                <p className="text-lg font-bold text-blue-600 leading-tight">2대</p>
+                <p className="text-[8px] text-blue-600/80 leading-tight">구급차</p>
               </div>
 
               {/* Bed Trend */}
               <div className="flex flex-col items-center p-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-white text-center">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-1.5">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-1">
                   <TrendingDown className="w-3.5 h-3.5 text-amber-600" />
                 </div>
+                <p className="text-[8px] text-muted-foreground mb-0.5">병상 소진</p>
                 <p className="text-lg font-bold text-amber-600 leading-tight">-3</p>
-                <p className="text-[9px] text-muted-foreground leading-tight">/시간</p>
+                <p className="text-[8px] text-amber-600/80 leading-tight">병상/시간</p>
               </div>
             </div>
 
