@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database, Heart } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -53,6 +53,8 @@ const getZoomForRadius = (radiusKm: number): number => {
 
 const MapPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isDriverMode = searchParams.get("mode") === "driver";
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
@@ -565,15 +567,17 @@ const MapPage = () => {
               </div>
             </button>
             
-            {/* Family Medical Card Button */}
-            <motion.button
-              onClick={() => navigate("/family")}
-              className="bg-white rounded-xl px-3 py-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-              whileTap={{ scale: 0.95 }}
-            >
-              <Heart className="w-5 h-5 text-pink-500" />
-              <span className="text-sm font-medium text-foreground">가족 카드</span>
-            </motion.button>
+            {/* Family Medical Card Button - Hide in driver mode */}
+            {!isDriverMode && (
+              <motion.button
+                onClick={() => navigate("/family")}
+                className="bg-white rounded-xl px-3 py-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                whileTap={{ scale: 0.95 }}
+              >
+                <Heart className="w-5 h-5 text-pink-500" />
+                <span className="text-sm font-medium text-foreground">가족 카드</span>
+              </motion.button>
+            )}
           </div>
         </header>
 
