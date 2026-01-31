@@ -188,6 +188,7 @@ const MapPage = () => {
         const { dismiss } = toast({
           title: `${regionName}에는 외상센터가 없습니다`,
           description: `${locationLabel} 가장 가까운 외상센터: ${nearest.nameKr} (${nearest.distanceFromRef.toFixed(1)}km, ${timeDisplay})`,
+          duration: 5000,
           action: (
             <Button
               variant="outline"
