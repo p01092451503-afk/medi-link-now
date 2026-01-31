@@ -11,7 +11,8 @@ import {
   Calendar,
   Weight,
   FileText,
-  Ambulance
+  Ambulance,
+  Edit
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FamilyMember, RELATION_LABELS, BLOOD_TYPE_LABELS } from "@/types/familyMember";
@@ -23,13 +24,15 @@ interface MedicalPassportDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCallAmbulance: (member: FamilyMember) => void;
+  onEdit?: (member: FamilyMember) => void;
 }
 
 const MedicalPassportDetailModal = ({ 
   member, 
   isOpen, 
   onClose,
-  onCallAmbulance
+  onCallAmbulance,
+  onEdit
 }: MedicalPassportDetailModalProps) => {
   const [copied, setCopied] = useState(false);
 
@@ -118,12 +121,25 @@ const MedicalPassportDetailModal = ({
                     {member.weightKg && ` · ${member.weightKg}kg`}
                   </p>
                 </div>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                >
-                  <X className="w-6 h-6" />
-                </button>
+                <div className="flex items-center gap-1">
+                  {onEdit && (
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onEdit(member);
+                      }}
+                      className="p-2 hover:bg-white/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    >
+                      <Edit className="w-5 h-5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={onClose}
+                    className="p-2 hover:bg-white/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
             </div>
 

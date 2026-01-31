@@ -333,6 +333,10 @@ const FamilyPage = () => {
         isOpen={!!detailMember}
         onClose={() => setDetailMember(null)}
         onCallAmbulance={handleCallAmbulance}
+        onEdit={(member) => {
+          setDetailMember(null);
+          handleEditMember(member);
+        }}
       />
 
       {/* PIN Settings Modal */}
