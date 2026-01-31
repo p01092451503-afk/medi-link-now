@@ -174,10 +174,10 @@ const RadiusCircle = ({ center, radius }: { center: [number, number]; radius: nu
 
 type KoreaBoundsLiteral = [L.LatLngTuple, L.LatLngTuple];
 
-// South Korea bounds
+// South Korea bounds (includes Dokdo at ~131.87° E)
 const KOREA_BOUNDS: KoreaBoundsLiteral = [
-  [33.0, 124.0],
-  [38.8, 131.0],
+  [33.0, 124.0], // Southwest corner
+  [38.8, 132.0], // Northeast corner (extended for Dokdo)
 ];
 
 const computeMinZoomToContainViewportInBounds = (map: L.Map, bounds: L.LatLngBounds) => {

@@ -36,6 +36,7 @@ import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
 import RegionSummaryCard from "@/components/map/RegionSummaryCard";
 import CompactAIPrediction from "@/components/hospital/CompactAIPrediction";
+import OfflineBanner from "@/components/OfflineBanner";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -50,7 +51,7 @@ const getZoomForRadius = (radiusKm: number): number => {
 
 const MapPage = () => {
   const navigate = useNavigate();
-  const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
@@ -188,7 +189,7 @@ const MapPage = () => {
         const { dismiss } = toast({
           title: `${regionName}에는 외상센터가 없습니다`,
           description: `${locationLabel} 가장 가까운 외상센터: ${nearest.nameKr} (${nearest.distanceFromRef.toFixed(1)}km, ${timeDisplay})`,
-          duration: 5000,
+          duration: 8000,
           action: (
             <Button
               variant="outline"
@@ -374,6 +375,9 @@ const MapPage = () => {
         className="relative flex-1 transition-all duration-300"
         style={{ height: isListExpanded ? "60%" : "100%" }}
       >
+        {/* Offline/Error Banner */}
+        <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
+
         {/* Leaflet Map with Clustering */}
         <ClusteredMapView
           hospitals={isPharmacyFilter ? [] : filteredHospitals}

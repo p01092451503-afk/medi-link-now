@@ -59,6 +59,7 @@ function dbToHospital(dbHospital: DbHospital): Hospital {
 export const useRealtimeHospitals = () => {
   const [hospitals, setHospitals] = useState<Hospital[]>(staticHospitals);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const isMounted = useRef(true);
 
@@ -67,6 +68,7 @@ export const useRealtimeHospitals = () => {
     if (!isMounted.current) return;
     
     setIsLoading(true);
+    setIsError(false);
     
     try {
       // Fetch hospitals from DB
@@ -196,6 +198,7 @@ export const useRealtimeHospitals = () => {
       console.error("Error fetching hospital data:", err);
       if (isMounted.current) {
         setHospitals(staticHospitals);
+        setIsError(true);
       }
     } finally {
       if (isMounted.current) {
@@ -255,6 +258,7 @@ export const useRealtimeHospitals = () => {
   return {
     hospitals,
     isLoading,
+    isError,
     lastUpdated,
     refetch: fetchHospitalData,
   };
