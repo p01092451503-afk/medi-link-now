@@ -8,6 +8,7 @@ import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import DataFreshnessTimer from "@/components/DataFreshnessTimer";
+import logoImage from "@/assets/logo-finder.png";
 
 
 const Landing = () => {
@@ -136,17 +137,13 @@ const Landing = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/25">
-              <Ambulance className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-baseline gap-1.5">
-                <h1 className="text-xl font-bold text-slate-800">Find-ER</h1>
-                <span className="text-xl font-bold text-primary">파인더</span>
-              </div>
-              <p className="text-[10px] text-slate-500">실시간 응급실 병상 정보</p>
-            </div>
+          <div className="flex flex-col items-center gap-1">
+            <img 
+              src={logoImage} 
+              alt="Find-ER 파인더" 
+              className="h-9 w-auto object-contain"
+            />
+            <p className="text-[10px] text-slate-500">실시간 응급실 병상 정보</p>
           </div>
         </div>
       </header>
@@ -661,14 +658,12 @@ const Landing = () => {
       <footer className="relative mt-auto bg-white border-t border-slate-100">
         <div className="px-5 py-6 space-y-4 max-w-lg mx-auto">
           {/* Brand */}
-          <div className="flex items-center justify-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 flex items-center justify-center">
-              <Ambulance className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-sm font-bold text-slate-700">Find-ER</span>
-              <span className="text-sm font-bold text-primary">파인더</span>
-            </div>
+          <div className="flex items-center justify-center">
+            <img 
+              src={logoImage} 
+              alt="Find-ER 파인더" 
+              className="h-6 w-auto object-contain"
+            />
           </div>
           
           {/* Links */}
