@@ -64,12 +64,12 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
   return (
     <section 
       aria-label={`${regionName} 지역 응급실 현황 요약`}
-      className="relative bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-white/50 max-w-[calc(100vw-2rem)] overflow-hidden"
+      className="relative bg-white/50 backdrop-blur-sm rounded-xl shadow-lg border border-white/30 max-w-[calc(100vw-2rem)] overflow-hidden"
     >
       {/* Left fade indicator */}
       {showLeftFade && (
         <div 
-          className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white/70 to-transparent z-10 pointer-events-none rounded-l-xl"
+          className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white/50 to-transparent z-10 pointer-events-none rounded-l-xl"
           aria-hidden="true"
         />
       )}
@@ -77,7 +77,7 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
       {/* Right fade indicator */}
       {showRightFade && (
         <div 
-          className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-white/70 to-transparent z-10 pointer-events-none rounded-r-xl"
+          className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-white/50 to-transparent z-10 pointer-events-none rounded-r-xl"
           aria-hidden="true"
         />
       )}
