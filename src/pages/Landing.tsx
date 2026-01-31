@@ -626,7 +626,7 @@ const Landing = () => {
         >
           {/* Guardian Button */}
           <button
-            onClick={() => navigate("/map")}
+            onClick={() => navigate("/guardian")}
             className="w-full py-4 px-5 rounded-2xl bg-slate-700 border border-slate-600 relative overflow-hidden group transition-all duration-300 hover:bg-slate-600"
           >
             <div className="flex items-center w-full">
