@@ -1,7 +1,10 @@
+export type Gender = "male" | "female" | "unknown";
+
 export interface FamilyMember {
   id: string;
   name: string;
   age: number;
+  gender: Gender;
   relation: "child" | "parent" | "spouse" | "sibling" | "self" | "other";
   bloodType: "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-" | "unknown";
   chronicDiseases: string[];
@@ -15,6 +18,12 @@ export interface FamilyMember {
   createdAt: string;
   updatedAt: string;
 }
+
+export const GENDER_LABELS: Record<Gender, string> = {
+  male: "남성",
+  female: "여성",
+  unknown: "미지정",
+};
 
 export const RELATION_LABELS: Record<FamilyMember["relation"], string> = {
   child: "자녀",
