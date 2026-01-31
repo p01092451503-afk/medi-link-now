@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database, Heart, Moon, Calendar, Pill } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database, Heart, Moon } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,7 +28,7 @@ import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
-import { useNearbyPharmacies, NearbyPharmacy, PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
+import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
@@ -83,26 +83,9 @@ const MapPage = () => {
   const [showDataSource, setShowDataSource] = useState(true);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
 
-  // Determine pharmacy filter type
-  const isPharmacyMode = activeFilter === "openPharmacy" || activeFilter === "nightPharmacy";
-  const pharmacyFilterType: PharmacyFilterType = activeFilter === "nightPharmacy" 
-    ? "nightPharmacy" 
-    : "all";
-
   // Fetch holiday pharmacies when filter is set to 'pharmacy' (legacy)
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
-
-  // Fetch nearby pharmacies when in pharmacy mode
-  const { 
-    pharmacies: nearbyPharmacies, 
-    isLoading: isLoadingNearbyPharmacies,
-    refetch: refetchPharmacies 
-  } = useNearbyPharmacies({
-    enabled: isPharmacyMode,
-    userLocation,
-    filter: pharmacyFilterType,
-  });
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
@@ -404,7 +387,7 @@ const MapPage = () => {
 
         {/* Leaflet Map with Clustering */}
         <ClusteredMapView
-          hospitals={isPharmacyFilter || isPharmacyMode ? [] : filteredHospitals}
+          hospitals={isPharmacyFilter ? [] : filteredHospitals}
           onHospitalClick={handleHospitalClick}
           userLocation={userLocation}
           center={mapCenter}
@@ -415,7 +398,7 @@ const MapPage = () => {
           nearbyDrivers={nearbyDrivers}
           onCallDriver={handleCallDriver}
           holidayPharmacies={[]}
-          nearbyPharmacies={isPharmacyMode ? nearbyPharmacies : []}
+          nearbyPharmacies={[]}
           onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
           activeAmbulanceTrips={activeAmbulanceTrips}
           onBoundsChange={handleBoundsChange}
@@ -627,20 +610,10 @@ const MapPage = () => {
               .filter((f) => f.id !== "pharmacy") // Hide legacy pharmacy filter
               .map((f) => {
                 const isActive = activeFilter === f.id;
-                const isPharmacyType = f.id === "openPharmacy" || f.id === "nightPharmacy";
                 const isTraumaCenter = f.id === "traumaCenter";
                 const isMoonlight = f.id === "moonlight";
-                const isNightPharmacy = f.id === "nightPharmacy";
 
                 const handleFilterClick = () => {
-                  // When switching to pharmacy mode, require location
-                  if (isPharmacyType && !userLocation) {
-                    toast({
-                      title: "위치 정보가 필요합니다",
-                      description: "영업 중인 약국을 찾으려면 먼저 위치 버튼을 눌러주세요",
-                    });
-                    return;
-                  }
                   setActiveFilter(f.id);
                   // Clear selected hospital/pharmacy when switching filters
                   setSelectedHospital(null);
@@ -653,20 +626,16 @@ const MapPage = () => {
                     onClick={handleFilterClick}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border backdrop-blur-sm flex items-center gap-1.5 ${
                       isActive
-                        ? isPharmacyType
-                          ? "bg-green-500/80 text-white border-green-500 shadow-lg shadow-green-500/30"
-                          : isTraumaCenter
-                            ? "bg-gradient-to-r from-purple-600/80 to-violet-600/80 text-white border-purple-600 shadow-lg shadow-purple-500/30"
-                            : isMoonlight
-                              ? "bg-gradient-to-r from-amber-400/80 to-yellow-500/80 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
-                              : "bg-primary/80 text-white border-primary"
-                        : isPharmacyType
-                          ? "bg-white/40 text-green-600 border-green-200/50 hover:bg-white/60"
-                          : isTraumaCenter
-                            ? "bg-white/40 text-purple-600 border-purple-200/50 hover:bg-white/60"
-                            : isMoonlight
-                              ? "bg-white/40 text-amber-600 border-amber-200/50 hover:bg-white/60"
-                              : "bg-white/40 text-gray-600 border-gray-200/50 hover:bg-white/60"
+                        ? isTraumaCenter
+                          ? "bg-gradient-to-r from-purple-600/80 to-violet-600/80 text-white border-purple-600 shadow-lg shadow-purple-500/30"
+                          : isMoonlight
+                            ? "bg-gradient-to-r from-amber-400/80 to-yellow-500/80 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
+                            : "bg-primary/80 text-white border-primary"
+                        : isTraumaCenter
+                          ? "bg-white/40 text-purple-600 border-purple-200/50 hover:bg-white/60"
+                          : isMoonlight
+                            ? "bg-white/40 text-amber-600 border-amber-200/50 hover:bg-white/60"
+                            : "bg-white/40 text-gray-600 border-gray-200/50 hover:bg-white/60"
                     }`}
                   >
                     {isMoonlight && (
@@ -680,14 +649,6 @@ const MapPage = () => {
                       </span>
                     )}
                     {f.labelKr}
-                    {isPharmacyType && isActive && isLoadingNearbyPharmacies && (
-                      <Loader2 className="w-3 h-3 animate-spin ml-1" />
-                    )}
-                    {isPharmacyType && isActive && !isLoadingNearbyPharmacies && nearbyPharmacies.length > 0 && (
-                      <span className="ml-1 px-1.5 py-0.5 bg-white/30 text-[10px] font-semibold rounded">
-                        {nearbyPharmacies.length}
-                      </span>
-                    )}
                   </button>
                 );
               })}
