@@ -135,13 +135,18 @@ const ClusterPopup = ({
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 mb-0.5">
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${statusStyles.badge}`}>
                           {hospital.status === "available" ? "수용가능" : hospital.status === "limited" ? "혼잡" : "만실"}
                         </span>
                         {hospital.isTraumaCenter && (
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-100 text-purple-700">
                             외상
+                          </span>
+                        )}
+                        {normalizedBeds.pediatric > 0 && (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700">
+                            🌙 야간소아
                           </span>
                         )}
                       </div>
