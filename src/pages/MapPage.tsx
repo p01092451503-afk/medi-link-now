@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, X, Phone, Stethoscope, Baby, Thermometer, RefreshCw, Info, Ambulance, MapPin, Plus, Minus, Database, Heart } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
@@ -553,7 +553,7 @@ const MapPage = () => {
 
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/")}
               className="bg-white rounded-xl p-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
@@ -564,6 +564,16 @@ const MapPage = () => {
                 <span className="font-bold text-primary text-sm">파인더</span>
               </div>
             </button>
+            
+            {/* Family Medical Card Button */}
+            <motion.button
+              onClick={() => navigate("/family")}
+              className="bg-white rounded-xl px-3 py-2.5 shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+              whileTap={{ scale: 0.95 }}
+            >
+              <Heart className="w-5 h-5 text-pink-500" />
+              <span className="text-sm font-medium text-foreground">가족 카드</span>
+            </motion.button>
           </div>
         </header>
 
