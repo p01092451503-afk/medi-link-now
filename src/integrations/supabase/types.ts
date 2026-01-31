@@ -311,6 +311,39 @@ export type Database = {
           },
         ]
       }
+      hospital_rejection_logs: {
+        Row: {
+          created_at: string
+          driver_id: string
+          hospital_id: number
+          hospital_name: string
+          id: string
+          notes: string | null
+          recorded_at: string
+          rejection_reason: string
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          hospital_id: number
+          hospital_name: string
+          id?: string
+          notes?: string | null
+          recorded_at?: string
+          rejection_reason: string
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          hospital_id?: number
+          hospital_name?: string
+          id?: string
+          notes?: string | null
+          recorded_at?: string
+          rejection_reason?: string
+        }
+        Relationships: []
+      }
       hospital_status_cache: {
         Row: {
           general_beds: number
