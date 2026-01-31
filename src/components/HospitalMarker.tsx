@@ -112,42 +112,7 @@ const createMarkerIcon = (
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
   
-  const pulseAnimation = isPediatricFilter ? "animation: pediatric-pulse 1.5s ease-in-out infinite;" : "";
-  const childBadge = hasPediatric
-    ? `<div style="
-        position: absolute; 
-        top: -12px; 
-        right: -12px; 
-        width: 26px; 
-        height: 26px; 
-        background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
-        border: 2px solid white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.5);
-        ${pulseAnimation}
-      ">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Baby face -->
-          <circle cx="12" cy="12" r="10" fill="#FFE4C9"/>
-          <!-- Hair tuft -->
-          <path d="M12 2C12 2 14 4 14 6C14 6 13 5 12 5C11 5 10 6 10 6C10 4 12 2 12 2Z" fill="#8B5A2B"/>
-          <!-- Left eye -->
-          <circle cx="8.5" cy="11" r="1.5" fill="#1a1a1a"/>
-          <circle cx="8" cy="10.5" r="0.5" fill="white"/>
-          <!-- Right eye -->
-          <circle cx="15.5" cy="11" r="1.5" fill="#1a1a1a"/>
-          <circle cx="15" cy="10.5" r="0.5" fill="white"/>
-          <!-- Cheeks -->
-          <circle cx="6" cy="14" r="1.5" fill="#FECACA" opacity="0.7"/>
-          <circle cx="18" cy="14" r="1.5" fill="#FECACA" opacity="0.7"/>
-          <!-- Smile -->
-          <path d="M9 15.5C9 15.5 10.5 17 12 17C13.5 17 15 15.5 15 15.5" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>`
-    : "";
+  // Child badge removed for cleaner marker design
   const traumaBadge = isTraumaCenter
     ? `<div style="
         position: absolute; 
@@ -250,7 +215,6 @@ const createMarkerIcon = (
           transition: transform 0.2s;
         ">
           ${beds}
-          ${childBadge}
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
         </div>
         <div style="
