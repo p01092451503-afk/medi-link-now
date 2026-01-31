@@ -12,7 +12,8 @@ import {
   Users,
   Stethoscope,
   ArrowRight,
-  Ambulance
+  Ambulance,
+  Calculator
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -167,6 +168,15 @@ const GuardianLanding = () => {
           >
             <Heart className="w-5 h-5 mr-2 text-pink-500" />
             가족 의료정보 등록하기
+          </Button>
+
+          <Button
+            onClick={() => navigate("/fare-calculator")}
+            variant="outline"
+            className="w-full py-5 rounded-2xl text-base font-medium border-2"
+          >
+            <Calculator className="w-5 h-5 mr-2 text-blue-500" />
+            구급차 요금 계산기
           </Button>
         </motion.div>
 
