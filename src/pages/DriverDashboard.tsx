@@ -18,14 +18,16 @@ import {
   Radio,
   Loader2,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import RevenueTab from "@/components/RevenueTab";
-import { useDrivingLogs, type CreateDrivingLogInput } from "@/hooks/useDrivingLogs";
+import RevenueStatsWidget from "@/components/RevenueStatsWidget";
+import { useDrivingLogs, type CreateDrivingLogInput, type UpdateRevenueInput } from "@/hooks/useDrivingLogs";
 import DrivingLogHistory from "@/components/DrivingLogHistory";
 import DrivingStatsWidget from "@/components/DrivingStatsWidget";
 import PatientInfoModal from "@/components/PatientInfoModal";
@@ -82,6 +84,7 @@ const DriverDashboard = () => {
     isLoading: isLogsLoading, 
     createLog, 
     deleteLog,
+    updateRevenue,
     currentMonth,
     setCurrentMonth,
     stats 
@@ -124,8 +127,13 @@ const DriverDashboard = () => {
     toast({ title: "호출을 수락했습니다!", description: "환자에게 연락 중..." });
   };
 
-  const handleLogComplete = async (input: CreateDrivingLogInput) => {
-    await createLog(input);
+  const handleLogComplete = async (input: CreateDrivingLogInput): Promise<string | null> => {
+    const log = await createLog(input);
+    return log?.id || null;
+  };
+
+  const handleRevenueUpdate = (logId: string, data: UpdateRevenueInput) => {
+    updateRevenue(logId, data);
   };
 
   const handleDeleteLog = (id: string) => {
@@ -350,10 +358,23 @@ const DriverDashboard = () => {
         )}
 
         {activeTab === "revenue" && (
-          <RevenueTab 
-            todayRevenue={todayRevenue} 
-            completedTrips={completedCalls.length} 
-          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
+            {/* Revenue Stats Widget with Charts */}
+            <RevenueStatsWidget 
+              logs={drivingLogs} 
+              currentMonth={currentMonth} 
+            />
+            
+            {/* Return Trip Matching */}
+            <RevenueTab 
+              todayRevenue={stats.totalRevenue} 
+              completedTrips={drivingLogs.filter(l => l.revenue_amount).length} 
+            />
+          </motion.div>
         )}
 
         {activeTab === "log" && (
@@ -395,6 +416,7 @@ const DriverDashboard = () => {
       {/* Trip Management Widget - 통합된 이송/운행 관리 */}
       <TripManagementWidget 
         onLogComplete={handleLogComplete}
+        onRevenueUpdate={handleRevenueUpdate}
         isSimulateMode={isSimulateMode}
       />
 

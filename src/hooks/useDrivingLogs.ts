@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+export type PaymentMethod = "cash" | "card" | "transfer" | "unpaid";
+
 export interface DrivingLog {
   id: string;
   driver_id: string;
@@ -21,6 +23,9 @@ export interface DrivingLog {
   hospital_id?: number;
   notes?: string;
   created_at: string;
+  revenue_amount?: number;
+  payment_method?: PaymentMethod;
+  revenue_memo?: string;
 }
 
 export interface CreateDrivingLogInput {
@@ -33,6 +38,12 @@ export interface CreateDrivingLogInput {
   hospitalName?: string;
   hospitalId?: number;
   notes?: string;
+}
+
+export interface UpdateRevenueInput {
+  revenueAmount: number;
+  paymentMethod: PaymentMethod;
+  revenueMemo?: string;
 }
 
 export const useDrivingLogs = () => {
@@ -159,11 +170,39 @@ export const useDrivingLogs = () => {
     }
   };
 
+  const updateRevenue = async (logId: string, revenueData: UpdateRevenueInput) => {
+    try {
+      const { data, error } = await supabase
+        .from("driving_logs")
+        .update({
+          revenue_amount: revenueData.revenueAmount,
+          payment_method: revenueData.paymentMethod,
+          revenue_memo: revenueData.revenueMemo,
+        })
+        .eq("id", logId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setLogs((prev) =>
+        prev.map((log) => (log.id === logId ? (data as DrivingLog) : log))
+      );
+      toast.success("매출 정보가 저장되었습니다");
+      return data as DrivingLog;
+    } catch (error) {
+      console.error("Error updating revenue:", error);
+      toast.error("매출 저장에 실패했습니다");
+      return null;
+    }
+  };
+
   // Statistics
   const stats = {
     totalTrips: logs.length,
     totalDistance: logs.reduce((sum, log) => sum + log.distance_km, 0),
     totalDuration: logs.reduce((sum, log) => sum + (log.duration_minutes || 0), 0),
+    totalRevenue: logs.reduce((sum, log) => sum + (log.revenue_amount || 0), 0),
   };
 
   return {
@@ -172,6 +211,7 @@ export const useDrivingLogs = () => {
     createLog,
     deleteLog,
     updateLog,
+    updateRevenue,
     fetchLogs,
     currentMonth,
     setCurrentMonth,

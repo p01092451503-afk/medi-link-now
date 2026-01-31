@@ -155,6 +155,9 @@ export type Database = {
           id: string
           notes: string | null
           patient_name: string | null
+          payment_method: string | null
+          revenue_amount: number | null
+          revenue_memo: string | null
           start_lat: number | null
           start_lng: number | null
           start_location: string
@@ -175,6 +178,9 @@ export type Database = {
           id?: string
           notes?: string | null
           patient_name?: string | null
+          payment_method?: string | null
+          revenue_amount?: number | null
+          revenue_memo?: string | null
           start_lat?: number | null
           start_lng?: number | null
           start_location: string
@@ -195,6 +201,9 @@ export type Database = {
           id?: string
           notes?: string | null
           patient_name?: string | null
+          payment_method?: string | null
+          revenue_amount?: number | null
+          revenue_memo?: string | null
           start_lat?: number | null
           start_lng?: number | null
           start_location?: string

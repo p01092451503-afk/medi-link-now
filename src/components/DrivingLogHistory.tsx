@@ -11,7 +11,10 @@ import {
   Clock,
   MapPin,
   Building2,
-  ArrowRight
+  ArrowRight,
+  Banknote,
+  CreditCard,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -29,8 +32,16 @@ interface DrivingLogHistoryProps {
     totalTrips: number;
     totalDistance: number;
     totalDuration: number;
+    totalRevenue?: number;
   };
 }
+
+const PAYMENT_METHOD_LABELS: Record<string, { label: string; color: string }> = {
+  cash: { label: "현금", color: "text-green-600 bg-green-50" },
+  card: { label: "카드", color: "text-blue-600 bg-blue-50" },
+  transfer: { label: "이체", color: "text-purple-600 bg-purple-50" },
+  unpaid: { label: "미수금", color: "text-red-600 bg-red-50" },
+};
 
 const DrivingLogHistory = ({ 
   logs, 
@@ -119,31 +130,43 @@ const DrivingLogHistory = ({
     // Summary box
     const totalDistance = logsToExport.reduce((sum, log) => sum + log.distance_km, 0);
     const totalDuration = logsToExport.reduce((sum, log) => sum + (log.duration_minutes || 0), 0);
+    const totalRevenue = logsToExport.reduce((sum, log) => sum + (log.revenue_amount || 0), 0);
     const totalHours = Math.floor(totalDuration / 60);
     const totalMins = totalDuration % 60;
 
     doc.setFillColor(240, 245, 255);
     doc.roundedRect(14, 45, 182, 25, 3, 3, "F");
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setTextColor(40, 40, 40);
-    doc.text(`총 운행 횟수: ${logsToExport.length}건`, 25, 55);
-    doc.text(`총 운행 거리: ${totalDistance.toFixed(1)}km`, 85, 55);
-    doc.text(`총 운행 시간: ${totalHours}시간 ${totalMins}분`, 145, 55);
+    doc.text(`총 운행: ${logsToExport.length}건`, 20, 55);
+    doc.text(`총 거리: ${totalDistance.toFixed(1)}km`, 60, 55);
+    doc.text(`총 시간: ${totalHours}시간 ${totalMins}분`, 105, 55);
+    doc.text(`총 매출: ₩${totalRevenue.toLocaleString()}`, 155, 55);
 
     // Table
+    const getPaymentLabel = (method?: string) => {
+      const labels: Record<string, string> = {
+        cash: "현금",
+        card: "카드",
+        transfer: "이체",
+        unpaid: "미수금",
+      };
+      return method ? labels[method] || method : "-";
+    };
+
     const tableData = logsToExport.map((log) => [
       new Date(log.date).toLocaleDateString("ko-KR"),
       formatTime(log.start_time),
       formatTime(log.end_time),
       `${log.distance_km.toFixed(1)}km`,
-      log.duration_minutes ? formatDuration(log.duration_minutes) : "-",
       log.hospital_name || "-",
-      log.patient_name || "-"
+      log.revenue_amount ? `₩${log.revenue_amount.toLocaleString()}` : "-",
+      log.payment_method ? getPaymentLabel(log.payment_method) : "-"
     ]);
 
     autoTable(doc, {
       startY: 78,
-      head: [["날짜", "시작", "종료", "거리", "소요시간", "목적지", "환자명"]],
+      head: [["날짜", "시작", "종료", "거리", "목적지", "요금", "결제"]],
       body: tableData,
       theme: "grid",
       headStyles: {
@@ -165,9 +188,9 @@ const DrivingLogHistory = ({
         1: { cellWidth: 18 },
         2: { cellWidth: 18 },
         3: { cellWidth: 20 },
-        4: { cellWidth: 26 },
-        5: { cellWidth: 45 },
-        6: { cellWidth: 31 },
+        4: { cellWidth: 50 },
+        5: { cellWidth: 28 },
+        6: { cellWidth: 22 },
       },
       margin: { left: 14, right: 14 },
     });
@@ -335,7 +358,7 @@ const DrivingLogHistory = ({
 
               {/* Stats Row */}
               <div className="flex items-center justify-between pt-2 border-t border-border">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 flex-wrap">
                   <div className="flex items-center gap-1 text-primary font-semibold">
                     <Navigation className="w-4 h-4" />
                     {log.distance_km.toFixed(1)}km
@@ -349,6 +372,21 @@ const DrivingLogHistory = ({
                     <span className="px-2 py-0.5 bg-muted rounded text-xs text-muted-foreground">
                       {log.patient_name}
                     </span>
+                  )}
+                  {/* Revenue Info */}
+                  {log.revenue_amount !== undefined && log.revenue_amount !== null && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-sm text-foreground">
+                        ₩{log.revenue_amount.toLocaleString()}
+                      </span>
+                      {log.payment_method && (
+                        <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                          PAYMENT_METHOD_LABELS[log.payment_method]?.color || "text-gray-600 bg-gray-50"
+                        }`}>
+                          {PAYMENT_METHOD_LABELS[log.payment_method]?.label || log.payment_method}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
 
