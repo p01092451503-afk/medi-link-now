@@ -252,27 +252,45 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 </button>
               </div>
 
-              {/* AI Predictive Features Section - Placed prominently at top */}
-              <div className="space-y-3 mb-5 p-3 bg-gradient-to-br from-primary/5 to-blue-50 rounded-xl border border-primary/10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-primary">🤖 AI 예측 분석</span>
-                    <span className="text-[10px] text-white bg-primary/80 px-1.5 py-0.5 rounded">Beta</span>
+              {/* AI Predictive Features Section - Premium Design */}
+              <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-xl shadow-violet-500/10 overflow-hidden">
+                {/* Decorative background elements */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-violet-400/20 to-indigo-400/20 blur-3xl" />
+                <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/20 blur-2xl" />
+                
+                {/* Header */}
+                <div className="relative flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                      <span className="text-lg">🤖</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-foreground">AI 예측 분석</h3>
+                        <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-500 px-2 py-0.5 rounded-full shadow-sm">
+                          BETA
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">Predictive Analytics</p>
+                    </div>
                   </div>
                   <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
                 </div>
                 
-                {/* Congestion Forecast */}
-                <CongestionForecast 
-                  hospitalId={hospital.id?.toString() || hospital.name}
-                  officialBeds={totalBeds}
-                />
-                
-                {/* Shadow Demand Visualization */}
-                <ShadowDemandCard 
-                  hospitalId={hospital.id?.toString() || hospital.name}
-                  officialBeds={totalBeds}
-                />
+                {/* Cards Container */}
+                <div className="relative space-y-3">
+                  {/* Congestion Forecast */}
+                  <CongestionForecast 
+                    hospitalId={hospital.id?.toString() || hospital.name}
+                    officialBeds={totalBeds}
+                  />
+                  
+                  {/* Shadow Demand Visualization */}
+                  <ShadowDemandCard 
+                    hospitalId={hospital.id?.toString() || hospital.name}
+                    officialBeds={totalBeds}
+                  />
+                </div>
               </div>
 
               {/* Bed Status Grid */}

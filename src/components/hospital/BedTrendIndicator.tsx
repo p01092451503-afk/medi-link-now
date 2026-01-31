@@ -1,4 +1,5 @@
-import { TrendingDown, Minus, TrendingUp, Info } from "lucide-react";
+import { TrendingDown, Minus, TrendingUp, Info, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   Tooltip,
   TooltipContent,
@@ -31,27 +32,30 @@ const BedTrendIndicator = ({ hospitalId }: BedTrendIndicatorProps) => {
     switch (status) {
       case "depleting":
         return {
-          bg: "bg-red-100",
+          gradient: "from-red-500 to-orange-500",
+          bg: "bg-gradient-to-r from-red-50 to-orange-50",
           text: "text-red-700",
-          border: "border-red-200",
+          border: "border-red-200/50",
           icon: TrendingDown,
-          emoji: "📉",
+          glow: "shadow-red-500/20",
         };
       case "increasing":
         return {
-          bg: "bg-green-100",
-          text: "text-green-700",
-          border: "border-green-200",
+          gradient: "from-emerald-500 to-green-500",
+          bg: "bg-gradient-to-r from-emerald-50 to-green-50",
+          text: "text-emerald-700",
+          border: "border-emerald-200/50",
           icon: TrendingUp,
-          emoji: "📈",
+          glow: "shadow-emerald-500/20",
         };
       default:
         return {
-          bg: "bg-gray-100",
-          text: "text-gray-600",
-          border: "border-gray-200",
+          gradient: "from-slate-400 to-gray-400",
+          bg: "bg-gradient-to-r from-slate-50 to-gray-50",
+          text: "text-slate-600",
+          border: "border-slate-200/50",
           icon: Minus,
-          emoji: "➖",
+          glow: "shadow-slate-500/20",
         };
     }
   };
@@ -63,22 +67,34 @@ const BedTrendIndicator = ({ hospitalId }: BedTrendIndicatorProps) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${styles.bg} ${styles.text} ${styles.border} cursor-help`}
+          <motion.div
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${styles.bg} ${styles.text} ${styles.border} cursor-help shadow-lg ${styles.glow}`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
           >
-            <span>{styles.emoji}</span>
-            <Icon className="w-3 h-3" />
+            <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${styles.gradient} flex items-center justify-center`}>
+              <Icon className="w-3 h-3 text-white" />
+            </div>
             <span>{label}</span>
-            <span className="text-[10px] opacity-70">
-              ({trend > 0 ? "+" : ""}{trend}/hr)
+            <span className="text-[10px] opacity-70 font-mono">
+              ({trend > 0 ? "+" : ""}{trend}/h)
             </span>
-            <Info className="w-3 h-3 opacity-50" />
-          </div>
+          </motion.div>
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-[220px]">
-          <p className="text-xs font-medium mb-1">AI 병상 트렌드 분석</p>
-          <p className="text-xs text-muted-foreground">
+        <TooltipContent side="top" className="max-w-[240px] p-3 rounded-xl">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <p className="text-xs font-bold">AI 병상 트렌드 분석</p>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             최근 1시간 동안의 병상 가용률 변화를 분석한 예측 지표입니다.
+            <span className={`ml-1 font-semibold ${styles.text}`}>
+              {status === "depleting" && "병상이 빠르게 감소하고 있습니다."}
+              {status === "increasing" && "병상 여유가 늘어나고 있습니다."}
+              {status === "stable" && "현재 안정적인 상태입니다."}
+            </span>
           </p>
         </TooltipContent>
       </Tooltip>

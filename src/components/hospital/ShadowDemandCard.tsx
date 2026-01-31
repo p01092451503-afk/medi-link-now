@@ -1,5 +1,6 @@
-import { Ambulance, AlertTriangle, Users, Loader2 } from "lucide-react";
+import { Ambulance, AlertTriangle, Users, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
 import { useHospitalEnRouteCount } from "@/hooks/useAmbulanceTrips";
+import { motion } from "framer-motion";
 
 interface ShadowDemandCardProps {
   hospitalId: string;
@@ -13,84 +14,139 @@ const ShadowDemandCard = ({ hospitalId, officialBeds }: ShadowDemandCardProps) =
   const hasConflict = ambulancesEnRoute > 0 && estimatedBeds < officialBeds;
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-slate-200">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-          <Ambulance className="w-4 h-4 text-blue-600" />
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold text-foreground">실시간 이동 현황</h4>
-          <p className="text-[10px] text-muted-foreground">Real-time Traffic</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        {/* Ambulances En Route */}
-        <div className="bg-white rounded-lg p-2.5 border border-slate-100 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Users className="w-3.5 h-3.5 text-orange-500" />
+    <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/50 shadow-lg">
+      {/* Decorative background */}
+      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-blue-500/10 blur-2xl" />
+      <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl" />
+      
+      <div className="relative p-4">
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
+            <Ambulance className="w-5 h-5 text-white" />
           </div>
-          {isLoading ? (
-            <Loader2 className="w-4 h-4 mx-auto text-orange-500 animate-spin" />
-          ) : (
-            <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
-          )}
-          <p className="text-[10px] text-muted-foreground">이동 중</p>
+          <div>
+            <h4 className="text-sm font-bold text-foreground">실시간 이동 현황</h4>
+            <p className="text-[10px] text-muted-foreground">Shadow Demand Tracking</p>
+          </div>
         </div>
 
-        {/* Official Beds */}
-        <div className="bg-white rounded-lg p-2.5 border border-slate-100 text-center">
-          <p className="text-[10px] text-muted-foreground mb-1">공식 데이터</p>
-          <p className="text-lg font-bold text-slate-600">{officialBeds}</p>
-          <p className="text-[10px] text-muted-foreground">병상</p>
+        {/* Flow Visualization */}
+        <div className="flex items-center justify-between gap-2 mb-4">
+          {/* En Route Count */}
+          <motion.div 
+            className="flex-1 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-3 border border-orange-200/50 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="w-8 h-8 mx-auto mb-1.5 rounded-full bg-orange-100 flex items-center justify-center">
+              <Users className="w-4 h-4 text-orange-600" />
+            </div>
+            {isLoading ? (
+              <Loader2 className="w-5 h-5 mx-auto text-orange-500 animate-spin" />
+            ) : (
+              <p className="text-2xl font-black text-orange-600">{ambulancesEnRoute}</p>
+            )}
+            <p className="text-[10px] font-medium text-orange-700/80">이동 중</p>
+          </motion.div>
+
+          {/* Arrow */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <ArrowRight className="w-5 h-5 text-muted-foreground/50" />
+          </motion.div>
+
+          {/* Official Beds */}
+          <motion.div 
+            className="flex-1 bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-3 border border-slate-200/50 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <p className="text-[10px] font-medium text-slate-500 mb-1">공식 데이터</p>
+            <p className="text-2xl font-black text-slate-600">{officialBeds}</p>
+            <p className="text-[10px] font-medium text-slate-500">병상</p>
+          </motion.div>
+
+          {/* Arrow */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <span className="text-muted-foreground/50">=</span>
+          </motion.div>
+
+          {/* Estimated Available */}
+          <motion.div 
+            className={`flex-1 rounded-xl p-3 text-center ring-2 ${
+              estimatedBeds > 5 
+                ? "bg-gradient-to-br from-emerald-50 to-green-50 ring-emerald-400/50 border border-emerald-200/50" 
+                : estimatedBeds > 0 
+                ? "bg-gradient-to-br from-amber-50 to-yellow-50 ring-amber-400/50 border border-amber-200/50" 
+                : "bg-gradient-to-br from-red-50 to-orange-50 ring-red-400/50 border border-red-200/50"
+            }`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <p className="text-[10px] font-medium text-muted-foreground mb-1">예상 가용</p>
+            <p className={`text-2xl font-black ${
+              estimatedBeds > 5 
+                ? "text-emerald-600" 
+                : estimatedBeds > 0 
+                ? "text-amber-600" 
+                : "text-red-600"
+            }`}>
+              {estimatedBeds}
+            </p>
+            <p className="text-[10px] font-medium text-muted-foreground">병상</p>
+          </motion.div>
         </div>
 
-        {/* Estimated Beds - Highlighted */}
-        <div className={`rounded-lg p-2.5 text-center border-2 ${
-          estimatedBeds > 5 
-            ? "bg-green-50 border-green-300" 
-            : estimatedBeds > 0 
-            ? "bg-yellow-50 border-yellow-300" 
-            : "bg-red-50 border-red-300"
-        }`}>
-          <p className="text-[10px] text-muted-foreground mb-1">예상 가용</p>
-          <p className={`text-xl font-bold ${
-            estimatedBeds > 5 
-              ? "text-green-600" 
-              : estimatedBeds > 0 
-              ? "text-yellow-600" 
-              : "text-red-600"
-          }`}>
-            {estimatedBeds}
-          </p>
-          <p className="text-[10px] text-muted-foreground">병상</p>
-        </div>
+        {/* Status Message */}
+        {hasConflict && (
+          <motion.div 
+            className="flex items-start gap-2.5 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/50"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+            </div>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              <span className="font-bold">{ambulancesEnRoute}대의 구급차</span>가 현재 이 병원으로 이동 중입니다. 
+              실제 가용 병상은 <span className="font-black text-amber-900">{estimatedBeds}개</span>일 수 있습니다.
+            </p>
+          </motion.div>
+        )}
+
+        {!hasConflict && ambulancesEnRoute === 0 && (
+          <motion.div 
+            className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-200/50"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            </div>
+            <p className="text-xs text-emerald-700 font-medium">
+              현재 이 병원으로 이동 중인 구급차가 없습니다.
+            </p>
+          </motion.div>
+        )}
+
+        {/* Disclaimer */}
+        <p className="text-[9px] text-muted-foreground/70 text-center mt-3">
+          * 119 이송 정보는 포함되지 않았습니다.
+        </p>
       </div>
-
-      {/* Warning if there's shadow demand */}
-      {hasConflict && (
-        <div className="flex items-start gap-2 p-2 bg-amber-50 rounded-lg border border-amber-200">
-          <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-700">
-            <span className="font-medium">{ambulancesEnRoute}대의 구급차</span>가 현재 이 병원으로 이동 중입니다. 
-            실제 가용 병상은 <span className="font-bold">{estimatedBeds}개</span>일 수 있습니다.
-          </p>
-        </div>
-      )}
-
-      {!hasConflict && ambulancesEnRoute === 0 && (
-        <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg border border-green-200">
-          <span className="text-green-600">✓</span>
-          <p className="text-xs text-green-700">
-            현재 이 병원으로 이동 중인 구급차가 없습니다.
-          </p>
-        </div>
-      )}
-
-      {/* 119 Disclaimer */}
-      <p className="text-[10px] text-muted-foreground text-center mt-2 opacity-70">
-        * 119 이송 정보는 포함되지 않았습니다.
-      </p>
     </div>
   );
 };
