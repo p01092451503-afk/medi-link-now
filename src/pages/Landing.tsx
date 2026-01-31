@@ -463,94 +463,75 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        {/* AI Prediction Feature Promotion */}
+        {/* AI Prediction Feature Promotion - Compact */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="w-full max-w-sm mb-10"
+          className="w-full max-w-sm mb-6"
         >
-          <div className="relative bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 rounded-2xl p-5 border border-purple-100 overflow-hidden">
+          <div className="relative bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 rounded-2xl p-4 border border-purple-100 overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-200/30 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
             
-            {/* Header */}
-            <div className="relative flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <Brain className="w-5 h-5 text-white" />
+            {/* Header - More compact */}
+            <div className="relative flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <Brain className="w-4.5 h-4.5 text-white" />
               </div>
-              <div>
+              <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-foreground">AI 예측 분석</h3>
-                  <span className="px-1.5 py-0.5 text-[9px] font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-500 rounded">Beta</span>
+                  <h3 className="text-sm font-bold text-foreground">AI 예측 분석</h3>
+                  <span className="px-1.5 py-0.5 text-[8px] font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-500 rounded">Beta</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground">공식 데이터를 넘어선 스마트 분석</p>
+                <p className="text-[10px] text-muted-foreground">공식 데이터를 넘어선 스마트 분석</p>
               </div>
             </div>
 
-            {/* Feature Cards */}
-            <div className="relative space-y-2.5">
+            {/* Feature Cards - Horizontal compact layout */}
+            <div className="relative grid grid-cols-3 gap-2">
               {/* Safe Arrival Score */}
-              <div className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center shrink-0">
-                  <Target className="w-4.5 h-4.5 text-emerald-600" />
+              <div className="flex flex-col items-center p-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-white text-center">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center mb-1.5">
+                  <Target className="w-3.5 h-3.5 text-emerald-600" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground">안전 도착 확률</p>
-                  <p className="text-[10px] text-muted-foreground">병상 확보 가능성을 % 로 예측</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-lg font-bold text-emerald-600">95%</p>
-                  <p className="text-[9px] text-emerald-600/70">🟢 안전</p>
-                </div>
+                <p className="text-lg font-bold text-emerald-600 leading-tight">95%</p>
+                <p className="text-[9px] text-muted-foreground leading-tight">안전 도착</p>
               </div>
 
               {/* Shadow Demand */}
-              <div className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center shrink-0">
-                  <Ambulance className="w-4.5 h-4.5 text-blue-600" />
+              <div className="flex flex-col items-center p-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-white text-center">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center mb-1.5">
+                  <Ambulance className="w-3.5 h-3.5 text-blue-600" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground">실시간 이동 현황</p>
-                  <p className="text-[10px] text-muted-foreground">이동 중인 구급차를 반영한 예상 가용 병상</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-lg font-bold text-blue-600">-2</p>
-                  <p className="text-[9px] text-blue-600/70">이동 중</p>
-                </div>
+                <p className="text-lg font-bold text-blue-600 leading-tight">-2</p>
+                <p className="text-[9px] text-muted-foreground leading-tight">이동 중</p>
               </div>
 
               {/* Bed Trend */}
-              <div className="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center shrink-0">
-                  <TrendingDown className="w-4.5 h-4.5 text-amber-600" />
+              <div className="flex flex-col items-center p-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-white text-center">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center mb-1.5">
+                  <TrendingDown className="w-3.5 h-3.5 text-amber-600" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground">병상 소진 트렌드</p>
-                  <p className="text-[10px] text-muted-foreground">시간당 병상 변화율 AI 분석</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-lg font-bold text-amber-600">-3</p>
-                  <p className="text-[9px] text-amber-600/70">/시간</p>
-                </div>
+                <p className="text-lg font-bold text-amber-600 leading-tight">-3</p>
+                <p className="text-[9px] text-muted-foreground leading-tight">/시간</p>
               </div>
             </div>
 
-            {/* Bottom CTA */}
+            {/* Bottom CTA - Compact */}
             <button 
               onClick={() => navigate("/map")}
-              className="relative mt-4 pt-3 border-t border-purple-100 w-full text-left hover:bg-purple-50/50 -mx-1 px-1 rounded-lg transition-colors"
+              className="relative mt-3 pt-2.5 border-t border-purple-100 w-full text-left hover:bg-purple-50/50 -mx-1 px-1 rounded-lg transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-500" />
-                  <p className="text-[11px] text-purple-700 font-medium">
-                    병원 상세정보에서 확인하세요
+                  <Sparkles className="w-3 h-3 text-purple-500" />
+                  <p className="text-[10px] text-purple-700 font-medium">
+                    병원 상세정보에서 확인
                   </p>
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-purple-500 font-medium">
-                  <span>지도에서 확인</span>
+                  <span>지도</span>
                   <ChevronRight className="w-3 h-3" />
                 </div>
               </div>
