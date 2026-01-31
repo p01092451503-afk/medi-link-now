@@ -14,16 +14,19 @@ import {
   ArrowRight,
   Banknote,
   CreditCard,
-  AlertCircle
+  AlertCircle,
+  Ban
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { type DrivingLog } from "@/hooks/useDrivingLogs";
+import { type RejectionLog, REJECTION_REASONS } from "@/hooks/useRejectionLogs";
 
 interface DrivingLogHistoryProps {
   logs: DrivingLog[];
+  rejectionLogs?: RejectionLog[];
   isLoading?: boolean;
   currentMonth: Date;
   onMonthChange: (date: Date) => void;
@@ -45,6 +48,7 @@ const PAYMENT_METHOD_LABELS: Record<string, { label: string; color: string }> = 
 
 const DrivingLogHistory = ({ 
   logs, 
+  rejectionLogs = [],
   isLoading,
   currentMonth,
   onMonthChange,
@@ -98,14 +102,26 @@ const DrivingLogHistory = ({
     onMonthChange(newDate);
   };
 
+  // Filter rejection logs for current month
+  const monthRejectionLogs = rejectionLogs.filter(log => {
+    const logDate = new Date(log.recorded_at);
+    return logDate.getFullYear() === currentMonth.getFullYear() && 
+           logDate.getMonth() === currentMonth.getMonth();
+  });
+
+  const getRejectionReasonLabel = (reasonId: string) => {
+    const reason = REJECTION_REASONS.find(r => r.id === reasonId);
+    return reason ? reason.label : reasonId;
+  };
+
   const exportToPDF = () => {
     const logsToExport = selectedLogs.length > 0 
       ? logs.filter((log) => selectedLogs.includes(log.id))
       : logs;
 
-    if (logsToExport.length === 0) {
+    if (logsToExport.length === 0 && monthRejectionLogs.length === 0) {
       toast({
-        title: "내보낼 운행 기록이 없습니다",
+        title: "내보낼 기록이 없습니다",
         variant: "destructive",
       });
       return;
@@ -135,15 +151,36 @@ const DrivingLogHistory = ({
     const totalMins = totalDuration % 60;
 
     doc.setFillColor(240, 245, 255);
-    doc.roundedRect(14, 45, 182, 25, 3, 3, "F");
+    doc.roundedRect(14, 45, 182, 30, 3, 3, "F");
     doc.setFontSize(10);
     doc.setTextColor(40, 40, 40);
     doc.text(`총 운행: ${logsToExport.length}건`, 20, 55);
     doc.text(`총 거리: ${totalDistance.toFixed(1)}km`, 60, 55);
     doc.text(`총 시간: ${totalHours}시간 ${totalMins}분`, 105, 55);
     doc.text(`총 매출: ₩${totalRevenue.toLocaleString()}`, 155, 55);
+    
+    // Rejection stats in summary
+    doc.setTextColor(200, 50, 50);
+    doc.text(`거부 이력: ${monthRejectionLogs.length}건`, 20, 67);
+    
+    // Count rejection reasons
+    const rejectionStats = monthRejectionLogs.reduce((acc, log) => {
+      acc[log.rejection_reason] = (acc[log.rejection_reason] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const topReasons = Object.entries(rejectionStats)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([reason, count]) => `${getRejectionReasonLabel(reason)}(${count})`)
+      .join(", ");
+    
+    if (topReasons) {
+      doc.setFontSize(9);
+      doc.text(`주요 사유: ${topReasons}`, 60, 67);
+    }
 
-    // Table
+    // Driving Logs Table
     const getPaymentLabel = (method?: string) => {
       const labels: Record<string, string> = {
         cash: "현금",
@@ -154,46 +191,108 @@ const DrivingLogHistory = ({
       return method ? labels[method] || method : "-";
     };
 
-    const tableData = logsToExport.map((log) => [
-      new Date(log.date).toLocaleDateString("ko-KR"),
-      formatTime(log.start_time),
-      formatTime(log.end_time),
-      `${log.distance_km.toFixed(1)}km`,
-      log.hospital_name || "-",
-      log.revenue_amount ? `₩${log.revenue_amount.toLocaleString()}` : "-",
-      log.payment_method ? getPaymentLabel(log.payment_method) : "-"
-    ]);
+    let currentY = 85;
 
-    autoTable(doc, {
-      startY: 78,
-      head: [["날짜", "시작", "종료", "거리", "목적지", "요금", "결제"]],
-      body: tableData,
-      theme: "grid",
-      headStyles: {
-        fillColor: [0, 85, 255],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        halign: "center",
-        fontSize: 9,
-      },
-      bodyStyles: {
-        halign: "center",
-        fontSize: 8,
-      },
-      alternateRowStyles: {
-        fillColor: [248, 250, 255],
-      },
-      columnStyles: {
-        0: { cellWidth: 24 },
-        1: { cellWidth: 18 },
-        2: { cellWidth: 18 },
-        3: { cellWidth: 20 },
-        4: { cellWidth: 50 },
-        5: { cellWidth: 28 },
-        6: { cellWidth: 22 },
-      },
-      margin: { left: 14, right: 14 },
-    });
+    if (logsToExport.length > 0) {
+      doc.setFontSize(12);
+      doc.setTextColor(0, 85, 255);
+      doc.text("운행 기록", 14, currentY);
+      currentY += 5;
+
+      const tableData = logsToExport.map((log) => [
+        new Date(log.date).toLocaleDateString("ko-KR"),
+        formatTime(log.start_time),
+        formatTime(log.end_time),
+        `${log.distance_km.toFixed(1)}km`,
+        log.hospital_name || "-",
+        log.revenue_amount ? `₩${log.revenue_amount.toLocaleString()}` : "-",
+        log.payment_method ? getPaymentLabel(log.payment_method) : "-"
+      ]);
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [["날짜", "시작", "종료", "거리", "목적지", "요금", "결제"]],
+        body: tableData,
+        theme: "grid",
+        headStyles: {
+          fillColor: [0, 85, 255],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          halign: "center",
+          fontSize: 9,
+        },
+        bodyStyles: {
+          halign: "center",
+          fontSize: 8,
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 255],
+        },
+        columnStyles: {
+          0: { cellWidth: 24 },
+          1: { cellWidth: 18 },
+          2: { cellWidth: 18 },
+          3: { cellWidth: 20 },
+          4: { cellWidth: 50 },
+          5: { cellWidth: 28 },
+          6: { cellWidth: 22 },
+        },
+        margin: { left: 14, right: 14 },
+      });
+
+      currentY = (doc as any).lastAutoTable.finalY + 15;
+    }
+
+    // Rejection Logs Table
+    if (monthRejectionLogs.length > 0) {
+      // Check if we need a new page
+      if (currentY > 230) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      doc.setFontSize(12);
+      doc.setTextColor(200, 50, 50);
+      doc.text("거부 이력", 14, currentY);
+      currentY += 5;
+
+      const rejectionTableData = monthRejectionLogs.map((log) => [
+        new Date(log.recorded_at).toLocaleDateString("ko-KR"),
+        new Date(log.recorded_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+        log.hospital_name,
+        getRejectionReasonLabel(log.rejection_reason),
+        log.notes || "-"
+      ]);
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [["날짜", "시간", "병원명", "거부 사유", "메모"]],
+        body: rejectionTableData,
+        theme: "grid",
+        headStyles: {
+          fillColor: [200, 50, 50],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          halign: "center",
+          fontSize: 9,
+        },
+        bodyStyles: {
+          halign: "center",
+          fontSize: 8,
+        },
+        alternateRowStyles: {
+          fillColor: [255, 245, 245],
+        },
+        columnStyles: {
+          0: { cellWidth: 24 },
+          1: { cellWidth: 20 },
+          2: { cellWidth: 50 },
+          3: { cellWidth: 30 },
+          4: { cellWidth: 56 },
+        },
+        margin: { left: 14, right: 14 },
+      });
+    }
 
     // Footer
     const pageCount = doc.getNumberOfPages();
@@ -216,7 +315,7 @@ const DrivingLogHistory = ({
     
     toast({
       title: "PDF 내보내기 완료",
-      description: `${logsToExport.length}건의 운행 기록이 저장되었습니다`,
+      description: `운행 ${logsToExport.length}건, 거부 ${monthRejectionLogs.length}건이 저장되었습니다`,
     });
   };
 

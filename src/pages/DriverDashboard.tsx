@@ -37,6 +37,7 @@ import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import TripManagementWidget from "@/components/TripManagementWidget";
 import RejectionLoggerFAB from "@/components/RejectionLoggerFAB";
 import RejectionTimeline from "@/components/RejectionTimeline";
+import { useRejectionLogs } from "@/hooks/useRejectionLogs";
 
 // Mock call data
 const mockCalls = [
@@ -95,6 +96,7 @@ const DriverDashboard = () => {
   const { hotlines, toggleFavorite, removeHotline } = useHotlines();
   const { isTracking, startTracking, stopTracking, nearbyDrivers } = useDriverPresence();
   const { pendingRequests, acceptRequest } = useDispatchRequests();
+  const { logs: rejectionLogs } = useRejectionLogs();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -395,7 +397,8 @@ const DriverDashboard = () => {
             <RejectionTimeline />
             
             <DrivingLogHistory 
-              logs={drivingLogs} 
+              logs={drivingLogs}
+              rejectionLogs={rejectionLogs}
               isLoading={isLogsLoading}
               currentMonth={currentMonth}
               onMonthChange={setCurrentMonth}
