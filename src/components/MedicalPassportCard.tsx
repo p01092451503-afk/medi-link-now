@@ -40,8 +40,16 @@ const getRelationIcon = (relation: FamilyMember["relation"]) => {
   }
 };
 
-// Credit card style gradient based on blood type
-const getCardGradient = (bloodType: FamilyMember["bloodType"]) => {
+// Credit card style gradient based on gender (primary) and blood type (secondary)
+const getCardGradient = (gender: FamilyMember["gender"], bloodType: FamilyMember["bloodType"]) => {
+  // Gender-based primary colors
+  if (gender === "male") {
+    return "from-blue-600 via-blue-500 to-cyan-400";
+  } else if (gender === "female") {
+    return "from-pink-500 via-rose-500 to-red-400";
+  }
+  
+  // Default/unknown: use blood type colors as fallback
   switch (bloodType) {
     case "A+":
     case "A-":
@@ -62,7 +70,7 @@ const getCardGradient = (bloodType: FamilyMember["bloodType"]) => {
 
 const MedicalPassportCard = ({ member, onEdit, onDelete, onViewDetail }: MedicalPassportCardProps) => {
   const RelationIcon = getRelationIcon(member.relation);
-  const cardGradient = getCardGradient(member.bloodType);
+  const cardGradient = getCardGradient(member.gender, member.bloodType);
   
   // Calculate age from birth date if available
   const displayAge = member.birthDate 

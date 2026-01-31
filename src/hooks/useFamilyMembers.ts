@@ -31,6 +31,7 @@ export const useFamilyMembers = () => {
     const newMember: FamilyMember = {
       ...member,
       id: crypto.randomUUID(),
+      gender: member.gender || "unknown",
       chronicDiseases: member.chronicDiseases || [],
       allergies: member.allergies || [],
       medications: member.medications || [],

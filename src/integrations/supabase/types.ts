@@ -227,6 +227,7 @@ export type Database = {
           blood_type: string
           chronic_diseases: string[] | null
           created_at: string
+          gender: string | null
           guardian_contact: string | null
           id: string
           medications: string[] | null
@@ -244,6 +245,7 @@ export type Database = {
           blood_type?: string
           chronic_diseases?: string[] | null
           created_at?: string
+          gender?: string | null
           guardian_contact?: string | null
           id?: string
           medications?: string[] | null
@@ -261,6 +263,7 @@ export type Database = {
           blood_type?: string
           chronic_diseases?: string[] | null
           created_at?: string
+          gender?: string | null
           guardian_contact?: string | null
           id?: string
           medications?: string[] | null

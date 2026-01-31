@@ -53,6 +53,7 @@ const FamilyPage = () => {
         id: dbMember.id,
         name: dbMember.name,
         age: dbMember.age,
+        gender: (dbMember.gender || 'unknown') as FamilyMember["gender"],
         relation: dbMember.relation as FamilyMember["relation"],
         bloodType: dbMember.blood_type as FamilyMember["bloodType"],
         chronicDiseases: dbMember.chronic_diseases || [],
@@ -86,6 +87,7 @@ const FamilyPage = () => {
       await supabaseMembers.addMember({
         name: data.name,
         age: data.age,
+        gender: data.gender,
         relation: data.relation,
         blood_type: data.bloodType,
         chronic_diseases: data.chronicDiseases,
@@ -113,6 +115,7 @@ const FamilyPage = () => {
         await supabaseMembers.updateMember(editingMember.id, {
           name: data.name,
           age: data.age,
+          gender: data.gender,
           relation: data.relation,
           blood_type: data.bloodType,
           chronic_diseases: data.chronicDiseases,

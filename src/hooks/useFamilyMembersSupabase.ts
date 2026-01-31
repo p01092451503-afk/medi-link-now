@@ -8,6 +8,7 @@ export interface FamilyMemberDB {
   user_id: string;
   name: string;
   age: number;
+  gender: string;
   relation: string;
   blood_type: string;
   chronic_diseases: string[];
