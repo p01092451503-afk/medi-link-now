@@ -61,14 +61,10 @@ const RegionSelector = ({
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center gap-2">
       {/* Major Region Selector */}
       <Select value={majorRegion} onValueChange={handleMajorChange}>
-        <SelectTrigger className={`w-[140px] bg-white/50 backdrop-blur-sm shadow-md border border-white/30 h-10 ${
-          majorRegion !== "all" && subRegions.length > 0 
-            ? "rounded-l-xl rounded-r-none border-r-0" 
-            : "rounded-xl"
-        }`}>
+        <SelectTrigger className="w-[140px] bg-white/50 backdrop-blur-sm shadow-md border border-white/30 h-10 rounded-xl">
           <MapPin className="w-4 h-4 mr-1 text-primary flex-shrink-0" />
           <SelectValue placeholder="광역시/도">
             {getMajorRegionLabel(majorRegion)}
@@ -85,30 +81,26 @@ const RegionSelector = ({
 
       {/* Sub-region Selector (only show if major region selected and has sub-regions) */}
       {majorRegion !== "all" && subRegions.length > 0 && (
-        <>
-          {/* Divider */}
-          <div className="h-6 w-px bg-gray-300/50" />
-          <Select 
-            value={subRegion === majorRegion ? "all" : subRegion} 
-            onValueChange={(val) => handleSubChange(val === "all" ? majorRegion : val)}
-          >
-            <SelectTrigger className="w-[120px] bg-white/50 backdrop-blur-sm shadow-md border border-white/30 rounded-r-xl rounded-l-none border-l-0 h-10">
-              <SelectValue placeholder="시/군/구">
-                {getSubRegionLabel(subRegion)}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="bg-white/90 backdrop-blur-sm z-[1001] max-h-[300px]">
-              <SelectItem value="all" className="font-medium text-primary">
-                전체
+        <Select 
+          value={subRegion === majorRegion ? "all" : subRegion} 
+          onValueChange={(val) => handleSubChange(val === "all" ? majorRegion : val)}
+        >
+          <SelectTrigger className="w-[120px] bg-white/50 backdrop-blur-sm shadow-md border border-white/30 rounded-xl h-10">
+            <SelectValue placeholder="시/군/구">
+              {getSubRegionLabel(subRegion)}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="bg-white/90 backdrop-blur-sm z-[1001] max-h-[300px]">
+            <SelectItem value="all" className="font-medium text-primary">
+              전체
+            </SelectItem>
+            {subRegions.map((r) => (
+              <SelectItem key={r.id} value={r.id}>
+                {r.labelKr}
               </SelectItem>
-              {subRegions.map((r) => (
-                <SelectItem key={r.id} value={r.id}>
-                  {r.labelKr}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </>
+            ))}
+          </SelectContent>
+        </Select>
       )}
     </div>
   );
