@@ -25,7 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import RevenueTab from "@/components/RevenueTab";
-import { type DrivingLog } from "@/components/TripManagementWidget";
+import { useDrivingLogs, type CreateDrivingLogInput } from "@/hooks/useDrivingLogs";
 import DrivingLogHistory from "@/components/DrivingLogHistory";
 import DrivingStatsWidget from "@/components/DrivingStatsWidget";
 import PatientInfoModal from "@/components/PatientInfoModal";
@@ -72,10 +72,20 @@ const DriverDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [activeTab, setActiveTab] = useState<"calls" | "revenue" | "log" | "map">("calls");
-  const [drivingLogs, setDrivingLogs] = useState<DrivingLog[]>([]);
   const [isPatientInfoOpen, setIsPatientInfoOpen] = useState(false);
   const [isHotlineOpen, setIsHotlineOpen] = useState(false);
   const [isSimulateMode, setIsSimulateMode] = useState(false);
+  
+  // Driving logs from database
+  const { 
+    logs: drivingLogs, 
+    isLoading: isLogsLoading, 
+    createLog, 
+    deleteLog,
+    currentMonth,
+    setCurrentMonth,
+    stats 
+  } = useDrivingLogs();
   
   const { hotlines, toggleFavorite, removeHotline } = useHotlines();
   const { isTracking, startTracking, stopTracking, nearbyDrivers } = useDriverPresence();
@@ -101,12 +111,6 @@ const DriverDashboard = () => {
       }
     });
 
-    // Load driving logs from localStorage
-    const storedLogs = localStorage.getItem("driving_logs");
-    if (storedLogs) {
-      setDrivingLogs(JSON.parse(storedLogs));
-    }
-
     return () => subscription.unsubscribe();
   }, [navigate]);
 
@@ -120,17 +124,12 @@ const DriverDashboard = () => {
     toast({ title: "호출을 수락했습니다!", description: "환자에게 연락 중..." });
   };
 
-  const handleLogComplete = (log: DrivingLog) => {
-    const newLogs = [log, ...drivingLogs];
-    setDrivingLogs(newLogs);
-    localStorage.setItem("driving_logs", JSON.stringify(newLogs));
+  const handleLogComplete = async (input: CreateDrivingLogInput) => {
+    await createLog(input);
   };
 
   const handleDeleteLog = (id: string) => {
-    const newLogs = drivingLogs.filter((log) => log.id !== id);
-    setDrivingLogs(newLogs);
-    localStorage.setItem("driving_logs", JSON.stringify(newLogs));
-    toast({ title: "기록이 삭제되었습니다" });
+    deleteLog(id);
   };
 
   const todayRevenue = mockCalls
@@ -139,6 +138,18 @@ const DriverDashboard = () => {
 
   const pendingCalls = mockCalls.filter((c) => c.status === "pending");
   const completedCalls = mockCalls.filter((c) => c.status === "completed");
+
+  // Convert DB logs to stats widget format
+  const statsLogs = drivingLogs.map(log => ({
+    id: log.id,
+    date: log.date,
+    startTime: new Date(log.start_time).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+    endTime: new Date(log.end_time).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+    startLocation: log.start_location,
+    endLocation: log.end_location,
+    distance: log.distance_km,
+    patientName: log.patient_name || "",
+  }));
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -259,7 +270,7 @@ const DriverDashboard = () => {
             className="space-y-4"
           >
             {/* Driving Stats Summary */}
-            <DrivingStatsWidget logs={drivingLogs} />
+            <DrivingStatsWidget logs={statsLogs} />
             {/* Pending Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
@@ -352,7 +363,11 @@ const DriverDashboard = () => {
           >
             <DrivingLogHistory 
               logs={drivingLogs} 
-              onDeleteLog={handleDeleteLog} 
+              isLoading={isLogsLoading}
+              currentMonth={currentMonth}
+              onMonthChange={setCurrentMonth}
+              onDeleteLog={handleDeleteLog}
+              stats={stats}
             />
           </motion.div>
         )}

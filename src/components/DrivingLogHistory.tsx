@@ -1,18 +1,45 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, Calendar, Clock, Navigation, Trash2, Printer } from "lucide-react";
+import { 
+  FileText, 
+  Download, 
+  Calendar, 
+  Navigation, 
+  Trash2, 
+  ChevronLeft, 
+  ChevronRight,
+  Clock,
+  MapPin,
+  Building2,
+  ArrowRight
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import type { DrivingLog } from "./DrivingLogWidget";
+import { type DrivingLog } from "@/hooks/useDrivingLogs";
 
 interface DrivingLogHistoryProps {
   logs: DrivingLog[];
+  isLoading?: boolean;
+  currentMonth: Date;
+  onMonthChange: (date: Date) => void;
   onDeleteLog?: (id: string) => void;
+  stats: {
+    totalTrips: number;
+    totalDistance: number;
+    totalDuration: number;
+  };
 }
 
-const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
+const DrivingLogHistory = ({ 
+  logs, 
+  isLoading,
+  currentMonth,
+  onMonthChange,
+  onDeleteLog,
+  stats 
+}: DrivingLogHistoryProps) => {
   const [selectedLogs, setSelectedLogs] = useState<string[]>([]);
 
   const toggleLogSelection = (id: string) => {
@@ -27,6 +54,37 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
     } else {
       setSelectedLogs(logs.map((log) => log.id));
     }
+  };
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}시간 ${mins}분`;
+    }
+    return `${mins}분`;
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric", weekday: "short" });
+  };
+
+  const prevMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() - 1);
+    onMonthChange(newDate);
+  };
+
+  const nextMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() + 1);
+    onMonthChange(newDate);
   };
 
   const exportToPDF = () => {
@@ -52,19 +110,15 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
     doc.setTextColor(100, 100, 100);
     doc.text("Driving Log Report", 105, 28, { align: "center" });
     
-    // Date range
-    doc.setFontSize(10);
+    // Month info
+    doc.setFontSize(11);
     doc.setTextColor(60, 60, 60);
-    const dateRange = `기간: ${logsToExport[logsToExport.length - 1]?.date} ~ ${logsToExport[0]?.date}`;
-    doc.text(dateRange, 105, 38, { align: "center" });
+    const monthStr = currentMonth.toLocaleDateString("ko-KR", { year: "numeric", month: "long" });
+    doc.text(`기간: ${monthStr}`, 105, 38, { align: "center" });
 
     // Summary box
-    const totalDistance = logsToExport.reduce((sum, log) => sum + log.distance, 0);
-    const totalDuration = logsToExport.reduce((sum, log) => {
-      const [startH, startM] = log.startTime.split(":").map(Number);
-      const [endH, endM] = log.endTime.split(":").map(Number);
-      return sum + ((endH * 60 + endM) - (startH * 60 + startM));
-    }, 0);
+    const totalDistance = logsToExport.reduce((sum, log) => sum + log.distance_km, 0);
+    const totalDuration = logsToExport.reduce((sum, log) => sum + (log.duration_minutes || 0), 0);
     const totalHours = Math.floor(totalDuration / 60);
     const totalMins = totalDuration % 60;
 
@@ -76,19 +130,20 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
     doc.text(`총 운행 거리: ${totalDistance.toFixed(1)}km`, 85, 55);
     doc.text(`총 운행 시간: ${totalHours}시간 ${totalMins}분`, 145, 55);
 
-    // Table using autotable
+    // Table
     const tableData = logsToExport.map((log) => [
-      log.date,
-      log.startTime,
-      log.endTime,
-      `${log.distance}km`,
-      log.patientName,
-      log.startLocation.length > 20 ? log.startLocation.substring(0, 20) + "..." : log.startLocation
+      new Date(log.date).toLocaleDateString("ko-KR"),
+      formatTime(log.start_time),
+      formatTime(log.end_time),
+      `${log.distance_km.toFixed(1)}km`,
+      log.duration_minutes ? formatDuration(log.duration_minutes) : "-",
+      log.hospital_name || "-",
+      log.patient_name || "-"
     ]);
 
     autoTable(doc, {
       startY: 78,
-      head: [["날짜", "시작", "종료", "거리", "환자명", "출발지"]],
+      head: [["날짜", "시작", "종료", "거리", "소요시간", "목적지", "환자명"]],
       body: tableData,
       theme: "grid",
       headStyles: {
@@ -96,21 +151,23 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
         textColor: [255, 255, 255],
         fontStyle: "bold",
         halign: "center",
+        fontSize: 9,
       },
       bodyStyles: {
         halign: "center",
-        fontSize: 9,
+        fontSize: 8,
       },
       alternateRowStyles: {
         fillColor: [248, 250, 255],
       },
       columnStyles: {
-        0: { cellWidth: 28 },
-        1: { cellWidth: 20 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 22 },
-        4: { cellWidth: 30 },
-        5: { cellWidth: 62 },
+        0: { cellWidth: 24 },
+        1: { cellWidth: 18 },
+        2: { cellWidth: 18 },
+        3: { cellWidth: 20 },
+        4: { cellWidth: 26 },
+        5: { cellWidth: 45 },
+        6: { cellWidth: 31 },
       },
       margin: { left: 14, right: 14 },
     });
@@ -127,11 +184,11 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
         285,
         { align: "center" }
       );
-      doc.text("Medi-Link Pro - 자동 생성 운행일지", 105, 290, { align: "center" });
+      doc.text("Find-ER Pro - 자동 생성 운행일지", 105, 290, { align: "center" });
     }
 
     // Save
-    const fileName = `운행일지_${new Date().toLocaleDateString("ko-KR").replace(/\./g, "")}.pdf`;
+    const fileName = `운행일지_${currentMonth.getFullYear()}년${currentMonth.getMonth() + 1}월.pdf`;
     doc.save(fileName);
     
     toast({
@@ -140,17 +197,66 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
     });
   };
 
-  const totalDistance = logs.reduce((sum, log) => sum + log.distance, 0);
-
   return (
     <div className="space-y-4">
-      {/* Header */}
+      {/* Header with Month Navigation */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary" />
-          운행 기록
+          운행일지
         </h3>
-        <div className="flex items-center gap-2">
+        <Button
+          onClick={exportToPDF}
+          size="sm"
+          className="bg-primary"
+        >
+          <Download className="w-4 h-4 mr-1" />
+          PDF 내보내기
+        </Button>
+      </div>
+
+      {/* Month Selector */}
+      <div className="flex items-center justify-center gap-4 py-2">
+        <button
+          onClick={prevMonth}
+          className="p-2 hover:bg-muted rounded-lg transition-colors"
+        >
+          <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+        </button>
+        <div className="text-center">
+          <p className="text-lg font-bold text-foreground">
+            {currentMonth.toLocaleDateString("ko-KR", { year: "numeric", month: "long" })}
+          </p>
+        </div>
+        <button
+          onClick={nextMonth}
+          className="p-2 hover:bg-muted rounded-lg transition-colors"
+        >
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+        </button>
+      </div>
+
+      {/* Summary Card */}
+      <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-4 border border-primary/20">
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground mb-1">총 운행</p>
+            <p className="text-2xl font-bold text-foreground">{stats.totalTrips}건</p>
+          </div>
+          <div className="text-center border-x border-primary/20">
+            <p className="text-xs text-muted-foreground mb-1">총 거리</p>
+            <p className="text-2xl font-bold text-primary">{stats.totalDistance.toFixed(1)}km</p>
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground mb-1">총 시간</p>
+            <p className="text-2xl font-bold text-foreground">{formatDuration(stats.totalDuration)}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Selection Controls */}
+      {logs.length > 0 && (
+        <div className="flex items-center justify-between">
           <Button
             variant="outline"
             size="sm"
@@ -159,40 +265,26 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
           >
             {selectedLogs.length === logs.length ? "전체 해제" : "전체 선택"}
           </Button>
-          <Button
-            onClick={exportToPDF}
-            size="sm"
-            className="bg-primary"
-          >
-            <Download className="w-4 h-4 mr-1" />
-            PDF
-          </Button>
+          <span className="text-xs text-muted-foreground">
+            {selectedLogs.length > 0 ? `${selectedLogs.length}건 선택됨` : `총 ${logs.length}건`}
+          </span>
         </div>
-      </div>
-
-      {/* Summary Card */}
-      <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-4 border border-primary/20">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-muted-foreground">총 운행</p>
-            <p className="text-2xl font-bold text-foreground">{logs.length}건</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">총 거리</p>
-            <p className="text-2xl font-bold text-primary">{totalDistance.toFixed(1)}km</p>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Log List */}
-      {logs.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm">운행 기록 로딩 중...</p>
+        </div>
+      ) : logs.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">운행 기록이 없습니다</p>
-          <p className="text-xs mt-1">운행 시작 버튼을 눌러 기록을 시작하세요</p>
+          <p className="text-sm">이 달의 운행 기록이 없습니다</p>
+          <p className="text-xs mt-1">이송 시작 버튼을 눌러 기록을 시작하세요</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {logs.map((log, index) => (
             <motion.div
               key={log.id}
@@ -206,23 +298,58 @@ const DrivingLogHistory = ({ logs, onDeleteLog }: DrivingLogHistoryProps) => {
                   : "border-border hover:border-primary/50"
               }`}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold text-foreground">{log.date}</span>
+              {/* Date & Time Header */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">
+                    {formatDate(log.date)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  <span>{formatTime(log.start_time)}</span>
+                  <ArrowRight className="w-3 h-3" />
+                  <span>{formatTime(log.end_time)}</span>
+                </div>
+              </div>
+              
+              {/* Route Info */}
+              <div className="flex items-start gap-3 mb-3">
+                <div className="flex flex-col items-center">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <div className="w-0.5 h-8 bg-gradient-to-b from-green-500 to-primary" />
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                </div>
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin className="w-3 h-3" />
+                    <span className="truncate">{log.start_location}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm font-medium text-foreground">
+                    <Building2 className="w-3.5 h-3.5 text-primary" />
+                    <span className="truncate">{log.hospital_name || log.end_location}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Row */}
+              <div className="flex items-center justify-between pt-2 border-t border-border">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 text-primary font-semibold">
+                    <Navigation className="w-4 h-4" />
+                    {log.distance_km.toFixed(1)}km
+                  </div>
+                  {log.duration_minutes && (
                     <span className="text-xs text-muted-foreground">
-                      {log.startTime} - {log.endTime}
+                      {formatDuration(log.duration_minutes)}
                     </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-1 text-primary font-medium">
-                      <Navigation className="w-4 h-4" />
-                      {log.distance}km
-                    </div>
-                    <span className="text-muted-foreground">{log.patientName}</span>
-                  </div>
+                  )}
+                  {log.patient_name && (
+                    <span className="px-2 py-0.5 bg-muted rounded text-xs text-muted-foreground">
+                      {log.patient_name}
+                    </span>
+                  )}
                 </div>
 
                 {onDeleteLog && (

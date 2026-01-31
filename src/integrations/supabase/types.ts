@@ -139,6 +139,77 @@ export type Database = {
         }
         Relationships: []
       }
+      driving_logs: {
+        Row: {
+          created_at: string
+          date: string
+          distance_km: number
+          driver_id: string
+          duration_minutes: number | null
+          end_lat: number | null
+          end_lng: number | null
+          end_location: string
+          end_time: string
+          hospital_id: number | null
+          hospital_name: string | null
+          id: string
+          notes: string | null
+          patient_name: string | null
+          start_lat: number | null
+          start_lng: number | null
+          start_location: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          distance_km?: number
+          driver_id: string
+          duration_minutes?: number | null
+          end_lat?: number | null
+          end_lng?: number | null
+          end_location: string
+          end_time: string
+          hospital_id?: number | null
+          hospital_name?: string | null
+          id?: string
+          notes?: string | null
+          patient_name?: string | null
+          start_lat?: number | null
+          start_lng?: number | null
+          start_location: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          distance_km?: number
+          driver_id?: string
+          duration_minutes?: number | null
+          end_lat?: number | null
+          end_lng?: number | null
+          end_location?: string
+          end_time?: string
+          hospital_id?: number | null
+          hospital_name?: string | null
+          id?: string
+          notes?: string | null
+          patient_name?: string | null
+          start_lat?: number | null
+          start_lng?: number | null
+          start_location?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driving_logs_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_members: {
         Row: {
           age: number
