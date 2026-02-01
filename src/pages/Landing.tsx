@@ -692,7 +692,7 @@ const Landing = () => {
             >
               <div className="flex items-center w-full">
                 <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
-                  <Users className="w-5 h-5 text-white" />
+                  <Ambulance className="w-7 h-7 text-white" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
@@ -709,7 +709,7 @@ const Landing = () => {
             >
               <div className="flex items-center w-full">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-orange-100 group-hover:to-red-100 transition-all">
-                  <Ambulance className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                  <Ambulance className="w-7 h-7 text-slate-600 group-hover:text-orange-600 transition-colors" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원 / 기사님</p>
