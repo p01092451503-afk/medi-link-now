@@ -102,7 +102,7 @@ const QuickRejectionButton = ({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-2xl shadow-2xl z-[2001] overflow-hidden"
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-2xl shadow-2xl z-[2001] overflow-hidden max-h-[85vh] flex flex-col"
             >
               {/* Header */}
               <div className="bg-gradient-to-r from-red-500 to-orange-500 px-5 py-4">
@@ -126,7 +126,7 @@ const QuickRejectionButton = ({
               </div>
 
               {/* Content */}
-              <div className="p-5 space-y-3">
+              <div className="p-5 space-y-3 overflow-y-auto flex-1">
                 <p className="text-sm text-muted-foreground">
                   이 정보는 동료 대원들과 실시간으로 공유됩니다.
                 </p>
