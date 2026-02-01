@@ -458,7 +458,7 @@ const MapPage = () => {
                 disabled={isLocating}
                 className={`relative w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 disabled:opacity-70 overflow-hidden ${
                   userLocation
-                    ? "bg-primary shadow-primary/30"
+                    ? "bg-emerald-500 shadow-emerald-500/40"
                     : "bg-primary shadow-primary/20"
                 }`}
                 aria-label="내 위치에서 가까운 병원 찾기"
