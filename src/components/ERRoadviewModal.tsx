@@ -152,7 +152,7 @@ const ERRoadviewModal = ({
             )}
 
             {/* Content */}
-            <div className="flex-1 relative bg-gray-100">
+            <div className="flex-1 relative bg-gray-100 min-h-[350px]">
               {isLoading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
                   <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
@@ -163,7 +163,7 @@ const ERRoadviewModal = ({
               )}
 
               {hasError && !isLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 p-6">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 p-6 pb-8">
                   <AlertTriangle className="w-16 h-16 text-yellow-500 mb-4" />
                   <h3 className="font-semibold text-foreground text-lg mb-2">
                     로드뷰를 불러올 수 없습니다
