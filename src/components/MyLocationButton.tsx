@@ -10,6 +10,19 @@ const MyLocationButton = ({ onClick, isLoading }: MyLocationButtonProps) => {
   return (
     <motion.button
       whileTap={{ scale: 0.9 }}
+      animate={!isLoading ? {
+        scale: [1, 1.08, 1],
+        boxShadow: [
+          "0 4px 14px 0 rgba(59, 130, 246, 0.3)",
+          "0 6px 20px 0 rgba(59, 130, 246, 0.5)",
+          "0 4px 14px 0 rgba(59, 130, 246, 0.3)"
+        ]
+      } : {}}
+      transition={!isLoading ? {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      } : {}}
       onClick={onClick}
       disabled={isLoading}
       className="fab-button bottom-32 right-4"
