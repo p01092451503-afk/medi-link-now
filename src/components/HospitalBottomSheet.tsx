@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import CongestionForecast from "@/components/hospital/CongestionForecast";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import { useAuth } from "@/hooks/useAuth";
-
+import { useIncomingAmbulancesForHospital } from "@/hooks/useIncomingAmbulances";
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
   onClose: () => void;
@@ -28,6 +28,8 @@ interface HospitalBottomSheetProps {
 const BedStatusCard = ({
   label,
   count,
+  adjustedCount,
+  incomingCount,
   icon: Icon,
   type,
   showTooltip,
@@ -36,6 +38,8 @@ const BedStatusCard = ({
 }: {
   label: string;
   count: number;
+  adjustedCount?: number;
+  incomingCount?: number;
   icon: React.ElementType;
   type: "general" | "pediatric" | "fever";
   showTooltip?: boolean;
@@ -43,7 +47,8 @@ const BedStatusCard = ({
   isHospitalFull?: boolean;
 }) => {
   // 음수 병상은 0으로 표시 (API 데이터 이상값 처리)
-  const displayCount = Math.max(0, count);
+  const displayCount = adjustedCount !== undefined ? adjustedCount : Math.max(0, count);
+  const hasIncoming = incomingCount !== undefined && incomingCount > 0;
   
   // 0보다 크면 여유, 0이면 병원 전체 만실 여부에 따라 색상 결정
   const isAvailable = displayCount > 0;
@@ -78,19 +83,27 @@ const BedStatusCard = ({
       >
         {displayCount}
       </span>
-      <div className="flex items-center gap-1">
-        <span className="text-xs text-muted-foreground text-center">{label}</span>
-        {showTooltip && tooltipText && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="w-3 h-3 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-xs max-w-[200px]">{tooltipText}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-muted-foreground text-center">{label}</span>
+          {showTooltip && tooltipText && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="w-3 h-3 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs max-w-[200px]">{tooltipText}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+        {hasIncoming && (
+          <span className="text-[10px] text-orange-500 font-medium flex items-center gap-0.5">
+            <Truck className="w-3 h-3" />
+            이송 중 {incomingCount}대
+          </span>
         )}
       </div>
     </div>
@@ -125,12 +138,19 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
   const { user } = useAuth();
   const [showRoadview, setShowRoadview] = useState(false);
   
+  // 이송 중인 구급차 수 가져오기
+  const { incomingCount } = useIncomingAmbulancesForHospital(hospital?.id);
+  
   if (!hospital) return null;
 
   const status = getHospitalStatus(hospital);
   const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
   const hasPediatric = hospital.beds.pediatric > 0;
   const isFavorite = isHotline(hospital.phone);
+  
+  // 실질 가용 병상 계산 (이송 중 차량 수 차감)
+  const adjustedGeneralBeds = Math.max(0, hospital.beds.general - incomingCount);
+  const adjustedTotalBeds = Math.max(0, totalBeds - incomingCount);
 
   const handleCall = () => {
     window.location.href = `tel:${hospital.phone}`;
@@ -292,12 +312,34 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
 
               {/* Bed Status Grid */}
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-foreground">공식 병상 현황</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-foreground">실질 가용 병상</h3>
+                  {incomingCount > 0 && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 text-orange-600">
+                            <Truck className="w-3 h-3" />
+                            이송 중 {incomingCount}대
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs max-w-[200px]">
+                            현재 이 병원으로 향하는 구급차가 {incomingCount}대 있어,<br/>
+                            공식 병상에서 차감하여 실질 가용 병상을 표시합니다.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
               </div>
               <div className="grid grid-cols-3 gap-3 mb-5">
                 <BedStatusCard
                   label="성인"
                   count={hospital.beds.general}
+                  adjustedCount={adjustedGeneralBeds}
+                  incomingCount={incomingCount}
                   icon={Stethoscope}
                   type="general"
                   isHospitalFull={status === "unavailable"}

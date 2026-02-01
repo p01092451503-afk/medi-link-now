@@ -99,12 +99,14 @@ export const createHospitalIcon = (
   isPediatricFilter?: boolean,
   emergencyGrade?: string | null,
   isMoonlightMode?: boolean,
-  rejectionAlert?: RejectionAlertInfo
+  rejectionAlert?: RejectionAlertInfo,
+  incomingCount?: number
 ) => {
   // Use moonlight colors if in moonlight mode, otherwise use grade colors
   const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
+  const hasIncoming = incomingCount && incomingCount > 0;
 
   // Rejection alert styles
   const hasRejectionAlert = rejectionAlert && rejectionAlert.severity !== 'none';
@@ -168,6 +170,32 @@ export const createHospitalIcon = (
         z-index: 15;
       ">
         ${rejectionAlert?.count || 0}
+      </div>`
+    : '';
+
+  // Incoming ambulance badge (small truck icon with count)
+  const incomingBadge = hasIncoming && !isCritical
+    ? `<div style="
+        position: absolute;
+        top: -18px;
+        right: ${isWarning ? '-30px' : '-10px'};
+        background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+        border: 2px solid white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 2px 6px;
+        font-size: 9px;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 2px 6px rgba(249, 115, 22, 0.5);
+        z-index: 15;
+      ">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 8H17V4H3C1.9 4 1 4.9 1 6V17H3C3 18.66 4.34 20 6 20S9 18.66 9 17H15C15 18.66 16.34 20 18 20S21 18.66 21 17H23V12L20 8Z"/>
+        </svg>
+        ${incomingCount}
       </div>`
     : '';
 
@@ -275,6 +303,7 @@ export const createHospitalIcon = (
           <span style="font-size: 9px; font-weight: 500; opacity: 0.9;">석</span>
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
+          ${incomingBadge}
         </div>
         <div style="
           width: 0;
