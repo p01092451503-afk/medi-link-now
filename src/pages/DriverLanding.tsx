@@ -76,10 +76,15 @@ const DriverLanding = () => {
             <ChevronRight className="w-4 h-4 rotate-180" />
             돌아가기
           </button>
-          <div className="flex items-baseline gap-1">
-            <span className="font-bold text-slate-800">Find-ER</span>
-            <span className="text-sm font-bold text-primary">파인더</span>
-            <span className="text-[10px] font-bold text-orange-500 bg-orange-100 px-1.5 py-0.5 rounded-full">Pro</span>
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
+              <Ambulance className="w-4.5 h-4.5 text-white" />
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="font-bold text-slate-800">Find-ER</span>
+              <span className="text-sm font-bold text-primary">파인더</span>
+              <span className="text-[10px] font-bold text-orange-500 bg-orange-100 px-1.5 py-0.5 rounded-full">Pro</span>
+            </div>
           </div>
         </div>
       </header>
