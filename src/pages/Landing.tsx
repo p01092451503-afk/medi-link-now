@@ -691,8 +691,8 @@ const Landing = () => {
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-700 to-slate-800 border border-slate-600 relative overflow-hidden group transition-all duration-300 hover:from-slate-600 hover:to-slate-700 shadow-lg shadow-slate-900/20"
             >
               <div className="flex items-center w-full">
-                <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
-                  <Ambulance className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
+                  <Ambulance className="w-9 h-9 text-white" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
@@ -708,8 +708,8 @@ const Landing = () => {
               className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 hover:border-orange-200 shadow-sm hover:shadow-md"
             >
               <div className="flex items-center w-full">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-orange-100 group-hover:to-red-100 transition-all">
-                  <Ambulance className="w-8 h-8 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-orange-100 group-hover:to-red-100 transition-all">
+                  <Ambulance className="w-9 h-9 text-slate-600 group-hover:text-orange-600 transition-colors" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원 / 기사님</p>
