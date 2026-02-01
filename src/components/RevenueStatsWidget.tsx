@@ -139,15 +139,15 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       className="space-y-4"
     >
       {/* Monthly Total Revenue Card */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-6 text-white">
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="w-5 h-5" />
-          <p className="text-sm opacity-80">이번 달 누적 매출</p>
+      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-4 text-white">
+        <div className="flex items-center gap-2 mb-1">
+          <TrendingUp className="w-4 h-4" />
+          <p className="text-xs opacity-80">이번 달 누적 매출</p>
         </div>
-        <p className="text-4xl font-bold">
+        <p className="text-2xl font-bold">
           ₩{monthlyTotalRevenue.toLocaleString()}
         </p>
-        <div className="flex items-center gap-4 mt-3 text-sm opacity-80">
+        <div className="flex items-center gap-3 mt-2 text-xs opacity-80">
           <span>총 {logs.filter(l => l.revenue_amount).length}건</span>
           <span>
             평균 ₩
