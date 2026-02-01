@@ -598,34 +598,32 @@ const VoiceEmergencyLogFAB = () => {
                         }`}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <div className="relative">
+                        <div className="relative h-12 w-24 flex items-center justify-center">
                           {isProcessingAI ? (
                             <Sparkles className="w-12 h-12 animate-pulse" />
                           ) : isListening ? (
                             <>
                               {/* Waveform Animation */}
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="flex items-end gap-1 h-12">
-                                  {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-                                    <motion.div
-                                      key={i}
-                                      className="w-1.5 bg-white rounded-full"
-                                      animate={{ 
-                                        height: [8, 32, 16, 40, 12, 28, 8] 
-                                      }}
-                                      transition={{
-                                        duration: 0.8,
-                                        repeat: Infinity,
-                                        delay: i * 0.1,
-                                        ease: "easeInOut"
-                                      }}
-                                    />
-                                  ))}
-                                </div>
+                              <div className="flex items-end gap-1 h-12">
+                                {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+                                  <motion.div
+                                    key={i}
+                                    className="w-1.5 bg-white rounded-full"
+                                    animate={{ 
+                                      height: [8, 32, 16, 40, 12, 28, 8] 
+                                    }}
+                                    transition={{
+                                      duration: 0.8,
+                                      repeat: Infinity,
+                                      delay: i * 0.1,
+                                      ease: "easeInOut"
+                                    }}
+                                  />
+                                ))}
                               </div>
                               <motion.div
-                                className="absolute inset-0 rounded-full bg-white/30"
-                                animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
+                                className="absolute inset-0 rounded-full bg-white/30 pointer-events-none"
+                                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
                                 transition={{ duration: 1.5, repeat: Infinity }}
                               />
                             </>
