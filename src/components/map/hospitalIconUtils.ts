@@ -220,13 +220,14 @@ export const createHospitalIcon = (
         bottom: -8px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.75);
+        background: rgba(0,0,0,0.85);
         color: white;
         font-size: 9px;
         font-weight: 600;
         padding: 2px 6px;
         border-radius: 4px;
         white-space: nowrap;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
       ">${gradeLabel}</div>`
     : "";
 
@@ -255,23 +256,23 @@ export const createHospitalIcon = (
         ${rejectionBadge}
         <div style="
           position: relative;
-          min-width: 36px;
+          min-width: 40px;
           height: 36px;
-          padding: 0 10px;
+          padding: 0 8px;
           background: ${color.bg};
           border: 3px solid ${color.border};
           border-radius: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
+          gap: 1px;
           color: ${color.text};
-          font-weight: 700;
-          font-size: 16px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.3);
           cursor: pointer;
           ${rejectionBorderStyle}
         ">
-          ${beds}
+          <span style="font-weight: 800; font-size: 15px;">${beds}</span>
+          <span style="font-size: 9px; font-weight: 500; opacity: 0.9;">석</span>
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
         </div>

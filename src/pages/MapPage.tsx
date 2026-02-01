@@ -1,9 +1,8 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, X, RefreshCw, Ambulance, MapPin, Plus, Minus, Database, Heart, Moon } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import L from "leaflet";
 import {
@@ -12,7 +11,6 @@ import {
   filterOptions,
   filterHospitals,
   calculateDistance,
-  getHospitalStatus,
   RegionType,
   MajorRegionType,
   regionOptions,
@@ -32,11 +30,9 @@ import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
-import RegionSelector from "@/components/RegionSelector";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
-import RegionSummaryCard from "@/components/map/RegionSummaryCard";
 import OfflineBanner from "@/components/OfflineBanner";
 import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";
@@ -81,7 +77,6 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
   const [isListExpanded, setIsListExpanded] = useState(false);
-  const [showDataSource, setShowDataSource] = useState(true);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
 
   // Get rejection alerts for hospitals - convert to RejectionAlertInfo format
@@ -421,6 +416,7 @@ const MapPage = () => {
           onBoundsChange={handleBoundsChange}
           isMoonlightMode={activeFilter === "moonlight"}
           rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
+          isDriverMode={isDriverMode}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
@@ -531,50 +527,7 @@ const MapPage = () => {
           </HoverCard>
         </div>
 
-        {/* Data Source Attribution - Bottom left, above radius chips */}
-        <div className="absolute bottom-14 left-4 z-[999]">
-          <AnimatePresence mode="wait">
-            {showDataSource ? (
-              <motion.div
-                key="expanded"
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                className="flex items-center gap-2.5 bg-white backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg"
-              >
-                <Database className="w-4 h-4 text-primary flex-shrink-0" />
-                <div className="text-[10px] text-muted-foreground leading-tight min-w-0">
-                  <p className="font-medium text-foreground">공공데이터포털</p>
-                  <p className="text-muted-foreground">전국 응급의료기관 실시간 가용병상정보</p>
-                  {lastUpdated && (
-                    <p className="text-primary font-medium">
-                      {lastUpdated.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 업데이트
-                    </p>
-                  )}
-                </div>
-                <button
-                  onClick={() => setShowDataSource(false)}
-                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-                  aria-label="닫기"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
-              </motion.div>
-            ) : (
-              <motion.button
-                key="collapsed"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                onClick={() => setShowDataSource(true)}
-                className="flex items-center justify-center w-10 h-10 bg-white backdrop-blur-sm rounded-xl shadow-lg hover:bg-gray-50 active:scale-95 transition-all border border-gray-200"
-                aria-label="데이터 출처 보기"
-              >
-                <Database className="w-4 h-4 text-primary" />
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </div>
+        {/* Data Source removed - update time moved to RadiusChips */}
 
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
@@ -604,28 +557,12 @@ const MapPage = () => {
           </div>
         </header>
 
-        {/* Filter Section */}
-        <div className="absolute top-20 left-0 right-0 z-[999] px-4 space-y-2">
-          {/* Region Filter */}
-          <RegionSelector
-            majorRegion={activeMajorRegion}
-            subRegion={activeRegion}
-            onMajorRegionChange={handleMajorRegionChange}
-            onSubRegionChange={handleSubRegionChange}
-            hospitalCount={filteredHospitals.length}
-          />
-
-          {/* Region Summary Card */}
-          <RegionSummaryCard
-            hospitals={filteredHospitals}
-            regionName={activeMajorRegion === "all" ? "전국" : activeMajorRegion}
-          />
-
-          {/* Bed Type Filter Chips */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide items-center">
+        {/* Filter Chips - Single row horizontal scroll */}
+        <div className="absolute top-20 left-0 right-0 z-[999] px-4">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
             {filterOptions
               .filter((f) => f.category === "bed" || f.category === "special")
-              .filter((f) => f.id !== "pharmacy") // Hide legacy pharmacy filter
+              .filter((f) => f.id !== "pharmacy")
               .map((f) => {
                 const isActive = activeFilter === f.id;
                 const isTraumaCenter = f.id === "traumaCenter";
@@ -633,7 +570,6 @@ const MapPage = () => {
 
                 const handleFilterClick = () => {
                   setActiveFilter(f.id);
-                  // Clear selected hospital/pharmacy when switching filters
                   setSelectedHospital(null);
                   setSelectedPharmacy(null);
                 };
@@ -642,29 +578,21 @@ const MapPage = () => {
                   <button
                     key={f.id}
                     onClick={handleFilterClick}
-                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border backdrop-blur-sm flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 flex-shrink-0 ${
                       isActive
                         ? isTraumaCenter
-                          ? "bg-gradient-to-r from-purple-600/80 to-violet-600/80 text-white border-purple-600 shadow-lg shadow-purple-500/30"
+                          ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
                           : isMoonlight
-                            ? "bg-gradient-to-r from-amber-400/80 to-yellow-500/80 text-amber-900 border-amber-400 shadow-lg shadow-amber-500/30"
-                            : "bg-primary/80 text-white border-primary"
-                        : isTraumaCenter
-                          ? "bg-white/40 text-purple-600 border-purple-200/50 hover:bg-white/60"
-                          : isMoonlight
-                            ? "bg-white/40 text-amber-600 border-amber-200/50 hover:bg-white/60"
-                            : "bg-white/40 text-gray-600 border-gray-200/50 hover:bg-white/60"
+                            ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
+                            : "bg-primary text-white shadow-md"
+                        : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
                     }`}
                   >
-                    {isMoonlight && (
-                      <span className="text-sm">🌙</span>
-                    )}
+                    {isMoonlight && <span className="text-xs">🌙</span>}
                     {isTraumaCenter && (
-                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
                         isActive ? "bg-white/20" : "bg-purple-100"
-                      }`}>
-                        +
-                      </span>
+                      }`}>+</span>
                     )}
                     {f.labelKr}
                   </button>
@@ -673,12 +601,13 @@ const MapPage = () => {
           </div>
         </div>
 
-        {/* Radius Chips - Bottom left */}
-        <div className="absolute bottom-4 left-4 z-[999]">
+        {/* Radius Chips - Capsule style, tight to bottom sheet */}
+        <div className="absolute bottom-[68px] left-4 z-[999]">
           <RadiusChips
             activeRadius={activeRadius}
             onRadiusChange={handleRadiusChange}
             userLocation={userLocation}
+            lastUpdated={lastUpdated}
           />
         </div>
       </div>

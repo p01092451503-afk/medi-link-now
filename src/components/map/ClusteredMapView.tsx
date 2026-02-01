@@ -36,6 +36,7 @@ interface ClusteredMapViewProps {
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
   isMoonlightMode?: boolean;
   rejectionAlerts?: Map<number, RejectionAlertInfo>;
+  isDriverMode?: boolean;
 }
 
 // Component to handle map center changes and bounds
@@ -115,7 +116,7 @@ const MapController = ({
   return null;
 };
 
-// User location marker with pulse animation
+// User location marker with pulse animation (standard blue dot)
 const UserLocationMarker = ({ position }: { position: [number, number] }) => {
   return (
     <>
@@ -158,6 +159,61 @@ const UserLocationMarker = ({ position }: { position: [number, number] }) => {
         </Popup>
       </CircleMarker>
     </>
+  );
+};
+
+// Driver mode location marker (truck icon)
+const createDriverLocationIcon = () => {
+  return L.divIcon({
+    className: "custom-marker",
+    html: `
+      <div style="
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      ">
+        <div style="
+          width: 44px;
+          height: 44px;
+          background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+        ">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 8H17V4H3C1.9 4 1 4.9 1 6V17H3C3 18.66 4.34 20 6 20S9 18.66 9 17H15C15 18.66 16.34 20 18 20S21 18.66 21 17H23V12L20 8ZM6 18.5C5.17 18.5 4.5 17.83 4.5 17S5.17 15.5 6 15.5 7.5 16.17 7.5 17 6.83 18.5 6 18.5ZM19.5 9.5L21.46 12H17V9.5H19.5ZM18 18.5C17.17 18.5 16.5 17.83 16.5 17S17.17 15.5 18 15.5 19.5 16.17 19.5 17 18.83 18.5 18 18.5Z" fill="white"/>
+          </svg>
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 8px solid transparent;
+          border-right: 8px solid transparent;
+          border-top: 10px solid #B91C1C;
+          margin-top: -2px;
+        "></div>
+      </div>
+    `,
+    iconSize: [44, 54],
+    iconAnchor: [22, 54],
+    popupAnchor: [0, -54],
+  });
+};
+
+const DriverLocationMarker = ({ position }: { position: [number, number] }) => {
+  return (
+    <Marker position={position} icon={createDriverLocationIcon()}>
+      <Popup>
+        <div className="text-sm font-medium text-center">
+          <p className="font-bold text-red-600">🚑 내 위치</p>
+          <p className="text-xs text-gray-500">현재 대기 위치</p>
+        </div>
+      </Popup>
+    </Marker>
   );
 };
 
@@ -268,6 +324,7 @@ const ClusteredMapView = ({
   onBoundsChange,
   isMoonlightMode = false,
   rejectionAlerts,
+  isDriverMode = false,
 }: ClusteredMapViewProps) => {
   // react-leaflet's Marker update logic compares position by reference.
   // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
@@ -415,8 +472,12 @@ const ClusteredMapView = ({
           onBoundsChange={onBoundsChange}
         />
 
-        {/* User location marker */}
-        {userLocation && <UserLocationMarker position={userLocation} />}
+        {/* User location marker - blue dot for regular users, truck for drivers */}
+        {userLocation && (
+          isDriverMode 
+            ? <DriverLocationMarker position={userLocation} />
+            : <UserLocationMarker position={userLocation} />
+        )}
         
         {/* Radius visualization */}
         {userLocation && activeRadius !== "all" && (
