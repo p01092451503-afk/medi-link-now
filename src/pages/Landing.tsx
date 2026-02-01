@@ -138,16 +138,13 @@ const Landing = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
-              <Ambulance className="w-5 h-5 text-white" />
-            </div>
+          <div className="flex items-center">
             <div>
               <div className="flex items-baseline gap-1.5">
                 <h1 className="text-xl font-bold text-slate-800">Find-ER</h1>
                 <span className="text-xl font-bold text-primary">파인더</span>
               </div>
-              <p className="text-[10px] text-slate-500">실시간 응급실 병상 정보</p>
+              <p className="text-[10px] text-slate-500 text-center">실시간 응급실 병상 정보</p>
             </div>
           </div>
         </div>
