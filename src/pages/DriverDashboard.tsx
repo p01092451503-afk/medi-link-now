@@ -37,6 +37,7 @@ import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import TripManagementWidget from "@/components/TripManagementWidget";
 import RejectionLoggerFAB from "@/components/RejectionLoggerFAB";
 import RejectionTimeline from "@/components/RejectionTimeline";
+import RejectionTickerFeed from "@/components/RejectionTickerFeed";
 import { useRejectionLogs } from "@/hooks/useRejectionLogs";
 
 // Helper function to format time ago
@@ -267,6 +268,9 @@ const DriverDashboard = () => {
             animate={{ opacity: 1 }}
             className="space-y-4"
           >
+            {/* Real-time Rejection Ticker Feed */}
+            <RejectionTickerFeed />
+            
             {/* Driving Stats Summary */}
             <DrivingStatsWidget logs={statsLogs} />
             {/* Pending Calls */}

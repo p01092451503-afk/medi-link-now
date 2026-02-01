@@ -16,7 +16,7 @@ import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIcon";
-import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName } from "./hospitalIconUtils";
+import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName, type RejectionAlertInfo } from "./hospitalIconUtils";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -35,6 +35,7 @@ interface ClusteredMapViewProps {
   activeAmbulanceTrips?: AmbulanceTrip[];
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
   isMoonlightMode?: boolean;
+  rejectionAlerts?: Map<number, RejectionAlertInfo>;
 }
 
 // Component to handle map center changes and bounds
@@ -266,6 +267,7 @@ const ClusteredMapView = ({
   activeAmbulanceTrips = [],
   onBoundsChange,
   isMoonlightMode = false,
+  rejectionAlerts,
 }: ClusteredMapViewProps) => {
   // react-leaflet's Marker update logic compares position by reference.
   // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
@@ -450,6 +452,9 @@ const ClusteredMapView = ({
             };
             const hasPediatric = normalizedBeds.pediatric > 0;
             const isPediatricFilter = activeFilter === "pediatric" || activeFilter === "moonlight";
+            // Get rejection alert for this hospital
+            const rejectionAlert = rejectionAlerts?.get(hospital.id);
+            
             const icon = createHospitalIcon(
               status,
               displayBeds,
@@ -457,7 +462,8 @@ const ClusteredMapView = ({
               hospital.isTraumaCenter,
               isPediatricFilter,
               hospital.emergencyGrade,
-              isMoonlightMode
+              isMoonlightMode,
+              rejectionAlert
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
