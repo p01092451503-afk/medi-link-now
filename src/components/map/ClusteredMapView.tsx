@@ -44,12 +44,14 @@ const MapController = ({
   center, 
   zoom, 
   hospitals,
-  onBoundsChange 
+  onBoundsChange,
+  onClearTooltip,
 }: { 
   center: [number, number]; 
   zoom?: number;
   hospitals: Hospital[];
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
+  onClearTooltip?: () => void;
 }) => {
   const map = useMap();
   const prevCenterRef = useRef<[number, number]>(center);
@@ -80,7 +82,7 @@ const MapController = ({
     prevZoomRef.current = zoom;
   }, [center, zoom, map]);
 
-  // Track bounds changes
+  // Track bounds changes and clear tooltip on map interaction
   useMapEvents({
     moveend: () => {
       if (onBoundsChange) {
@@ -99,6 +101,18 @@ const MapController = ({
         );
         onBoundsChange(bounds, visible);
       }
+    },
+    // Clear tooltip when clicking on map (not on markers)
+    click: () => {
+      onClearTooltip?.();
+    },
+    // Clear tooltip when dragging map
+    dragstart: () => {
+      onClearTooltip?.();
+    },
+    // Clear tooltip when zooming
+    zoomstart: () => {
+      onClearTooltip?.();
     },
   });
 
@@ -449,7 +463,11 @@ const ClusteredMapView = ({
   }, [getHospitalsFromCluster]);
 
   return (
-    <div className="absolute inset-0" style={{ height: "100%", width: "100%" }}>
+    <div 
+      className="absolute inset-0" 
+      style={{ height: "100%", width: "100%" }}
+      onMouseLeave={() => setHoverTooltip(null)}
+    >
       <MapContainer
         center={center}
         zoom={zoom}
@@ -470,6 +488,7 @@ const ClusteredMapView = ({
           zoom={zoom} 
           hospitals={hospitals}
           onBoundsChange={onBoundsChange}
+          onClearTooltip={() => setHoverTooltip(null)}
         />
 
         {/* User location marker - blue dot for regular users, truck for drivers */}
@@ -536,7 +555,10 @@ const ClusteredMapView = ({
                 icon={icon}
                 opacity={opacity}
                 eventHandlers={{
-                  click: () => onHospitalClick(hospital),
+                  click: () => {
+                    setHoverTooltip(null); // Clear tooltip on click
+                    onHospitalClick(hospital);
+                  },
                   mouseover: (e) => {
                     const { clientX, clientY } = e.originalEvent as MouseEvent;
                     setHoverTooltip({
@@ -546,6 +568,14 @@ const ClusteredMapView = ({
                   },
                   mouseout: () => {
                     setHoverTooltip(null);
+                  },
+                  mousemove: (e) => {
+                    // Update position as mouse moves over marker
+                    const { clientX, clientY } = e.originalEvent as MouseEvent;
+                    setHoverTooltip((prev) => prev ? {
+                      ...prev,
+                      position: { x: clientX, y: clientY },
+                    } : null);
                   },
                 }}
               />
