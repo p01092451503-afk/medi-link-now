@@ -420,7 +420,7 @@ const MapPage = () => {
           activeAmbulanceTrips={activeAmbulanceTrips}
           onBoundsChange={handleBoundsChange}
           isMoonlightMode={activeFilter === "moonlight"}
-          rejectionAlerts={rejectionAlerts}
+          rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
