@@ -449,51 +449,64 @@ const MapPage = () => {
           {/* Spacer for separation */}
           <div className="h-4" />
 
-          {/* My Location Button */}
+          {/* My Location Button - Apple Maps style */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
               <motion.button
                 ref={locationButtonRef}
                 onClick={handleMyLocation}
                 disabled={isLocating}
-                className={`relative w-12 h-12 rounded-xl shadow-xl flex items-center justify-center hover:shadow-2xl active:scale-95 transition-all border-2 border-white disabled:opacity-70 group ${
+                className={`relative w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 disabled:opacity-70 overflow-hidden ${
                   userLocation
-                    ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
-                    : "bg-gradient-to-br from-primary to-primary/80"
+                    ? "bg-primary shadow-primary/30"
+                    : "bg-primary shadow-primary/20"
                 }`}
                 aria-label="내 위치에서 가까운 병원 찾기"
-                whileTap={{ scale: 0.9 }}
-                animate={!userLocation && !isLocating ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                whileTap={{ scale: 0.92 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
+                {/* Soft glow background animation when inactive */}
                 {!userLocation && !isLocating && (
-                  <>
-                    <motion.span
-                      className="absolute inset-0 rounded-xl bg-primary"
-                      animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
-                    />
-                    <motion.span
-                      className="absolute inset-0 rounded-xl bg-primary"
-                      animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
-                    />
-                  </>
+                  <motion.div
+                    className="absolute inset-0 bg-white/20 rounded-2xl"
+                    animate={{ 
+                      scale: [1, 1.15, 1],
+                      opacity: [0.3, 0.1, 0.3]
+                    }}
+                    transition={{ 
+                      duration: 2.5, 
+                      repeat: Infinity, 
+                      ease: "easeInOut"
+                    }}
+                  />
                 )}
+                
+                {/* Active state indicator */}
                 {userLocation && !isLocating && (
-                  <motion.span
-                    className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-md"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                  >
-                    <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />
-                  </motion.span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
                 )}
+                
+                {/* Icon */}
                 {isLocating ? (
-                  <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Loader2 className="w-6 h-6 text-white" />
+                  </motion.div>
                 ) : (
-                  <Crosshair className="w-6 h-6 text-white" />
+                  <motion.div
+                    animate={userLocation ? { scale: [1, 0.9, 1] } : {}}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Crosshair className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  </motion.div>
                 )}
               </motion.button>
             </HoverCardTrigger>
@@ -503,13 +516,7 @@ const MapPage = () => {
               className="w-auto max-w-[200px] p-3.5 bg-white shadow-2xl border-0 rounded-xl"
             >
               <div className="flex items-start gap-3">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-md ${
-                    userLocation
-                      ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
-                      : "bg-gradient-to-br from-primary to-primary/70"
-                  }`}
-                >
+                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md">
                   <MapPin className="w-5 h-5 text-white" />
                 </div>
                 <div className="space-y-1">
