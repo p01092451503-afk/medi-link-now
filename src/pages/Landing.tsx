@@ -140,11 +140,11 @@ const Landing = () => {
         <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
           <div className="flex items-center">
             <div>
-              <div className="flex items-baseline gap-1.5">
-                <h1 className="text-xl font-bold text-slate-800">Find-ER</h1>
-                <span className="text-xl font-bold text-primary">파인더</span>
+              <div className="flex items-baseline gap-2">
+                <h1 className="text-[26px] font-bold text-slate-800">Find-ER</h1>
+                <span className="text-[26px] font-bold text-primary">파인더</span>
               </div>
-              <p className="text-[10px] text-slate-500 text-center">실시간 응급실 병상 정보</p>
+              <p className="text-xs text-slate-500 text-center">실시간 응급실 병상 정보</p>
             </div>
           </div>
         </div>
