@@ -477,7 +477,7 @@ const VoiceEmergencyLogFAB = () => {
 
       {/* Bottom Sheet */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl p-0 overflow-hidden">
+        <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl p-0 overflow-hidden" hideCloseButton>
           <div className="h-full flex flex-col">
             {/* Header */}
             <SheetHeader className="px-5 pt-6 pb-4 border-b border-border bg-gradient-to-r from-red-500 to-orange-500 text-white">
