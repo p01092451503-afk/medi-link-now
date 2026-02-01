@@ -723,14 +723,9 @@ const Landing = () => {
       <footer className="relative mt-auto bg-white border-t border-slate-100">
         <div className="px-5 py-6 space-y-4 max-w-lg mx-auto">
           {/* Brand */}
-          <div className="flex items-center justify-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 flex items-center justify-center">
-              <Ambulance className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-sm font-bold text-slate-700">Find-ER</span>
-              <span className="text-sm font-bold text-primary">파인더</span>
-            </div>
+          <div className="flex items-center justify-center gap-1">
+            <span className="text-sm font-bold text-slate-700">Find-ER</span>
+            <span className="text-sm font-bold text-primary">파인더</span>
           </div>
           
           {/* Links */}
