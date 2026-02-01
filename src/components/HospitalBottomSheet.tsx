@@ -17,7 +17,9 @@ import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 import NavigationSelector from "@/components/NavigationSelector";
 import NearbyPharmacySheet from "@/components/NearbyPharmacySheet";
+import QuickRejectionButton from "@/components/QuickRejectionButton";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
+import { useAuth } from "@/hooks/useAuth";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -122,6 +124,7 @@ const AcceptanceBadge = ({
 
 const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
+  const { user } = useAuth();
   const [showRoadview, setShowRoadview] = useState(false);
   const [showPharmacySheet, setShowPharmacySheet] = useState(false);
   
@@ -413,11 +416,23 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               <Button
                 onClick={() => setShowPharmacySheet(true)}
                 variant="outline"
-                className="w-full mb-4 py-5 rounded-xl border-green-500 text-green-600 hover:bg-green-50 font-medium"
+                className="w-full mb-3 py-5 rounded-xl border-green-500 text-green-600 hover:bg-green-50 font-medium"
               >
                 <Pill className="w-5 h-5 mr-2" />
                 💊 근처 문 연 약국 보기
               </Button>
+
+              {/* Quick Rejection Report Button - Only for logged in users */}
+              {user && hospital.id && (
+                <div className="mb-4">
+                  <QuickRejectionButton
+                    hospitalId={hospital.id}
+                    hospitalName={hospital.nameKr}
+                    variant="button"
+                    className="w-full py-5 rounded-xl font-medium"
+                  />
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3">

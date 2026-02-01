@@ -30,6 +30,7 @@ import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
+import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import RegionSelector from "@/components/RegionSelector";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
@@ -62,6 +63,7 @@ const MapPage = () => {
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
+  const { getActiveWarnings } = useSharedRejectionLogs();
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -82,6 +84,22 @@ const MapPage = () => {
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [showDataSource, setShowDataSource] = useState(true);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
+
+  // Get rejection alerts for hospitals - convert to RejectionAlertInfo format
+  const rejectionAlerts = useMemo(() => {
+    const warnings = getActiveWarnings();
+    const alerts = new Map<number, { severity: 'none' | 'warning' | 'critical'; count: number; reasons?: string[] }>();
+    
+    warnings.forEach((status, hospitalId) => {
+      alerts.set(hospitalId, {
+        severity: status.severity,
+        count: status.recentCount,
+        reasons: status.reasons,
+      });
+    });
+    
+    return alerts;
+  }, [getActiveWarnings]);
 
   // Fetch holiday pharmacies when filter is set to 'pharmacy' (legacy)
   const isPharmacyFilter = activeFilter === "pharmacy";
@@ -403,6 +421,7 @@ const MapPage = () => {
           activeAmbulanceTrips={activeAmbulanceTrips}
           onBoundsChange={handleBoundsChange}
           isMoonlightMode={activeFilter === "moonlight"}
+          rejectionAlerts={rejectionAlerts}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}

@@ -1,6 +1,15 @@
 import L from "leaflet";
 import { Hospital, FilterType, getHospitalStatus } from "@/data/hospitals";
 
+// Rejection alert severity types
+export type RejectionSeverity = 'none' | 'warning' | 'critical';
+
+export interface RejectionAlertInfo {
+  severity: RejectionSeverity;
+  count: number;
+  reasons?: string[];
+}
+
 export const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
   const general = Math.max(0, hospital.beds.general);
   const pediatric = Math.max(0, hospital.beds.pediatric);
@@ -89,14 +98,78 @@ export const createHospitalIcon = (
   isTraumaCenter?: boolean,
   isPediatricFilter?: boolean,
   emergencyGrade?: string | null,
-  isMoonlightMode?: boolean
+  isMoonlightMode?: boolean,
+  rejectionAlert?: RejectionAlertInfo
 ) => {
   // Use moonlight colors if in moonlight mode, otherwise use grade colors
   const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
 
-  // Child badge removed for cleaner marker design
+  // Rejection alert styles
+  const hasRejectionAlert = rejectionAlert && rejectionAlert.severity !== 'none';
+  const isWarning = rejectionAlert?.severity === 'warning';
+  const isCritical = rejectionAlert?.severity === 'critical';
+
+  // Generate unique animation name for this instance
+  const animationId = `blink-${Math.random().toString(36).substr(2, 9)}`;
+
+  const rejectionBorderStyle = hasRejectionAlert
+    ? `
+      border-color: ${isCritical ? '#DC2626' : '#F97316'} !important;
+      animation: ${animationId} ${isCritical ? '0.5s' : '1s'} ease-in-out infinite;
+      box-shadow: 0 0 ${isCritical ? '15px' : '10px'} ${isCritical ? 'rgba(220, 38, 38, 0.6)' : 'rgba(249, 115, 22, 0.5)'}, 0 4px 12px rgba(0,0,0,0.3);
+    `
+    : '';
+
+  // Critical rejection tooltip badge
+  const rejectionBadge = isCritical
+    ? `<div style="
+        position: absolute;
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+        color: white;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.5);
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      ">
+        <span>⛔</span>
+        <span>수용 불가 유력</span>
+      </div>`
+    : '';
+
+  // Warning count badge (for 1-2 rejections)
+  const warningCountBadge = isWarning
+    ? `<div style="
+        position: absolute;
+        top: -16px;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 2px 6px rgba(249, 115, 22, 0.5);
+        z-index: 15;
+      ">
+        ${rejectionAlert?.count || 0}
+      </div>`
+    : '';
 
   const traumaBadge = isTraumaCenter
     ? `<div class="trauma-badge" style="
@@ -160,6 +233,18 @@ export const createHospitalIcon = (
   return L.divIcon({
     className: "custom-marker",
     html: `
+      <style>
+        @keyframes ${animationId} {
+          0%, 100% { 
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% { 
+            opacity: 0.7;
+            transform: scale(1.05);
+          }
+        }
+      </style>
       <div class="marker-container" style="
         position: relative;
         display: flex;
@@ -167,6 +252,7 @@ export const createHospitalIcon = (
         align-items: center;
         cursor: pointer;
       ">
+        ${rejectionBadge}
         <div style="
           position: relative;
           min-width: 36px;
@@ -183,16 +269,18 @@ export const createHospitalIcon = (
           font-size: 16px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.3);
           cursor: pointer;
+          ${rejectionBorderStyle}
         ">
           ${beds}
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
+          ${warningCountBadge}
         </div>
         <div style="
           width: 0;
           height: 0;
           border-left: 8px solid transparent;
           border-right: 8px solid transparent;
-          border-top: 10px solid ${color.border};
+          border-top: 10px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : color.border};
           margin-top: -2px;
         "></div>
         ${gradeBadge}
