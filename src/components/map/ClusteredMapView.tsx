@@ -17,6 +17,7 @@ import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIcon";
 import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName, type RejectionAlertInfo } from "./hospitalIconUtils";
+import { useIncomingAmbulances } from "@/hooks/useIncomingAmbulances";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -340,6 +341,9 @@ const ClusteredMapView = ({
   rejectionAlerts,
   isDriverMode = false,
 }: ClusteredMapViewProps) => {
+  // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
+  const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
+
   // react-leaflet's Marker update logic compares position by reference.
   // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
   // which triggers marker move events that can crash leaflet.markercluster (removeObject undefined).
@@ -523,7 +527,10 @@ const ClusteredMapView = ({
         >
           {sortedHospitals.map((hospital) => {
             const opacity = getMarkerOpacity(hospital);
-            const displayBeds = getDisplayBeds(hospital, activeFilter);
+            // 이송 중 차량 수를 반영한 실질 가용 병상 계산
+            const incomingCount = getIncomingCount(hospital.id);
+            const publicBeds = getDisplayBeds(hospital, activeFilter);
+            const displayBeds = Math.max(0, publicBeds - incomingCount);
             const status = getMarkerStatus(displayBeds);
             const normalizedBeds = {
               general: Math.max(0, hospital.beds.general),
@@ -543,7 +550,8 @@ const ClusteredMapView = ({
               isPediatricFilter,
               hospital.emergencyGrade,
               isMoonlightMode,
-              rejectionAlert
+              rejectionAlert,
+              incomingCount
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
