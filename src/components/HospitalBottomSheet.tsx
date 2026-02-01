@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Pill } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +16,7 @@ import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 import NavigationSelector from "@/components/NavigationSelector";
-import NearbyPharmacySheet from "@/components/NearbyPharmacySheet";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
-import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 import { useAuth } from "@/hooks/useAuth";
 
 interface HospitalBottomSheetProps {
@@ -126,10 +124,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const { user } = useAuth();
   const [showRoadview, setShowRoadview] = useState(false);
-  const [showPharmacySheet, setShowPharmacySheet] = useState(false);
-  
-  // Fetch pharmacies when pharmacy sheet is requested
-  const { pharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(showPharmacySheet);
   
   if (!hospital) return null;
 
@@ -412,16 +406,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 🚑 응급실 입구 로드뷰 (ER Entrance View)
               </Button>
 
-              {/* Nearby Pharmacy Button - Sticky style */}
-              <Button
-                onClick={() => setShowPharmacySheet(true)}
-                variant="outline"
-                className="w-full mb-3 py-5 rounded-xl border-green-500 text-green-600 hover:bg-green-50 font-medium"
-              >
-                <Pill className="w-5 h-5 mr-2" />
-                💊 근처 문 연 약국 보기
-              </Button>
-
               {/* Quick Rejection Report Button - Only for logged in users */}
               {user && hospital.id && (
                 <div className="mb-4">
@@ -467,14 +451,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             hospitalLng={hospital.lng}
           />
 
-          {/* Nearby Pharmacy Sheet */}
-          <NearbyPharmacySheet
-            isOpen={showPharmacySheet}
-            onClose={() => setShowPharmacySheet(false)}
-            hospital={hospital}
-            pharmacies={pharmacies}
-            isLoading={isLoadingPharmacies}
-          />
         </>
       )}
     </AnimatePresence>
