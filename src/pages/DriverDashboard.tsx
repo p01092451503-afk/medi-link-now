@@ -38,6 +38,7 @@ import TripManagementWidget from "@/components/TripManagementWidget";
 import RejectionLoggerFAB from "@/components/RejectionLoggerFAB";
 import RejectionTimeline from "@/components/RejectionTimeline";
 import RejectionTickerFeed from "@/components/RejectionTickerFeed";
+import VoiceEmergencyLogFAB from "@/components/VoiceEmergencyLogFAB";
 import { useRejectionLogs } from "@/hooks/useRejectionLogs";
 
 // Helper function to format time ago
@@ -466,6 +467,9 @@ const DriverDashboard = () => {
         contacts={hotlines}
         onToggleFavorite={toggleFavorite}
       />
+
+      {/* Voice Emergency Log FAB */}
+      <VoiceEmergencyLogFAB />
     </div>
   );
 };
