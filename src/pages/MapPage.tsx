@@ -609,7 +609,7 @@ const MapPage = () => {
         </div>
 
         {/* Radius Chips - Capsule style, tight to bottom sheet */}
-        <div className="absolute bottom-[68px] left-4 z-[999]">
+        <div className="absolute bottom-[40px] left-4 z-[999]">
           <RadiusChips
             activeRadius={activeRadius}
             onRadiusChange={handleRadiusChange}
