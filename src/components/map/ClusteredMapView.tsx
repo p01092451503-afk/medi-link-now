@@ -611,10 +611,10 @@ const ClusteredMapView = ({
           />
         ))}
 
-        {/* Active Ambulance Trip Markers */}
-        {activeAmbulanceTrips.map((trip) => (
+        {/* Active Ambulance Trip Markers - Hidden for now */}
+        {/* {activeAmbulanceTrips.map((trip) => (
           <AmbulanceTripMarker key={`trip-${trip.id}`} trip={trip} />
-        ))}
+        ))} */}
       </MapContainer>
 
       {/* Hospital Hover Tooltip */}
