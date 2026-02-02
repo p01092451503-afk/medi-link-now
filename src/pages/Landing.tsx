@@ -142,11 +142,7 @@ const Landing = () => {
           <div className="flex items-center">
             <div className="text-center">
               <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-ER</h1>
-              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                응급상황,<br />
-                가장 가까운 병상을<br />
-                <span className="font-semibold text-primary">파인더</span>가 찾아드립니다.
-              </p>
+              <p className="text-xs text-slate-500">실시간 응급실 병상 정보</p>
             </div>
           </div>
         </div>
