@@ -24,7 +24,6 @@ const Header = ({ onSearch }: HeaderProps) => {
           </div>
           <div className="hidden sm:flex items-baseline gap-1.5">
             <span className="font-logo font-extrabold text-foreground">Find-ER</span>
-            <span className="font-logo-kr font-bold text-primary">파인더</span>
           </div>
         </div>
 
