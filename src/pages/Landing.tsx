@@ -697,17 +697,17 @@ const Landing = () => {
             {/* Ambulance Driver Button */}
             <button
               onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 hover:border-orange-200 shadow-sm hover:shadow-md"
+              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 shadow-sm hover:shadow-md"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-orange-100 group-hover:to-red-100 transition-all">
-                  <Ambulance className="w-9 h-9 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-slate-200 group-hover:to-slate-100 transition-all">
+                  <Ambulance className="w-9 h-9 text-slate-600 group-hover:text-slate-700 transition-colors" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원 / 기사님</p>
                   <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-orange-500" />
+                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-slate-600" />
               </div>
             </button>
           </div>
