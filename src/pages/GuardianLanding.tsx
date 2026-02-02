@@ -60,14 +60,7 @@ const GuardianLanding = () => {
             <ChevronRight className="w-4 h-4 rotate-180" />
             돌아가기
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
-              <Ambulance className="w-4.5 h-4.5 text-white" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="font-logo font-extrabold text-blue-800">Find-ER</span>
-            </div>
-          </div>
+          <span className="font-logo font-extrabold text-slate-800">Find-ER</span>
         </div>
       </header>
 
