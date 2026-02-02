@@ -6,6 +6,7 @@ import { useRejectionLogs, REJECTION_REASONS } from '@/hooks/useRejectionLogs';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { toast } from '@/hooks/use-toast';
+import { cleanHospitalName } from '@/lib/utils';
 
 interface Props {
   compact?: boolean;
@@ -30,7 +31,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
     const timelineText = todayLogs
       .map(log => {
         const time = format(new Date(log.recorded_at), 'HH:mm', { locale: ko });
-        return `${time} ${log.hospital_name} - ${getReasonLabel(log.rejection_reason)}`;
+        return `${time} ${cleanHospitalName(log.hospital_name)} - ${getReasonLabel(log.rejection_reason)}`;
       })
       .join('\n');
 
@@ -123,7 +124,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
                       <div className="text-lg">{getReasonIcon(log.rejection_reason)}</div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm text-slate-800 truncate">
-                          {log.hospital_name}
+                          {cleanHospitalName(log.hospital_name)}
                         </p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-red-600 font-medium">
@@ -185,7 +186,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
                         {format(new Date(log.recorded_at), 'HH:mm', { locale: ko })}
                       </span>
                       <span className="text-slate-700 flex-1 truncate">
-                        {log.hospital_name}
+                        {cleanHospitalName(log.hospital_name)}
                       </span>
                       <span className="text-red-500 text-xs shrink-0">
                         {getReasonLabel(log.rejection_reason)}

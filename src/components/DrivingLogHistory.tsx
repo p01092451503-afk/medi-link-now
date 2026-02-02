@@ -23,6 +23,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { type DrivingLog } from "@/hooks/useDrivingLogs";
 import { type RejectionLog, REJECTION_REASONS } from "@/hooks/useRejectionLogs";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface DrivingLogHistoryProps {
   logs: DrivingLog[];
@@ -204,7 +205,7 @@ const DrivingLogHistory = ({
         formatTime(log.start_time),
         formatTime(log.end_time),
         `${log.distance_km.toFixed(1)}km`,
-        log.hospital_name || "-",
+        log.hospital_name ? cleanHospitalName(log.hospital_name) : "-",
         log.revenue_amount ? `₩${log.revenue_amount.toLocaleString()}` : "-",
         log.payment_method ? getPaymentLabel(log.payment_method) : "-"
       ]);
@@ -259,7 +260,7 @@ const DrivingLogHistory = ({
       const rejectionTableData = monthRejectionLogs.map((log) => [
         new Date(log.recorded_at).toLocaleDateString("ko-KR"),
         new Date(log.recorded_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
-        log.hospital_name,
+        cleanHospitalName(log.hospital_name),
         getRejectionReasonLabel(log.rejection_reason),
         log.notes || "-"
       ]);
@@ -450,7 +451,7 @@ const DrivingLogHistory = ({
                   </div>
                   <div className="flex items-center gap-1 text-sm font-medium text-foreground">
                     <Building2 className="w-3.5 h-3.5 text-primary" />
-                    <span className="truncate">{log.hospital_name || log.end_location}</span>
+                    <span className="truncate">{cleanHospitalName(log.hospital_name || log.end_location)}</span>
                   </div>
                 </div>
               </div>

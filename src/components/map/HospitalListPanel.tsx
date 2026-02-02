@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Hospital, getHospitalStatus, calculateDistance } from "@/data/hospitals";
 import { Phone, Navigation, Clock, Stethoscope, Baby, Thermometer, ChevronUp, MapPin, Activity } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface HospitalListPanelProps {
   hospitals: Hospital[];
@@ -157,7 +158,7 @@ const HospitalListPanel = ({
                               </span>
                             )}
                           </div>
-                          <h4 className="font-bold text-gray-900 truncate">{hospital.nameKr}</h4>
+                          <h4 className="font-bold text-gray-900 truncate">{cleanHospitalName(hospital.nameKr)}</h4>
                           <p className="text-xs text-gray-500 truncate">{hospital.category}</p>
                         </div>
                         

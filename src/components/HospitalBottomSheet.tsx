@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
 import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck } from "lucide-react";
+import { cleanHospitalName } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -164,7 +165,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
         toast({ title: "핫라인에서 제거되었습니다" });
       }
     } else {
-      addHotline(hospital.nameKr, hospital.phone);
+      addHotline(cleanHospitalName(hospital.nameKr), hospital.phone);
       toast({ title: "핫라인에 추가되었습니다", description: "드라이버 대시보드에서 확인하세요" });
     }
   };
@@ -256,7 +257,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     )}
                   </div>
                   <h2 className="text-xl font-bold text-foreground mb-0.5">
-                    {hospital.nameKr}
+                    {cleanHospitalName(hospital.nameKr)}
                   </h2>
                   <p className="text-sm text-muted-foreground">{hospital.name}</p>
                   <p className="text-xs text-muted-foreground mt-1">{hospital.category}</p>
@@ -453,7 +454,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 <div className="mb-4">
                   <QuickRejectionButton
                     hospitalId={hospital.id}
-                    hospitalName={hospital.nameKr}
+                    hospitalName={cleanHospitalName(hospital.nameKr)}
                     variant="button"
                     className="w-full py-5 rounded-xl font-medium"
                   />
@@ -473,7 +474,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   destination={{
                     lat: hospital.lat,
                     lng: hospital.lng,
-                    name: hospital.nameKr,
+                    name: cleanHospitalName(hospital.nameKr),
                   }}
                   variant="outline"
                   className="border-primary text-primary hover:bg-primary/5 font-semibold py-6 rounded-xl h-auto"
@@ -486,7 +487,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
           <ERRoadviewModal
             isOpen={showRoadview}
             onClose={() => setShowRoadview(false)}
-            hospitalName={hospital.nameKr}
+            hospitalName={cleanHospitalName(hospital.nameKr)}
             entranceLat={hospital.entrance_lat}
             entranceLng={hospital.entrance_lng}
             hospitalLat={hospital.lat}

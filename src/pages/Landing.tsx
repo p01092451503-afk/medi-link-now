@@ -9,6 +9,7 @@ import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import DataFreshnessTimer from "@/components/DataFreshnessTimer";
+import { cleanHospitalName } from "@/lib/utils";
 
 
 const Landing = () => {
@@ -313,7 +314,7 @@ const Landing = () => {
                             <div className="flex items-center gap-1.5">
                               <div className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
                               <p className="text-[11px] font-medium text-foreground truncate">
-                                {hospital.name}
+                                {cleanHospitalName(hospital.nameKr)}
                               </p>
                             </div>
                             <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5">
