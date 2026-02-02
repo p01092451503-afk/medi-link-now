@@ -246,7 +246,7 @@ const Landing = () => {
                     <p className="text-lg font-bold text-slate-800 leading-none">
                       {stats?.totalHospitals !== undefined ? stats.totalHospitals : "---"}
                     </p>
-                    <p className="text-[9px] text-slate-400 mt-0.5">응급실</p>
+                    <p className="text-[10px] font-medium text-slate-600 mt-0.5">응급실</p>
                   </div>
                   
                   <div className="bg-white rounded-xl p-2 text-center">
@@ -256,7 +256,7 @@ const Landing = () => {
                     <p className="text-lg font-bold text-slate-800 leading-none">
                       {stats?.totalBeds !== undefined ? stats.totalBeds : "---"}
                     </p>
-                    <p className="text-[9px] text-slate-400 mt-0.5">병상</p>
+                    <p className="text-[10px] font-medium text-slate-600 mt-0.5">병상</p>
                   </div>
                   
                   <div className="bg-slate-50 rounded-xl p-2 text-center ring-1 ring-slate-200">
@@ -266,7 +266,7 @@ const Landing = () => {
                     <p className="text-xl font-extrabold text-slate-800 leading-none">
                       {stats?.availableHospitals !== undefined ? stats.availableHospitals : "---"}
                     </p>
-                    <p className="text-[9px] font-medium text-slate-500 mt-0.5">여유</p>
+                    <p className="text-[10px] font-semibold text-slate-600 mt-0.5">여유</p>
                   </div>
                   
                   <div className="bg-white rounded-xl p-2 text-center">
@@ -276,7 +276,7 @@ const Landing = () => {
                     <p className="text-lg font-bold text-slate-800 leading-none">
                       {stats?.pediatricBeds !== undefined ? stats.pediatricBeds : "---"}
                     </p>
-                    <p className="text-[9px] text-slate-400 mt-0.5">소아</p>
+                    <p className="text-[10px] font-medium text-slate-600 mt-0.5">소아</p>
                   </div>
                 </motion.div>
             </AnimatePresence>
