@@ -17,6 +17,7 @@ import {
 import { FilterType, Hospital, filterHospitals, calculateDistance, getHospitalStatus } from "@/data/hospitals";
 import { analyzeSymptom, getSymptomExamples, SymptomAnalysisResult } from "@/utils/symptomAnalyzer";
 import { useToast } from "@/hooks/use-toast";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface SymptomSearchBarProps {
   value: string;
@@ -184,7 +185,7 @@ const SymptomSearchBar = ({
       }
       // Show toast with hospital selection info
       toast({
-        title: `🏥 ${hospital.nameKr} 선택됨`,
+        title: `🏥 ${cleanHospitalName(hospital.nameKr)} 선택됨`,
         description: analysis?.keywords ? `"${analysis.keywords.join(", ")}" 기준 추천` : "병원을 선택했습니다",
       });
       setIsFocused(false);
@@ -291,7 +292,7 @@ const SymptomSearchBar = ({
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 mb-0.5">
                                 <span className="font-semibold text-xs text-gray-900 truncate">
-                                  {hospital.nameKr}
+                                  {cleanHospitalName(hospital.nameKr)}
                                 </span>
                                 {getStatusBadge(hospital)}
                               </div>
