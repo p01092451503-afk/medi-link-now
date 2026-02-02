@@ -29,7 +29,7 @@ const PrivacyPage = () => {
           <section className="mb-8">
             <h2 className="text-base font-semibold mb-3">제1조 (개인정보의 수집 및 이용 목적)</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              find-ER(이하 "회사")는 다음의 목적을 위하여 개인정보를 처리합니다.
+              Find-ER(이하 "회사")는 다음의 목적을 위하여 개인정보를 처리합니다.
             </p>
             <ul className="text-sm text-muted-foreground leading-relaxed space-y-2 list-disc pl-5">
               <li>서비스 제공: 응급실 정보 제공, 경로 안내, 가족 건강정보 관리</li>
