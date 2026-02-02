@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Hospital, calculateDistance } from "@/data/hospitals";
+import { cleanHospitalName } from "@/lib/utils";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
 
 interface NearbyPharmacySheetProps {
@@ -120,7 +121,7 @@ const NearbyPharmacySheet = ({ isOpen, onClose, hospital, pharmacies, isLoading 
               <div>
                 <h3 className="font-bold text-lg text-foreground">근처 문 연 약국</h3>
                 <p className="text-xs text-muted-foreground">
-                  {hospital.nameKr} 기준
+                  {cleanHospitalName(hospital.nameKr)} 기준
                 </p>
               </div>
             </div>
