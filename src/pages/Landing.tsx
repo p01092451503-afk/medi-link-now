@@ -143,7 +143,7 @@ const Landing = () => {
             <div>
               <div className="flex items-baseline gap-2">
                 <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-<span className="text-red-500">ER</span></h1>
-                <span className="font-logo text-[26px] font-bold text-primary">파인더</span>
+                <span className="font-logo-kr text-[26px] font-bold text-primary">파인더</span>
               </div>
               <p className="text-xs text-slate-500 text-center">실시간 응급실 병상 정보</p>
             </div>
@@ -726,7 +726,7 @@ const Landing = () => {
           {/* Brand */}
           <div className="flex items-center justify-center gap-1">
             <span className="font-logo text-sm font-extrabold text-slate-700">Find-<span className="text-red-500">ER</span></span>
-            <span className="font-logo text-sm font-bold text-primary">파인더</span>
+            <span className="font-logo-kr text-sm font-bold text-primary">파인더</span>
           </div>
           
           {/* Links */}

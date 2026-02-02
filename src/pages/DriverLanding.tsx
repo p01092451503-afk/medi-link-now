@@ -82,7 +82,7 @@ const DriverLanding = () => {
             </div>
             <div className="flex items-baseline gap-1">
               <span className="font-logo font-extrabold text-slate-800">Find-<span className="text-red-500">ER</span></span>
-              <span className="font-logo text-sm font-bold text-primary">파인더</span>
+              <span className="font-logo-kr text-sm font-bold text-primary">파인더</span>
               <span className="text-[10px] font-bold text-orange-500 bg-orange-100 px-1.5 py-0.5 rounded-full">Pro</span>
             </div>
           </div>
