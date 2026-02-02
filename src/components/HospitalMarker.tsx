@@ -1,6 +1,7 @@
 import { Marker, Popup, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import { Hospital, getHospitalStatus, FilterType } from "@/data/hospitals";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface HospitalMarkerProps {
   hospital: Hospital & { distance?: number };
@@ -286,7 +287,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
         className="!bg-white !border-gray-200 !shadow-lg !rounded-lg !px-3 !py-2 !text-sm !text-gray-800"
       >
         <div className="flex flex-col items-center gap-0.5">
-          <span className="font-semibold">{hospital.nameKr}</span>
+          <span className="font-semibold">{cleanHospitalName(hospital.nameKr)}</span>
           {gradeKoreanName && (
             <span className="text-xs text-blue-600 font-medium">{gradeKoreanName}</span>
           )}
@@ -295,7 +296,7 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
       <Popup>
         <div className="text-sm min-w-[180px]">
           <div className="flex items-center gap-1 mb-1">
-            <strong className="text-base">{hospital.nameKr}</strong>
+            <strong className="text-base">{cleanHospitalName(hospital.nameKr)}</strong>
             {hasPediatric && <span title="아이 진료 가능">👶</span>}
           </div>
           {gradeKoreanName && (
