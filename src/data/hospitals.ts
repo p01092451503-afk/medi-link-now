@@ -2116,17 +2116,25 @@ export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionTyp
     const simplifiedParentLabel = parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
     
     return hospitals.filter((h) => {
-      // Check the Korean region field first (e.g., "서울 마포구")
       const hospitalRegionKr = h.region || "";
+      const address = h.address || "";
+      
+      // Case 1: h.region is English ID (e.g., "seoul") - match against parent
+      if (hospitalRegionKr === selectedRegion.parent) {
+        // Check if address contains the sub-region Korean name
+        if (address.includes(selectedRegion.labelKr)) {
+          return true;
+        }
+      }
+      
+      // Case 2: h.region is Korean format (e.g., "서울 마포구")
       if (hospitalRegionKr.includes(selectedRegion.labelKr)) {
-        // Also verify it's in the correct parent region
         if (!simplifiedParentLabel || hospitalRegionKr.includes(simplifiedParentLabel)) {
           return true;
         }
       }
       
-      // Fallback: check address field
-      const address = h.address || "";
+      // Fallback: check address for both parent and sub-region
       const hasParentRegion = simplifiedParentLabel ? address.includes(simplifiedParentLabel) : true;
       const hasSubRegion = address.includes(selectedRegion.labelKr);
       return hasParentRegion && hasSubRegion;
@@ -2142,17 +2150,22 @@ export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionTyp
   const simplifiedMajorLabel = majorLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
   
   return hospitals.filter((h) => {
+    const hospitalRegionKr = h.region || "";
+    
+    // Direct match with major region ID (e.g., h.region === "seoul")
+    if (hospitalRegionKr === region) return true;
+    
+    // Check via getRegionFromHospital
     const hospitalRegion = getRegionFromHospital(h);
-    // Direct match with major region
     if (hospitalRegion === region) return true;
     
     // Check the Korean region field (e.g., "서울 마포구")
-    const hospitalRegionKr = h.region || "";
     if (simplifiedMajorLabel && hospitalRegionKr.includes(simplifiedMajorLabel)) return true;
     
     // Check if hospital address contains the major region name
     const address = h.address || "";
     if (simplifiedMajorLabel && address.includes(simplifiedMajorLabel)) return true;
+    
     // Check if hospital is in any child region (with parent context)
     return childLabels.some((label) => address.includes(label) && address.includes(simplifiedMajorLabel));
   });
