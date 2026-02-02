@@ -35,7 +35,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
       })
       .join('\n');
 
-    const fullText = `[구급차 병원 연락 이력]\n${format(new Date(), 'yyyy년 M월 d일', { locale: ko })}\n\n${timelineText}\n\n※ Find-ER 파인더에서 자동 생성됨`;
+    const fullText = `[구급차 병원 연락 이력]\n${format(new Date(), 'yyyy년 M월 d일', { locale: ko })}\n\n${timelineText}\n\n※ find-ER 파인더에서 자동 생성됨`;
 
     navigator.clipboard.writeText(fullText);
     toast({
