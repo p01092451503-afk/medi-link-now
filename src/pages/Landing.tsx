@@ -142,7 +142,7 @@ const Landing = () => {
           <div className="flex items-center">
             <div>
               <div className="flex items-baseline gap-2">
-                <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-<span className="text-red-500">ER</span></h1>
+                <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-ER</h1>
                 <span className="font-logo-kr text-[26px] font-bold text-primary">파인더</span>
               </div>
               <p className="text-xs text-slate-500 text-center">실시간 응급실 병상 정보</p>
@@ -725,7 +725,7 @@ const Landing = () => {
         <div className="px-5 py-6 space-y-4 max-w-lg mx-auto">
           {/* Brand */}
           <div className="flex items-center justify-center gap-1">
-            <span className="font-logo text-sm font-extrabold text-slate-700">Find-<span className="text-red-500">ER</span></span>
+            <span className="font-logo text-sm font-extrabold text-slate-700">Find-ER</span>
             <span className="font-logo-kr text-sm font-bold text-primary">파인더</span>
           </div>
           
