@@ -133,7 +133,7 @@ const Login = () => {
             <p className="text-sm text-muted-foreground">
               {isLogin 
                 ? "로그인하여 호출 목록을 확인하세요" 
-                : "가입하여 find-ER 드라이버가 되세요"}
+                : "가입하여 Find-ER 드라이버가 되세요"}
             </p>
           </div>
 

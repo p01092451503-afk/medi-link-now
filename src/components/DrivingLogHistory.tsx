@@ -307,7 +307,7 @@ const DrivingLogHistory = ({
         285,
         { align: "center" }
       );
-      doc.text("find-ER Pro - 자동 생성 운행일지", 105, 290, { align: "center" });
+      doc.text("Find-ER Pro - 자동 생성 운행일지", 105, 290, { align: "center" });
     }
 
     // Save
