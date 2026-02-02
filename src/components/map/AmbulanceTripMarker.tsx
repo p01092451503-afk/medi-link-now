@@ -2,6 +2,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { Ambulance, Clock, MapPin, Navigation } from "lucide-react";
 import { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface AmbulanceTripMarkerProps {
   trip: AmbulanceTrip;
@@ -113,7 +114,7 @@ const AmbulanceTripMarker = ({ trip }: AmbulanceTripMarkerProps) => {
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-[10px] text-muted-foreground">목적지</p>
-                <p className="text-sm font-medium">{trip.destination_hospital_name}</p>
+                <p className="text-sm font-medium">{cleanHospitalName(trip.destination_hospital_name)}</p>
               </div>
             </div>
             

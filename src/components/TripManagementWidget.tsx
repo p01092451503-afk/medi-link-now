@@ -31,6 +31,7 @@ import GeofenceArrivalModal from "@/components/GeofenceArrivalModal";
 import NavigationSelector from "@/components/NavigationSelector";
 import FareInputModal, { type PaymentMethod } from "@/components/FareInputModal";
 import { type CreateDrivingLogInput, type UpdateRevenueInput } from "@/hooks/useDrivingLogs";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface HospitalOption {
   id: number;
@@ -293,7 +294,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   };
 
   const handleCompleteTrip = async () => {
-    const hospitalName = selectedHospital?.name || myActiveTrip?.destination_hospital_name || "";
+    const hospitalName = cleanHospitalName(selectedHospital?.name || myActiveTrip?.destination_hospital_name || "");
     setCompletedHospitalName(hospitalName);
     
     if (tripStartTime && startLocation && onLogComplete) {
@@ -379,7 +380,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
     <>
       <GeofenceArrivalModal
         isOpen={showArrivalModal}
-        hospitalName={destinationCoords?.name || myActiveTrip?.destination_hospital_name || ""}
+        hospitalName={cleanHospitalName(destinationCoords?.name || myActiveTrip?.destination_hospital_name || "")}
         onConfirm={handleCompleteTrip}
         onCancel={handleArrivalModalCancel}
       />
@@ -417,7 +418,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
                   <Navigation className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">
-                      {myActiveTrip.destination_hospital_name}
+                      {cleanHospitalName(myActiveTrip.destination_hospital_name)}
                     </p>
                     {myActiveTrip.patient_condition && (
                       <p className="text-xs text-muted-foreground mt-1">

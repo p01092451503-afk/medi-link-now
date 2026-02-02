@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Ambulance, Loader2, Phone, MapPin, Check, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Hospital } from "@/data/hospitals";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface AmbulanceCallModalProps {
   isOpen: boolean;
@@ -97,7 +98,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                       <MapPin className="w-5 h-5 text-primary mt-0.5" />
                       <div>
                         <p className="text-xs text-muted-foreground">목적지</p>
-                        <p className="font-semibold text-foreground">{hospital.nameKr}</p>
+                        <p className="font-semibold text-foreground">{cleanHospitalName(hospital.nameKr)}</p>
                         <p className="text-sm text-muted-foreground">{hospital.address}</p>
                       </div>
                     </div>

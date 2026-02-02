@@ -21,6 +21,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface RevenueStatsWidgetProps {
   logs: DrivingLog[];
@@ -310,7 +311,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
               >
                 <div>
                   <p className="font-medium text-foreground text-sm">
-                    {log.hospital_name || log.end_location}
+                    {cleanHospitalName(log.hospital_name || log.end_location)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(log.date).toLocaleDateString("ko-KR")}

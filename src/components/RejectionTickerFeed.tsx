@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, Radio, Ban } from "lucide-react";
 import { useSharedRejectionLogs, SHARED_REJECTION_REASONS } from "@/hooks/useSharedRejectionLogs";
+import { cleanHospitalName } from "@/lib/utils";
 
 // Helper function to format time ago in Korean
 const formatTimeAgo = (dateString: string) => {
@@ -94,7 +95,7 @@ const RejectionTickerFeed = () => {
                 <p className="text-xs text-gray-700 leading-relaxed">
                   <span className="text-red-600 font-semibold">{formatTimeAgo(log.recorded_at)}</span>
                   {" · "}
-                  <span className="font-medium text-gray-900 truncate">{log.hospital_name}</span>
+                  <span className="font-medium text-gray-900 truncate">{cleanHospitalName(log.hospital_name)}</span>
                   {" "}
                   <span className="text-orange-600">[{getReasonLabel(log.rejection_reason)}]</span>
                 </p>

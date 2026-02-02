@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { X, MapPin, Stethoscope, Baby, Thermometer, Phone, Navigation } from "lucide-react";
 import { Hospital, getHospitalStatus, calculateDistance } from "@/data/hospitals";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cleanHospitalName } from "@/lib/utils";
 
 interface ClusterPopupProps {
   hospitals: Hospital[];
@@ -150,7 +151,7 @@ const ClusterPopup = ({
                           </span>
                         )}
                       </div>
-                      <h4 className="font-bold text-gray-900 text-sm truncate">{hospital.nameKr}</h4>
+                      <h4 className="font-bold text-gray-900 text-sm truncate">{cleanHospitalName(hospital.nameKr)}</h4>
                     </div>
 
                     <div className="flex flex-col items-end gap-1 shrink-0">
