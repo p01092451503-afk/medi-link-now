@@ -76,7 +76,7 @@ const GuardianLanding = () => {
             </div>
             <div className="flex items-baseline gap-1">
               <span className="font-logo font-extrabold text-slate-800">Find-<span className="text-red-500">ER</span></span>
-              <span className="font-logo text-sm font-bold text-primary">파인더</span>
+              <span className="font-logo-kr text-sm font-bold text-primary">파인더</span>
             </div>
           </div>
         </div>
