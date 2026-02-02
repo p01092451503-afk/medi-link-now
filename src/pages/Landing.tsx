@@ -247,7 +247,7 @@ const Landing = () => {
                       <Hospital className="w-3 h-3 text-primary" />
                     </div>
                     <p className="text-lg font-bold text-foreground leading-none">
-                      {stats?.totalHospitals || "---"}
+                      {stats?.totalHospitals !== undefined ? stats.totalHospitals : "---"}
                     </p>
                     <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
                   </div>
@@ -257,7 +257,7 @@ const Landing = () => {
                       <Bed className="w-3 h-3 text-green-600" />
                     </div>
                     <p className="text-lg font-bold text-green-600 leading-none">
-                      {stats?.totalBeds || "---"}
+                      {stats?.totalBeds !== undefined ? stats.totalBeds : "---"}
                     </p>
                     <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
                   </div>
@@ -267,7 +267,7 @@ const Landing = () => {
                       <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
                     </div>
                     <p className="text-xl font-extrabold text-blue-600 leading-none">
-                      {stats?.availableHospitals || "---"}
+                      {stats?.availableHospitals !== undefined ? stats.availableHospitals : "---"}
                     </p>
                     <p className="text-[9px] font-medium text-blue-600/70 mt-0.5">여유</p>
                   </div>
@@ -277,7 +277,7 @@ const Landing = () => {
                       <Users className="w-3 h-3 text-pink-600" />
                     </div>
                     <p className="text-lg font-bold text-pink-600 leading-none">
-                      {stats?.pediatricBeds || "---"}
+                      {stats?.pediatricBeds !== undefined ? stats.pediatricBeds : "---"}
                     </p>
                     <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
                   </div>

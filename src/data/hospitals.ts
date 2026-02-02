@@ -2113,11 +2113,21 @@ export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionTyp
   if (selectedRegion?.parent) {
     const parentRegion = regionOptions.find((r) => r.id === selectedRegion.parent);
     const parentLabel = parentRegion?.labelKr || "";
+    const simplifiedParentLabel = parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
     
     return hospitals.filter((h) => {
+      // Check the Korean region field first (e.g., "서울 마포구")
+      const hospitalRegionKr = h.region || "";
+      if (hospitalRegionKr.includes(selectedRegion.labelKr)) {
+        // Also verify it's in the correct parent region
+        if (!simplifiedParentLabel || hospitalRegionKr.includes(simplifiedParentLabel)) {
+          return true;
+        }
+      }
+      
+      // Fallback: check address field
       const address = h.address || "";
-      // Must contain BOTH parent region (e.g., "인천") AND sub-region (e.g., "동구")
-      const hasParentRegion = parentLabel ? address.includes(parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "")) : true;
+      const hasParentRegion = simplifiedParentLabel ? address.includes(simplifiedParentLabel) : true;
       const hasSubRegion = address.includes(selectedRegion.labelKr);
       return hasParentRegion && hasSubRegion;
     });
@@ -2135,6 +2145,11 @@ export const filterHospitalsByRegion = (hospitals: Hospital[], region: RegionTyp
     const hospitalRegion = getRegionFromHospital(h);
     // Direct match with major region
     if (hospitalRegion === region) return true;
+    
+    // Check the Korean region field (e.g., "서울 마포구")
+    const hospitalRegionKr = h.region || "";
+    if (simplifiedMajorLabel && hospitalRegionKr.includes(simplifiedMajorLabel)) return true;
+    
     // Check if hospital address contains the major region name
     const address = h.address || "";
     if (simplifiedMajorLabel && address.includes(simplifiedMajorLabel)) return true;
