@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import url('https://cdn.jsdelivr.net/gh/webfontworld/seoulnamsan/SeoulNamsanC.css');
 
 @tailwind base;
 @tailwind components;
@@ -358,7 +358,7 @@
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Korean Logo font - Pretendard */
+/* Korean Logo font - Seoul Namsan */
 .font-logo-kr {
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'SeoulNamsanC', -apple-system, BlinkMacSystemFont, sans-serif;
 }
