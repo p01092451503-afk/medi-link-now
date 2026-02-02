@@ -175,7 +175,7 @@ const Landing = () => {
         >
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             {/* Tab Header */}
-            <div className="bg-slate-700 p-1.5">
+            <div className="bg-slate-500 p-1.5">
               <div className="flex gap-1">
                 {/* National Tab */}
                 <button
@@ -680,7 +680,7 @@ const Landing = () => {
             {/* Guardian Button */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-700 to-slate-800 border border-slate-600 relative overflow-hidden group transition-all duration-300 hover:from-slate-600 hover:to-slate-700 shadow-lg shadow-slate-900/20"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 border border-slate-400 relative overflow-hidden group transition-all duration-300 hover:from-slate-400 hover:to-slate-500 shadow-lg shadow-slate-700/20"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
