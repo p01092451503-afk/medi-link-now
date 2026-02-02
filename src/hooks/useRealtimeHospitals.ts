@@ -103,7 +103,8 @@ export const useRealtimeHospitals = () => {
         // Extract core hospital name for matching (remove common prefixes/suffixes)
         const extractCoreName = (name: string): string => {
           return name
-            .replace(/의료법인|재단법인|학교법인|사회복지|의과대학|부속|의료재단/g, '')
+            .replace(/의료법인|재단법인|학교법인|사회복지재단|사회복지|의과대학|부속|의료재단/g, '')
+            .replace(/아산사회복지재단/g, '') // Remove Asan Foundation prefix specifically
             .replace(/[^가-힣]/g, ''); // Keep only Korean characters
         };
         
@@ -124,7 +125,8 @@ export const useRealtimeHospitals = () => {
             // Core name matching (e.g., "인하대학교병원" core = "인하대학교병원", "인하대학교의과대학부속병원" core = "인하대학교병원")
             if (dbCore.includes(tcCore) || tcCore.includes(dbCore)) return true;
             // Check if both contain the same key institution name
-            const keyNames = ['인하', '아산', '서울대', '세브란스', '성모', '을지', '길병원', '부산대', '경북대', '충남대', '전남대', '전북대', '조선대', '원주', '강원대', '제주대', '경상대'];
+            // '서울아산' is more specific than '아산' to avoid false positives with other Asan hospitals
+            const keyNames = ['서울아산', '인하', '서울대', '세브란스', '성모', '을지', '길병원', '부산대', '경북대', '충남대', '전남대', '전북대', '조선대', '원주', '강원대', '제주대', '경상대', '아주대', '가톨릭'];
             for (const key of keyNames) {
               if (dbName.includes(key) && tc.nameKr.includes(key)) {
                 // Additional check: both should be major hospitals (regional centers typically)
