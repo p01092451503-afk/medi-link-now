@@ -175,7 +175,7 @@ const Landing = () => {
         >
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             {/* Tab Header */}
-            <div className="bg-slate-500 p-1.5">
+            <div className="bg-blue-500 p-1.5">
               <div className="flex gap-1">
                 {/* National Tab */}
                 <button
