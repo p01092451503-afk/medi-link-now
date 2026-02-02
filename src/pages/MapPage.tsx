@@ -283,11 +283,10 @@ const MapPage = () => {
         setActiveRadius(10); // Default 10km radius
         setMapZoom(getZoomForRadius(10));
         
-        // Detect nearest major region and sub-region from coordinates
-        const nearestMajor = findNearestMajorRegion(pos.coords.latitude, pos.coords.longitude);
-        const nearestSub = findNearestSubRegion(pos.coords.latitude, pos.coords.longitude, nearestMajor);
-        setActiveMajorRegion(nearestMajor);
-        setActiveRegion(nearestSub);
+        // When location is active, use "all" region to show nearby hospitals
+        // across administrative boundaries (radius filter handles distance)
+        setActiveMajorRegion("all");
+        setActiveRegion("all");
       },
       () => {
         // Silently fail on initial auto-location
@@ -341,11 +340,10 @@ const MapPage = () => {
           setMapZoom(getZoomForRadius(activeRadius as number));
         }
         
-        // Detect nearest major region and sub-region from coordinates
-        const nearestMajor = findNearestMajorRegion(pos.coords.latitude, pos.coords.longitude);
-        const nearestSub = findNearestSubRegion(pos.coords.latitude, pos.coords.longitude, nearestMajor);
-        setActiveMajorRegion(nearestMajor);
-        setActiveRegion(nearestSub);
+        // Use "all" region to show nearby hospitals across boundaries
+        // (radius filter handles distance-based filtering)
+        setActiveMajorRegion("all");
+        setActiveRegion("all");
         
         setIsLocating(false);
         toast({
