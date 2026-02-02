@@ -1,5 +1,4 @@
-@import url('https://static.toss.im/tps/main.css');
-@import url('https://static.toss.im/tps/others.css');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -353,7 +352,7 @@
   border-top-color: white !important;
 }
 
-/* Logo font - Toss Product Sans */
+/* Logo font - Geometric Sans-Serif */
 .font-logo {
-  font-family: 'Toss Product Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
