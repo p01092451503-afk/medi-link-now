@@ -680,7 +680,7 @@ const Landing = () => {
             {/* Guardian Button */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-500 border border-blue-300 relative overflow-hidden group transition-all duration-300 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 border border-blue-400 relative overflow-hidden group transition-all duration-300 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-600/25"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
