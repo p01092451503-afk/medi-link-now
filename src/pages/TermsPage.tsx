@@ -29,7 +29,7 @@ const TermsPage = () => {
           <section className="mb-8">
             <h2 className="text-base font-semibold mb-3">제1조 (목적)</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              본 약관은 Find-ER(이하 "서비스")가 제공하는 응급 의료 정보 서비스의 이용과 관련하여 
+              본 약관은 find-ER(이하 "서비스")가 제공하는 응급 의료 정보 서비스의 이용과 관련하여 
               회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
             </p>
           </section>
