@@ -173,16 +173,16 @@ const Landing = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="w-full mb-8"
         >
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             {/* Tab Header */}
-            <div className="bg-gradient-to-r from-primary to-blue-600 p-1.5">
+            <div className="bg-slate-700 p-1.5">
               <div className="flex gap-1">
                 {/* National Tab */}
                 <button
                   onClick={() => setActiveTab("national")}
                   className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeTab === "national"
-                      ? "bg-white text-primary shadow-sm"
+                      ? "bg-white text-slate-800 shadow-sm"
                       : "text-white/90 hover:bg-white/10"
                   }`}
                 >
@@ -196,7 +196,7 @@ const Landing = () => {
                   disabled={isLocating}
                   className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeTab === "local"
-                      ? "bg-white text-primary shadow-sm"
+                      ? "bg-white text-slate-800 shadow-sm"
                       : "text-white/90 hover:bg-white/10"
                   } disabled:opacity-50`}
                 >
@@ -211,20 +211,20 @@ const Landing = () => {
             </div>
 
             {/* Info Bar */}
-            <div className="bg-gradient-to-r from-primary/10 to-blue-500/10 px-4 py-2 flex items-center justify-between">
+            <div className="bg-slate-50 px-4 py-2 flex items-center justify-between border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-primary animate-pulse" />
-                <span className="text-xs font-medium text-foreground">
+                <Activity className="w-4 h-4 text-slate-500" />
+                <span className="text-xs font-medium text-slate-600">
                   {activeTab === "national" ? "실시간 전국 현황" : `실시간 ${userRegion || "내 지역"} 현황`}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-slate-400">
                   {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
                 </span>
                 <div className="relative flex items-center justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                  <div className="absolute w-2.5 h-2.5 rounded-full bg-green-500 animate-ping" />
+                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <div className="absolute w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 </div>
               </div>
             </div>
@@ -240,43 +240,43 @@ const Landing = () => {
                   className="grid grid-cols-4 gap-1 p-2"
                 >
                   <div className="bg-white rounded-xl p-2 text-center">
-                    <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-1">
-                      <Hospital className="w-3 h-3 text-primary" />
+                    <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center mx-auto mb-1">
+                      <Hospital className="w-3 h-3 text-slate-500" />
                     </div>
-                    <p className="text-lg font-bold text-foreground leading-none">
+                    <p className="text-lg font-bold text-slate-800 leading-none">
                       {stats?.totalHospitals !== undefined ? stats.totalHospitals : "---"}
                     </p>
-                    <p className="text-[9px] text-muted-foreground mt-0.5">응급실</p>
+                    <p className="text-[9px] text-slate-400 mt-0.5">응급실</p>
                   </div>
                   
                   <div className="bg-white rounded-xl p-2 text-center">
-                    <div className="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
-                      <Bed className="w-3 h-3 text-green-600" />
+                    <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center mx-auto mb-1">
+                      <Bed className="w-3 h-3 text-slate-500" />
                     </div>
-                    <p className="text-lg font-bold text-green-600 leading-none">
+                    <p className="text-lg font-bold text-slate-800 leading-none">
                       {stats?.totalBeds !== undefined ? stats.totalBeds : "---"}
                     </p>
-                    <p className="text-[9px] text-muted-foreground mt-0.5">병상</p>
+                    <p className="text-[9px] text-slate-400 mt-0.5">병상</p>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-2 text-center ring-1 ring-blue-200/50">
-                    <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                      <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+                  <div className="bg-slate-50 rounded-xl p-2 text-center ring-1 ring-slate-200">
+                    <div className="w-6 h-6 rounded-lg bg-slate-200 flex items-center justify-center mx-auto mb-1">
+                      <TrendingUp className="w-3.5 h-3.5 text-slate-600" />
                     </div>
-                    <p className="text-xl font-extrabold text-blue-600 leading-none">
+                    <p className="text-xl font-extrabold text-slate-800 leading-none">
                       {stats?.availableHospitals !== undefined ? stats.availableHospitals : "---"}
                     </p>
-                    <p className="text-[9px] font-medium text-blue-600/70 mt-0.5">여유</p>
+                    <p className="text-[9px] font-medium text-slate-500 mt-0.5">여유</p>
                   </div>
                   
                   <div className="bg-white rounded-xl p-2 text-center">
-                    <div className="w-6 h-6 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
-                      <Users className="w-3 h-3 text-pink-600" />
+                    <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center mx-auto mb-1">
+                      <Users className="w-3 h-3 text-slate-500" />
                     </div>
-                    <p className="text-lg font-bold text-pink-600 leading-none">
+                    <p className="text-lg font-bold text-slate-800 leading-none">
                       {stats?.pediatricBeds !== undefined ? stats.pediatricBeds : "---"}
                     </p>
-                    <p className="text-[9px] text-muted-foreground mt-0.5">소아</p>
+                    <p className="text-[9px] text-slate-400 mt-0.5">소아</p>
                   </div>
                 </motion.div>
             </AnimatePresence>
