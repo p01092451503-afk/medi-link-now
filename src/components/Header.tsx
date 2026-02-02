@@ -23,7 +23,7 @@ const Header = ({ onSearch }: HeaderProps) => {
             <span className="text-primary-foreground font-bold text-sm">F</span>
           </div>
           <div className="hidden sm:flex items-baseline gap-1.5">
-            <span className="font-logo font-bold text-foreground">Find-ER</span>
+            <span className="font-logo font-extrabold text-foreground">Find-ER</span>
             <span className="font-logo font-bold text-primary">파인더</span>
           </div>
         </div>
