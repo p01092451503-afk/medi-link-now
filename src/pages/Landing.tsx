@@ -158,8 +158,8 @@ const Landing = () => {
         >
           <h2 className="text-[1.75rem] leading-tight font-extrabold text-slate-900 mb-3 tracking-tight">
             응급상황,<br />
-            <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">가장 가까운 병상</span>을<br />
-            찾아드립니다
+            가장 가까운 병상을<br />
+            <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">파인더</span>가 찾아드립니다
           </h2>
           <p className="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">
             전국 응급실 실시간 병상 현황을 확인하고<br />가장 빠른 경로를 안내받으세요
