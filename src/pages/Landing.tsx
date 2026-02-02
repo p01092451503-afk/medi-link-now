@@ -680,17 +680,17 @@ const Landing = () => {
             {/* Guardian Button */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 border border-slate-400 relative overflow-hidden group transition-all duration-300 hover:from-slate-400 hover:to-slate-500 shadow-lg shadow-slate-700/20"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-500 border border-blue-300 relative overflow-hidden group transition-all duration-300 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
                   <Ambulance className="w-9 h-9 text-white" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
-                  <p className="text-xs text-slate-300 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                  <p className="text-xs text-blue-100 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-blue-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
 
