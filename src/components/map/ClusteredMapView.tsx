@@ -4,6 +4,7 @@ import L from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { AnimatePresence } from "framer-motion";
 import { Hospital, FilterType, getHospitalStatus, calculateDistance } from "@/data/hospitals";
+import { cleanHospitalName } from "@/lib/utils";
 import ReportMarker from "../ReportMarker";
 import DriverMarker from "../DriverMarker";
 import PharmacyMarker from "../PharmacyMarker";
@@ -642,7 +643,7 @@ const ClusteredMapView = ({
         >
           <div className="bg-white border border-gray-200 shadow-lg rounded-lg px-3 py-2 text-sm text-gray-800">
             <div className="flex flex-col items-center gap-0.5">
-              <span className="font-semibold">{hoverTooltip.hospital.nameKr}</span>
+              <span className="font-semibold">{cleanHospitalName(hoverTooltip.hospital.nameKr)}</span>
               {(hoverTooltip.hospital as any).gradeKoreanName && (
                 <span className="text-xs text-blue-600 font-medium">
                   {(hoverTooltip.hospital as any).gradeKoreanName}
