@@ -140,11 +140,9 @@ const Landing = () => {
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
           <div className="flex items-center">
-            <div>
-              <div className="flex items-baseline gap-2">
-                <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-ER</h1>
-              </div>
-              <p className="text-xs text-slate-500 text-center">실시간 응급실 병상 정보</p>
+            <div className="text-center">
+              <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-ER</h1>
+              <p className="text-xs text-slate-500">실시간 응급실 병상 정보</p>
             </div>
           </div>
         </div>
