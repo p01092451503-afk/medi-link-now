@@ -1,3 +1,6 @@
+@import url('https://static.toss.im/tps/main.css');
+@import url('https://static.toss.im/tps/others.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -348,4 +351,9 @@
 
 .leaflet-tooltip-top.hospital-tooltip::before {
   border-top-color: white !important;
+}
+
+/* Logo font - Toss Product Sans */
+.font-logo {
+  font-family: 'Toss Product Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
