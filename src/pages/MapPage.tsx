@@ -673,14 +673,14 @@ const MapPage = () => {
               </button>
               
               {/* Role Badge */}
-              <div className={`px-2.5 py-1 rounded-full text-[10px] font-semibold backdrop-blur-sm shadow-sm ${
+              <div className={`px-4 py-1.5 rounded-full text-[15px] font-semibold backdrop-blur-sm shadow-sm ${
                 isParamedicMode
                   ? "bg-red-100/80 text-red-700 border border-red-200/50"
                   : hideMode
                     ? "bg-violet-100/80 text-violet-700 border border-violet-200/50"
                     : "bg-emerald-100/80 text-emerald-700 border border-emerald-200/50"
               }`}>
-                {isParamedicMode ? "🚑 구급대원용" : hideMode ? "🚐 민간 구급차용" : "👨‍👩‍👧 보호자/환자용"}
+                {isParamedicMode ? "구급대원용" : hideMode ? "민간 구급차용" : "보호자/환자용"}
               </div>
             </div>
 
