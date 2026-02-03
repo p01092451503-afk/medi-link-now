@@ -20,6 +20,8 @@ import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIco
 import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName, type RejectionAlertInfo } from "./hospitalIconUtils";
 import { useIncomingAmbulances } from "@/hooks/useIncomingAmbulances";
 import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
+import NursingHospitalMarker from "../NursingHospitalMarker";
+import type { NursingHospital } from "@/hooks/useNursingHospitals";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -40,6 +42,7 @@ interface ClusteredMapViewProps {
   isMoonlightMode?: boolean;
   rejectionAlerts?: Map<number, RejectionAlertInfo>;
   isDriverMode?: boolean;
+  nursingHospitals?: NursingHospital[];
 }
 
 // Component to handle map center changes and bounds
@@ -347,6 +350,7 @@ const ClusteredMapView = ({
   isMoonlightMode = false,
   rejectionAlerts,
   isDriverMode = false,
+  nursingHospitals = [],
 }: ClusteredMapViewProps) => {
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
@@ -630,6 +634,14 @@ const ClusteredMapView = ({
             key={`open-pharmacy-${pharmacy.id}`} 
             pharmacy={pharmacy}
             onClick={onPharmacyClick || (() => {})}
+          />
+        ))}
+
+        {/* Nursing Hospital Markers (for transfer mode) */}
+        {nursingHospitals.map((hospital) => (
+          <NursingHospitalMarker
+            key={`nursing-${hospital.id}`}
+            hospital={hospital}
           />
         ))}
 
