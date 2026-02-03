@@ -683,60 +683,60 @@ const Landing = () => {
           </div>
           
           <div className="space-y-3">
-            {/* Guardian Button - Muted blue tone */}
+            {/* Guardian Button */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-500 border border-blue-300 relative overflow-hidden group transition-all duration-300 hover:from-blue-500 hover:to-blue-600 shadow-md"
+              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-blue-300 relative overflow-hidden group transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/50 shadow-sm"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
-                  <Ambulance className="w-9 h-9 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-colors">
+                  <Ambulance className="w-7 h-7 text-blue-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
-                  <p className="text-xs text-blue-100 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                  <p className="text-base font-bold text-slate-800 leading-tight">보호자 / 환자</p>
+                  <p className="text-xs text-slate-500 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-blue-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-blue-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-600" />
               </div>
             </button>
 
-            {/* Private Transfer Mode Button - Muted gray tone */}
+            {/* Private Transfer Mode Button */}
             <button
               onClick={() => {
                 setMode("transfer");
                 navigate("/map?hideMode=true");
               }}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-gray-400 to-gray-500 border border-gray-300 relative overflow-hidden group transition-all duration-300 hover:from-gray-500 hover:to-gray-600 shadow-md"
+              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-300 relative overflow-hidden group transition-all duration-300 hover:border-slate-400 hover:bg-slate-50/50 shadow-sm"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
-                  <Truck className="w-9 h-9 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-colors">
+                  <Truck className="w-7 h-7 text-slate-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-white leading-tight">민간 구급차 이송</p>
-                  <p className="text-xs text-gray-200 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
+                  <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차 이송</p>
+                  <p className="text-xs text-slate-500 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-300 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-slate-600" />
               </div>
             </button>
 
-            {/* Ambulance Driver Button - Orange for 119 uniform */}
+            {/* Ambulance Driver Button */}
             <button
               onClick={() => {
                 setMode("emergency");
                 navigate("/map?role=paramedic");
               }}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 relative overflow-hidden group transition-all duration-300 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-600/25"
+              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-orange-300 relative overflow-hidden group transition-all duration-300 hover:border-orange-400 hover:bg-orange-50/50 shadow-sm"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
-                  <Ambulance className="w-9 h-9 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0 group-hover:bg-orange-200 transition-colors">
+                  <Ambulance className="w-7 h-7 text-orange-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-white leading-tight">구급대원</p>
-                  <p className="text-xs text-orange-100 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
+                  <p className="text-base font-bold text-slate-800 leading-tight">구급대원</p>
+                  <p className="text-xs text-slate-500 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-orange-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-orange-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-orange-600" />
               </div>
             </button>
           </div>
