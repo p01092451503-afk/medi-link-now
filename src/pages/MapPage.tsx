@@ -23,6 +23,10 @@ import { cleanHospitalName } from "@/lib/utils";
 import ClusteredMapView from "@/components/map/ClusteredMapView";
 import RadiusChips from "@/components/map/RadiusChips";
 import HospitalListPanel from "@/components/map/HospitalListPanel";
+import ModeToggle from "@/components/ModeToggle";
+import TransferFilterChips from "@/components/TransferFilterChips";
+import { useTransferMode } from "@/contexts/TransferModeContext";
+import { getTransferBeds, getTotalICU } from "@/data/transferBedsMock";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
@@ -60,6 +64,7 @@ const MapPage = () => {
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const { getActiveWarnings } = useSharedRejectionLogs();
+  const { isTransferMode, transferFilter } = useTransferMode();
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -106,7 +111,7 @@ const MapPage = () => {
   }, []);
 
   const { filteredHospitals } = useMemo(() => {
-    let result = filterHospitals(hospitalData, activeFilter);
+    let result = isTransferMode ? [...hospitalData] : filterHospitals(hospitalData, activeFilter);
     result = filterHospitalsByRegion(result, activeRegion);
     
     if (searchQuery.trim()) {
@@ -115,10 +120,31 @@ const MapPage = () => {
     }
 
     // Exclude full hospitals (total beds = 0)
-    if (excludeFullHospitals) {
+    if (excludeFullHospitals && !isTransferMode) {
       result = result.filter((h) => {
         const totalBeds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
         return totalBeds > 0;
+      });
+    }
+
+    // Transfer mode filtering based on transfer filter
+    if (isTransferMode && transferFilter !== "all") {
+      result = result.filter((h) => {
+        const transferBeds = getTransferBeds(h.id);
+        switch (transferFilter) {
+          case "icu-general":
+            return transferBeds.icuGeneral > 0;
+          case "icu-neuro":
+            return transferBeds.icuNeuro > 0;
+          case "icu-cardio":
+            return transferBeds.icuCardio > 0;
+          case "ward":
+            return transferBeds.ward > 0;
+          case "isolation":
+            return transferBeds.isolation > 0;
+          default:
+            return true;
+        }
       });
     }
 
@@ -136,11 +162,29 @@ const MapPage = () => {
         ...h,
         distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng),
       }));
-      result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+      
+      // In transfer mode, sort by total ICU first, then distance
+      if (isTransferMode) {
+        result.sort((a, b) => {
+          const icuA = getTotalICU(getTransferBeds(a.id));
+          const icuB = getTotalICU(getTransferBeds(b.id));
+          if (icuB !== icuA) return icuB - icuA; // Higher ICU first
+          return (a.distance || 0) - (b.distance || 0);
+        });
+      } else {
+        result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+      }
+    } else if (isTransferMode) {
+      // Even without location, sort by ICU in transfer mode
+      result.sort((a, b) => {
+        const icuA = getTotalICU(getTransferBeds(a.id));
+        const icuB = getTotalICU(getTransferBeds(b.id));
+        return icuB - icuA;
+      });
     }
 
     return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter]);
 
   // Filter holiday pharmacies by selected region
   const filteredPharmacies = useMemo(() => {
@@ -540,16 +584,23 @@ const MapPage = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/")}
-              className="bg-white/50 backdrop-blur-sm rounded-xl p-2.5 shadow-lg border border-white/30 hover:bg-white/60 transition-colors flex items-center gap-2"
+              className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 ${
+                isTransferMode 
+                  ? "bg-violet-100/70 border-violet-200/50" 
+                  : "bg-white/50 border-white/30"
+              }`}
             >
               <ArrowLeft className="w-5 h-5" />
               <div className="flex items-center gap-1.5 pr-1">
                 <span className="font-logo font-extrabold text-foreground text-sm">Find-ER</span>
               </div>
             </button>
+
+            {/* Mode Toggle - Center */}
+            <ModeToggle />
             
             {/* Family Medical Card Button - Hide in driver mode */}
-            {!isDriverMode && (
+            {!isDriverMode && !isTransferMode && (
               <motion.button
                 onClick={() => navigate("/family")}
                 className="bg-white/50 backdrop-blur-sm rounded-xl px-3 py-2.5 shadow-lg border border-white/30 hover:bg-white/60 transition-colors flex items-center gap-2"
@@ -559,52 +610,59 @@ const MapPage = () => {
                 <span className="text-sm font-medium text-foreground">가족 카드</span>
               </motion.button>
             )}
+
+            {/* Spacer when in transfer mode to balance layout */}
+            {isTransferMode && <div className="w-24" />}
           </div>
         </header>
 
         {/* Filter Chips - Single row horizontal scroll */}
-        <div className="absolute top-20 left-0 right-0 z-[999] px-4">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
-            {filterOptions
-              .filter((f) => f.category === "bed" || f.category === "special")
-              .filter((f) => f.id !== "pharmacy")
-              .map((f) => {
-                const isActive = activeFilter === f.id;
-                const isTraumaCenter = f.id === "traumaCenter";
-                const isMoonlight = f.id === "moonlight";
+        {!isTransferMode ? (
+          <div className="absolute top-20 left-0 right-0 z-[999] px-4">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+              {filterOptions
+                .filter((f) => f.category === "bed" || f.category === "special")
+                .filter((f) => f.id !== "pharmacy")
+                .map((f) => {
+                  const isActive = activeFilter === f.id;
+                  const isTraumaCenter = f.id === "traumaCenter";
+                  const isMoonlight = f.id === "moonlight";
 
-                const handleFilterClick = () => {
-                  setActiveFilter(f.id);
-                  setSelectedHospital(null);
-                  setSelectedPharmacy(null);
-                };
+                  const handleFilterClick = () => {
+                    setActiveFilter(f.id);
+                    setSelectedHospital(null);
+                    setSelectedPharmacy(null);
+                  };
 
-                return (
-                  <button
-                    key={f.id}
-                    onClick={handleFilterClick}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 flex-shrink-0 ${
-                      isActive
-                        ? isTraumaCenter
-                          ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
-                          : isMoonlight
-                            ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
-                            : "bg-primary text-white shadow-md"
-                        : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
-                    }`}
-                  >
-                    {isMoonlight && <span className="text-xs">🌙</span>}
-                    {isTraumaCenter && (
-                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                        isActive ? "bg-white/20" : "bg-purple-100"
-                      }`}>+</span>
-                    )}
-                    {f.labelKr}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={handleFilterClick}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 flex-shrink-0 ${
+                        isActive
+                          ? isTraumaCenter
+                            ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
+                            : isMoonlight
+                              ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
+                              : "bg-primary text-white shadow-md"
+                          : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
+                      }`}
+                    >
+                      {isMoonlight && <span className="text-xs">🌙</span>}
+                      {isTraumaCenter && (
+                        <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                          isActive ? "bg-white/20" : "bg-purple-100"
+                        }`}>+</span>
+                      )}
+                      {f.labelKr}
+                    </button>
+                  );
+                })}
+            </div>
           </div>
-        </div>
+        ) : (
+          <TransferFilterChips />
+        )}
 
         {/* Radius Chips - Capsule style, tight to bottom sheet */}
         <div className="absolute bottom-[40px] left-4 z-[999]">
@@ -625,6 +683,7 @@ const MapPage = () => {
         selectedHospitalId={selectedHospital?.id}
         isExpanded={isListExpanded}
         onToggleExpand={() => setIsListExpanded(!isListExpanded)}
+        isTransferMode={isTransferMode}
       />
 
       {/* Bottom Sheet for Selected Hospital */}
