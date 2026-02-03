@@ -10,10 +10,10 @@ const ModeToggle = () => {
   };
 
   return (
-    <div className="flex items-center gap-1 bg-card rounded-full p-1 shadow-lg border border-border">
+    <div className="flex items-center gap-1 bg-card rounded-full p-1 shadow-lg border border-border flex-shrink-0">
       <button
         onClick={() => handleModeChange("emergency")}
-        className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+        className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0 ${
           mode === "emergency"
             ? "text-white"
             : "text-muted-foreground hover:text-foreground"
@@ -26,13 +26,13 @@ const ModeToggle = () => {
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
           />
         )}
-        <Siren className="w-3.5 h-3.5 relative z-10" />
-        <span className="relative z-10">119 응급</span>
+        <Siren className="w-3.5 h-3.5 relative z-10 flex-shrink-0" />
+        <span className="relative z-10 whitespace-nowrap">119 응급</span>
       </button>
       
       <button
         onClick={() => handleModeChange("transfer")}
-        className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+        className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap flex-shrink-0 ${
           mode === "transfer"
             ? "text-white"
             : "text-muted-foreground hover:text-foreground"
@@ -45,8 +45,8 @@ const ModeToggle = () => {
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
           />
         )}
-        <Truck className="w-3.5 h-3.5 relative z-10" />
-        <span className="relative z-10">비응급 이송</span>
+        <Truck className="w-3.5 h-3.5 relative z-10 flex-shrink-0" />
+        <span className="relative z-10 whitespace-nowrap">비응급 이송</span>
       </button>
     </div>
   );
