@@ -43,6 +43,7 @@ interface ClusteredMapViewProps {
   rejectionAlerts?: Map<number, RejectionAlertInfo>;
   isDriverMode?: boolean;
   nursingHospitals?: NursingHospital[];
+  onNursingHospitalClick?: (hospital: NursingHospital) => void;
 }
 
 // Component to handle map center changes and bounds
@@ -351,6 +352,7 @@ const ClusteredMapView = ({
   rejectionAlerts,
   isDriverMode = false,
   nursingHospitals = [],
+  onNursingHospitalClick,
 }: ClusteredMapViewProps) => {
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
@@ -642,6 +644,7 @@ const ClusteredMapView = ({
           <NursingHospitalMarker
             key={`nursing-${hospital.id}`}
             hospital={hospital}
+            onClick={onNursingHospitalClick}
           />
         ))}
 
