@@ -702,17 +702,17 @@ const Landing = () => {
                 setMode("emergency");
                 navigate("/map");
               }}
-              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 shadow-sm hover:shadow-md"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 relative overflow-hidden group transition-all duration-300 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-600/25"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0 group-hover:from-slate-200 group-hover:to-slate-100 transition-all">
-                  <Ambulance className="w-9 h-9 text-slate-600 group-hover:text-slate-700 transition-colors" />
+                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
+                  <Ambulance className="w-9 h-9 text-white" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원</p>
-                  <p className="text-xs text-slate-500 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
+                  <p className="text-base font-bold text-white leading-tight">구급대원</p>
+                  <p className="text-xs text-orange-100 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-slate-600" />
+                <ChevronRight className="w-5 h-5 text-orange-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
 
