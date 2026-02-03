@@ -700,7 +700,7 @@ const Landing = () => {
             <button
               onClick={() => {
                 setMode("emergency");
-                navigate("/map");
+                navigate("/map?role=paramedic");
               }}
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 relative overflow-hidden group transition-all duration-300 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-600/25"
             >

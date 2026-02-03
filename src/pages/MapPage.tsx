@@ -60,6 +60,7 @@ const MapPage = () => {
   const [searchParams] = useSearchParams();
   const isDriverMode = searchParams.get("mode") === "driver";
   const hideMode = searchParams.get("hideMode") === "true";
+  const isParamedicMode = searchParams.get("role") === "paramedic";
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
@@ -601,8 +602,8 @@ const MapPage = () => {
             {/* Mode Toggle - Center (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
             
-            {/* Family Medical Card Button - Hide in driver mode */}
-            {!isDriverMode && !isTransferMode && (
+            {/* Family Medical Card Button - Hide in driver/paramedic mode */}
+            {!isDriverMode && !isTransferMode && !isParamedicMode && (
               <motion.button
                 onClick={() => navigate("/family")}
                 className="bg-white/50 backdrop-blur-sm rounded-xl px-3 py-2.5 shadow-lg border border-white/30 hover:bg-white/60 transition-colors flex items-center gap-2"
