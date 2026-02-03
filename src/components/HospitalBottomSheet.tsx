@@ -16,6 +16,7 @@ import ERRoadviewModal from "@/components/ERRoadviewModal";
 import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
+import IncomingTrafficCard from "@/components/hospital/IncomingTrafficCard";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import PatientTransferRequestModal from "@/components/PatientTransferRequestModal";
@@ -316,6 +317,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     officialBeds={totalBeds}
                   />
                 </div>
+              </div>
+
+              {/* Private Ambulance Traffic Section */}
+              <div className="mb-6">
+                <IncomingTrafficCard 
+                  hospitalId={hospital.id}
+                  officialBeds={totalBeds}
+                />
               </div>
 
               {/* Bed Status Grid */}

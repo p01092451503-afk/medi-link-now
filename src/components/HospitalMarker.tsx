@@ -9,6 +9,8 @@ interface HospitalMarkerProps {
   activeFilter: FilterType;
   opacity?: number;
   isMoonlightMode?: boolean;
+  isHighTraffic?: boolean;
+  privateTrafficCount?: number;
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
@@ -106,11 +108,16 @@ const createMarkerIcon = (
   isTraumaCenter?: boolean,
   isPediatricFilter?: boolean,
   emergencyGrade?: string | null,
-  isMoonlightMode?: boolean
+  isMoonlightMode?: boolean,
+  isHighTraffic?: boolean,
+  privateTrafficCount?: number
 ) => {
   // Use moonlight colors if in moonlight mode, otherwise use grade colors
   const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
-  const color = colors[status];
+  
+  // If high traffic and estimated full, override to gray
+  const effectiveStatus = isHighTraffic && beds === 0 ? "unavailable" : status;
+  const color = colors[effectiveStatus];
   const gradeLabel = getGradeLabel(emergencyGrade);
   
   // Child badge removed for cleaner marker design
@@ -134,6 +141,27 @@ const createMarkerIcon = (
           <rect x="10" y="4" width="4" height="16" rx="1" fill="white"/>
           <rect x="4" y="10" width="16" height="4" rx="1" fill="white"/>
         </svg>
+      </div>`
+    : "";
+
+  // High traffic warning badge (top-right)
+  const highTrafficBadge = isHighTraffic
+    ? `<div style="
+        position: absolute;
+        top: -10px;
+        right: -14px;
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        border: 2px solid white;
+        border-radius: 8px;
+        padding: 2px 4px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+        z-index: 10;
+      ">
+        <span style="font-size: 10px;">⚠️</span>
+        <span style="font-size: 9px; font-weight: bold; color: white;">${privateTrafficCount || 0}</span>
       </div>`
     : "";
 
@@ -217,6 +245,7 @@ const createMarkerIcon = (
         ">
           ${beds}
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
+          ${highTrafficBadge}
         </div>
         <div style="
           width: 0;
@@ -235,7 +264,7 @@ const createMarkerIcon = (
   });
 };
 
-const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false }: HospitalMarkerProps) => {
+const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0 }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   
@@ -255,7 +284,9 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
     hospital.isTraumaCenter, 
     isPediatricFilter,
     hospital.emergencyGrade,
-    isMoonlightMode
+    isMoonlightMode,
+    isHighTraffic,
+    privateTrafficCount
   );
 
   // 등급 한글명 표시

@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
+import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 import { toast } from "@/hooks/use-toast";
 
 interface PatientTransferRequestModalProps {
@@ -43,6 +44,7 @@ const PatientTransferRequestModal = ({
   onRequestSent,
 }: PatientTransferRequestModalProps) => {
   const { addRequest, updateRequestStatus } = useTransferRequest();
+  const { incrementTraffic } = usePrivateTraffic();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -99,6 +101,9 @@ const PatientTransferRequestModal = ({
     // Simulate hospital response after 3 seconds
     setTimeout(() => {
       updateRequestStatus(requestId, "accepted");
+      
+      // Increment private traffic count for this hospital
+      incrementTraffic(hospitalId);
       
       // Browser notification
       if ("Notification" in window && Notification.permission === "granted") {

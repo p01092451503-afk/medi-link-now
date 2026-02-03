@@ -100,7 +100,9 @@ export const createHospitalIcon = (
   emergencyGrade?: string | null,
   isMoonlightMode?: boolean,
   rejectionAlert?: RejectionAlertInfo,
-  incomingCount?: number
+  incomingCount?: number,
+  isHighTraffic?: boolean,
+  privateTrafficCount?: number
 ) => {
   // Use moonlight colors if in moonlight mode, otherwise use grade colors
   const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
@@ -170,6 +172,30 @@ export const createHospitalIcon = (
         z-index: 15;
       ">
         ${rejectionAlert?.count || 0}
+      </div>`
+    : '';
+
+  // High traffic warning badge (private ambulances > 2)
+  const highTrafficBadge = isHighTraffic && !isCritical && !isWarning
+    ? `<div style="
+        position: absolute;
+        top: -18px;
+        right: ${hasIncoming ? '-35px' : '-12px'};
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        border: 2px solid white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 2px 6px;
+        font-size: 9px;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 2px 6px rgba(245, 158, 11, 0.5);
+        z-index: 16;
+      ">
+        <span>⚠️</span>
+        <span>${privateTrafficCount || 0}</span>
       </div>`
     : '';
 
@@ -303,6 +329,7 @@ export const createHospitalIcon = (
           <span style="font-size: 9px; font-weight: 500; opacity: 0.9;">석</span>
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
+          ${highTrafficBadge}
           ${incomingBadge}
         </div>
         <div style="
