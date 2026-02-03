@@ -688,9 +688,6 @@ const Landing = () => {
               onClick={() => navigate("/guardian")}
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-500 border border-blue-300 relative overflow-hidden group transition-all duration-300 hover:from-blue-500 hover:to-blue-600 shadow-md"
             >
-              <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold bg-white/25 text-white rounded-full">
-                보호자/환자용
-              </span>
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
                   <Ambulance className="w-9 h-9 text-white" />
@@ -711,9 +708,6 @@ const Landing = () => {
               }}
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 relative overflow-hidden group transition-all duration-300 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-600/25"
             >
-              <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold bg-white/25 text-white rounded-full">
-                구급대원용
-              </span>
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
                   <Ambulance className="w-9 h-9 text-white" />
@@ -734,9 +728,6 @@ const Landing = () => {
               }}
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-gray-400 to-gray-500 border border-gray-300 relative overflow-hidden group transition-all duration-300 hover:from-gray-500 hover:to-gray-600 shadow-md"
             >
-              <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold bg-white/25 text-white rounded-full">
-                민간구급차용
-              </span>
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
                   <Truck className="w-9 h-9 text-white" />
