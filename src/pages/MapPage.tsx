@@ -657,19 +657,32 @@ const MapPage = () => {
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => navigate("/")}
-              className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 ${
-                isTransferMode 
-                  ? "bg-violet-100/70 border-violet-200/50" 
-                  : "bg-white/50 border-white/30"
-              }`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <div className="flex items-center gap-1.5 pr-1">
-                <span className="font-logo font-extrabold text-foreground text-sm">Find-ER</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate("/")}
+                className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 ${
+                  isTransferMode 
+                    ? "bg-violet-100/70 border-violet-200/50" 
+                    : "bg-white/50 border-white/30"
+                }`}
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <div className="flex items-center gap-1.5 pr-1">
+                  <span className="font-logo font-extrabold text-foreground text-sm">Find-ER</span>
+                </div>
+              </button>
+              
+              {/* Role Badge */}
+              <div className={`px-2.5 py-1 rounded-full text-[10px] font-semibold backdrop-blur-sm shadow-sm ${
+                isParamedicMode
+                  ? "bg-red-100/80 text-red-700 border border-red-200/50"
+                  : hideMode
+                    ? "bg-violet-100/80 text-violet-700 border border-violet-200/50"
+                    : "bg-emerald-100/80 text-emerald-700 border border-emerald-200/50"
+              }`}>
+                {isParamedicMode ? "🚑 구급대원용" : hideMode ? "🚐 민간 구급차용" : "👨‍👩‍👧 보호자/환자용"}
               </div>
-            </button>
+            </div>
 
             {/* Mode Toggle - Center (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
