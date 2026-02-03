@@ -679,10 +679,10 @@ const Landing = () => {
           </div>
           
           <div className="space-y-3">
-            {/* Guardian Button */}
+            {/* Guardian Button - Muted slate tone */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 border border-blue-400 relative overflow-hidden group transition-all duration-300 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-600/25"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 border border-slate-400 relative overflow-hidden group transition-all duration-300 hover:from-slate-600 hover:to-slate-700 shadow-md"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
@@ -690,13 +690,13 @@ const Landing = () => {
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
-                  <p className="text-xs text-blue-100 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                  <p className="text-xs text-slate-200 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-blue-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
 
-            {/* Ambulance Driver Button - Now goes directly to map in emergency mode */}
+            {/* Ambulance Driver Button - Orange for 119 uniform */}
             <button
               onClick={() => {
                 setMode("emergency");
@@ -716,10 +716,10 @@ const Landing = () => {
               </div>
             </button>
 
-            {/* Private Transfer Mode Button - Now goes to driver intro landing */}
+            {/* Private Transfer Mode Button - Muted gray tone */}
             <button
               onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 border border-violet-400 relative overflow-hidden group transition-all duration-300 hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-600/25"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-gray-400 to-gray-500 border border-gray-300 relative overflow-hidden group transition-all duration-300 hover:from-gray-500 hover:to-gray-600 shadow-md"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
@@ -727,9 +727,9 @@ const Landing = () => {
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-white leading-tight">민간 구급차 이송</p>
-                  <p className="text-xs text-violet-100 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
+                  <p className="text-xs text-gray-200 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-violet-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-gray-300 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
           </div>
