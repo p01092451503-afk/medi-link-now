@@ -43,6 +43,8 @@ import MapLegendPopup from "@/components/map/MapLegendPopup";
 import OfflineBanner from "@/components/OfflineBanner";
 import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";
+import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet";
+import type { NursingHospital } from "@/hooks/useNursingHospitals";
 
 
 // Map default center (Seoul)
@@ -89,6 +91,7 @@ const MapPage = () => {
   const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
+  const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -535,6 +538,7 @@ const MapPage = () => {
           rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
           isDriverMode={isDriverMode}
           nursingHospitals={filteredNursingHospitals}
+          onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
@@ -786,6 +790,13 @@ const MapPage = () => {
         pharmacy={selectedPharmacy}
         isOpen={!!selectedPharmacy}
         onClose={() => setSelectedPharmacy(null)}
+      />
+
+      {/* Nursing Hospital Bottom Sheet */}
+      <NursingHospitalBottomSheet
+        hospital={selectedNursingHospital}
+        isOpen={!!selectedNursingHospital}
+        onClose={() => setSelectedNursingHospital(null)}
       />
 
       {/* My Requests Panel - Floating */}

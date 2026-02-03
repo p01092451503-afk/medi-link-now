@@ -1,4 +1,4 @@
-import { Marker, Popup, Tooltip } from "react-leaflet";
+import { Marker, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import { NursingHospital } from "@/hooks/useNursingHospitals";
 
@@ -83,40 +83,6 @@ const NursingHospitalMarker = ({ hospital, onClick }: NursingHospitalMarkerProps
           <span className="text-xs text-purple-600 font-medium">{hospital.type}</span>
         </div>
       </Tooltip>
-      <Popup>
-        <div className="text-sm min-w-[200px]">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7V10C2 16.5 6.84 22.74 12 24C17.16 22.74 22 16.5 22 10V7L12 2Z" fill="#8B5CF6"/>
-                <path d="M12 6V12M9 9H15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <strong className="text-base block">{hospital.name}</strong>
-              <span className="text-xs text-purple-600 font-medium">{hospital.type}</span>
-            </div>
-          </div>
-          <div className="space-y-1 text-xs text-gray-600">
-            <p className="flex items-center gap-1">
-              <span>📍</span> {hospital.address}
-            </p>
-            {hospital.phone && (
-              <p className="flex items-center gap-1">
-                <span>📞</span> 
-                <a href={`tel:${hospital.phone}`} className="text-blue-600 hover:underline">
-                  {hospital.phone}
-                </a>
-              </p>
-            )}
-            {hospital.beds && hospital.beds > 0 && (
-              <p className="flex items-center gap-1">
-                <span>🛏️</span> 병상 {hospital.beds}개
-              </p>
-            )}
-          </div>
-        </div>
-      </Popup>
     </Marker>
   );
 };
