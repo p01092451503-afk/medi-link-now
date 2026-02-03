@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -656,24 +656,22 @@ const MapPage = () => {
 
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => navigate("/")}
-                className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 ${
+                className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 flex-shrink-0 ${
                   isTransferMode 
                     ? "bg-violet-100/70 border-violet-200/50" 
                     : "bg-white/50 border-white/30"
                 }`}
               >
-                <ArrowLeft className="w-5 h-5" />
-                <div className="flex items-center gap-1.5 pr-1">
-                  <span className="font-logo font-extrabold text-foreground text-sm">Find-ER</span>
-                </div>
+                <ArrowLeft className="w-5 h-5 flex-shrink-0" />
+                <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">Find-ER</span>
               </button>
               
               {/* Role Badge */}
-              <div className={`px-4 py-1.5 rounded-full text-[15px] font-semibold backdrop-blur-sm shadow-sm ${
+              <div className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-sm whitespace-nowrap flex-shrink-0 ${
                 isParamedicMode
                   ? "bg-red-100/80 text-red-700 border border-red-200/50"
                   : hideMode
@@ -687,20 +685,8 @@ const MapPage = () => {
             {/* Mode Toggle - Center (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
             
-            {/* Family Medical Card Button - Hide in driver/paramedic mode */}
-            {!isDriverMode && !isTransferMode && !isParamedicMode && (
-              <motion.button
-                onClick={() => navigate("/family")}
-                className="bg-white/50 backdrop-blur-sm rounded-xl px-3 py-2.5 shadow-lg border border-white/30 hover:bg-white/60 transition-colors flex items-center gap-2"
-                whileTap={{ scale: 0.95 }}
-              >
-                <Heart className="w-5 h-5 text-pink-500" />
-                <span className="text-sm font-medium text-foreground">가족 카드</span>
-              </motion.button>
-            )}
-
-            {/* Spacer when in transfer mode to balance layout */}
-            {isTransferMode && <div className="w-24" />}
+            {/* Spacer to balance layout */}
+            <div className="w-4 flex-shrink-0" />
           </div>
         </header>
 
