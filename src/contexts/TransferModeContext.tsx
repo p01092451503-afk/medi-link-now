@@ -2,7 +2,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 
 export type AppMode = "emergency" | "transfer";
 
-export type TransferFilterType = "all" | "icu-general" | "icu-neuro" | "icu-cardio" | "ward" | "isolation";
+export type TransferFilterType = "all" | "hospital" | "nursing" | "icu-general" | "icu-neuro" | "icu-cardio" | "ward" | "isolation";
 
 interface TransferModeContextType {
   mode: AppMode;
@@ -16,6 +16,8 @@ const TransferModeContext = createContext<TransferModeContextType | undefined>(u
 
 export const transferFilterOptions: { id: TransferFilterType; label: string; labelKr: string }[] = [
   { id: "all", label: "All Facilities", labelKr: "전체" },
+  { id: "hospital", label: "General Hospital", labelKr: "일반 병원" },
+  { id: "nursing", label: "Nursing Hospital", labelKr: "요양병원" },
   { id: "icu-general", label: "General ICU", labelKr: "일반 중환자실" },
   { id: "icu-neuro", label: "Neuro ICU", labelKr: "신경계 중환자실" },
   { id: "icu-cardio", label: "Cardio ICU", labelKr: "심장 중환자실" },
