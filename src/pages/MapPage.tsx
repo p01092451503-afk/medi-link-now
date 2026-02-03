@@ -68,7 +68,7 @@ const MapPage = () => {
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const { getActiveWarnings } = useSharedRejectionLogs();
-  const { isTransferMode, transferFilter } = useTransferMode();
+  const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -89,6 +89,13 @@ const MapPage = () => {
   const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
+
+  // Auto-set transfer mode when entering via hideMode=true
+  useEffect(() => {
+    if (hideMode) {
+      setMode("transfer");
+    }
+  }, [hideMode, setMode]);
 
   // Get rejection alerts for hospitals - convert to RejectionAlertInfo format
   const rejectionAlerts = useMemo(() => {
