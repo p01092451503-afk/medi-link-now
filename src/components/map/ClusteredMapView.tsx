@@ -123,7 +123,12 @@ const MapController = ({
     },
   });
 
-  // Initial bounds calculation
+  // Initial bounds calculation - use stable identifier to prevent infinite loops
+  const hospitalIdsKey = useMemo(() => 
+    hospitals.map(h => h.id).join(','), 
+    [hospitals]
+  );
+  
   useEffect(() => {
     if (onBoundsChange) {
       const bounds = map.getBounds();
@@ -132,7 +137,8 @@ const MapController = ({
       );
       onBoundsChange(bounds, visible);
     }
-  }, [hospitals, map, onBoundsChange]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hospitalIdsKey, map]);
 
   return null;
 };
