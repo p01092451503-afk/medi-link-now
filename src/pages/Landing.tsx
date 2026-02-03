@@ -686,7 +686,7 @@ const Landing = () => {
             {/* Guardian Button */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-blue-300 relative overflow-hidden group transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/50 shadow-sm"
+              className="w-full py-4 px-5 rounded-2xl bg-blue-50/70 border border-blue-200 relative overflow-hidden group transition-all duration-300 hover:bg-blue-100/70 hover:border-blue-300 shadow-sm"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-200 transition-colors">
@@ -703,10 +703,10 @@ const Landing = () => {
             {/* Private Transfer Mode Button */}
             <button
               onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-300 relative overflow-hidden group transition-all duration-300 hover:border-slate-400 hover:bg-slate-50/50 shadow-sm"
+              className="w-full py-4 px-5 rounded-2xl bg-slate-100/70 border border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-200/70 hover:border-slate-300 shadow-sm"
             >
               <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center shrink-0 group-hover:bg-slate-300 transition-colors">
                   <Truck className="w-7 h-7 text-slate-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
@@ -723,7 +723,7 @@ const Landing = () => {
                 setMode("emergency");
                 navigate("/map?role=paramedic");
               }}
-              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-orange-300 relative overflow-hidden group transition-all duration-300 hover:border-orange-400 hover:bg-orange-50/50 shadow-sm"
+              className="w-full py-4 px-5 rounded-2xl bg-orange-50/70 border border-orange-200 relative overflow-hidden group transition-all duration-300 hover:bg-orange-100/70 hover:border-orange-300 shadow-sm"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0 group-hover:bg-orange-200 transition-colors">
