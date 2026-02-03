@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
-import { getHospitalStatus, findNearestMajorRegion, findNearestSubRegion, filterHospitalsByRegion, regionOptions } from "@/data/hospitals";
+import { getHospitalStatus } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import DataFreshnessTimer from "@/components/DataFreshnessTimer";
 import { cleanHospitalName } from "@/lib/utils";
@@ -19,9 +19,9 @@ const Landing = () => {
   const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
   const [activeTab, setActiveTab] = useState<"national" | "local">("national");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [userRegion, setUserRegion] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [isAIPredictionOpen, setIsAIPredictionOpen] = useState(false);
+
 
   // Get user location when switching to local tab
   const handleLocalTab = () => {
@@ -33,16 +33,6 @@ const Landing = () => {
         (position) => {
           const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
           setUserLocation(coords);
-          
-          // Find nearest region
-          const majorRegion = findNearestMajorRegion(coords[0], coords[1]);
-          const subRegion = findNearestSubRegion(coords[0], coords[1], majorRegion);
-          
-          // Get region display name
-          const subRegionOption = regionOptions.find(r => r.id === subRegion);
-          const majorRegionOption = regionOptions.find(r => r.id === majorRegion);
-          setUserRegion(subRegionOption?.labelKr || majorRegionOption?.labelKr || "내 지역");
-          
           setIsLocating(false);
           setActiveTab("local");
         },
@@ -82,12 +72,26 @@ const Landing = () => {
       pediatricBeds: nationalPediatricBeds,
     };
 
-    // Local stats (only if user location is available)
+    // Local stats (only if user location is available) - use distance-based filtering (10km radius)
     let local = null;
     if (userLocation) {
-      const majorRegion = findNearestMajorRegion(userLocation[0], userLocation[1]);
-      const subRegion = findNearestSubRegion(userLocation[0], userLocation[1], majorRegion);
-      const localHospitals = filterHospitalsByRegion(hospitals, subRegion);
+      const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371; // km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      };
+      
+      // Filter hospitals within 10km radius
+      const LOCAL_RADIUS_KM = 10;
+      const localHospitals = hospitals.filter(h => {
+        const distance = calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng);
+        return distance <= LOCAL_RADIUS_KM;
+      });
 
       const localTotalBeds = localHospitals.reduce(
         (sum, h) => sum + h.beds.general + h.beds.pediatric + h.beds.fever,
@@ -217,7 +221,7 @@ const Landing = () => {
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-slate-500" />
                 <span className="text-xs font-medium text-slate-600">
-                  {activeTab === "national" ? "실시간 전국 현황" : `실시간 ${userRegion || "내 지역"} 현황`}
+                  {activeTab === "national" ? "실시간 전국 현황" : "실시간 내 주변 10km 현황"}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
