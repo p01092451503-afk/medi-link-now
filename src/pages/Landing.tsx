@@ -700,26 +700,6 @@ const Landing = () => {
               </div>
             </button>
 
-            {/* Ambulance Driver Button - Orange for 119 uniform */}
-            <button
-              onClick={() => {
-                setMode("emergency");
-                navigate("/map?role=paramedic");
-              }}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 relative overflow-hidden group transition-all duration-300 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-600/25"
-            >
-              <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
-                  <Ambulance className="w-9 h-9 text-white" />
-                </div>
-                <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-white leading-tight">구급대원</p>
-                  <p className="text-xs text-orange-100 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-orange-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
-              </div>
-            </button>
-
             {/* Private Transfer Mode Button - Muted gray tone */}
             <button
               onClick={() => {
@@ -737,6 +717,26 @@ const Landing = () => {
                   <p className="text-xs text-gray-200 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-300 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+              </div>
+            </button>
+
+            {/* Ambulance Driver Button - Orange for 119 uniform */}
+            <button
+              onClick={() => {
+                setMode("emergency");
+                navigate("/map?role=paramedic");
+              }}
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 border border-orange-400 relative overflow-hidden group transition-all duration-300 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-600/25"
+            >
+              <div className="flex items-center w-full">
+                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
+                  <Ambulance className="w-9 h-9 text-white" />
+                </div>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-base font-bold text-white leading-tight">구급대원</p>
+                  <p className="text-xs text-orange-100 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-orange-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
           </div>
