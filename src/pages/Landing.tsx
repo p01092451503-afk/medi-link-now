@@ -696,10 +696,10 @@ const Landing = () => {
               </div>
             </button>
 
-            {/* Ambulance Driver Button - Now goes directly to map in transfer mode */}
+            {/* Ambulance Driver Button - Now goes directly to map in emergency mode */}
             <button
               onClick={() => {
-                setMode("transfer");
+                setMode("emergency");
                 navigate("/map");
               }}
               className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 shadow-sm hover:shadow-md"
