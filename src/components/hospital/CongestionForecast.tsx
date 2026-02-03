@@ -21,23 +21,24 @@ interface ScoreData {
 }
 
 const calculateScore = (estimatedBeds: number): ScoreData => {
+  // 혼잡도: 높을수록 혼잡함 (병상이 적을수록 혼잡도 높음)
   if (estimatedBeds > 5) {
     return {
-      score: 95,
+      score: 20,
       label: "원활",
       status: "smooth",
       message: "현재 병원 혼잡도가 낮습니다",
     };
   } else if (estimatedBeds >= 2 && estimatedBeds <= 5) {
     return {
-      score: 70,
+      score: 55,
       label: "보통",
       status: "moderate",
       message: "도착 전 전화 확인을 권장합니다",
     };
   } else {
     return {
-      score: 30,
+      score: 85,
       label: "혼잡",
       status: "congested",
       message: "다른 병원도 함께 확인해보세요",
