@@ -454,7 +454,7 @@ const MapPage = () => {
 
         {/* Leaflet Map with Clustering */}
         <ClusteredMapView
-          hospitals={isPharmacyFilter ? [] : filteredHospitals}
+          hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
           onHospitalClick={handleHospitalClick}
           userLocation={userLocation}
           center={mapCenter}
@@ -472,7 +472,7 @@ const MapPage = () => {
           isMoonlightMode={activeFilter === "moonlight"}
           rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
           isDriverMode={isDriverMode}
-          nursingHospitals={isTransferMode ? nursingHospitals : []}
+          nursingHospitals={isTransferMode && transferFilter !== "hospital" ? nursingHospitals : []}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
