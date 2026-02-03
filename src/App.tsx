@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TransferModeProvider } from "@/contexts/TransferModeContext";
+import { TransferRequestProvider } from "@/contexts/TransferRequestContext";
 import ScrollToTop from "./components/ScrollToTop";
 import Landing from "./pages/Landing";
 import GuardianLanding from "./pages/GuardianLanding";
@@ -25,8 +26,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <TransferModeProvider>
-        <Toaster />
-        <Sonner />
+        <TransferRequestProvider>
+          <Toaster />
+          <Sonner />
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
@@ -45,7 +47,8 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+          </BrowserRouter>
+        </TransferRequestProvider>
       </TransferModeProvider>
     </TooltipProvider>
   </QueryClientProvider>
