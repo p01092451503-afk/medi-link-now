@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { TransferModeProvider } from "@/contexts/TransferModeContext";
 import ScrollToTop from "./components/ScrollToTop";
 import Landing from "./pages/Landing";
 import GuardianLanding from "./pages/GuardianLanding";
@@ -23,27 +24,29 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/guardian" element={<GuardianLanding />} />
-          <Route path="/driver-intro" element={<DriverLanding />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/family" element={<FamilyPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/driver" element={<DriverDashboard />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/install" element={<InstallPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/fare-calculator" element={<FareCalculatorPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <TransferModeProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/guardian" element={<GuardianLanding />} />
+            <Route path="/driver-intro" element={<DriverLanding />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/family" element={<FamilyPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/driver" element={<DriverDashboard />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/install" element={<InstallPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/fare-calculator" element={<FareCalculatorPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TransferModeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

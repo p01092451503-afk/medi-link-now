@@ -73,6 +73,15 @@
     --sidebar-ring: 220 100% 50%;
   }
 
+  /* Transfer Mode Theme - Deep Purple */
+  .transfer-mode {
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 262 83% 58%;
+    --accent: 262 100% 96%;
+    --accent-foreground: 262 83% 50%;
+  }
+
   .dark {
     --background: 220 20% 8%;
     --foreground: 210 20% 98%;

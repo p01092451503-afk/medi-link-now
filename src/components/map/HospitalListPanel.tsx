@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hospital, getHospitalStatus, calculateDistance } from "@/data/hospitals";
-import { Phone, Navigation, Clock, Stethoscope, Baby, Thermometer, ChevronUp, MapPin, Activity } from "lucide-react";
+import { Phone, Navigation, Clock, Stethoscope, Baby, Thermometer, ChevronUp, MapPin, Activity, BedDouble, HeartPulse, ShieldPlus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cleanHospitalName } from "@/lib/utils";
+import { getTransferBeds, getTotalICU, TransferBeds } from "@/data/transferBedsMock";
 
 interface HospitalListPanelProps {
   hospitals: Hospital[];
@@ -12,6 +13,7 @@ interface HospitalListPanelProps {
   selectedHospitalId?: number;
   isExpanded: boolean;
   onToggleExpand: () => void;
+  isTransferMode?: boolean;
 }
 
 // Status priority for sorting (lower = higher priority)
@@ -28,8 +30,9 @@ const HospitalListPanel = ({
   selectedHospitalId,
   isExpanded,
   onToggleExpand,
+  isTransferMode = false,
 }: HospitalListPanelProps) => {
-  // Sort hospitals by status first, then by distance
+  // Sort hospitals by status first, then by distance (or ICU in transfer mode)
   const sortedHospitals = useMemo(() => {
     return [...hospitals]
       .map((h) => ({
@@ -38,11 +41,19 @@ const HospitalListPanel = ({
           ? calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng)
           : undefined,
         status: getHospitalStatus(h),
+        transferBeds: getTransferBeds(h.id),
       }))
       .sort((a, b) => {
-        // First sort by status priority
-        const statusDiff = STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status];
-        if (statusDiff !== 0) return statusDiff;
+        if (isTransferMode) {
+          // In transfer mode, sort by total ICU first
+          const icuA = getTotalICU(a.transferBeds);
+          const icuB = getTotalICU(b.transferBeds);
+          if (icuB !== icuA) return icuB - icuA;
+        } else {
+          // First sort by status priority
+          const statusDiff = STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status];
+          if (statusDiff !== 0) return statusDiff;
+        }
         
         // Then by distance if available
         if (a.distance !== undefined && b.distance !== undefined) {
@@ -50,15 +61,23 @@ const HospitalListPanel = ({
         }
         return 0;
       });
-  }, [hospitals, userLocation]);
+  }, [hospitals, userLocation, isTransferMode]);
 
   const availableCount = sortedHospitals.filter((h) => h.status === "available").length;
   const limitedCount = sortedHospitals.filter((h) => h.status === "limited").length;
   const unavailableCount = sortedHospitals.filter((h) => h.status === "unavailable").length;
+  
+  // For transfer mode, calculate total ICU beds
+  const totalICUBeds = useMemo(() => {
+    if (!isTransferMode) return 0;
+    return sortedHospitals.reduce((sum, h) => sum + getTotalICU(h.transferBeds), 0);
+  }, [sortedHospitals, isTransferMode]);
 
   return (
     <motion.div
-      className="bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] rounded-t-3xl overflow-hidden z-[1001]"
+      className={`border-t shadow-[0_-4px_20px_rgba(0,0,0,0.1)] rounded-t-3xl overflow-hidden z-[1001] ${
+        isTransferMode ? "bg-violet-50 border-violet-200" : "bg-white border-gray-200"
+      }`}
       initial={false}
       animate={{
         height: isExpanded ? "40vh" : "auto",
@@ -68,39 +87,58 @@ const HospitalListPanel = ({
       {/* Handle Bar */}
       <button
         onClick={onToggleExpand}
-        className="w-full py-3 flex flex-col items-center gap-2 bg-gradient-to-b from-white to-gray-50/50"
+        className={`w-full py-3 flex flex-col items-center gap-2 ${
+          isTransferMode 
+            ? "bg-gradient-to-b from-violet-50 to-violet-100/50" 
+            : "bg-gradient-to-b from-white to-gray-50/50"
+        }`}
       >
-        <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        <div className={`w-10 h-1 rounded-full ${isTransferMode ? "bg-violet-300" : "bg-gray-300"}`} />
         
         {/* Summary Stats */}
         <div className="flex items-center gap-4 px-4">
           <div className="flex items-center gap-1.5">
-            <Activity className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-700">
+            {isTransferMode ? (
+              <HeartPulse className="w-4 h-4 text-violet-600" />
+            ) : (
+              <Activity className="w-4 h-4 text-gray-500" />
+            )}
+            <span className={`text-sm font-semibold ${isTransferMode ? "text-violet-700" : "text-gray-700"}`}>
               {sortedHospitals.length}개 병원
             </span>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs font-medium text-emerald-600">{availableCount}</span>
+          {isTransferMode ? (
+            // Transfer mode stats - show ICU summary
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 px-2 py-0.5 bg-violet-100 rounded-full">
+                <ShieldPlus className="w-3 h-3 text-violet-600" />
+                <span className="text-xs font-semibold text-violet-700">ICU {totalICUBeds}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              <span className="text-xs font-medium text-amber-600">{limitedCount}</span>
+          ) : (
+            // Emergency mode stats - show status counts
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-xs font-medium text-emerald-600">{availableCount}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="text-xs font-medium text-amber-600">{limitedCount}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="text-xs font-medium text-red-600">{unavailableCount}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-red-500" />
-              <span className="text-xs font-medium text-red-600">{unavailableCount}</span>
-            </div>
-          </div>
+          )}
           
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronUp className="w-5 h-5 text-gray-400" />
+            <ChevronUp className={`w-5 h-5 ${isTransferMode ? "text-violet-400" : "text-gray-400"}`} />
           </motion.div>
         </div>
       </button>
@@ -124,16 +162,25 @@ const HospitalListPanel = ({
                     fever: Math.max(0, hospital.beds.fever),
                   };
                   const totalBeds = normalizedBeds.general + normalizedBeds.pediatric + normalizedBeds.fever;
+                  const transferBeds = hospital.transferBeds;
+                  const totalICU = getTotalICU(transferBeds);
                   
-                  const statusColor = 
-                    hospital.status === "available" ? "border-l-emerald-500 bg-emerald-50/50" :
-                    hospital.status === "limited" ? "border-l-amber-500 bg-amber-50/50" :
-                    "border-l-red-500 bg-red-50/50";
+                  // Transfer mode uses purple-based colors
+                  const statusColor = isTransferMode
+                    ? totalICU > 0 
+                      ? "border-l-violet-500 bg-violet-50/70" 
+                      : "border-l-gray-400 bg-gray-50/50"
+                    : hospital.status === "available" ? "border-l-emerald-500 bg-emerald-50/50" :
+                      hospital.status === "limited" ? "border-l-amber-500 bg-amber-50/50" :
+                      "border-l-red-500 bg-red-50/50";
                   
-                  const statusBadge = 
-                    hospital.status === "available" ? { bg: "bg-emerald-100", text: "text-emerald-700", label: "수용가능" } :
-                    hospital.status === "limited" ? { bg: "bg-amber-100", text: "text-amber-700", label: "혼잡" } :
-                    { bg: "bg-red-100", text: "text-red-700", label: "수용불가" };
+                  const statusBadge = isTransferMode
+                    ? totalICU > 0
+                      ? { bg: "bg-violet-100", text: "text-violet-700", label: `ICU ${totalICU}` }
+                      : { bg: "bg-gray-100", text: "text-gray-600", label: "ICU 없음" }
+                    : hospital.status === "available" ? { bg: "bg-emerald-100", text: "text-emerald-700", label: "수용가능" } :
+                      hospital.status === "limited" ? { bg: "bg-amber-100", text: "text-amber-700", label: "혼잡" } :
+                      { bg: "bg-red-100", text: "text-red-700", label: "수용불가" };
 
                   return (
                     <motion.button
@@ -143,7 +190,11 @@ const HospitalListPanel = ({
                       transition={{ delay: index * 0.03 }}
                       onClick={() => onHospitalClick(hospital)}
                       className={`w-full text-left p-3 rounded-xl border-l-4 ${statusColor} ${
-                        isSelected ? "ring-2 ring-primary shadow-lg" : "hover:shadow-md"
+                        isSelected 
+                          ? isTransferMode 
+                            ? "ring-2 ring-violet-500 shadow-lg" 
+                            : "ring-2 ring-primary shadow-lg" 
+                          : "hover:shadow-md"
                       } transition-all`}
                     >
                       <div className="flex items-start justify-between gap-2 mb-2">
@@ -152,7 +203,7 @@ const HospitalListPanel = ({
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusBadge.bg} ${statusBadge.text}`}>
                               {statusBadge.label}
                             </span>
-                            {hospital.isTraumaCenter && (
+                            {!isTransferMode && hospital.isTraumaCenter && (
                               <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-purple-100 text-purple-700">
                                 외상
                               </span>
@@ -164,30 +215,59 @@ const HospitalListPanel = ({
                         
                         <div className="flex flex-col items-end gap-1 shrink-0">
                           {hospital.distance !== undefined && (
-                            <div className="flex items-center gap-1 text-primary">
+                            <div className={`flex items-center gap-1 ${isTransferMode ? "text-violet-600" : "text-primary"}`}>
                               <MapPin className="w-3 h-3" />
                               <span className="text-xs font-bold">{hospital.distance.toFixed(1)}km</span>
                             </div>
                           )}
-                          <div className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 shadow-sm">
-                            <Stethoscope className="w-3 h-3 text-primary" />
-                            <span className="text-xs font-bold text-primary">{totalBeds}</span>
+                          <div className={`flex items-center gap-1 bg-white rounded-full px-2 py-0.5 shadow-sm`}>
+                            {isTransferMode ? (
+                              <>
+                                <BedDouble className="w-3 h-3 text-violet-600" />
+                                <span className="text-xs font-bold text-violet-600">{transferBeds.ward}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Stethoscope className="w-3 h-3 text-primary" />
+                                <span className="text-xs font-bold text-primary">{totalBeds}</span>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
                       
-                      {/* Bed breakdown */}
-                      <div className="flex items-center gap-3 text-[10px] text-gray-500">
-                        <span className={`flex items-center gap-0.5 ${normalizedBeds.general > 0 ? "text-emerald-600 font-medium" : ""}`}>
-                          <Stethoscope className="w-3 h-3" /> 성인 {normalizedBeds.general}
-                        </span>
-                        <span className={`flex items-center gap-0.5 ${normalizedBeds.pediatric > 0 ? "text-emerald-600 font-medium" : ""}`}>
-                          <Baby className="w-3 h-3" /> 소아 {normalizedBeds.pediatric}
-                        </span>
-                        <span className={`flex items-center gap-0.5 ${normalizedBeds.fever > 0 ? "text-emerald-600 font-medium" : ""}`}>
-                          <Thermometer className="w-3 h-3" /> 열/감염 {normalizedBeds.fever}
-                        </span>
-                      </div>
+                      {/* Bed breakdown - different for transfer vs emergency mode */}
+                      {isTransferMode ? (
+                        <div className="flex items-center gap-2 text-[10px] text-gray-500 flex-wrap">
+                          <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${transferBeds.icuGeneral > 0 ? "bg-violet-100 text-violet-700 font-medium" : ""}`}>
+                            <ShieldPlus className="w-3 h-3" /> 일반ICU {transferBeds.icuGeneral}
+                          </span>
+                          <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${transferBeds.icuNeuro > 0 ? "bg-violet-100 text-violet-700 font-medium" : ""}`}>
+                            <HeartPulse className="w-3 h-3" /> 신경ICU {transferBeds.icuNeuro}
+                          </span>
+                          <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${transferBeds.icuCardio > 0 ? "bg-violet-100 text-violet-700 font-medium" : ""}`}>
+                            <HeartPulse className="w-3 h-3" /> 심장ICU {transferBeds.icuCardio}
+                          </span>
+                          <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${transferBeds.ward > 0 ? "bg-blue-100 text-blue-700 font-medium" : ""}`}>
+                            <BedDouble className="w-3 h-3" /> 병실 {transferBeds.ward}
+                          </span>
+                          <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${transferBeds.isolation > 0 ? "bg-amber-100 text-amber-700 font-medium" : ""}`}>
+                            <Thermometer className="w-3 h-3" /> 격리 {transferBeds.isolation}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 text-[10px] text-gray-500">
+                          <span className={`flex items-center gap-0.5 ${normalizedBeds.general > 0 ? "text-emerald-600 font-medium" : ""}`}>
+                            <Stethoscope className="w-3 h-3" /> 성인 {normalizedBeds.general}
+                          </span>
+                          <span className={`flex items-center gap-0.5 ${normalizedBeds.pediatric > 0 ? "text-emerald-600 font-medium" : ""}`}>
+                            <Baby className="w-3 h-3" /> 소아 {normalizedBeds.pediatric}
+                          </span>
+                          <span className={`flex items-center gap-0.5 ${normalizedBeds.fever > 0 ? "text-emerald-600 font-medium" : ""}`}>
+                            <Thermometer className="w-3 h-3" /> 열/감염 {normalizedBeds.fever}
+                          </span>
+                        </div>
+                      )}
                     </motion.button>
                   );
                 })}
