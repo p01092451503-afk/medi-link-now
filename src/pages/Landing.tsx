@@ -696,9 +696,12 @@ const Landing = () => {
               </div>
             </button>
 
-            {/* Ambulance Driver Button */}
+            {/* Ambulance Driver Button - Now goes directly to map in transfer mode */}
             <button
-              onClick={() => navigate("/driver-intro")}
+              onClick={() => {
+                setMode("transfer");
+                navigate("/map");
+              }}
               className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 shadow-sm hover:shadow-md"
             >
               <div className="flex items-center w-full">
@@ -713,12 +716,9 @@ const Landing = () => {
               </div>
             </button>
 
-            {/* Private Transfer Mode Button */}
+            {/* Private Transfer Mode Button - Now goes to driver intro landing */}
             <button
-              onClick={() => {
-                setMode("transfer");
-                navigate("/map");
-              }}
+              onClick={() => navigate("/driver-intro")}
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 border border-violet-400 relative overflow-hidden group transition-all duration-300 hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-600/25"
             >
               <div className="flex items-center w-full">
