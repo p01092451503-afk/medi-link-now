@@ -59,7 +59,6 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
         <div className="flex items-center justify-center gap-4 py-3">
           <div className="text-center">
             <div className="flex items-center justify-center gap-2">
-              <span className="text-3xl">🚑</span>
               <span className={`text-4xl font-bold ${
                 highTraffic ? "text-amber-600" : trafficCount > 0 ? "text-blue-600" : "text-gray-400"
               }`}>
