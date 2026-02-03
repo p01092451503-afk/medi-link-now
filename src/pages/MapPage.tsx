@@ -655,38 +655,33 @@ const MapPage = () => {
         {/* Data Source removed - update time moved to RadiusChips */}
 
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-[1001] p-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={() => navigate("/")}
-                className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 flex-shrink-0 ${
-                  isTransferMode 
-                    ? "bg-violet-100/70 border-violet-200/50" 
-                    : "bg-white/50 border-white/30"
-                }`}
-              >
-                <ArrowLeft className="w-5 h-5 flex-shrink-0" />
-                <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">Find-ER</span>
-              </button>
-              
-              {/* Role Badge */}
-              <div className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-sm whitespace-nowrap flex-shrink-0 ${
-                isParamedicMode
-                  ? "bg-red-100/80 text-red-700 border border-red-200/50"
-                  : hideMode
-                    ? "bg-violet-100/80 text-violet-700 border border-violet-200/50"
-                    : "bg-emerald-100/80 text-emerald-700 border border-emerald-200/50"
-              }`}>
-                {isParamedicMode ? "구급대원용" : hideMode ? "민간 구급차용" : "보호자/환자용"}
-              </div>
+        <header className="absolute top-0 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-3 min-w-max">
+            <button
+              onClick={() => navigate("/")}
+              className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 flex-shrink-0 ${
+                isTransferMode 
+                  ? "bg-violet-100/70 border-violet-200/50" 
+                  : "bg-white/50 border-white/30"
+              }`}
+            >
+              <ArrowLeft className="w-5 h-5 flex-shrink-0" />
+              <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">Find-ER</span>
+            </button>
+            
+            {/* Role Badge */}
+            <div className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-sm whitespace-nowrap flex-shrink-0 ${
+              isParamedicMode
+                ? "bg-red-100/80 text-red-700 border border-red-200/50"
+                : hideMode
+                  ? "bg-violet-100/80 text-violet-700 border border-violet-200/50"
+                  : "bg-emerald-100/80 text-emerald-700 border border-emerald-200/50"
+            }`}>
+              {isParamedicMode ? "구급대원용" : hideMode ? "민간 구급차용" : "보호자/환자용"}
             </div>
 
-            {/* Mode Toggle - Center (hidden when hideMode is true) */}
+            {/* Mode Toggle (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
-            
-            {/* Spacer to balance layout */}
-            <div className="w-4 flex-shrink-0" />
           </div>
         </header>
 
