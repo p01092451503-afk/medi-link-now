@@ -737,15 +737,17 @@ const MapPage = () => {
           <TransferFilterChips />
         )}
 
-        {/* Radius Chips - Capsule style, tight to bottom sheet */}
-        <div className="absolute bottom-[40px] left-4 z-[999]">
-          <RadiusChips
-            activeRadius={activeRadius}
-            onRadiusChange={handleRadiusChange}
-            userLocation={userLocation}
-            lastUpdated={lastUpdated}
-          />
-        </div>
+        {/* Radius Chips - Capsule style, hidden when hospital selected */}
+        {!selectedHospital && !selectedNursingHospital && (
+          <div className="absolute bottom-[40px] left-4 z-[999]">
+            <RadiusChips
+              activeRadius={activeRadius}
+              onRadiusChange={handleRadiusChange}
+              userLocation={userLocation}
+              lastUpdated={lastUpdated}
+            />
+          </div>
+        )}
       </div>
 
       {/* Hospital List Panel - Sync with map viewport (hidden in transfer mode) */}
