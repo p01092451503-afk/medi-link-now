@@ -709,8 +709,8 @@ const Landing = () => {
                   <Ambulance className="w-9 h-9 text-slate-600 group-hover:text-slate-700 transition-colors" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원 / 기사님</p>
-                  <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
+                  <p className="text-base font-bold text-slate-700 leading-tight group-hover:text-slate-800">구급대원</p>
+                  <p className="text-xs text-slate-500 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-slate-600" />
               </div>
