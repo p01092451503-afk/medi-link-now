@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -673,15 +673,21 @@ const MapPage = () => {
               <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">Find-ER</span>
             </button>
             
-            {/* Role Badge */}
-            <div className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-sm whitespace-nowrap flex-shrink-0 ${
+            {/* Role Badge - Icon only */}
+            <div className={`p-2 rounded-full backdrop-blur-sm shadow-sm flex-shrink-0 ${
               isParamedicMode
-                ? "bg-red-100/80 text-red-700 border border-red-200/50"
+                ? "bg-red-100/80 text-red-600 border border-red-200/50"
                 : hideMode
-                  ? "bg-violet-100/80 text-violet-700 border border-violet-200/50"
-                  : "bg-emerald-100/80 text-emerald-700 border border-emerald-200/50"
+                  ? "bg-violet-100/80 text-violet-600 border border-violet-200/50"
+                  : "bg-emerald-100/80 text-emerald-600 border border-emerald-200/50"
             }`}>
-              {isParamedicMode ? "구급대원용" : hideMode ? "민간 구급차용" : "보호자/환자용"}
+              {isParamedicMode ? (
+                <Siren className="w-4 h-4" />
+              ) : hideMode ? (
+                <Truck className="w-4 h-4" />
+              ) : (
+                <Heart className="w-4 h-4" />
+              )}
             </div>
 
             {/* Mode Toggle (hidden when hideMode is true) */}
