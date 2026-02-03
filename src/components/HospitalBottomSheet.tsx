@@ -517,7 +517,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   onClick={handleCall}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 rounded-xl"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-14 rounded-xl"
                 >
                   <Phone className="w-4 h-4 mr-2" />
                   응급실 전화
@@ -529,7 +529,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     name: cleanHospitalName(hospital.nameKr),
                   }}
                   variant="outline"
-                  className="border-primary text-primary hover:bg-primary/5 font-semibold py-6 rounded-xl h-auto"
+                  className="border-primary text-primary hover:bg-primary/5 font-semibold h-14 rounded-xl"
                 />
               </div>
             </div>
