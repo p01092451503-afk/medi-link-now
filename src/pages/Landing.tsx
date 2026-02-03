@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, Truck } from "lucide-react";
+import { useTransferMode } from "@/contexts/TransferModeContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -14,6 +15,7 @@ import { cleanHospitalName } from "@/lib/utils";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { setMode } = useTransferMode();
   const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
   const [activeTab, setActiveTab] = useState<"national" | "local">("national");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -708,6 +710,26 @@ const Landing = () => {
                   <p className="text-xs text-slate-500 leading-tight mt-0.5">수익 최적화 · 자동 운행일지</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-slate-600" />
+              </div>
+            </button>
+
+            {/* Private Transfer Mode Button */}
+            <button
+              onClick={() => {
+                setMode("transfer");
+                navigate("/map");
+              }}
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 border border-violet-400 relative overflow-hidden group transition-all duration-300 hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-600/25"
+            >
+              <div className="flex items-center w-full">
+                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
+                  <Truck className="w-9 h-9 text-white" />
+                </div>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-base font-bold text-white leading-tight">민간 구급차 이송</p>
+                  <p className="text-xs text-violet-100 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-violet-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
           </div>
