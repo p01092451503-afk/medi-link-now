@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle, Loader2, Activity } from "lucide-react";
+import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle, Loader2 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Tooltip,
@@ -180,14 +180,9 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
               
               {/* 1. 병원 혼잡도 예측 */}
               <div className="p-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
-                    <Activity className="w-4 h-4 text-violet-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">병원 혼잡도 예측</p>
-                    <p className={`text-lg font-bold ${congestion.textColor}`}>{congestion.score}%</p>
-                  </div>
+                <div>
+                  <p className="text-xs text-slate-500">병원 혼잡도 예측</p>
+                  <p className={`text-lg font-bold ${congestion.textColor}`}>{congestion.score}%</p>
                 </div>
                 <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${congestion.labelBg} ${congestion.labelColor}`}>
                   {congestion.label}
@@ -196,22 +191,17 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
               
               {/* 2. 실시간 이동 현황 */}
               <div className="p-3 flex items-center justify-between bg-slate-50/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                    <Ambulance className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">실시간 이동 현황</p>
-                    <div className="flex items-baseline gap-1">
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
-                      ) : (
-                        <>
-                          <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
-                          <span className="text-xs text-orange-500">대 이송 중</span>
-                        </>
-                      )}
-                    </div>
+                <div>
+                  <p className="text-xs text-slate-500">실시간 이동 현황</p>
+                  <div className="flex items-baseline gap-1">
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
+                    ) : (
+                      <>
+                        <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
+                        <span className="text-xs text-orange-500">대 이송 중</span>
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className="text-right">

@@ -1,4 +1,4 @@
-import { Ambulance, AlertTriangle, Users, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
+import { AlertTriangle, Users, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
 import { useHospitalEnRouteCount } from "@/hooks/useAmbulanceTrips";
 import { motion } from "framer-motion";
 
@@ -21,14 +21,9 @@ const ShadowDemandCard = ({ hospitalId, officialBeds }: ShadowDemandCardProps) =
       
       <div className="relative p-4">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
-            <Ambulance className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h4 className="text-sm font-bold text-foreground">실시간 이동 현황</h4>
-            <p className="text-[10px] text-muted-foreground">Shadow Demand Tracking</p>
-          </div>
+        <div className="mb-4">
+          <h4 className="text-sm font-bold text-foreground">실시간 이동 현황</h4>
+          <p className="text-[10px] text-muted-foreground">Shadow Demand Tracking</p>
         </div>
 
         {/* Flow Visualization */}
