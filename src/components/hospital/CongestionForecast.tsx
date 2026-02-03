@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { TrendingUp, AlertTriangle, TrendingDown, Gauge } from "lucide-react";
+import { TrendingUp, AlertTriangle, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface CongestionForecastProps {
@@ -94,14 +94,9 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
       
       <div className="relative p-4">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center shadow-lg`}>
-            <Gauge className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h4 className="text-sm font-bold text-foreground">병원 혼잡도 예측</h4>
-            <p className="text-[10px] text-muted-foreground">Congestion Forecast</p>
-          </div>
+        <div className="mb-4">
+          <h4 className="text-sm font-bold text-foreground">병원 혼잡도 예측</h4>
+          <p className="text-[10px] text-muted-foreground">Congestion Forecast</p>
         </div>
 
         {/* Main Score Display */}
