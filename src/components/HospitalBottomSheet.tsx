@@ -295,19 +295,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 
                 {/* Header */}
                 <div className="relative flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
-                      <span className="text-lg">🤖</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-foreground">AI 예측 분석</h3>
+                      <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-500 px-2 py-0.5 rounded-full shadow-sm">
+                        BETA
+                      </span>
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-bold text-foreground">AI 예측 분석</h3>
-                        <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-500 px-2 py-0.5 rounded-full shadow-sm">
-                          BETA
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground">Predictive Analytics</p>
-                    </div>
+                    <p className="text-[10px] text-muted-foreground">Predictive Analytics</p>
                   </div>
                   <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
                 </div>
