@@ -748,16 +748,18 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* Hospital List Panel - Sync with map viewport */}
-      <HospitalListPanel
-        hospitals={visibleHospitals.length > 0 ? visibleHospitals : filteredHospitals}
-        userLocation={userLocation}
-        onHospitalClick={handleHospitalClick}
-        selectedHospitalId={selectedHospital?.id}
-        isExpanded={isListExpanded}
-        onToggleExpand={() => setIsListExpanded(!isListExpanded)}
-        isTransferMode={isTransferMode}
-      />
+      {/* Hospital List Panel - Sync with map viewport (hidden in transfer mode) */}
+      {!hideMode && (
+        <HospitalListPanel
+          hospitals={visibleHospitals.length > 0 ? visibleHospitals : filteredHospitals}
+          userLocation={userLocation}
+          onHospitalClick={handleHospitalClick}
+          selectedHospitalId={selectedHospital?.id}
+          isExpanded={isListExpanded}
+          onToggleExpand={() => setIsListExpanded(!isListExpanded)}
+          isTransferMode={isTransferMode}
+        />
+      )}
 
       {/* Bottom Sheet for Selected Hospital */}
       <HospitalBottomSheet
