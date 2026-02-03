@@ -90,10 +90,13 @@ const MapPage = () => {
   const [isListExpanded, setIsListExpanded] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
 
-  // Auto-set transfer mode when entering via hideMode=true
+  // Auto-set mode based on URL params
   useEffect(() => {
     if (hideMode) {
       setMode("transfer");
+    } else {
+      // Reset to emergency mode when entering without hideMode (guardian/patient mode)
+      setMode("emergency");
     }
   }, [hideMode, setMode]);
 
