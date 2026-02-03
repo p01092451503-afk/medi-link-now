@@ -19,6 +19,7 @@ import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { createDonutClusterIcon, calculateClusterStats } from "./DonutClusterIcon";
 import { createHospitalIcon, getDisplayBeds, getMarkerStatus, getGradeKoreanName, type RejectionAlertInfo } from "./hospitalIconUtils";
 import { useIncomingAmbulances } from "@/hooks/useIncomingAmbulances";
+import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -349,6 +350,8 @@ const ClusteredMapView = ({
 }: ClusteredMapViewProps) => {
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
+  // 민간 구급차 트래픽 데이터
+  const { getTrafficCount, isHighTraffic } = usePrivateTraffic();
 
   // react-leaflet's Marker update logic compares position by reference.
   // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
@@ -547,6 +550,9 @@ const ClusteredMapView = ({
             const isPediatricFilter = activeFilter === "pediatric" || activeFilter === "moonlight";
             // Get rejection alert for this hospital
             const rejectionAlert = rejectionAlerts?.get(hospital.id);
+            // Get private traffic data
+            const privateTrafficCount = getTrafficCount(hospital.id);
+            const highTraffic = isHighTraffic(hospital.id);
             
             const icon = createHospitalIcon(
               status,
@@ -557,7 +563,9 @@ const ClusteredMapView = ({
               hospital.emergencyGrade,
               isMoonlightMode,
               rejectionAlert,
-              incomingCount
+              incomingCount,
+              highTraffic,
+              privateTrafficCount
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);

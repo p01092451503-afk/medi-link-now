@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TransferModeProvider } from "@/contexts/TransferModeContext";
 import { TransferRequestProvider } from "@/contexts/TransferRequestContext";
+import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
 import ScrollToTop from "./components/ScrollToTop";
 import Landing from "./pages/Landing";
 import GuardianLanding from "./pages/GuardianLanding";
@@ -27,27 +28,29 @@ const App = () => (
     <TooltipProvider>
       <TransferModeProvider>
         <TransferRequestProvider>
-          <Toaster />
-          <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/guardian" element={<GuardianLanding />} />
-            <Route path="/driver-intro" element={<DriverLanding />} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/family" element={<FamilyPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/driver" element={<DriverDashboard />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/install" element={<InstallPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/fare-calculator" element={<FareCalculatorPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </BrowserRouter>
+          <PrivateTrafficProvider>
+            <Toaster />
+            <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/guardian" element={<GuardianLanding />} />
+              <Route path="/driver-intro" element={<DriverLanding />} />
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/family" element={<FamilyPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/driver" element={<DriverDashboard />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/install" element={<InstallPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/fare-calculator" element={<FareCalculatorPage />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </BrowserRouter>
+          </PrivateTrafficProvider>
         </TransferRequestProvider>
       </TransferModeProvider>
     </TooltipProvider>
