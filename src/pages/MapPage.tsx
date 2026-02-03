@@ -59,6 +59,7 @@ const MapPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isDriverMode = searchParams.get("mode") === "driver";
+  const hideMode = searchParams.get("hideMode") === "true";
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
@@ -597,8 +598,8 @@ const MapPage = () => {
               </div>
             </button>
 
-            {/* Mode Toggle - Center */}
-            <ModeToggle />
+            {/* Mode Toggle - Center (hidden when hideMode is true) */}
+            {!hideMode && <ModeToggle />}
             
             {/* Family Medical Card Button - Hide in driver mode */}
             {!isDriverMode && !isTransferMode && (

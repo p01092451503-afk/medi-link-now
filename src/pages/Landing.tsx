@@ -718,7 +718,10 @@ const Landing = () => {
 
             {/* Private Transfer Mode Button - Muted gray tone */}
             <button
-              onClick={() => navigate("/driver-intro")}
+              onClick={() => {
+                setMode("transfer");
+                navigate("/map?hideMode=true");
+              }}
               className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-gray-400 to-gray-500 border border-gray-300 relative overflow-hidden group transition-all duration-300 hover:from-gray-500 hover:to-gray-600 shadow-md"
             >
               <div className="flex items-center w-full">
