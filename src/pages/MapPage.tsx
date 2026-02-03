@@ -35,6 +35,7 @@ import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
 import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
+import { useNursingHospitals } from "@/hooks/useNursingHospitals";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
@@ -68,6 +69,7 @@ const MapPage = () => {
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter } = useTransferMode();
+  const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -463,6 +465,7 @@ const MapPage = () => {
           isMoonlightMode={activeFilter === "moonlight"}
           rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
           isDriverMode={isDriverMode}
+          nursingHospitals={isTransferMode ? nursingHospitals : []}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
