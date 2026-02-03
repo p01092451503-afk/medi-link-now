@@ -26,7 +26,7 @@ import HospitalListPanel from "@/components/map/HospitalListPanel";
 import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
-import { useTransferMode } from "@/contexts/TransferModeContext";
+import { useTransferMode, TransferFilterType } from "@/contexts/TransferModeContext";
 import { getTransferBeds, getTotalICU } from "@/data/transferBedsMock";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
@@ -234,8 +234,9 @@ const MapPage = () => {
   const filteredNursingHospitals = useMemo(() => {
     if (!isTransferMode || nursingHospitals.length === 0) return [];
     
-    // Filter by hospital type first
-    if (transferFilter === "hospital") return [];
+    // Hide nursing hospitals when hospital or any hospital sub-filter is selected
+    const hospitalFilters: TransferFilterType[] = ["hospital", "icu-general", "icu-neuro", "icu-cardio", "ward", "isolation"];
+    if (hospitalFilters.includes(transferFilter)) return [];
     
     let result = [...nursingHospitals];
     
