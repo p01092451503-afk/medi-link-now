@@ -23,6 +23,7 @@ import PatientTransferRequestModal from "@/components/PatientTransferRequestModa
 import { useAuth } from "@/hooks/useAuth";
 import { useIncomingAmbulancesForHospital } from "@/hooks/useIncomingAmbulances";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
+import { useTransferMode } from "@/contexts/TransferModeContext";
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
   onClose: () => void;
@@ -141,6 +142,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const { user } = useAuth();
   const { getRequestByHospitalId } = useTransferRequest();
+  const { isTransferMode } = useTransferMode();
   const [showRoadview, setShowRoadview] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
   
@@ -455,40 +457,42 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 <p className="text-xs text-muted-foreground pl-7">{hospital.address}</p>
               </div>
 
-              {/* Digital Transfer Request Button */}
-              {existingRequest ? (
-                <div className={`w-full mb-3 py-4 px-4 rounded-xl border-2 flex items-center justify-center gap-2 ${
-                  existingRequest.status === "pending" 
-                    ? "bg-yellow-50 border-yellow-300 text-yellow-700"
-                    : existingRequest.status === "accepted"
-                    ? "bg-green-50 border-green-300 text-green-700"
-                    : "bg-red-50 border-red-300 text-red-700"
-                }`}>
-                  {existingRequest.status === "pending" ? (
-                    <>
-                      <Clock className="w-5 h-5 animate-pulse" />
-                      <span className="font-semibold">승인 대기 중 ⏳</span>
-                    </>
-                  ) : existingRequest.status === "accepted" ? (
-                    <>
-                      <CheckCircle className="w-5 h-5" />
-                      <span className="font-semibold">요청 승인됨 ✅</span>
-                    </>
-                  ) : (
-                    <>
-                      <X className="w-5 h-5" />
-                      <span className="font-semibold">요청 거절됨 ❌</span>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <Button
-                  onClick={() => setShowTransferModal(true)}
-                  className="w-full mb-3 py-5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold"
-                >
-                  <Send className="w-5 h-5 mr-2" />
-                  📋 디지털 이송 요청 (Request Transfer)
-                </Button>
+              {/* Digital Transfer Request Button - Only in Transfer Mode */}
+              {isTransferMode && (
+                existingRequest ? (
+                  <div className={`w-full mb-3 py-4 px-4 rounded-xl border-2 flex items-center justify-center gap-2 ${
+                    existingRequest.status === "pending" 
+                      ? "bg-yellow-50 border-yellow-300 text-yellow-700"
+                      : existingRequest.status === "accepted"
+                      ? "bg-green-50 border-green-300 text-green-700"
+                      : "bg-red-50 border-red-300 text-red-700"
+                  }`}>
+                    {existingRequest.status === "pending" ? (
+                      <>
+                        <Clock className="w-5 h-5 animate-pulse" />
+                        <span className="font-semibold">승인 대기 중 ⏳</span>
+                      </>
+                    ) : existingRequest.status === "accepted" ? (
+                      <>
+                        <CheckCircle className="w-5 h-5" />
+                        <span className="font-semibold">요청 승인됨 ✅</span>
+                      </>
+                    ) : (
+                      <>
+                        <X className="w-5 h-5" />
+                        <span className="font-semibold">요청 거절됨 ❌</span>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => setShowTransferModal(true)}
+                    className="w-full mb-3 py-5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold"
+                  >
+                    <Send className="w-5 h-5 mr-2" />
+                    📋 디지털 이송 요청 (Request Transfer)
+                  </Button>
+                )
               )}
 
               {/* ER Entrance Roadview Button */}
