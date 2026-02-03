@@ -230,6 +230,64 @@ const MapPage = () => {
     });
   }, [isPharmacyFilter, holidayPharmacies, activeRegion]);
 
+  // Filter nursing hospitals by region and distance
+  const filteredNursingHospitals = useMemo(() => {
+    if (!isTransferMode || nursingHospitals.length === 0) return [];
+    
+    // Filter by hospital type first
+    if (transferFilter === "hospital") return [];
+    
+    let result = [...nursingHospitals];
+    
+    // Filter by region if not "all"
+    if (activeRegion !== "all") {
+      const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
+      if (selectedRegion) {
+        if (selectedRegion.parent) {
+          // Sub-region filtering
+          const parentRegion = regionOptions.find((r) => r.id === selectedRegion.parent);
+          const parentLabel = parentRegion?.labelKr || "";
+          const simplifiedParent = parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
+          
+          result = result.filter((h) => {
+            const address = h.address || "";
+            const hasParentRegion = simplifiedParent ? address.includes(simplifiedParent) : true;
+            const hasSubRegion = address.includes(selectedRegion.labelKr);
+            return hasParentRegion && hasSubRegion;
+          });
+        } else {
+          // Major region filtering
+          const majorLabel = selectedRegion.labelKr || "";
+          const simplifiedMajorLabel = majorLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
+          
+          result = result.filter((h) => {
+            const address = h.address || "";
+            return address.includes(simplifiedMajorLabel);
+          });
+        }
+      }
+    }
+    
+    // Filter by radius if set and user location available
+    if (userLocation && activeRadius !== "all") {
+      result = result.filter((h) => {
+        const distance = calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng);
+        return distance <= activeRadius;
+      });
+    }
+    
+    // Add distance and sort by proximity
+    if (userLocation) {
+      result = result.map((h) => ({
+        ...h,
+        distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng),
+      }));
+      result.sort((a, b) => ((a as any).distance || 0) - ((b as any).distance || 0));
+    }
+    
+    return result;
+  }, [isTransferMode, nursingHospitals, activeRegion, userLocation, activeRadius, transferFilter]);
+
   // Show message when no trauma centers in selected region and recommend nearest one
   useEffect(() => {
     if (activeFilter === "traumaCenter" && filteredHospitals.length === 0 && activeRegion !== "all") {
@@ -472,7 +530,7 @@ const MapPage = () => {
           isMoonlightMode={activeFilter === "moonlight"}
           rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
           isDriverMode={isDriverMode}
-          nursingHospitals={isTransferMode && transferFilter !== "hospital" ? nursingHospitals : []}
+          nursingHospitals={filteredNursingHospitals}
         />
 
         {/* Map Controls (Zoom + Legend + Location) */}
