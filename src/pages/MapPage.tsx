@@ -25,6 +25,7 @@ import RadiusChips from "@/components/map/RadiusChips";
 import HospitalListPanel from "@/components/map/HospitalListPanel";
 import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
+import MyRequestsPanel from "@/components/MyRequestsPanel";
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { getTransferBeds, getTotalICU } from "@/data/transferBedsMock";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
@@ -718,6 +719,9 @@ const MapPage = () => {
         isOpen={!!selectedPharmacy}
         onClose={() => setSelectedPharmacy(null)}
       />
+
+      {/* My Requests Panel - Floating */}
+      <MyRequestsPanel />
     </div>
   );
 };
