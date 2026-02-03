@@ -679,10 +679,10 @@ const Landing = () => {
           </div>
           
           <div className="space-y-3">
-            {/* Guardian Button - Muted slate tone */}
+            {/* Guardian Button - Muted blue tone */}
             <button
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-slate-500 to-slate-600 border border-slate-400 relative overflow-hidden group transition-all duration-300 hover:from-slate-600 hover:to-slate-700 shadow-md"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-500 border border-blue-300 relative overflow-hidden group transition-all duration-300 hover:from-blue-500 hover:to-blue-600 shadow-md"
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
@@ -690,9 +690,9 @@ const Landing = () => {
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-white leading-tight">보호자 / 환자</p>
-                  <p className="text-xs text-slate-200 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                  <p className="text-xs text-blue-100 leading-tight mt-0.5">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+                <ChevronRight className="w-5 h-5 text-blue-200 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               </div>
             </button>
 
