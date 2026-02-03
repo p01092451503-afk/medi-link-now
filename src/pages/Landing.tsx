@@ -707,7 +707,7 @@ const Landing = () => {
             >
               <div className="flex items-center w-full">
                 <div className="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center shrink-0 group-hover:bg-slate-300 transition-colors">
-                  <Truck className="w-7 h-7 text-slate-600" />
+                  <Ambulance className="w-7 h-7 text-slate-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
                   <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차 이송</p>
