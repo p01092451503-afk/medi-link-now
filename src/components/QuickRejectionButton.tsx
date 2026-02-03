@@ -102,7 +102,7 @@ const QuickRejectionButton = ({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-2xl shadow-2xl z-[2001] overflow-hidden max-h-[85vh] flex flex-col"
+              className="fixed inset-x-4 top-[10%] bottom-[10%] mx-auto max-w-sm bg-white rounded-2xl shadow-2xl z-[2001] overflow-hidden flex flex-col"
             >
               {/* Header */}
               <div className="bg-gradient-to-r from-red-500 to-orange-500 px-5 py-4">
