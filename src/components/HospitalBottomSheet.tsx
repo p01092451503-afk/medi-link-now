@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
 import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle } from "lucide-react";
 import { cleanHospitalName } from "@/lib/utils";
@@ -139,12 +140,18 @@ const AcceptanceBadge = ({
 );
 
 const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
+  const [searchParams] = useSearchParams();
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const { user } = useAuth();
   const { getRequestByHospitalId } = useTransferRequest();
   const { isTransferMode } = useTransferMode();
   const [showRoadview, setShowRoadview] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
+  
+  // Check if in paramedic/driver mode
+  const isParamedicMode = searchParams.get("role") === "paramedic";
+  const isDriverMode = searchParams.get("mode") === "driver";
+  const showTransferButton = isTransferMode || isParamedicMode || isDriverMode;
   
   // 이송 중인 구급차 수 가져오기
   const { incomingCount } = useIncomingAmbulancesForHospital(hospital?.id);
@@ -457,8 +464,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 <p className="text-xs text-muted-foreground pl-7">{hospital.address}</p>
               </div>
 
-              {/* Digital Transfer Request Button - Only in Transfer Mode */}
-              {isTransferMode && (
+              {/* Digital Transfer Request Button - Transfer Mode, Paramedic, or Driver */}
+              {showTransferButton && (
                 existingRequest ? (
                   <div className={`w-full mb-3 py-4 px-4 rounded-xl border-2 flex items-center justify-center gap-2 ${
                     existingRequest.status === "pending" 
