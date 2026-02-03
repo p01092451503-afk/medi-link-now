@@ -10,6 +10,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Landing from "./pages/Landing";
 import GuardianLanding from "./pages/GuardianLanding";
 import DriverLanding from "./pages/DriverLanding";
+import ParamedicLanding from "./pages/ParamedicLanding";
 import MapPage from "./pages/MapPage";
 import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/guardian" element={<GuardianLanding />} />
               <Route path="/driver-intro" element={<DriverLanding />} />
+              <Route path="/paramedic" element={<ParamedicLanding />} />
               <Route path="/map" element={<MapPage />} />
               <Route path="/family" element={<FamilyPage />} />
               <Route path="/login" element={<Login />} />

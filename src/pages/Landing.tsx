@@ -719,10 +719,7 @@ const Landing = () => {
 
             {/* Ambulance Driver Button */}
             <button
-              onClick={() => {
-                setMode("emergency");
-                navigate("/map?role=paramedic");
-              }}
+              onClick={() => navigate("/paramedic")}
               className="w-full py-4 px-5 rounded-2xl bg-orange-50/70 border border-orange-200 relative overflow-hidden group transition-all duration-300 hover:bg-orange-100/70 hover:border-orange-300 shadow-sm"
             >
               <div className="flex items-center w-full">
