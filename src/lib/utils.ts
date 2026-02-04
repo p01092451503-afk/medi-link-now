@@ -8,16 +8,25 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Clean hospital name by removing foundation/organization prefixes
  * e.g., "재단법인아산사회복지재단서울아산병원" → "서울아산병원"
+ * e.g., "의료법인녹십자의료재단녹십자병원" → "녹십자병원"
  */
 export function cleanHospitalName(name: string): string {
   if (!name) return "";
 
   let cleaned = name
-    // Remove common foundation/organization words (anywhere)
+    // Remove common legal entity types (법인 types)
     .replace(/재단법인/g, "")
     .replace(/의료법인/g, "")
     .replace(/학교법인/g, "")
     .replace(/사회복지법인/g, "")
+    .replace(/사단법인/g, "")
+    .replace(/특수법인/g, "")
+    // Remove generic foundation/organization suffixes with preceding names
+    .replace(/[가-힣A-Za-z0-9·]+의료재단/g, "")
+    .replace(/[가-힣A-Za-z0-9·]+사회복지재단/g, "")
+    .replace(/[가-힣A-Za-z0-9·]+학술재단/g, "")
+    .replace(/[가-힣A-Za-z0-9·]+장학재단/g, "")
+    .replace(/[가-힣A-Za-z0-9·]+복지재단/g, "")
     // Remove known foundation/organization names
     .replace(/아산사회복지재단/g, "")
     .replace(/삼성의료재단/g, "")
@@ -25,7 +34,7 @@ export function cleanHospitalName(name: string): string {
     .replace(/고려중앙학원/g, "")
     .replace(/가톨릭학원/g, "")
     .replace(/이화학당/g, "")
-    // Generic “...재단/학원” fragments frequently embedded in names
+    // Generic "...재단/학원" fragments frequently embedded in names
     .replace(/[가-힣A-Za-z0-9·]+재단/g, "")
     .replace(/[가-힣A-Za-z0-9·]+학원/g, "")
     // Medical school / affiliation cleanup
@@ -41,7 +50,7 @@ export function cleanHospitalName(name: string): string {
   const duplicateMatch = cleaned.match(/^(.{2,6})\1(병원|의료원|대학교병원|대학병원)$/);
   if (duplicateMatch) cleaned = duplicateMatch[1] + duplicateMatch[2];
 
-  // Handle repeated prefix cases like “건양건양대학교병원” → “건양대학교병원” (after stripping foundations)
+  // Handle repeated prefix cases like "건양건양대학교병원" → "건양대학교병원" (after stripping foundations)
   for (let len = 2; len <= 6; len++) {
     const prefix = cleaned.slice(0, len);
     if (!prefix) continue;
