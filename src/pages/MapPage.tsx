@@ -1,6 +1,8 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck } from "lucide-react";
+import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
+import { useMapProvider } from "@/hooks/useMapProvider";
+import KakaoMapView from "@/components/map/KakaoMapView";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
@@ -73,6 +75,7 @@ const MapPage = () => {
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
+  const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao } = useMapProvider();
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -518,29 +521,40 @@ const MapPage = () => {
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
-        {/* Leaflet Map with Clustering */}
-        <ClusteredMapView
-          hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
-          onHospitalClick={handleHospitalClick}
-          userLocation={userLocation}
-          center={mapCenter}
-          zoom={mapZoom}
-          activeFilter={activeFilter}
-          activeRadius={activeRadius}
-          liveReports={liveReports}
-          nearbyDrivers={nearbyDrivers}
-          onCallDriver={handleCallDriver}
-          holidayPharmacies={[]}
-          nearbyPharmacies={[]}
-          onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
-          activeAmbulanceTrips={activeAmbulanceTrips}
-          onBoundsChange={handleBoundsChange}
-          isMoonlightMode={activeFilter === "moonlight"}
-          rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
-          isDriverMode={isDriverMode}
-          nursingHospitals={filteredNursingHospitals}
-          onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
-        />
+        {/* Map View - Kakao or Leaflet */}
+        {isKakao ? (
+          <KakaoMapView
+            hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
+            onHospitalClick={handleHospitalClick}
+            userLocation={userLocation}
+            center={mapCenter}
+            zoom={mapZoom}
+            activeFilter={activeFilter}
+          />
+        ) : (
+          <ClusteredMapView
+            hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
+            onHospitalClick={handleHospitalClick}
+            userLocation={userLocation}
+            center={mapCenter}
+            zoom={mapZoom}
+            activeFilter={activeFilter}
+            activeRadius={activeRadius}
+            liveReports={liveReports}
+            nearbyDrivers={nearbyDrivers}
+            onCallDriver={handleCallDriver}
+            holidayPharmacies={[]}
+            nearbyPharmacies={[]}
+            onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
+            activeAmbulanceTrips={activeAmbulanceTrips}
+            onBoundsChange={handleBoundsChange}
+            isMoonlightMode={activeFilter === "moonlight"}
+            rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
+            isDriverMode={isDriverMode}
+            nursingHospitals={filteredNursingHospitals}
+            onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
+          />
+        )}
 
         {/* Map Controls (Zoom + Legend + Location) */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000] flex flex-col gap-2">
@@ -568,6 +582,26 @@ const MapPage = () => {
 
           {/* Map Legend Help Button */}
           <MapLegendPopup />
+
+          {/* Map Provider Toggle (DEV) */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={toggleMapProvider}
+                className={`w-10 h-10 rounded-lg shadow-lg flex items-center justify-center transition-colors border ${
+                  isKakao 
+                    ? "bg-yellow-400 border-yellow-500 hover:bg-yellow-300" 
+                    : "bg-white border-gray-100 hover:bg-gray-50"
+                }`}
+                aria-label="지도 전환"
+              >
+                <MapIcon className={`w-5 h-5 ${isKakao ? "text-yellow-800" : "text-gray-700"}`} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="text-xs">
+              {isKakao ? "Leaflet으로 전환" : "카카오맵으로 전환"}
+            </TooltipContent>
+          </Tooltip>
 
           {/* Spacer for separation */}
           <div className="h-4" />
