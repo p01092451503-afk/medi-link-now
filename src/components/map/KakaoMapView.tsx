@@ -86,7 +86,8 @@ const KOREA_BOUNDS = {
 
 // Load Kakao Maps SDK dynamically with improved retry logic
 const loadKakaoSDK = (retryCount = 0): Promise<void> => {
-  const MAX_RETRIES = 3;
+  const MAX_RETRIES = 5;
+  const RETRY_DELAY = 800;
   
   return new Promise((resolve, reject) => {
     const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
@@ -96,29 +97,32 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
     }
 
     // Helper to wait for maps to be ready
-    const waitForMapsReady = (timeout: number = 10000): Promise<void> => {
+    const waitForMapsReady = (timeout: number = 15000): Promise<void> => {
       return new Promise((res, rej) => {
         const startTime = Date.now();
         
         const check = () => {
           // Fully loaded
-          if (window.kakao?.maps?.Map) {
+          if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
             res();
             return;
           }
           
           // maps object exists but needs load() call
-          if (window.kakao?.maps?.load) {
+          if (window.kakao?.maps?.load && typeof window.kakao.maps.load === 'function') {
             try {
               window.kakao.maps.load(() => {
-                // Double check after load
-                setTimeout(() => {
-                  if (window.kakao?.maps?.Map) {
+                // Double check after load with retry
+                const verifyLoad = (attempts = 0) => {
+                  if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
                     res();
+                  } else if (attempts < 10) {
+                    setTimeout(() => verifyLoad(attempts + 1), 200);
                   } else {
                     rej(new Error("Kakao Maps load() completed but Map not available"));
                   }
-                }, 100);
+                };
+                setTimeout(() => verifyLoad(), 150);
               });
             } catch (e) {
               rej(new Error("Kakao Maps load() failed"));
@@ -133,7 +137,7 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
           }
           
           // Keep checking
-          setTimeout(check, 150);
+          setTimeout(check, 200);
         };
         
         check();
@@ -141,13 +145,13 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
     };
 
     // If already fully loaded
-    if (window.kakao?.maps?.Map) {
+    if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
       resolve();
       return;
     }
 
     // If kakao object exists but needs initialization
-    if (window.kakao?.maps) {
+    if (window.kakao?.maps?.load) {
       waitForMapsReady()
         .then(resolve)
         .catch((err) => {
@@ -156,7 +160,9 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
             const oldScript = document.querySelector('script[src*="dapi.kakao.com"]');
             if (oldScript) oldScript.remove();
             delete (window as any).kakao;
-            loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
+            setTimeout(() => {
+              loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
+            }, RETRY_DELAY);
           } else {
             reject(err);
           }
@@ -175,21 +181,25 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
+    script.crossOrigin = "anonymous";
     
     const handleScriptLoad = () => {
-      waitForMapsReady(8000)
-        .then(resolve)
-        .catch((err) => {
-          if (retryCount < MAX_RETRIES) {
-            script.remove();
-            delete (window as any).kakao;
-            setTimeout(() => {
-              loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
-            }, 500);
-          } else {
-            reject(err);
-          }
-        });
+      // Wait a bit for the script to initialize
+      setTimeout(() => {
+        waitForMapsReady(12000)
+          .then(resolve)
+          .catch((err) => {
+            if (retryCount < MAX_RETRIES) {
+              script.remove();
+              delete (window as any).kakao;
+              setTimeout(() => {
+                loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
+              }, RETRY_DELAY * (retryCount + 1));
+            } else {
+              reject(err);
+            }
+          });
+      }, 100);
     };
     
     const handleScriptError = () => {
@@ -197,7 +207,7 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
       if (retryCount < MAX_RETRIES) {
         setTimeout(() => {
           loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
-        }, 1000);
+        }, RETRY_DELAY * (retryCount + 1));
       } else {
         reject(new Error("Failed to load Kakao Maps SDK script after retries"));
       }
