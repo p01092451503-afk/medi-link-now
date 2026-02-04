@@ -42,32 +42,23 @@ const loadKakaoSDK = (): Promise<void> => {
 
     // If SDK is already fully loaded and initialized
     if (window.kakao && window.kakao.maps && window.kakao.maps.Map) {
-      console.log("Kakao SDK already fully initialized");
       resolve();
       return;
     }
 
     // If kakao object exists but maps not fully initialized
     if (window.kakao && window.kakao.maps) {
-      console.log("Kakao SDK exists, calling maps.load()");
-      window.kakao.maps.load(() => {
-        console.log("Kakao maps.load() callback fired");
-        resolve();
-      });
+      window.kakao.maps.load(() => resolve());
       return;
     }
 
     // Check if script is already in DOM
     const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
     if (existingScript) {
-      console.log("Kakao script found in DOM, waiting for load...");
       const checkLoaded = setInterval(() => {
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkLoaded);
-          window.kakao.maps.load(() => {
-            console.log("Kakao maps.load() callback fired (from existing script)");
-            resolve();
-          });
+          window.kakao.maps.load(() => resolve());
         }
       }, 100);
       
@@ -79,25 +70,19 @@ const loadKakaoSDK = (): Promise<void> => {
       return;
     }
 
-    console.log("Loading Kakao SDK script...");
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
     
     script.onload = () => {
-      console.log("Kakao script onload fired");
       if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => {
-          console.log("Kakao maps.load() callback fired (new script)");
-          resolve();
-        });
+        window.kakao.maps.load(() => resolve());
       } else {
         reject(new Error("Kakao Maps SDK failed to initialize"));
       }
     };
     
-    script.onerror = (e) => {
-      console.error("Kakao script onerror:", e);
+    script.onerror = () => {
       reject(new Error("Failed to load Kakao Maps SDK"));
     };
 
@@ -123,48 +108,30 @@ const KakaoMapView = ({
   // Initialize Kakao Maps
   useEffect(() => {
     let mounted = true;
-    console.log("KakaoMapView: Starting initialization, mounted =", mounted);
 
     loadKakaoSDK()
       .then(() => {
-        console.log("KakaoMapView: SDK promise resolved, mounted =", mounted, "ref =", !!mapContainerRef.current);
-        if (!mounted) {
-          console.log("KakaoMapView: Component unmounted, aborting");
-          return;
-        }
-        if (!mapContainerRef.current) {
-          console.error("KakaoMapView: Container ref is null!");
-          return;
-        }
+        if (!mounted || !mapContainerRef.current) return;
 
-        const width = mapContainerRef.current.offsetWidth;
-        const height = mapContainerRef.current.offsetHeight;
-        console.log("KakaoMapView: Container dimensions:", width, "x", height);
-
-        if (width === 0 || height === 0) {
-          console.error("KakaoMapView: Container has zero dimensions!");
-          return;
-        }
+        const { offsetWidth, offsetHeight } = mapContainerRef.current;
+        if (offsetWidth === 0 || offsetHeight === 0) return;
 
         const options = {
           center: new window.kakao.maps.LatLng(center[0], center[1]),
           level: leafletToKakaoZoom(zoom),
         };
 
-        console.log("KakaoMapView: Creating map...");
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
         mapRef.current = map;
-        console.log("KakaoMapView: Map created!");
 
         // Add zoom control
         const zoomControl = new window.kakao.maps.ZoomControl();
         map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
         setIsLoaded(true);
-        console.log("KakaoMapView: Initialization complete!");
       })
       .catch((error) => {
-        console.error("KakaoMapView: Initialization error:", error);
+        console.error("Kakao Maps error:", error);
         if (mounted) {
           setLoadError(error.message);
         }
