@@ -558,8 +558,8 @@ const Landing = () => {
                     <Truck className="w-5 h-5 text-slate-600" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-800 leading-tight">민간 구급차</p>
-                    <p className="text-[10px] text-slate-400 leading-tight">전원 · 퇴원 이송</p>
+                    <p className="text-sm font-bold text-slate-800 leading-tight">민간 구급차</p>
+                    <p className="text-xs text-slate-400 leading-tight">전원 · 퇴원 이송</p>
                   </div>
                 </div>
               </motion.button>
@@ -576,8 +576,8 @@ const Landing = () => {
                     <Ambulance className="w-5 h-5 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-800 leading-tight">구급대원</p>
-                    <p className="text-[10px] text-slate-400 leading-tight">병상 · 거절이력</p>
+                    <p className="text-sm font-bold text-slate-800 leading-tight">구급대원</p>
+                    <p className="text-xs text-slate-400 leading-tight">병상 · 거절이력</p>
                   </div>
                 </div>
               </motion.button>
