@@ -193,7 +193,7 @@ const ERRoadviewModal = ({
               {!hasError && !isLoading && (
                 <div
                   id="roadview-container"
-                  className="w-full h-full"
+                  className="absolute inset-0 w-full h-full"
                 />
               )}
             </div>
