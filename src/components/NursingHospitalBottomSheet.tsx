@@ -86,18 +86,32 @@ const NursingHospitalBottomSheet = ({
             </div>
           )}
 
-          {/* Navigation Button */}
-          <div className="pt-4">
-            <NavigationSelector
-              destination={{
-                lat: hospital.lat,
-                lng: hospital.lng,
-                name: hospital.name,
-              }}
-              variant="outline"
-              size="lg"
-              className="w-full justify-center border-purple-500 text-purple-600 hover:bg-purple-50"
-            />
+          {/* Action Buttons */}
+          <div className="pt-4 flex gap-3">
+            {/* Phone Call Button */}
+            {hospital.phone && (
+              <a
+                href={`tel:${hospital.phone}`}
+                className="flex-1 h-14 flex items-center justify-center gap-2 bg-purple-600 text-white rounded-2xl font-semibold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/30"
+              >
+                <Phone className="w-5 h-5" />
+                병원 전화
+              </a>
+            )}
+            
+            {/* Navigation Button */}
+            <div className={hospital.phone ? "flex-1" : "w-full"}>
+              <NavigationSelector
+                destination={{
+                  lat: hospital.lat,
+                  lng: hospital.lng,
+                  name: hospital.name,
+                }}
+                variant="outline"
+                size="lg"
+                className="w-full h-14 justify-center border-purple-300 text-purple-600 hover:bg-purple-50 rounded-2xl"
+              />
+            </div>
           </div>
         </div>
       </SheetContent>
