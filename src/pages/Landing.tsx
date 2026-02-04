@@ -360,28 +360,23 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        {/* Trust Indicators - 2x2 Grid */}
+        {/* Trust Indicators - Horizontal Chip Style */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
           className="w-full mb-8"
         >
-          <div className="grid grid-cols-4 gap-2">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
             {/* 전국 응급실 */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
-                    <Hospital className="w-6 h-6 text-slate-600 transition-all duration-300 group-hover:scale-110" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-base font-bold text-slate-800 tracking-tight leading-tight">
-                      {isLoading ? "---" : `${hospitals.length}+`}
-                    </p>
-                    <p className="text-[10px] text-slate-500 font-medium">전국 응급실</p>
-                  </div>
-                </div>
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 hover:bg-slate-200 transition-colors cursor-pointer">
+                  <Hospital className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="text-xs font-semibold text-slate-700">
+                    {isLoading ? "---" : `${hospitals.length}+ 응급실`}
+                  </span>
+                </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
                 <div className="space-y-3">
@@ -415,18 +410,10 @@ const Landing = () => {
             {/* 실시간 업데이트 */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
-                    <Activity className="w-6 h-6 text-slate-600 transition-all duration-300 group-hover:scale-110" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-base font-bold text-slate-800 tracking-tight leading-tight">60초</p>
-                    <p className="text-[10px] text-slate-500 font-medium flex items-center justify-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      실시간
-                    </p>
-                  </div>
-                </div>
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xs font-semibold text-emerald-700">60초 실시간</span>
+                </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
                 <div className="space-y-3">
@@ -452,15 +439,10 @@ const Landing = () => {
             {/* 24시간 운영 */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
-                    <Clock className="w-6 h-6 text-slate-600 transition-all duration-300 group-hover:scale-110" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-base font-bold text-slate-800 tracking-tight leading-tight">24h</p>
-                    <p className="text-[10px] text-slate-500 font-medium">연중무휴</p>
-                  </div>
-                </div>
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 hover:bg-slate-200 transition-colors cursor-pointer">
+                  <Clock className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="text-xs font-semibold text-slate-700">24h 연중무휴</span>
+                </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
                 <div className="space-y-3">
@@ -481,15 +463,11 @@ const Landing = () => {
             {/* AI 예측 분석 */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center shadow-sm border border-violet-200 transition-all duration-300 group-hover:scale-105 group-hover:border-violet-300">
-                    <Brain className="w-6 h-6 text-violet-600 transition-all duration-300 group-hover:scale-110" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-base font-bold text-violet-700 tracking-tight leading-tight">AI</p>
-                    <p className="text-[10px] text-violet-500 font-medium">예측 분석</p>
-                  </div>
-                </div>
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-violet-100 to-indigo-100 border border-violet-200 hover:from-violet-200 hover:to-indigo-200 transition-colors cursor-pointer">
+                  <Brain className="w-3.5 h-3.5 text-violet-600" />
+                  <span className="text-xs font-semibold text-violet-700">AI 예측</span>
+                  <span className="px-1 py-0.5 text-[8px] font-bold text-white bg-violet-500 rounded">β</span>
+                </button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-4 rounded-2xl border border-violet-200 shadow-lg" side="bottom">
                 <div className="space-y-3">
