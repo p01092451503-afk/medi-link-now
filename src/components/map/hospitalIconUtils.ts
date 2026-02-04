@@ -199,8 +199,41 @@ export const createHospitalIcon = (
       </div>`
     : '';
 
-  // Incoming ambulance badge (small truck icon with count)
-  const incomingBadge = hasIncoming && !isCritical
+  // Floating traffic animation when 3+ people are heading to this hospital
+  const floatAnimationId = `float-${Math.random().toString(36).substr(2, 9)}`;
+  const showFloatingTraffic = incomingCount && incomingCount >= 3;
+  
+  const floatingTrafficBadge = showFloatingTraffic
+    ? `<div style="
+        position: absolute;
+        top: -32px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: ${floatAnimationId} 2s ease-in-out infinite;
+        z-index: 25;
+        pointer-events: none;
+      ">
+        <div style="
+          background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+          color: white;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 4px 10px;
+          border-radius: 12px;
+          white-space: nowrap;
+          box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        ">
+          <span style="font-size: 12px;">🏃</span>
+          <span>${incomingCount}명 이동 중</span>
+        </div>
+      </div>`
+    : '';
+
+  // Incoming ambulance badge (small truck icon with count) - only show if not showing floating traffic
+  const incomingBadge = hasIncoming && !isCritical && !showFloatingTraffic
     ? `<div style="
         position: absolute;
         top: -18px;
@@ -299,6 +332,14 @@ export const createHospitalIcon = (
             transform: scale(1.05);
           }
         }
+        @keyframes ${floatAnimationId} {
+          0%, 100% { 
+            transform: translateX(-50%) translateY(0);
+          }
+          50% { 
+            transform: translateX(-50%) translateY(-6px);
+          }
+        }
       </style>
       <div class="marker-container" style="
         position: relative;
@@ -307,6 +348,7 @@ export const createHospitalIcon = (
         align-items: center;
         cursor: pointer;
       ">
+        ${floatingTrafficBadge}
         ${rejectionBadge}
         <div style="
           position: relative;
@@ -341,8 +383,8 @@ export const createHospitalIcon = (
         ${gradeBadge}
       </div>
     `,
-    iconSize: [42, 58],
-    iconAnchor: [21, 50],
-    popupAnchor: [0, -50],
+    iconSize: [42, 70],
+    iconAnchor: [21, 62],
+    popupAnchor: [0, -62],
   });
 };
