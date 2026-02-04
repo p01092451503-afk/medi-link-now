@@ -533,6 +533,9 @@ const MapPage = () => {
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
             isMoonlightMode={activeFilter === "moonlight"}
+            nearbyPharmacies={[]}
+            onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
+            activeAmbulanceTrips={activeAmbulanceTrips}
           />
         ) : (
           <ClusteredMapView
