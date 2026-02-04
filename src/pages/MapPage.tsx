@@ -612,6 +612,7 @@ const MapPage = () => {
           center={mapCenter} 
           zoom={mapZoom} 
           onRegionClick={(newCenter, newZoom, regionName) => {
+            setUserLocation(null); // 내 위치 버튼 해제
             setMapCenter(newCenter);
             setMapZoom(newZoom);
             toast({
