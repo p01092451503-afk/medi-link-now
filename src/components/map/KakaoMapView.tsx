@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
-import { Loader2, RefreshCw, Map as MapIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
 import { cleanHospitalName } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 declare global {
   interface Window {
@@ -29,7 +28,6 @@ interface KakaoMapViewProps {
   activeAmbulanceTrips?: AmbulanceTrip[];
   incomingByHospital?: Map<number, number>;
   onZoomChange?: (zoom: number) => void;
-  onFallbackToLeaflet?: () => void;
 }
 
 // Get marker colors based on emergency grade
