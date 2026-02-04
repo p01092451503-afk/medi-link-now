@@ -791,7 +791,10 @@ const KakaoMapView = ({
               box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
               animation: kakao-pulse 2s infinite;
             ">
-              <span style="font-size: 18px;">🚑</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <rect x="10" y="4" width="4" height="16" rx="1"/>
+                <rect x="4" y="10" width="16" height="4" rx="1"/>
+              </svg>
             </div>
             <div style="
               margin-top: 2px;
