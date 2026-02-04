@@ -276,6 +276,50 @@ export type Database = {
         }
         Relationships: []
       }
+      hospital_acceptance_stats: {
+        Row: {
+          acceptance_rate: number
+          accepted_count: number
+          created_at: string
+          hospital_id: number
+          id: string
+          last_calculated_at: string
+          rejected_count: number
+          total_entries: number
+          updated_at: string
+        }
+        Insert: {
+          acceptance_rate?: number
+          accepted_count?: number
+          created_at?: string
+          hospital_id: number
+          id?: string
+          last_calculated_at?: string
+          rejected_count?: number
+          total_entries?: number
+          updated_at?: string
+        }
+        Update: {
+          acceptance_rate?: number
+          accepted_count?: number
+          created_at?: string
+          hospital_id?: number
+          id?: string
+          last_calculated_at?: string
+          rejected_count?: number
+          total_entries?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_acceptance_stats_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: true
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hospital_monitors: {
         Row: {
           bed_type: string
@@ -439,6 +483,50 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      location_logs: {
+        Row: {
+          created_at: string
+          distance_from_hospital: number | null
+          driver_id: string
+          event_type: string
+          hospital_id: number | null
+          id: string
+          lat: number
+          lng: number
+          recorded_at: string
+        }
+        Insert: {
+          created_at?: string
+          distance_from_hospital?: number | null
+          driver_id: string
+          event_type: string
+          hospital_id?: number | null
+          id?: string
+          lat: number
+          lng: number
+          recorded_at?: string
+        }
+        Update: {
+          created_at?: string
+          distance_from_hospital?: number | null
+          driver_id?: string
+          event_type?: string
+          hospital_id?: number | null
+          id?: string
+          lat?: number
+          lng?: number
+          recorded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_logs_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_subscriptions: {
         Row: {
