@@ -543,15 +543,15 @@ const Landing = () => {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/driver-intro")}
-                className="py-4 px-3 rounded-2xl bg-white border-2 border-slate-100 group transition-all duration-300 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/50"
+                className="py-4 px-3 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 border-2 border-slate-200 group transition-all duration-300 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-300/50"
               >
                 <div className="flex flex-col items-center text-center gap-2.5">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center group-hover:from-slate-200 group-hover:to-slate-100 transition-colors shadow-sm">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-100 flex items-center justify-center group-hover:from-slate-300 group-hover:to-slate-200 transition-colors shadow-sm">
                     <Truck className="w-6 h-6 text-slate-600" />
                   </div>
                   <div>
                     <p className="text-[15px] font-bold text-slate-800 leading-tight">민간 구급차</p>
-                    <p className="text-[11px] text-slate-400 leading-tight mt-0.5">전원 · 퇴원 이송</p>
+                    <p className="text-[11px] text-slate-500 leading-tight mt-0.5">전원 · 퇴원 이송</p>
                   </div>
                 </div>
               </motion.button>
@@ -561,15 +561,15 @@ const Landing = () => {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/paramedic")}
-                className="py-4 px-3 rounded-2xl bg-gradient-to-br from-amber-50/80 to-orange-50/80 border-2 border-orange-100 group transition-all duration-300 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-200/50"
+                className="py-4 px-3 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 border-2 border-orange-200 group transition-all duration-300 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-300/50"
               >
                 <div className="flex flex-col items-center text-center gap-2.5">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center group-hover:from-orange-200 group-hover:to-amber-200 transition-colors shadow-sm">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-200 to-amber-200 flex items-center justify-center group-hover:from-orange-300 group-hover:to-amber-300 transition-colors shadow-sm">
                     <Ambulance className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
                     <p className="text-[15px] font-bold text-slate-800 leading-tight">구급대원</p>
-                    <p className="text-[11px] text-slate-400 leading-tight mt-0.5">병상 · 거절이력</p>
+                    <p className="text-[11px] text-slate-500 leading-tight mt-0.5">병상 · 거절이력</p>
                   </div>
                 </div>
               </motion.button>
