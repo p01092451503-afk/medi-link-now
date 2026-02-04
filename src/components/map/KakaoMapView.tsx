@@ -273,8 +273,27 @@ const KakaoMapView = ({
     hospitals.forEach((hospital) => {
       const position = new window.kakao.maps.LatLng(hospital.lat, hospital.lng);
       
-      // Determine marker color based on mode and status
-      const totalBeds = (hospital.beds?.general || 0) + (hospital.beds?.pediatric || 0);
+      // Calculate display beds based on active filter
+      const getFilteredBeds = (): number => {
+        const general = Math.max(0, hospital.beds?.general || 0);
+        const pediatric = Math.max(0, hospital.beds?.pediatric || 0);
+        const fever = Math.max(0, hospital.beds?.fever || 0);
+
+        switch (activeFilter) {
+          case "adult":
+            return general;
+          case "pediatric":
+            return pediatric;
+          case "fever":
+            return fever;
+          case "moonlight":
+            return pediatric; // moonlight shows pediatric beds
+          default:
+            return general + pediatric + fever;
+        }
+      };
+
+      const displayBeds = getFilteredBeds();
       let bgColor: string;
       let borderColor: string;
       let textColor = "white";
@@ -293,10 +312,10 @@ const KakaoMapView = ({
           borderColor = gradeColors.border;
         } else {
           // Default status-based colors
-          if (totalBeds === 0) {
+          if (displayBeds === 0) {
             bgColor = "#ef4444"; // red
             borderColor = "#dc2626";
-          } else if (totalBeds <= 3) {
+          } else if (displayBeds <= 3) {
             bgColor = "#eab308"; // yellow
             borderColor = "#ca8a04";
           } else {
@@ -399,7 +418,7 @@ const KakaoMapView = ({
               font-size: 18px;
               font-weight: 800;
               line-height: 1;
-            ">${totalBeds}</span>
+            ">${displayBeds}</span>
             ${isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
           </div>
           <div style="
@@ -439,7 +458,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter]);
 
   // Update nursing hospital markers
   useEffect(() => {
