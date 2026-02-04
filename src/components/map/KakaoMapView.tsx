@@ -79,7 +79,7 @@ const KOREA_BOUNDS = {
   ne: { lat: 38.8, lng: 132.0 },
 };
 
-// Load Kakao Maps SDK dynamically
+// Load Kakao Maps SDK dynamically with improved retry logic
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
@@ -88,50 +88,81 @@ const loadKakaoSDK = (): Promise<void> => {
       return;
     }
 
-    // If SDK is already fully loaded and initialized
-    if (window.kakao && window.kakao.maps && window.kakao.maps.Map) {
+    // Helper to wait for maps to be ready
+    const waitForMapsReady = (timeout: number = 15000): Promise<void> => {
+      return new Promise((res, rej) => {
+        const startTime = Date.now();
+        
+        const check = () => {
+          // Fully loaded
+          if (window.kakao?.maps?.Map) {
+            res();
+            return;
+          }
+          
+          // maps object exists but needs load() call
+          if (window.kakao?.maps?.load) {
+            window.kakao.maps.load(() => {
+              if (window.kakao?.maps?.Map) {
+                res();
+              } else {
+                rej(new Error("Kakao Maps load() completed but Map not available"));
+              }
+            });
+            return;
+          }
+          
+          // Timeout check
+          if (Date.now() - startTime > timeout) {
+            rej(new Error("Kakao Maps SDK load timeout"));
+            return;
+          }
+          
+          // Keep checking
+          setTimeout(check, 100);
+        };
+        
+        check();
+      });
+    };
+
+    // If already fully loaded
+    if (window.kakao?.maps?.Map) {
       resolve();
       return;
     }
 
-    // If kakao object exists but maps not fully initialized
-    if (window.kakao && window.kakao.maps) {
-      window.kakao.maps.load(() => resolve());
+    // If kakao object exists, wait for it to be ready
+    if (window.kakao?.maps) {
+      waitForMapsReady()
+        .then(resolve)
+        .catch(reject);
       return;
     }
 
-    // Check if script is already in DOM
+    // Check if script tag already exists
     const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
     if (existingScript) {
-      const checkLoaded = setInterval(() => {
-        if (window.kakao && window.kakao.maps) {
-          clearInterval(checkLoaded);
-          window.kakao.maps.load(() => resolve());
-        }
-      }, 100);
-      
-      // Timeout after 10 seconds
-      setTimeout(() => {
-        clearInterval(checkLoaded);
-        reject(new Error("Kakao Maps SDK load timeout"));
-      }, 10000);
+      waitForMapsReady()
+        .then(resolve)
+        .catch(reject);
       return;
     }
 
+    // Create and load new script
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
     
     script.onload = () => {
-      if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => resolve());
-      } else {
-        reject(new Error("Kakao Maps SDK failed to initialize"));
-      }
+      waitForMapsReady(10000)
+        .then(resolve)
+        .catch(reject);
     };
     
-    script.onerror = () => {
-      reject(new Error("Failed to load Kakao Maps SDK"));
+    script.onerror = (e) => {
+      console.error("Kakao SDK script load error:", e);
+      reject(new Error("Failed to load Kakao Maps SDK script"));
     };
 
     document.head.appendChild(script);
