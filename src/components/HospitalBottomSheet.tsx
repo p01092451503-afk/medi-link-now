@@ -18,6 +18,7 @@ import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 import IncomingTrafficCard from "@/components/hospital/IncomingTrafficCard";
+import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import PatientTransferRequestModal from "@/components/PatientTransferRequestModal";
@@ -354,6 +355,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     </TooltipProvider>
                   )}
                 </div>
+                {/* AI Acceptance Prediction Badge */}
+                <AIAcceptanceBadge hospitalId={hospital.id} />
               </div>
               <div className="grid grid-cols-3 gap-3 mb-5">
                 <BedStatusCard

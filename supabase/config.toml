@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.fetch-nearby-pharmacies]
 verify_jwt = false
+
+[functions.calculate-acceptance-rate]
+verify_jwt = false
