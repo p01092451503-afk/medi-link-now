@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 export type MapProvider = "leaflet" | "kakao";
 
 export const useMapProvider = () => {
-  const [provider, setProvider] = useState<MapProvider>("leaflet");
+  const [provider, setProvider] = useState<MapProvider>("kakao");
 
   const toggleProvider = useCallback(() => {
     setProvider((prev) => (prev === "leaflet" ? "kakao" : "leaflet"));
