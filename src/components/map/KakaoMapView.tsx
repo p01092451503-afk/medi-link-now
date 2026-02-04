@@ -5,6 +5,7 @@ import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
+import { cleanHospitalName } from "@/lib/utils";
 
 declare global {
   interface Window {
@@ -576,7 +577,7 @@ const KakaoMapView = ({
             pointer-events: none;
           ">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-              <span>${hospital.name}</span>
+              <span>${cleanHospitalName(hospital.name)}</span>
               ${tooltipGradeText}
             </div>
             <div style="
