@@ -125,6 +125,22 @@ const MapPage = () => {
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
 
+  // Fetch night care hospital data when filter is set to 'nightCare'
+  const isNightCareFilter = activeFilter === "nightCare";
+  const { data: hospitalDetailsData, isLoading: isLoadingNightCare } = useHospitalDetails({
+    enabled: isNightCareFilter,
+  });
+
+  // Create a Set of night care hospital names for efficient lookup
+  const nightCareHospitalNames = useMemo(() => {
+    if (!hospitalDetailsData) return new Set<string>();
+    return new Set(
+      hospitalDetailsData
+        .filter((h) => h.hasNightCare)
+        .map((h) => h.hospitalName)
+    );
+  }, [hospitalDetailsData]);
+
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
     setShowDispatchModal(true);
