@@ -163,6 +163,11 @@ const MapPage = () => {
       });
     }
 
+    // Night care filter - filter by hospital names from API data
+    if (activeFilter === "nightCare" && nightCareHospitalNames.size > 0) {
+      result = result.filter((h) => nightCareHospitalNames.has(h.nameKr));
+    }
+
     // Transfer mode filtering based on transfer filter
     if (isTransferMode && transferFilter !== "all") {
       result = result.filter((h) => {
@@ -220,7 +225,7 @@ const MapPage = () => {
     }
 
     return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter, nightCareHospitalNames]);
 
   // Filter holiday pharmacies by selected region
   const filteredPharmacies = useMemo(() => {
