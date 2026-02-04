@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
 import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
+import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
 
 declare global {
   interface Window {
@@ -220,12 +221,68 @@ const KakaoMapView = ({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const markerDataRef = useRef<Map<number, { overlay: any; element: HTMLElement; hospital: Hospital }>>(new Map());
   const nursingMarkersRef = useRef<any[]>([]);
   const pharmacyMarkersRef = useRef<any[]>([]);
   const ambulanceMarkersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
+  const spiderfyManagerRef = useRef<SpiderfyManager | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Find overlapping marker groups
+  const overlappingGroups = useMemo(() => {
+    return findOverlappingGroups(hospitals);
+  }, [hospitals]);
+
+  // Check if a hospital is in an overlapping group
+  const isInOverlappingGroup = useCallback((hospitalId: number): string | null => {
+    for (const [groupKey, group] of overlappingGroups) {
+      if (group.some(h => h.id === hospitalId)) {
+        return groupKey;
+      }
+    }
+    return null;
+  }, [overlappingGroups]);
+
+  // Handle spiderfy click on overlapping markers
+  const handleSpiderfyClick = useCallback((groupKey: string) => {
+    if (!mapRef.current || !window.kakao) return;
+
+    // Initialize spiderfy manager if needed
+    if (!spiderfyManagerRef.current) {
+      spiderfyManagerRef.current = new SpiderfyManager(window.kakao, mapRef.current);
+    }
+
+    // If already spiderfied, unspiderfy
+    if (spiderfyManagerRef.current.isSpiderfied()) {
+      spiderfyManagerRef.current.unspiderfy();
+      return;
+    }
+
+    const group = overlappingGroups.get(groupKey);
+    if (!group || group.length <= 1) return;
+
+    // Collect marker data for spiderfy
+    const markersToSpiderfy = group
+      .map(hospital => {
+        const data = markerDataRef.current.get(hospital.id);
+        if (!data) return null;
+        return {
+          hospital,
+          overlay: data.overlay,
+          element: data.element,
+          originalPosition: { lat: hospital.lat, lng: hospital.lng },
+        };
+      })
+      .filter((m): m is NonNullable<typeof m> => m !== null);
+
+    if (markersToSpiderfy.length > 1) {
+      const centerLat = group[0].lat;
+      const centerLng = group[0].lng;
+      spiderfyManagerRef.current.spiderfy(markersToSpiderfy, centerLat, centerLng);
+    }
+  }, [overlappingGroups]);
 
   // Compute incoming count per hospital
   const incomingCountMap = useMemo(() => {
@@ -258,6 +315,20 @@ const KakaoMapView = ({
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
         mapRef.current = map;
 
+        // Add click handler to unspiderfy when clicking on map
+        window.kakao.maps.event.addListener(map, "click", () => {
+          if (spiderfyManagerRef.current?.isSpiderfied()) {
+            spiderfyManagerRef.current.unspiderfy();
+          }
+        });
+
+        // Unspiderfy on zoom change
+        window.kakao.maps.event.addListener(map, "zoom_changed", () => {
+          if (spiderfyManagerRef.current?.isSpiderfied()) {
+            spiderfyManagerRef.current.unspiderfy();
+          }
+        });
+
         setIsLoaded(true);
       })
       .catch((error) => {
@@ -269,11 +340,17 @@ const KakaoMapView = ({
 
     return () => {
       mounted = false;
+      // Cleanup spiderfy
+      if (spiderfyManagerRef.current) {
+        spiderfyManagerRef.current.destroy();
+        spiderfyManagerRef.current = null;
+      }
       // Cleanup markers
       markersRef.current.forEach((marker) => {
         if (marker.setMap) marker.setMap(null);
       });
       markersRef.current = [];
+      markerDataRef.current.clear();
       // Cleanup nursing markers
       nursingMarkersRef.current.forEach((marker) => {
         if (marker.setMap) marker.setMap(null);
@@ -356,18 +433,33 @@ const KakaoMapView = ({
     }
   }, [userLocation, isLoaded]);
 
-  // Update hospital markers with custom clustering
+  // Update hospital markers with z-index sorting and spiderfy support
   useEffect(() => {
     if (!mapRef.current || !isLoaded) return;
+
+    // Unspiderfy before clearing markers
+    if (spiderfyManagerRef.current) {
+      spiderfyManagerRef.current.unspiderfy();
+    }
 
     // Clear existing markers
     markersRef.current.forEach((marker) => {
       if (marker.setMap) marker.setMap(null);
     });
     markersRef.current = [];
+    markerDataRef.current.clear();
+
+    // Sort hospitals by z-index priority (lower priority first, so higher priority renders on top)
+    const sortedHospitals = [...hospitals].sort((a, b) => getMarkerZIndex(a) - getMarkerZIndex(b));
 
     // Create individual hospital markers
-    hospitals.forEach((hospital) => {
+    sortedHospitals.forEach((hospital) => {
+      // Check if this hospital is in an overlapping group
+      const groupKey = isInOverlappingGroup(hospital.id);
+      const isOverlapping = groupKey !== null;
+      const overlappingGroup = groupKey ? overlappingGroups.get(groupKey) : null;
+      const isTopOfGroup = overlappingGroup ? overlappingGroup[0].id === hospital.id : false;
+
       // Calculate display beds based on active filter
       const getFilteredBeds = (): number => {
         const general = Math.max(0, hospital.beds?.general || 0);
@@ -418,8 +510,9 @@ const KakaoMapView = ({
       }
 
       const gradeLabel = !isMoonlightMode ? getGradeLabel(hospital.emergencyGrade) : "";
+      // Grade label is hidden by default, shown on hover or when spiderfied
       const gradeBadgeHtml = gradeLabel
-        ? `<div style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">${gradeLabel}</div>`
+        ? `<div class="grade-label" style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.3); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;">${gradeLabel}</div>`
         : "";
 
       const traumaBadgeHtml = hospital.isTraumaCenter && !isMoonlightMode
@@ -440,9 +533,14 @@ const KakaoMapView = ({
       // Hospital name tooltip
       const tooltipGradeText = gradeLabel ? `<span style="color: #6B7280; font-size: 10px;">${gradeLabel}</span>` : "";
       
+      // Show group count indicator if this is top of overlapping group
+      const groupCountHtml = isOverlapping && isTopOfGroup && overlappingGroup && overlappingGroup.length > 1
+        ? `<div class="group-count-badge" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: #374151; border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 15;"><span style="color: white; font-size: 10px; font-weight: 700;">${overlappingGroup.length}</span></div>`
+        : "";
+      
       const content = document.createElement("div");
       content.className = "kakao-hospital-marker-wrapper";
-      content.style.cssText = "cursor: pointer; position: relative;";
+      content.style.cssText = `cursor: pointer; position: relative; z-index: ${getMarkerZIndex(hospital)};`;
       content.innerHTML = `
         <div class="kakao-hospital-marker" style="position: relative; display: flex; flex-direction: column; align-items: center;">
           ${congestionBadgeHtml}
@@ -482,11 +580,12 @@ const KakaoMapView = ({
               border-top: 5px solid rgba(0, 0, 0, 0.85);
             "></div>
           </div>
-          <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s;">
+          <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;">
             <span style="color: ${textColor}; font-size: 18px; font-weight: 800; line-height: 1;">${displayBeds}</span>
             ${isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
+            ${groupCountHtml}
           </div>
-          <div style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 8px solid ${borderColor}; margin-top: -2px;"></div>
+          <div style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 8px solid white; margin-top: -2px;"></div>
           ${gradeBadgeHtml}
         </div>
       `;
@@ -496,32 +595,66 @@ const KakaoMapView = ({
         content: content,
         yAnchor: 1.2,
         xAnchor: 0.5,
+        zIndex: getMarkerZIndex(hospital),
       });
 
-      content.addEventListener("click", () => onHospitalClick(hospital));
+      // Store marker data for spiderfy
+      markerDataRef.current.set(hospital.id, { overlay, element: content, hospital });
+
+      content.addEventListener("click", (e) => {
+        // If this is in an overlapping group and it's the top marker, trigger spiderfy first
+        if (isOverlapping && isTopOfGroup && overlappingGroup && overlappingGroup.length > 1) {
+          const isCurrentlySpiderfied = spiderfyManagerRef.current?.isSpiderfied();
+          if (!isCurrentlySpiderfied) {
+            e.stopPropagation();
+            handleSpiderfyClick(groupKey!);
+            return;
+          }
+        }
+        onHospitalClick(hospital);
+      });
+
       content.addEventListener("mouseenter", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         const tooltip = content.querySelector(".marker-tooltip") as HTMLElement;
-        if (markerDiv) markerDiv.style.transform = "scale(1.15)";
+        const gradeLabel = content.querySelector(".grade-label") as HTMLElement;
+        if (markerDiv) {
+          markerDiv.style.transform = "scale(1.15)";
+          markerDiv.style.boxShadow = "0 6px 16px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.2)";
+        }
         if (tooltip) {
           tooltip.style.opacity = "1";
           tooltip.style.visibility = "visible";
         }
+        if (gradeLabel) {
+          gradeLabel.style.opacity = "1";
+          gradeLabel.style.visibility = "visible";
+        }
       });
+
       content.addEventListener("mouseleave", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         const tooltip = content.querySelector(".marker-tooltip") as HTMLElement;
-        if (markerDiv) markerDiv.style.transform = "scale(1)";
+        const gradeLabel = content.querySelector(".grade-label") as HTMLElement;
+        if (markerDiv) {
+          markerDiv.style.transform = "scale(1)";
+          markerDiv.style.boxShadow = "0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15)";
+        }
         if (tooltip) {
           tooltip.style.opacity = "0";
           tooltip.style.visibility = "hidden";
+        }
+        // Only hide grade label if not spiderfied
+        if (gradeLabel && !content.classList.contains("spiderfied")) {
+          gradeLabel.style.opacity = "0";
+          gradeLabel.style.visibility = "hidden";
         }
       });
 
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick]);
 
   // Update nursing hospital markers
   useEffect(() => {
