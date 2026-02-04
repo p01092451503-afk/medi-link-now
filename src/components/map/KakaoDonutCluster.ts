@@ -53,9 +53,11 @@ export const clusterHospitals = (
 
   // Grid size based on zoom level
   // Higher Kakao zoom level = more zoomed out = larger grid = more clustering
+  // Use a smaller growth factor and cap max size to ensure ~10-15 regional clusters at max zoom
   const clusteringStrength = Math.max(1, zoomLevel - 5);
-  const latGridSize = 0.05 * Math.pow(1.8, clusteringStrength);
-  const lngGridSize = 0.06 * Math.pow(1.8, clusteringStrength);
+  // Cap grid size: min ~0.07 degrees (city district), max ~1.0 degrees (province)
+  const latGridSize = Math.min(1.0, 0.07 * Math.pow(1.4, clusteringStrength));
+  const lngGridSize = Math.min(1.2, 0.08 * Math.pow(1.4, clusteringStrength));
 
   const grid = new Map<string, Hospital[]>();
 
