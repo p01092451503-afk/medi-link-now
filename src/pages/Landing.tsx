@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, Truck } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -543,7 +543,7 @@ const Landing = () => {
             >
               <div className="flex items-center w-full">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(100,116,139,0.1),0_2px_4px_rgba(100,116,139,0.15)] group-hover:from-slate-100 group-hover:to-slate-200 group-hover:shadow-[inset_0_-2px_4px_rgba(100,116,139,0.15),0_3px_6px_rgba(100,116,139,0.2)] transition-all">
-                  <Truck className="w-7 h-7 text-slate-500" />
+                  <Ambulance className="w-7 h-7 text-slate-500" />
                 </div>
                 <div className="text-left flex-1 ml-4">
                   <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차</p>
