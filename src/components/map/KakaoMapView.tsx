@@ -26,6 +26,7 @@ interface KakaoMapViewProps {
   onPharmacyClick?: (pharmacy: NearbyPharmacy) => void;
   activeAmbulanceTrips?: AmbulanceTrip[];
   incomingByHospital?: Map<number, number>;
+  onZoomChange?: (zoom: number) => void;
 }
 
 // Get marker colors based on emergency grade
@@ -69,6 +70,11 @@ const leafletToKakaoZoom = (leafletZoom: number): number => {
   // Leaflet zoom 10 ≈ Kakao zoom 8
   const kakaoZoom = Math.max(1, Math.min(14, 18 - leafletZoom));
   return kakaoZoom;
+};
+
+// Convert Kakao zoom (1-14) back to Leaflet zoom (0-18)
+const kakaoToLeafletZoom = (kakaoZoom: number): number => {
+  return Math.max(4, Math.min(18, 18 - kakaoZoom));
 };
 
 // South Korea bounds
@@ -217,6 +223,7 @@ const KakaoMapView = ({
   onPharmacyClick,
   activeAmbulanceTrips = [],
   incomingByHospital,
+  onZoomChange,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -322,11 +329,15 @@ const KakaoMapView = ({
           }
         });
 
-        // Unspiderfy on zoom change
+        // Zoom change handler - unspiderfy and notify parent
         window.kakao.maps.event.addListener(map, "zoom_changed", () => {
           if (spiderfyManagerRef.current?.isSpiderfied()) {
             spiderfyManagerRef.current.unspiderfy();
           }
+          // Notify parent of zoom change (convert Kakao zoom to Leaflet zoom)
+          const currentKakaoZoom = map.getLevel();
+          const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
+          onZoomChange?.(leafletZoom);
         });
 
         setIsLoaded(true);
