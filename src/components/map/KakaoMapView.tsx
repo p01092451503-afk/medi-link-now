@@ -157,7 +157,6 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
-  onFallbackToLeaflet,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -172,43 +171,6 @@ const KakaoMapView = ({
   const distanceLabelRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [isRetrying, setIsRetrying] = useState(false);
-
-  // Handle retry
-  const handleRetry = useCallback(() => {
-    setIsRetrying(true);
-    setLoadError(null);
-    
-    // Clear previous kakao object
-    const oldScript = document.querySelector('script[src*="dapi.kakao.com"]');
-    if (oldScript) oldScript.remove();
-    delete (window as any).kakao;
-    
-    loadKakaoSDK()
-      .then(() => {
-        if (!mapContainerRef.current) return;
-
-        const { offsetWidth, offsetHeight } = mapContainerRef.current;
-        if (offsetWidth === 0 || offsetHeight === 0) return;
-
-        const options = {
-          center: new window.kakao.maps.LatLng(center[0], center[1]),
-          level: leafletToKakaoZoom(zoom),
-          minLevel: 1,
-          maxLevel: 13,
-        };
-
-        const map = new window.kakao.maps.Map(mapContainerRef.current, options);
-        mapRef.current = map;
-        setIsLoaded(true);
-        setIsRetrying(false);
-      })
-      .catch((error) => {
-        console.error("Kakao Maps retry error:", error);
-        setLoadError(error.message);
-        setIsRetrying(false);
-      });
-  }, [center, zoom]);
 
   // Calculate distance between two points in km
   const calculateDistanceKm = useCallback((lat1: number, lng1: number, lat2: number, lng2: number): number => {
