@@ -178,8 +178,8 @@ const Landing = () => {
           className="w-full mb-8"
         >
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            {/* Tab Header */}
-            <div className="bg-blue-500 p-1.5">
+            {/* Tab Header - Grayscale */}
+            <div className="bg-slate-700 p-1.5">
               <div className="flex gap-1">
                 {/* National Tab */}
                 <button
@@ -187,7 +187,7 @@ const Landing = () => {
                   className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeTab === "national"
                       ? "bg-white text-slate-800 shadow-sm"
-                      : "text-white/90 hover:bg-white/10"
+                      : "text-white/80 hover:bg-white/10"
                   }`}
                 >
                   <Hospital className="w-4 h-4" />
@@ -201,7 +201,7 @@ const Landing = () => {
                   className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeTab === "local"
                       ? "bg-white text-slate-800 shadow-sm"
-                      : "text-white/90 hover:bg-white/10"
+                      : "text-white/80 hover:bg-white/10"
                   } disabled:opacity-50`}
                 >
                   {isLocating ? (
