@@ -233,7 +233,7 @@ const Landing = () => {
               </div>
             </div>
             
-            {/* Stats Grid - Card Separated Layout */}
+            {/* Stats Grid - Integrated Dashboard Layout */}
             <AnimatePresence mode="wait">
               <motion.div
                   key={activeTab}
@@ -241,61 +241,53 @@ const Landing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="grid grid-cols-2 gap-3 p-4"
+                  className="grid grid-cols-2 divide-x divide-y divide-slate-100"
                 >
-                  {/* 응급실 Card */}
-                  <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                        <Hospital className="w-4 h-4 text-blue-600" />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">응급실</span>
+                  {/* 응급실 */}
+                  <div className="p-4 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Hospital className="w-4 h-4 text-blue-500" />
+                      <span className="text-[11px] font-medium text-slate-500">응급실</span>
                     </div>
-                    <p className="text-2xl font-extrabold text-slate-900">
+                    <p className="text-[1.75rem] font-black text-slate-900 leading-none">
                       {stats?.totalHospitals !== undefined ? stats.totalHospitals : "---"}
-                      <span className="text-sm font-medium text-slate-400 ml-1">개소</span>
+                      <span className="text-xs font-medium text-slate-400 ml-1">개소</span>
                     </p>
                   </div>
                   
-                  {/* 병상 Card */}
-                  <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                        <Bed className="w-4 h-4 text-slate-600" />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">총 병상</span>
+                  {/* 병상 */}
+                  <div className="p-4 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Bed className="w-4 h-4 text-slate-500" />
+                      <span className="text-[11px] font-medium text-slate-500">총 병상</span>
                     </div>
-                    <p className="text-2xl font-extrabold text-slate-900">
+                    <p className="text-[1.75rem] font-black text-slate-900 leading-none">
                       {stats?.totalBeds !== undefined ? stats.totalBeds.toLocaleString() : "---"}
-                      <span className="text-sm font-medium text-slate-400 ml-1">개</span>
+                      <span className="text-xs font-medium text-slate-400 ml-1">개</span>
                     </p>
                   </div>
                   
-                  {/* 여유 Card - Highlighted */}
-                  <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200 shadow-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                        <TrendingUp className="w-4 h-4 text-emerald-600" />
-                      </div>
-                      <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">여유 병원</span>
+                  {/* 여유 - Highlighted with gradient background */}
+                  <div className="p-4 bg-gradient-to-br from-emerald-50/80 to-green-50/50 hover:from-emerald-50 hover:to-green-50 transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <TrendingUp className="w-4 h-4 text-emerald-600" />
+                      <span className="text-[11px] font-medium text-emerald-600">여유 병원</span>
                     </div>
-                    <p className="text-2xl font-extrabold text-emerald-700">
+                    <p className="text-[1.75rem] font-black text-emerald-700 leading-none">
                       {stats?.availableHospitals !== undefined ? stats.availableHospitals : "---"}
-                      <span className="text-sm font-medium text-emerald-500 ml-1">개소</span>
+                      <span className="text-xs font-medium text-emerald-500 ml-1">개소</span>
                     </p>
                   </div>
                   
-                  {/* 소아 Card */}
-                  <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                        <Users className="w-4 h-4 text-orange-600" />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">소아 병상</span>
+                  {/* 소아 */}
+                  <div className="p-4 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Users className="w-4 h-4 text-orange-500" />
+                      <span className="text-[11px] font-medium text-slate-500">소아 병상</span>
                     </div>
-                    <p className="text-2xl font-extrabold text-slate-900">
+                    <p className="text-[1.75rem] font-black text-slate-900 leading-none">
                       {stats?.pediatricBeds !== undefined ? stats.pediatricBeds.toLocaleString() : "---"}
-                      <span className="text-sm font-medium text-slate-400 ml-1">개</span>
+                      <span className="text-xs font-medium text-slate-400 ml-1">개</span>
                     </p>
                   </div>
                 </motion.div>
@@ -545,39 +537,39 @@ const Landing = () => {
             </motion.button>
 
             {/* Two Column - Private Transfer & Paramedic */}
-            <div className="grid grid-cols-2 gap-2">
-              {/* Private Transfer Mode Button */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Private Transfer Mode Button - Card with elevated style */}
               <motion.button
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/driver-intro")}
-                className="py-3 px-3 rounded-xl bg-white border border-slate-200 group transition-all duration-300 hover:border-slate-300 hover:shadow-sm"
+                className="py-4 px-3 rounded-2xl bg-white border-2 border-slate-100 group transition-all duration-300 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/50"
               >
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
-                    <Truck className="w-5 h-5 text-slate-600" />
+                <div className="flex flex-col items-center text-center gap-2.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center group-hover:from-slate-200 group-hover:to-slate-100 transition-colors shadow-sm">
+                    <Truck className="w-6 h-6 text-slate-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-800 leading-tight">민간 구급차</p>
-                    <p className="text-xs text-slate-400 leading-tight">전원 · 퇴원 이송</p>
+                    <p className="text-[15px] font-bold text-slate-800 leading-tight">민간 구급차</p>
+                    <p className="text-[11px] text-slate-400 leading-tight mt-0.5">전원 · 퇴원 이송</p>
                   </div>
                 </div>
               </motion.button>
 
-              {/* Ambulance Driver Button */}
+              {/* Ambulance Driver Button - Card with warm elevated style */}
               <motion.button
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/paramedic")}
-                className="py-3 px-3 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 group transition-all duration-300 hover:border-orange-300 hover:shadow-sm"
+                className="py-4 px-3 rounded-2xl bg-gradient-to-br from-amber-50/80 to-orange-50/80 border-2 border-orange-100 group transition-all duration-300 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-200/50"
               >
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                    <Ambulance className="w-5 h-5 text-orange-600" />
+                <div className="flex flex-col items-center text-center gap-2.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center group-hover:from-orange-200 group-hover:to-amber-200 transition-colors shadow-sm">
+                    <Ambulance className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-800 leading-tight">구급대원</p>
-                    <p className="text-xs text-slate-400 leading-tight">병상 · 거절이력</p>
+                    <p className="text-[15px] font-bold text-slate-800 leading-tight">구급대원</p>
+                    <p className="text-[11px] text-slate-400 leading-tight mt-0.5">병상 · 거절이력</p>
                   </div>
                 </div>
               </motion.button>
