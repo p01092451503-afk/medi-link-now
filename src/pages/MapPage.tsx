@@ -43,7 +43,6 @@ import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 import MapLegendPopup from "@/components/map/MapLegendPopup";
-import MiniMapOverlay from "@/components/map/MiniMapOverlay";
 import OfflineBanner from "@/components/OfflineBanner";
 import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";
@@ -606,21 +605,6 @@ const MapPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Mini Map Overlay - Shows current view position in Korea */}
-        <MiniMapOverlay 
-          center={mapCenter} 
-          zoom={mapZoom} 
-          onRegionClick={(newCenter, newZoom, regionName) => {
-            setUserLocation(null); // 내 위치 버튼 해제
-            setMapCenter(newCenter);
-            setMapZoom(newZoom);
-            toast({
-              title: `${regionName} 지역으로 이동`,
-              duration: 2000,
-            });
-          }}
-        />
 
         {/* Utility Buttons (Legend + Map Toggle + Location) */}
         <div className="absolute right-4 bottom-48 z-[1000] flex flex-col gap-3">
