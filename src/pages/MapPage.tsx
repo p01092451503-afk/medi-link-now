@@ -522,7 +522,6 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             onZoomChange={setMapZoom}
-            onFallbackToLeaflet={() => setMapProvider("leaflet")}
           />
         ) : (
           <ClusteredMapView
