@@ -38,6 +38,7 @@ import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import { useNursingHospitals } from "@/hooks/useNursingHospitals";
+import { useHospitalDetails } from "@/hooks/useHospitalDetails";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
