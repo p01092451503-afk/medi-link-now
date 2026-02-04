@@ -1,11 +1,152 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 
 interface MiniMapOverlayProps {
   center: [number, number];
   zoom: number;
+  onRegionClick: (center: [number, number], zoom: number, name: string) => void;
 }
 
-// Korea bounds for reference
+// Korean provinces/metropolitan cities with approximate SVG paths and centers
+const REGIONS = [
+  { 
+    id: "seoul", 
+    name: "서울", 
+    center: [37.5665, 126.978] as [number, number], 
+    zoom: 12,
+    path: "M38 28 L42 27 L43 30 L40 32 L37 30 Z",
+    labelPos: { x: 40, y: 29 }
+  },
+  { 
+    id: "incheon", 
+    name: "인천", 
+    center: [37.4563, 126.7052] as [number, number], 
+    zoom: 11,
+    path: "M32 28 L37 27 L38 32 L35 35 L30 32 Z",
+    labelPos: { x: 34, y: 31 }
+  },
+  { 
+    id: "gyeonggi", 
+    name: "경기", 
+    center: [37.4138, 127.5183] as [number, number], 
+    zoom: 9,
+    path: "M30 20 L50 18 L55 25 L52 35 L43 38 L35 36 L28 30 Z",
+    labelPos: { x: 48, y: 28 }
+  },
+  { 
+    id: "gangwon", 
+    name: "강원", 
+    center: [37.8228, 128.1555] as [number, number], 
+    zoom: 9,
+    path: "M50 8 L72 5 L78 20 L70 35 L55 38 L50 30 L52 18 Z",
+    labelPos: { x: 62, y: 22 }
+  },
+  { 
+    id: "chungbuk", 
+    name: "충북", 
+    center: [36.6357, 127.4912] as [number, number], 
+    zoom: 10,
+    path: "M45 38 L60 36 L65 45 L55 52 L42 48 Z",
+    labelPos: { x: 52, y: 44 }
+  },
+  { 
+    id: "chungnam", 
+    name: "충남", 
+    center: [36.5184, 126.8] as [number, number], 
+    zoom: 10,
+    path: "M22 38 L42 36 L45 48 L38 55 L20 52 L18 45 Z",
+    labelPos: { x: 30, y: 46 }
+  },
+  { 
+    id: "sejong", 
+    name: "세종", 
+    center: [36.4801, 127.2892] as [number, number], 
+    zoom: 12,
+    path: "M40 42 L45 41 L46 45 L42 47 Z",
+    labelPos: { x: 43, y: 44 }
+  },
+  { 
+    id: "daejeon", 
+    name: "대전", 
+    center: [36.3504, 127.3845] as [number, number], 
+    zoom: 12,
+    path: "M42 48 L48 47 L49 52 L44 53 Z",
+    labelPos: { x: 45, y: 50 }
+  },
+  { 
+    id: "jeonbuk", 
+    name: "전북", 
+    center: [35.8203, 127.1088] as [number, number], 
+    zoom: 10,
+    path: "M18 52 L42 50 L48 58 L42 68 L22 70 L15 60 Z",
+    labelPos: { x: 30, y: 60 }
+  },
+  { 
+    id: "gwangju", 
+    name: "광주", 
+    center: [35.1595, 126.8526] as [number, number], 
+    zoom: 12,
+    path: "M25 72 L32 71 L33 76 L27 77 Z",
+    labelPos: { x: 29, y: 74 }
+  },
+  { 
+    id: "jeonnam", 
+    name: "전남", 
+    center: [34.8161, 126.4629] as [number, number], 
+    zoom: 9,
+    path: "M8 65 L25 62 L35 68 L40 78 L35 88 L15 92 L5 82 Z",
+    labelPos: { x: 20, y: 78 }
+  },
+  { 
+    id: "gyeongbuk", 
+    name: "경북", 
+    center: [36.4919, 128.8889] as [number, number], 
+    zoom: 9,
+    path: "M55 35 L75 32 L82 45 L78 60 L60 65 L50 55 L52 42 Z",
+    labelPos: { x: 65, y: 50 }
+  },
+  { 
+    id: "daegu", 
+    name: "대구", 
+    center: [35.8714, 128.6014] as [number, number], 
+    zoom: 11,
+    path: "M62 58 L70 56 L72 62 L66 65 Z",
+    labelPos: { x: 66, y: 61 }
+  },
+  { 
+    id: "ulsan", 
+    name: "울산", 
+    center: [35.5384, 129.3114] as [number, number], 
+    zoom: 11,
+    path: "M75 62 L82 60 L85 68 L78 72 Z",
+    labelPos: { x: 79, y: 66 }
+  },
+  { 
+    id: "gyeongnam", 
+    name: "경남", 
+    center: [35.4606, 128.2132] as [number, number], 
+    zoom: 9,
+    path: "M40 68 L62 65 L75 72 L72 82 L55 88 L38 85 L35 75 Z",
+    labelPos: { x: 52, y: 76 }
+  },
+  { 
+    id: "busan", 
+    name: "부산", 
+    center: [35.1796, 129.0756] as [number, number], 
+    zoom: 11,
+    path: "M72 78 L80 75 L83 82 L76 86 Z",
+    labelPos: { x: 76, y: 80 }
+  },
+  { 
+    id: "jeju", 
+    name: "제주", 
+    center: [33.4996, 126.5312] as [number, number], 
+    zoom: 10,
+    path: "M20 95 L38 94 L40 98 L22 99 Z",
+    labelPos: { x: 30, y: 97 }
+  },
+];
+
+// Convert lat/lng to percentage position on the mini map
 const KOREA_BOUNDS = {
   minLat: 33.0,
   maxLat: 38.8,
@@ -13,130 +154,116 @@ const KOREA_BOUNDS = {
   maxLng: 132.0,
 };
 
-// Major cities/regions for reference points
-const REGIONS = [
-  { name: "서울", lat: 37.5665, lng: 126.978, abbr: "서울" },
-  { name: "부산", lat: 35.1796, lng: 129.0756, abbr: "부산" },
-  { name: "대구", lat: 35.8714, lng: 128.6014, abbr: "대구" },
-  { name: "인천", lat: 37.4563, lng: 126.7052, abbr: "인천" },
-  { name: "광주", lat: 35.1595, lng: 126.8526, abbr: "광주" },
-  { name: "대전", lat: 36.3504, lng: 127.3845, abbr: "대전" },
-  { name: "울산", lat: 35.5384, lng: 129.3114, abbr: "울산" },
-  { name: "제주", lat: 33.4996, lng: 126.5312, abbr: "제주" },
-];
+const latToY = (lat: number) => {
+  const normalized = (lat - KOREA_BOUNDS.minLat) / (KOREA_BOUNDS.maxLat - KOREA_BOUNDS.minLat);
+  return (1 - normalized) * 100;
+};
 
-const MiniMapOverlay = memo(({ center, zoom }: MiniMapOverlayProps) => {
-  // Only show when zoomed in (zoom > 10)
-  if (zoom <= 10) return null;
+const lngToX = (lng: number) => {
+  const normalized = (lng - KOREA_BOUNDS.minLng) / (KOREA_BOUNDS.maxLng - KOREA_BOUNDS.minLng);
+  return normalized * 100;
+};
 
-  // Convert lat/lng to percentage position on the mini map
-  const latToY = (lat: number) => {
-    const normalized = (lat - KOREA_BOUNDS.minLat) / (KOREA_BOUNDS.maxLat - KOREA_BOUNDS.minLat);
-    return (1 - normalized) * 100; // Invert Y axis
-  };
+// Get current region based on center coordinates
+function getCurrentRegionId(center: [number, number]): string {
+  const [lat, lng] = center;
+  
+  // Check each region's approximate bounds
+  for (const region of REGIONS) {
+    const [rLat, rLng] = region.center;
+    const tolerance = region.zoom >= 11 ? 0.15 : 0.5;
+    
+    if (Math.abs(lat - rLat) < tolerance && Math.abs(lng - rLng) < tolerance * 1.5) {
+      return region.id;
+    }
+  }
+  
+  return "";
+}
 
-  const lngToX = (lng: number) => {
-    const normalized = (lng - KOREA_BOUNDS.minLng) / (KOREA_BOUNDS.maxLng - KOREA_BOUNDS.minLng);
-    return normalized * 100;
-  };
+const MiniMapOverlay = memo(({ center, zoom, onRegionClick }: MiniMapOverlayProps) => {
+  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
+  
+  // Only show when zoomed in (zoom > 8)
+  if (zoom <= 8) return null;
 
   const viewX = lngToX(center[1]);
   const viewY = latToY(center[0]);
+  const currentRegionId = getCurrentRegionId(center);
 
-  // Calculate viewport size based on zoom level (higher zoom = smaller viewport indicator)
-  const viewportSize = Math.max(4, 30 - zoom * 1.5);
+  const handleRegionClick = (region: typeof REGIONS[0]) => {
+    onRegionClick(region.center, region.zoom, region.name);
+  };
 
   return (
-    <div className="absolute left-4 bottom-52 z-[999] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 p-1.5 w-20 h-24 overflow-hidden">
-      {/* Korea outline - simplified SVG */}
+    <div className="absolute left-4 bottom-52 z-[999] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       <svg
-        viewBox="0 0 100 100"
-        className="w-full h-full"
+        viewBox="0 0 100 105"
+        className="w-24 h-28"
         style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.1))" }}
       >
-        {/* Simplified Korea peninsula outline */}
-        <path
-          d="M45 8 L55 10 L60 15 L62 25 L58 35 L55 40 L60 45 L65 55 L70 65 L68 75 L60 82 L50 85 L42 80 L38 70 L35 60 L30 50 L28 40 L32 30 L35 20 L40 12 Z"
-          fill="#E5E7EB"
-          stroke="#9CA3AF"
-          strokeWidth="1"
-        />
+        {/* Background */}
+        <rect x="0" y="0" width="100" height="105" fill="#F8FAFC" />
         
-        {/* Jeju Island */}
-        <ellipse
-          cx="35"
-          cy="95"
-          rx="8"
-          ry="3"
-          fill="#E5E7EB"
-          stroke="#9CA3AF"
-          strokeWidth="0.5"
-        />
+        {/* Regions */}
+        {REGIONS.map((region) => {
+          const isHovered = hoveredRegion === region.id;
+          const isCurrent = currentRegionId === region.id;
+          
+          return (
+            <g key={region.id}>
+              <path
+                d={region.path}
+                fill={isCurrent ? "#3B82F6" : isHovered ? "#93C5FD" : "#E2E8F0"}
+                stroke={isCurrent ? "#1D4ED8" : "#94A3B8"}
+                strokeWidth={isCurrent ? "1.5" : "0.5"}
+                className="cursor-pointer transition-colors duration-150"
+                onMouseEnter={() => setHoveredRegion(region.id)}
+                onMouseLeave={() => setHoveredRegion(null)}
+                onClick={() => handleRegionClick(region)}
+              />
+              {/* Region label - show on hover or if it's a major city */}
+              {(isHovered || isCurrent) && (
+                <text
+                  x={region.labelPos.x}
+                  y={region.labelPos.y}
+                  textAnchor="middle"
+                  fontSize="5"
+                  fontWeight="600"
+                  fill={isCurrent ? "#FFFFFF" : "#1E40AF"}
+                  className="pointer-events-none select-none"
+                  style={{ textShadow: isCurrent ? "none" : "0 0 2px white" }}
+                >
+                  {region.name}
+                </text>
+              )}
+            </g>
+          );
+        })}
 
-        {/* Region dots */}
-        {REGIONS.map((region) => (
-          <circle
-            key={region.name}
-            cx={lngToX(region.lng)}
-            cy={latToY(region.lat)}
-            r="1.5"
-            fill="#9CA3AF"
-            opacity="0.5"
-          />
-        ))}
-
-        {/* Current view indicator - pulsing dot */}
+        {/* Current view indicator */}
         <circle
           cx={viewX}
           cy={viewY}
-          r={viewportSize / 2}
-          fill="rgba(59, 130, 246, 0.2)"
-          stroke="#3B82F6"
+          r="2.5"
+          fill="#EF4444"
+          stroke="#FFFFFF"
           strokeWidth="1"
-        />
-        <circle
-          cx={viewX}
-          cy={viewY}
-          r="3"
-          fill="#3B82F6"
-          className="animate-pulse"
+          className="pointer-events-none"
         />
       </svg>
-
-      {/* Current region label */}
-      <div className="absolute bottom-0.5 left-0 right-0 text-center">
-        <span className="text-[8px] font-medium text-gray-500 bg-white/80 px-1 rounded">
-          {getCurrentRegionName(center)}
-        </span>
-      </div>
+      
+      {/* Hovered region name tooltip */}
+      {hoveredRegion && (
+        <div className="absolute bottom-1 left-0 right-0 text-center">
+          <span className="text-[9px] font-semibold text-primary bg-white/90 px-1.5 py-0.5 rounded shadow-sm">
+            {REGIONS.find(r => r.id === hoveredRegion)?.name}
+          </span>
+        </div>
+      )}
     </div>
   );
 });
-
-// Get approximate region name based on coordinates
-function getCurrentRegionName(center: [number, number]): string {
-  const [lat, lng] = center;
-  
-  // Rough region detection
-  if (lat > 37.4 && lng < 127.2 && lng > 126.7) return "서울";
-  if (lat > 37.3 && lat < 37.6 && lng < 126.8) return "인천";
-  if (lat > 37.2 && lat < 37.6 && lng > 127.0 && lng < 127.5) return "경기";
-  if (lat > 37.5 && lng > 127.5) return "강원";
-  if (lat > 36.2 && lat < 36.5 && lng > 127.2 && lng < 127.6) return "대전";
-  if (lat > 35.7 && lat < 36.2 && lng > 128.3 && lng < 129.0) return "대구";
-  if (lat > 35.0 && lat < 35.3 && lng > 128.8) return "부산";
-  if (lat > 35.4 && lat < 35.7 && lng > 129.0) return "울산";
-  if (lat > 34.9 && lat < 35.3 && lng < 127.0) return "광주";
-  if (lat < 33.6) return "제주";
-  if (lat > 36.5 && lng < 127.0) return "충남";
-  if (lat > 36.5 && lng > 127.5) return "충북";
-  if (lat > 35.5 && lat < 36.5 && lng < 127.5) return "전북";
-  if (lat < 35.5 && lng < 127.5) return "전남";
-  if (lat > 35.5 && lng > 128.5) return "경북";
-  if (lat < 35.5 && lng > 127.5 && lng < 129.0) return "경남";
-  
-  return "대한민국";
-}
 
 MiniMapOverlay.displayName = "MiniMapOverlay";
 
