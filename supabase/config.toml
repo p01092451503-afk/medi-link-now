@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.calculate-acceptance-rate]
 verify_jwt = false
+
+[functions.fetch-hospital-details]
+verify_jwt = false
