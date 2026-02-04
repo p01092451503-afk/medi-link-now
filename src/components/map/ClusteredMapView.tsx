@@ -279,12 +279,15 @@ const KOREA_BOUNDS: KoreaBoundsLiteral = [
   [38.8, 132.0], // Northeast corner (extended for Dokdo)
 ];
 
+// Minimum zoom level to ensure Korea stays in view (never show beyond Korea)
+const KOREA_MIN_ZOOM = 6;
+
 const computeMinZoomToContainViewportInBounds = (map: L.Map, bounds: L.LatLngBounds) => {
   const size = map.getSize();
   const center = bounds.getCenter();
   const maxZoom = map.getMaxZoom?.() ?? 18;
 
-  for (let z = 0; z <= maxZoom; z += 1) {
+  for (let z = KOREA_MIN_ZOOM; z <= maxZoom; z += 1) {
     const centerPoint = map.project(center, z);
     const half = size.divideBy(2);
     const swPoint = centerPoint.subtract(half);
@@ -293,10 +296,10 @@ const computeMinZoomToContainViewportInBounds = (map: L.Map, bounds: L.LatLngBou
     const ne = map.unproject(nePoint, z);
     const viewportBounds = L.latLngBounds(sw, ne);
 
-    if (bounds.contains(viewportBounds)) return z;
+    if (bounds.contains(viewportBounds)) return Math.max(z, KOREA_MIN_ZOOM);
   }
 
-  return maxZoom;
+  return Math.max(maxZoom, KOREA_MIN_ZOOM);
 };
 
 // Enforce Korea bounds
@@ -507,7 +510,7 @@ const ClusteredMapView = ({
         style={{ height: "100%", width: "100%" }}
         maxBounds={KOREA_BOUNDS}
         maxBoundsViscosity={1.0}
-        minZoom={0}
+        minZoom={KOREA_MIN_ZOOM}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
