@@ -310,23 +310,22 @@ export const createHospitalIcon = (
         ${rejectionBadge}
         <div style="
           position: relative;
-          min-width: 40px;
-          height: 36px;
-          padding: 0 8px;
+          width: 42px;
+          height: 42px;
           background: ${color.bg};
-          border: 3px solid ${color.border};
-          border-radius: 18px;
+          border: 2px solid ${color.border};
+          border-radius: 50%;
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 1px;
           color: ${color.text};
-          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          box-shadow: 0 3px 10px rgba(0,0,0,0.25);
           cursor: pointer;
           ${rejectionBorderStyle}
         ">
-          <span style="font-weight: 800; font-size: 15px;">${beds}</span>
-          <span style="font-size: 9px; font-weight: 500; opacity: 0.9;">석</span>
+          <span style="font-weight: 800; font-size: 16px; line-height: 1;">${beds}</span>
+          <span style="font-size: 9px; font-weight: 500; opacity: 0.85; margin-top: -1px;">석</span>
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
           ${highTrafficBadge}
@@ -335,16 +334,16 @@ export const createHospitalIcon = (
         <div style="
           width: 0;
           height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-top: 10px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : color.border};
+          border-left: 7px solid transparent;
+          border-right: 7px solid transparent;
+          border-top: 8px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : color.border};
           margin-top: -2px;
         "></div>
         ${gradeBadge}
       </div>
     `,
-    iconSize: [44, 62],
-    iconAnchor: [22, 52],
-    popupAnchor: [0, -52],
+    iconSize: [42, 58],
+    iconAnchor: [21, 50],
+    popupAnchor: [0, -50],
   });
 };
