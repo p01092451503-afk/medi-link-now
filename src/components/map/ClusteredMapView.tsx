@@ -44,6 +44,7 @@ interface ClusteredMapViewProps {
   isDriverMode?: boolean;
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
+  onZoomChange?: (zoom: number) => void;
 }
 
 // Component to handle map center changes and bounds
@@ -53,12 +54,14 @@ const MapController = ({
   hospitals,
   onBoundsChange,
   onClearTooltip,
+  onZoomChange,
 }: { 
   center: [number, number]; 
   zoom?: number;
   hospitals: Hospital[];
   onBoundsChange?: (bounds: L.LatLngBounds, visibleHospitals: Hospital[]) => void;
   onClearTooltip?: () => void;
+  onZoomChange?: (zoom: number) => void;
 }) => {
   const map = useMap();
   const prevCenterRef = useRef<[number, number]>(center);
@@ -101,6 +104,8 @@ const MapController = ({
       }
     },
     zoomend: () => {
+      const currentZoom = map.getZoom();
+      onZoomChange?.(currentZoom);
       if (onBoundsChange) {
         const bounds = map.getBounds();
         const visible = hospitals.filter((h) => 
@@ -359,6 +364,7 @@ const ClusteredMapView = ({
   isDriverMode = false,
   nursingHospitals = [],
   onNursingHospitalClick,
+  onZoomChange,
 }: ClusteredMapViewProps) => {
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
@@ -514,6 +520,7 @@ const ClusteredMapView = ({
           hospitals={hospitals}
           onBoundsChange={onBoundsChange}
           onClearTooltip={() => setHoverTooltip(null)}
+          onZoomChange={onZoomChange}
         />
 
         {/* User location marker - blue dot for regular users, truck for drivers */}

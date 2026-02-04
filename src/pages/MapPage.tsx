@@ -536,6 +536,7 @@ const MapPage = () => {
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
+            onZoomChange={setMapZoom}
           />
         ) : (
           <ClusteredMapView
@@ -559,6 +560,7 @@ const MapPage = () => {
             isDriverMode={isDriverMode}
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
+            onZoomChange={setMapZoom}
           />
         )}
 
@@ -567,20 +569,30 @@ const MapPage = () => {
           {/* Zoom Controls */}
           <button
             onClick={() => setMapZoom((prev) => Math.min(prev + 1, 18))}
-            className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100"
+            disabled={mapZoom >= 18}
+            className={`bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center transition-colors border border-gray-100 ${
+              mapZoom >= 18 
+                ? "opacity-50 cursor-not-allowed" 
+                : "hover:bg-gray-50 active:bg-gray-100"
+            }`}
             aria-label="확대"
           >
             <Plus className="w-5 h-5 text-gray-700" />
           </button>
           
           {/* Zoom Level Display */}
-          <div className="bg-white w-10 h-8 rounded-lg shadow-lg flex items-center justify-center border border-gray-100">
-            <span className="text-xs font-medium text-gray-600">{mapZoom}</span>
+          <div className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center border border-gray-100">
+            <span className="text-sm font-semibold text-gray-700">{mapZoom}</span>
           </div>
           
           <button
-            onClick={() => setMapZoom((prev) => Math.max(prev - 1, 5))}
-            className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100"
+            onClick={() => setMapZoom((prev) => Math.max(prev - 1, 4))}
+            disabled={mapZoom <= 4}
+            className={`bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center transition-colors border border-gray-100 ${
+              mapZoom <= 4 
+                ? "opacity-50 cursor-not-allowed" 
+                : "hover:bg-gray-50 active:bg-gray-100"
+            }`}
             aria-label="축소"
           >
             <Minus className="w-5 h-5 text-gray-700" />
