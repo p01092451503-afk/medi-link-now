@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
-import { Loader2, RefreshCw, Map as MapIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
 import { cleanHospitalName } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 declare global {
   interface Window {
@@ -29,7 +28,6 @@ interface KakaoMapViewProps {
   activeAmbulanceTrips?: AmbulanceTrip[];
   incomingByHospital?: Map<number, number>;
   onZoomChange?: (zoom: number) => void;
-  onFallbackToLeaflet?: () => void;
 }
 
 // Get marker colors based on emergency grade
@@ -86,11 +84,8 @@ const KOREA_BOUNDS = {
   ne: { lat: 38.8, lng: 132.0 },
 };
 
-// Load Kakao Maps SDK dynamically with improved retry logic
-const loadKakaoSDK = (retryCount = 0): Promise<void> => {
-  const MAX_RETRIES = 5;
-  const RETRY_DELAY = 800;
-  
+// Simplified, reliable Kakao Maps SDK loader
+const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
     if (!apiKey) {
@@ -98,139 +93,54 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
       return;
     }
 
-    // Helper to wait for maps to be ready
-    const waitForMapsReady = (timeout: number = 15000): Promise<void> => {
-      return new Promise((res, rej) => {
-        const startTime = Date.now();
-        
-        const check = () => {
-          // Fully loaded
-          if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
-            res();
-            return;
-          }
-          
-          // maps object exists but needs load() call
-          if (window.kakao?.maps?.load && typeof window.kakao.maps.load === 'function') {
-            try {
-              window.kakao.maps.load(() => {
-                // Double check after load with retry
-                const verifyLoad = (attempts = 0) => {
-                  if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
-                    res();
-                  } else if (attempts < 10) {
-                    setTimeout(() => verifyLoad(attempts + 1), 200);
-                  } else {
-                    rej(new Error("Kakao Maps load() completed but Map not available"));
-                  }
-                };
-                setTimeout(() => verifyLoad(), 150);
-              });
-            } catch (e) {
-              rej(new Error("Kakao Maps load() failed"));
-            }
-            return;
-          }
-          
-          // Timeout check
-          if (Date.now() - startTime > timeout) {
-            rej(new Error("Kakao Maps SDK load timeout"));
-            return;
-          }
-          
-          // Keep checking
-          setTimeout(check, 200);
-        };
-        
-        check();
-      });
-    };
-
-    // If already fully loaded
+    // Already fully loaded
     if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
       resolve();
       return;
     }
 
-    // If kakao object exists but needs initialization
+    // SDK object exists but needs load() call
     if (window.kakao?.maps?.load) {
-      waitForMapsReady()
-        .then(resolve)
-        .catch((err) => {
-          // Try removing and reloading
-          if (retryCount < MAX_RETRIES) {
-            const oldScript = document.querySelector('script[src*="dapi.kakao.com"]');
-            if (oldScript) oldScript.remove();
-            delete (window as any).kakao;
-            setTimeout(() => {
-              loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
-            }, RETRY_DELAY);
-          } else {
-            reject(err);
-          }
-        });
+      window.kakao.maps.load(() => {
+        resolve();
+      });
       return;
     }
 
-    // Remove existing broken script if any
+    // Remove any broken existing script
     const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
     if (existingScript) {
       existingScript.remove();
       delete (window as any).kakao;
     }
 
-    // Create and load new script
+    // Create new script with autoload=false (standard approach)
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
-    // Note: Do NOT set crossOrigin - Kakao SDK doesn't support CORS headers
-    
-    const handleScriptLoad = () => {
-      console.log(`[KakaoMap] Script loaded, attempt ${retryCount + 1}`);
-      // Wait a bit for the script to initialize
-      setTimeout(() => {
-        waitForMapsReady(12000)
-          .then(() => {
-            console.log("[KakaoMap] SDK fully initialized");
+
+    script.onload = () => {
+      // Wait for kakao object to be available
+      const checkKakao = () => {
+        if (window.kakao?.maps?.load) {
+          window.kakao.maps.load(() => {
             resolve();
-          })
-          .catch((err) => {
-            console.warn(`[KakaoMap] waitForMapsReady failed: ${err.message}`);
-            if (retryCount < MAX_RETRIES) {
-              script.remove();
-              delete (window as any).kakao;
-              setTimeout(() => {
-                loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
-              }, RETRY_DELAY * (retryCount + 1));
-            } else {
-              reject(err);
-            }
           });
-      }, 150);
+        } else {
+          // Retry check after a short delay
+          setTimeout(checkKakao, 50);
+        }
+      };
+      checkKakao();
     };
-    
-    const handleScriptError = (e: Event) => {
-      console.error(`[KakaoMap] Script error on attempt ${retryCount + 1}:`, e);
-      script.remove();
-      delete (window as any).kakao;
-      if (retryCount < MAX_RETRIES) {
-        setTimeout(() => {
-          loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
-        }, RETRY_DELAY * (retryCount + 1));
-      } else {
-        reject(new Error("카카오맵 SDK 로드 실패 - 네트워크 또는 API 키를 확인하세요"));
-      }
+
+    script.onerror = () => {
+      reject(new Error("카카오맵 SDK 로드 실패"));
     };
-    
-    script.onload = handleScriptLoad;
-    script.onerror = handleScriptError;
 
     document.head.appendChild(script);
   });
 };
-
-// Manual retry function
-let retryLoadKakaoSDK: (() => Promise<void>) | null = null;
 
 const KakaoMapView = ({
   hospitals,
@@ -247,7 +157,6 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
-  onFallbackToLeaflet,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -262,43 +171,6 @@ const KakaoMapView = ({
   const distanceLabelRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [isRetrying, setIsRetrying] = useState(false);
-
-  // Handle retry
-  const handleRetry = useCallback(() => {
-    setIsRetrying(true);
-    setLoadError(null);
-    
-    // Clear previous kakao object
-    const oldScript = document.querySelector('script[src*="dapi.kakao.com"]');
-    if (oldScript) oldScript.remove();
-    delete (window as any).kakao;
-    
-    loadKakaoSDK()
-      .then(() => {
-        if (!mapContainerRef.current) return;
-
-        const { offsetWidth, offsetHeight } = mapContainerRef.current;
-        if (offsetWidth === 0 || offsetHeight === 0) return;
-
-        const options = {
-          center: new window.kakao.maps.LatLng(center[0], center[1]),
-          level: leafletToKakaoZoom(zoom),
-          minLevel: 1,
-          maxLevel: 13,
-        };
-
-        const map = new window.kakao.maps.Map(mapContainerRef.current, options);
-        mapRef.current = map;
-        setIsLoaded(true);
-        setIsRetrying(false);
-      })
-      .catch((error) => {
-        console.error("Kakao Maps retry error:", error);
-        setLoadError(error.message);
-        setIsRetrying(false);
-      });
-  }, [center, zoom]);
 
   // Calculate distance between two points in km
   const calculateDistanceKm = useCallback((lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -1109,36 +981,7 @@ const KakaoMapView = ({
         <div className="absolute inset-0 flex items-center justify-center bg-background z-10">
           <div className="text-center p-6 max-w-sm">
             <p className="text-destructive font-semibold mb-2">카카오맵 로드 실패</p>
-            <p className="text-sm text-muted-foreground mb-6">{loadError}</p>
-            <div className="flex flex-col gap-3">
-              <Button 
-                onClick={handleRetry} 
-                disabled={isRetrying}
-                className="w-full"
-              >
-                {isRetrying ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    재시도 중...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    다시 시도
-                  </>
-                )}
-              </Button>
-              {onFallbackToLeaflet && (
-                <Button 
-                  onClick={onFallbackToLeaflet} 
-                  variant="outline"
-                  className="w-full"
-                >
-                  <MapIcon className="w-4 h-4 mr-2" />
-                  기본 지도로 전환
-                </Button>
-              )}
-            </div>
+            <p className="text-sm text-muted-foreground">{loadError}</p>
           </div>
         </div>
       )}
