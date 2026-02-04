@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
 import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
+import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
+import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 
 declare global {
   interface Window {
@@ -19,6 +21,11 @@ interface KakaoMapViewProps {
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
   isMoonlightMode?: boolean;
+  // New props for feature parity
+  nearbyPharmacies?: NearbyPharmacy[];
+  onPharmacyClick?: (pharmacy: NearbyPharmacy) => void;
+  activeAmbulanceTrips?: AmbulanceTrip[];
+  incomingByHospital?: Map<number, number>;
 }
 
 // Get marker colors based on emergency grade
@@ -139,14 +146,33 @@ const KakaoMapView = ({
   nursingHospitals = [],
   onNursingHospitalClick,
   isMoonlightMode = false,
+  nearbyPharmacies = [],
+  onPharmacyClick,
+  activeAmbulanceTrips = [],
+  incomingByHospital,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const nursingMarkersRef = useRef<any[]>([]);
+  const pharmacyMarkersRef = useRef<any[]>([]);
+  const ambulanceMarkersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
+  const clustererRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Compute incoming count per hospital
+  const incomingCountMap = useMemo(() => {
+    const countMap = new Map<number, number>();
+    activeAmbulanceTrips.forEach((trip) => {
+      if (trip.status === "en_route") {
+        const count = countMap.get(trip.destination_hospital_id) || 0;
+        countMap.set(trip.destination_hospital_id, count + 1);
+      }
+    });
+    return incomingByHospital || countMap;
+  }, [activeAmbulanceTrips, incomingByHospital]);
 
   // Initialize Kakao Maps
   useEffect(() => {
@@ -171,6 +197,61 @@ const KakaoMapView = ({
         const zoomControl = new window.kakao.maps.ZoomControl();
         map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
+        // Initialize clusterer with thin, transparent design
+        if (window.kakao.maps.MarkerClusterer) {
+          const clusterer = new window.kakao.maps.MarkerClusterer({
+            map: map,
+            averageCenter: true,
+            minLevel: 6, // Start clustering at zoom level 6 (Kakao scale)
+            disableClickZoom: false,
+            styles: [
+              // Small cluster (2-9)
+              {
+                width: "40px",
+                height: "40px",
+                background: "rgba(99, 102, 241, 0.6)",
+                borderRadius: "20px",
+                border: "2px solid rgba(255, 255, 255, 0.8)",
+                color: "white",
+                textAlign: "center",
+                fontWeight: "700",
+                fontSize: "14px",
+                lineHeight: "36px",
+                backdropFilter: "blur(4px)",
+              },
+              // Medium cluster (10-49)
+              {
+                width: "50px",
+                height: "50px",
+                background: "rgba(139, 92, 246, 0.65)",
+                borderRadius: "25px",
+                border: "2px solid rgba(255, 255, 255, 0.85)",
+                color: "white",
+                textAlign: "center",
+                fontWeight: "700",
+                fontSize: "15px",
+                lineHeight: "46px",
+                backdropFilter: "blur(4px)",
+              },
+              // Large cluster (50+)
+              {
+                width: "60px",
+                height: "60px",
+                background: "rgba(168, 85, 247, 0.7)",
+                borderRadius: "30px",
+                border: "2px solid rgba(255, 255, 255, 0.9)",
+                color: "white",
+                textAlign: "center",
+                fontWeight: "800",
+                fontSize: "16px",
+                lineHeight: "56px",
+                backdropFilter: "blur(4px)",
+              },
+            ],
+          });
+          clustererRef.current = clusterer;
+        }
+
         setIsLoaded(true);
       })
       .catch((error) => {
@@ -182,6 +263,11 @@ const KakaoMapView = ({
 
     return () => {
       mounted = false;
+      // Cleanup clusterer
+      if (clustererRef.current) {
+        clustererRef.current.clear();
+        clustererRef.current = null;
+      }
       // Cleanup markers
       markersRef.current.forEach((marker) => {
         if (marker.setMap) marker.setMap(null);
@@ -192,6 +278,16 @@ const KakaoMapView = ({
         if (marker.setMap) marker.setMap(null);
       });
       nursingMarkersRef.current = [];
+      // Cleanup pharmacy markers
+      pharmacyMarkersRef.current.forEach((marker) => {
+        if (marker.setMap) marker.setMap(null);
+      });
+      pharmacyMarkersRef.current = [];
+      // Cleanup ambulance markers
+      ambulanceMarkersRef.current.forEach((marker) => {
+        if (marker.setMap) marker.setMap(null);
+      });
+      ambulanceMarkersRef.current = [];
     };
   }, []);
 
@@ -389,6 +485,27 @@ const KakaoMapView = ({
           </div>`
         : "";
 
+      // Congestion badge - show when 3+ ambulances heading to this hospital
+      const incomingCount = incomingCountMap.get(hospital.id) || 0;
+      const congestionBadgeHtml = incomingCount >= 3
+        ? `<div class="congestion-badge" style="
+            position: absolute;
+            top: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
+            animation: kakao-float 2s ease-in-out infinite;
+            z-index: 20;
+          ">🏃 ${incomingCount}명 이동 중</div>`
+        : "";
+
       // Create custom marker element
       const content = document.createElement("div");
       content.className = "kakao-hospital-marker-wrapper";
@@ -400,6 +517,7 @@ const KakaoMapView = ({
           flex-direction: column;
           align-items: center;
         ">
+          ${congestionBadgeHtml}
           <div class="marker-circle" style="
             position: relative;
             width: 42px;
@@ -458,7 +576,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap]);
 
   // Update nursing hospital markers
   useEffect(() => {
@@ -542,12 +660,174 @@ const KakaoMapView = ({
     });
   }, [nursingHospitals, isLoaded, onNursingHospitalClick]);
 
+  // Update pharmacy markers
+  useEffect(() => {
+    if (!mapRef.current || !isLoaded) return;
+
+    // Clear existing pharmacy markers
+    pharmacyMarkersRef.current.forEach((marker) => {
+      if (marker.setMap) marker.setMap(null);
+    });
+    pharmacyMarkersRef.current = [];
+
+    // Create new pharmacy markers
+    nearbyPharmacies.forEach((pharmacy) => {
+      const position = new window.kakao.maps.LatLng(pharmacy.lat, pharmacy.lng);
+
+      // Check if night pharmacy (closes after 22:00)
+      const closeTime = parseInt(pharmacy.todayCloseTime || "0", 10);
+      const isNight = closeTime >= 2200 || closeTime < 400;
+      const isHoliday = !!(pharmacy.dutyTime7s || pharmacy.dutyTime8s);
+
+      const bgColor = isNight 
+        ? "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)"
+        : "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)";
+      const borderColor = isNight ? "#4338ca" : "#15803d";
+
+      const badges = [];
+      if (isNight) badges.push("🌙");
+      if (isHoliday) badges.push("📅");
+      const badgeHtml = badges.length > 0 
+        ? `<span style="position: absolute; top: -6px; right: -6px; font-size: 10px; background: white; border-radius: 10px; padding: 1px 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">${badges.join("")}</span>` 
+        : "";
+
+      const content = document.createElement("div");
+      content.className = "kakao-pharmacy-marker-wrapper";
+      content.style.cssText = "cursor: pointer;";
+      content.innerHTML = `
+        <div class="kakao-pharmacy-marker" style="
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        ">
+          <div class="marker-circle" style="
+            position: relative;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 8px;
+            background: ${bgColor};
+            border: 3px solid ${borderColor};
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px ${isNight ? "rgba(99, 102, 241, 0.4)" : "rgba(34, 197, 94, 0.4)"};
+            transition: transform 0.2s;
+          ">
+            <span style="font-size: 16px;">💊</span>
+            ${badgeHtml}
+          </div>
+          <div style="
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid ${borderColor};
+            margin-top: -2px;
+          "></div>
+        </div>
+      `;
+
+      const overlay = new window.kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 1.2,
+        xAnchor: 0.5,
+      });
+
+      content.addEventListener("click", () => {
+        onPharmacyClick?.(pharmacy);
+      });
+
+      content.addEventListener("mouseenter", () => {
+        const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
+        if (markerDiv) markerDiv.style.transform = "scale(1.15)";
+      });
+      content.addEventListener("mouseleave", () => {
+        const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
+        if (markerDiv) markerDiv.style.transform = "scale(1)";
+      });
+
+      overlay.setMap(mapRef.current);
+      pharmacyMarkersRef.current.push(overlay);
+    });
+  }, [nearbyPharmacies, isLoaded, onPharmacyClick]);
+
+  // Update ambulance trip markers
+  useEffect(() => {
+    if (!mapRef.current || !isLoaded) return;
+
+    // Clear existing ambulance markers
+    ambulanceMarkersRef.current.forEach((marker) => {
+      if (marker.setMap) marker.setMap(null);
+    });
+    ambulanceMarkersRef.current = [];
+
+    // Create new ambulance markers for en_route trips
+    activeAmbulanceTrips
+      .filter((trip) => trip.status === "en_route" && trip.current_lat && trip.current_lng)
+      .forEach((trip) => {
+        const position = new window.kakao.maps.LatLng(trip.current_lat!, trip.current_lng!);
+
+        const content = document.createElement("div");
+        content.className = "kakao-ambulance-marker-wrapper";
+        content.innerHTML = `
+          <div class="kakao-ambulance-marker" style="
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          ">
+            <div style="
+              width: 36px;
+              height: 36px;
+              background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+              border: 2px solid white;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+              animation: kakao-pulse 2s infinite;
+            ">
+              <span style="font-size: 18px;">🚑</span>
+            </div>
+            <div style="
+              margin-top: 2px;
+              background: rgba(0,0,0,0.75);
+              color: white;
+              font-size: 10px;
+              font-weight: 600;
+              padding: 2px 6px;
+              border-radius: 4px;
+              white-space: nowrap;
+            ">${trip.estimated_arrival_minutes ? `${trip.estimated_arrival_minutes}분` : "이송 중"}</div>
+          </div>
+        `;
+
+        const overlay = new window.kakao.maps.CustomOverlay({
+          position: position,
+          content: content,
+          yAnchor: 1,
+          xAnchor: 0.5,
+        });
+
+        overlay.setMap(mapRef.current);
+        ambulanceMarkersRef.current.push(overlay);
+      });
+  }, [activeAmbulanceTrips, isLoaded]);
+
   return (
     <>
       <style>{`
         @keyframes kakao-pulse {
           0% { transform: scale(1); opacity: 1; }
           100% { transform: scale(1.5); opacity: 0; }
+        }
+        @keyframes kakao-float {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-4px); }
         }
       `}</style>
       {/* Always render container so ref is available */}
