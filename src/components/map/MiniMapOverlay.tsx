@@ -6,143 +6,126 @@ interface MiniMapOverlayProps {
   onRegionClick: (center: [number, number], zoom: number, name: string) => void;
 }
 
-// Korean provinces with accurate SVG paths based on actual geography
+// Korean provinces with accurate SVG paths matching the peninsula shape
 const REGIONS = [
   { 
     id: "seoul", 
     name: "서울", 
     center: [37.5665, 126.978] as [number, number], 
     zoom: 12,
-    path: "M47.5,32.5 L50,31.5 L51.5,33 L50,35 L47,34 Z",
-    color: "#6366F1"
+    path: "M38,28 L42,27 L44,29 L43,32 L39,32 L37,30 Z"
   },
   { 
     id: "incheon", 
     name: "인천", 
     center: [37.4563, 126.7052] as [number, number], 
     zoom: 11,
-    path: "M40,33 L44,31 L47,33 L46,37 L42,40 L38,38 L36,35 Z",
-    color: "#8B5CF6"
+    path: "M30,26 L36,25 L38,28 L37,32 L33,35 L28,33 L27,29 Z"
   },
   { 
     id: "gyeonggi", 
     name: "경기", 
     center: [37.4138, 127.5183] as [number, number], 
     zoom: 9,
-    path: "M44,24 L58,22 L64,28 L62,38 L56,42 L50,40 L46,37 L44,32 L48,30 L52,32 L54,36 L52,38 L48,36 L46,34 L50,32 L48,30 L44,32 Z M51,33 L53,32 L54,34 L52,35 Z",
-    color: "#A78BFA"
+    path: "M36,18 L52,16 L58,22 L56,32 L52,38 L44,40 L40,38 L36,34 L33,35 L28,33 L30,26 L36,25 L38,28 L43,32 L44,29 L42,27 L38,28 L37,30 L39,32 L43,32 L44,29 L42,27 L38,28 Z"
   },
   { 
     id: "gangwon", 
     name: "강원", 
     center: [37.8228, 128.1555] as [number, number], 
     zoom: 9,
-    path: "M58,18 L78,12 L88,18 L86,32 L80,42 L68,48 L60,44 L56,38 L58,28 L62,24 Z",
-    color: "#34D399"
+    path: "M52,10 L72,6 L80,12 L78,28 L72,38 L62,44 L54,42 L52,38 L56,32 L58,22 L52,16 Z"
   },
   { 
     id: "chungbuk", 
     name: "충북", 
     center: [36.6357, 127.4912] as [number, number], 
     zoom: 10,
-    path: "M52,42 L66,40 L72,48 L68,56 L58,60 L50,56 L48,48 Z",
-    color: "#FBBF24"
+    path: "M44,40 L58,38 L64,44 L62,52 L54,56 L46,54 L42,48 Z"
   },
   { 
     id: "sejong", 
     name: "세종", 
     center: [36.4801, 127.2892] as [number, number], 
     zoom: 12,
-    path: "M48,52 L52,51 L53,54 L50,56 Z",
-    color: "#F472B6"
+    path: "M40,50 L44,49 L45,52 L42,54 Z"
   },
   { 
     id: "daejeon", 
     name: "대전", 
     center: [36.3504, 127.3845] as [number, number], 
     zoom: 12,
-    path: "M50,56 L55,55 L56,59 L52,61 Z",
-    color: "#FB923C"
+    path: "M44,54 L49,53 L50,57 L46,59 Z"
   },
   { 
     id: "chungnam", 
     name: "충남", 
     center: [36.5184, 126.8] as [number, number], 
     zoom: 10,
-    path: "M28,42 L48,40 L50,48 L52,52 L50,58 L44,64 L32,66 L24,60 L22,50 Z",
-    color: "#38BDF8"
+    path: "M22,40 L40,38 L42,48 L40,50 L42,54 L44,54 L46,59 L40,64 L28,66 L18,60 L16,48 Z"
   },
   { 
     id: "jeonbuk", 
     name: "전북", 
     center: [35.8203, 127.1088] as [number, number], 
     zoom: 10,
-    path: "M28,64 L46,62 L54,66 L52,76 L44,82 L30,84 L22,76 L20,68 Z",
-    color: "#4ADE80"
+    path: "M24,66 L42,62 L52,66 L50,76 L42,82 L28,84 L20,76 L18,68 Z"
   },
   { 
     id: "gwangju", 
     name: "광주", 
     center: [35.1595, 126.8526] as [number, number], 
     zoom: 12,
-    path: "M32,82 L38,80 L40,84 L36,87 Z",
-    color: "#F87171"
+    path: "M30,82 L36,80 L38,84 L34,87 Z"
   },
   { 
     id: "jeonnam", 
     name: "전남", 
     center: [34.8161, 126.4629] as [number, number], 
     zoom: 9,
-    path: "M14,76 L30,72 L38,78 L44,84 L42,94 L32,100 L18,98 L8,90 L6,82 Z",
-    color: "#2DD4BF"
+    path: "M12,76 L28,72 L36,78 L30,82 L34,87 L38,84 L42,90 L36,98 L22,100 L10,94 L6,84 Z"
   },
   { 
     id: "gyeongbuk", 
     name: "경북", 
     center: [36.4919, 128.8889] as [number, number], 
     zoom: 9,
-    path: "M60,44 L78,40 L88,48 L86,64 L78,72 L68,76 L58,72 L54,62 L56,52 Z",
-    color: "#A3E635"
+    path: "M54,42 L72,38 L82,46 L80,62 L74,70 L64,74 L56,70 L52,60 L54,52 Z"
   },
   { 
     id: "daegu", 
     name: "대구", 
     center: [35.8714, 128.6014] as [number, number], 
     zoom: 11,
-    path: "M66,68 L74,66 L76,72 L72,76 L66,74 Z",
-    color: "#E879F9"
+    path: "M60,68 L68,66 L70,72 L66,76 L60,74 Z"
   },
   { 
     id: "ulsan", 
     name: "울산", 
     center: [35.5384, 129.3114] as [number, number], 
     zoom: 11,
-    path: "M80,70 L88,68 L90,76 L84,80 Z",
-    color: "#FB7185"
+    path: "M74,68 L82,66 L84,74 L78,78 Z"
   },
   { 
     id: "gyeongnam", 
     name: "경남", 
     center: [35.4606, 128.2132] as [number, number], 
     zoom: 9,
-    path: "M44,76 L66,72 L78,78 L82,82 L78,92 L64,98 L48,96 L40,88 Z",
-    color: "#60A5FA"
+    path: "M42,76 L60,72 L66,76 L70,72 L74,68 L78,78 L76,88 L64,96 L48,94 L38,86 Z"
   },
   { 
     id: "busan", 
     name: "부산", 
     center: [35.1796, 129.0756] as [number, number], 
     zoom: 11,
-    path: "M78,86 L86,82 L90,88 L86,94 L80,92 Z",
-    color: "#C084FC"
+    path: "M72,84 L80,80 L84,86 L80,92 L74,90 Z"
   },
   { 
     id: "jeju", 
     name: "제주", 
     center: [33.4996, 126.5312] as [number, number], 
     zoom: 10,
-    path: "M24,108 L42,106 L46,112 L40,116 L22,116 L18,112 Z",
-    color: "#FBBF24"
+    path: "M22,112 L40,110 L44,116 L38,120 L20,120 L16,116 Z"
   },
 ];
 
@@ -253,14 +236,10 @@ const MiniMapOverlay = memo(({ center, zoom, onRegionClick }: MiniMapOverlayProp
               <g key={region.id} filter={isHovered || isCurrent ? "url(#region-shadow)" : undefined}>
                 <path
                   d={region.path}
-                  fill={isCurrent ? "url(#current-glow)" : isHovered ? `${region.color}90` : "rgba(226, 232, 240, 0.8)"}
-                  stroke={isCurrent ? "#1E40AF" : isHovered ? region.color : "rgba(148, 163, 184, 0.6)"}
-                  strokeWidth={isCurrent ? "1.5" : isHovered ? "1" : "0.5"}
+                  fill={isCurrent ? "url(#current-glow)" : isHovered ? "rgba(203, 213, 225, 0.9)" : "rgba(226, 232, 240, 0.7)"}
+                  stroke={isCurrent ? "#1E40AF" : "rgba(148, 163, 184, 0.8)"}
+                  strokeWidth={isCurrent ? "1.5" : "0.5"}
                   className="cursor-pointer transition-all duration-200"
-                  style={{ 
-                    transform: isHovered && !isCurrent ? "scale(1.02)" : "scale(1)",
-                    transformOrigin: "center",
-                  }}
                   onMouseEnter={() => setHoveredRegion(region.id)}
                   onMouseLeave={() => setHoveredRegion(null)}
                   onClick={() => handleRegionClick(region)}
