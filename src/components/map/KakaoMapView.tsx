@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw, Map as MapIcon } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
 import { cleanHospitalName } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 declare global {
   interface Window {
@@ -28,6 +29,7 @@ interface KakaoMapViewProps {
   activeAmbulanceTrips?: AmbulanceTrip[];
   incomingByHospital?: Map<number, number>;
   onZoomChange?: (zoom: number) => void;
+  onFallbackToLeaflet?: () => void;
 }
 
 // Get marker colors based on emergency grade
@@ -181,14 +183,19 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
-    script.crossOrigin = "anonymous";
+    // Note: Do NOT set crossOrigin - Kakao SDK doesn't support CORS headers
     
     const handleScriptLoad = () => {
+      console.log(`[KakaoMap] Script loaded, attempt ${retryCount + 1}`);
       // Wait a bit for the script to initialize
       setTimeout(() => {
         waitForMapsReady(12000)
-          .then(resolve)
+          .then(() => {
+            console.log("[KakaoMap] SDK fully initialized");
+            resolve();
+          })
           .catch((err) => {
+            console.warn(`[KakaoMap] waitForMapsReady failed: ${err.message}`);
             if (retryCount < MAX_RETRIES) {
               script.remove();
               delete (window as any).kakao;
@@ -199,17 +206,19 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
               reject(err);
             }
           });
-      }, 100);
+      }, 150);
     };
     
-    const handleScriptError = () => {
+    const handleScriptError = (e: Event) => {
+      console.error(`[KakaoMap] Script error on attempt ${retryCount + 1}:`, e);
       script.remove();
+      delete (window as any).kakao;
       if (retryCount < MAX_RETRIES) {
         setTimeout(() => {
           loadKakaoSDK(retryCount + 1).then(resolve).catch(reject);
         }, RETRY_DELAY * (retryCount + 1));
       } else {
-        reject(new Error("Failed to load Kakao Maps SDK script after retries"));
+        reject(new Error("카카오맵 SDK 로드 실패 - 네트워크 또는 API 키를 확인하세요"));
       }
     };
     
@@ -219,6 +228,9 @@ const loadKakaoSDK = (retryCount = 0): Promise<void> => {
     document.head.appendChild(script);
   });
 };
+
+// Manual retry function
+let retryLoadKakaoSDK: (() => Promise<void>) | null = null;
 
 const KakaoMapView = ({
   hospitals,
@@ -235,6 +247,7 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
+  onFallbackToLeaflet,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -249,6 +262,43 @@ const KakaoMapView = ({
   const distanceLabelRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  // Handle retry
+  const handleRetry = useCallback(() => {
+    setIsRetrying(true);
+    setLoadError(null);
+    
+    // Clear previous kakao object
+    const oldScript = document.querySelector('script[src*="dapi.kakao.com"]');
+    if (oldScript) oldScript.remove();
+    delete (window as any).kakao;
+    
+    loadKakaoSDK()
+      .then(() => {
+        if (!mapContainerRef.current) return;
+
+        const { offsetWidth, offsetHeight } = mapContainerRef.current;
+        if (offsetWidth === 0 || offsetHeight === 0) return;
+
+        const options = {
+          center: new window.kakao.maps.LatLng(center[0], center[1]),
+          level: leafletToKakaoZoom(zoom),
+          minLevel: 1,
+          maxLevel: 13,
+        };
+
+        const map = new window.kakao.maps.Map(mapContainerRef.current, options);
+        mapRef.current = map;
+        setIsLoaded(true);
+        setIsRetrying(false);
+      })
+      .catch((error) => {
+        console.error("Kakao Maps retry error:", error);
+        setLoadError(error.message);
+        setIsRetrying(false);
+      });
+  }, [center, zoom]);
 
   // Calculate distance between two points in km
   const calculateDistanceKm = useCallback((lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -1047,19 +1097,48 @@ const KakaoMapView = ({
       />
       {/* Loading overlay */}
       {!isLoaded && !loadError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-background z-10">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
-            <p className="text-sm text-gray-600">카카오맵 로딩 중...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">카카오맵 로딩 중...</p>
           </div>
         </div>
       )}
       {/* Error overlay */}
       {loadError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-          <div className="text-center p-6">
-            <p className="text-red-500 font-semibold mb-2">카카오맵 로드 실패</p>
-            <p className="text-sm text-gray-500">{loadError}</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-background z-10">
+          <div className="text-center p-6 max-w-sm">
+            <p className="text-destructive font-semibold mb-2">카카오맵 로드 실패</p>
+            <p className="text-sm text-muted-foreground mb-6">{loadError}</p>
+            <div className="flex flex-col gap-3">
+              <Button 
+                onClick={handleRetry} 
+                disabled={isRetrying}
+                className="w-full"
+              >
+                {isRetrying ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    재시도 중...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    다시 시도
+                  </>
+                )}
+              </Button>
+              {onFallbackToLeaflet && (
+                <Button 
+                  onClick={onFallbackToLeaflet} 
+                  variant="outline"
+                  className="w-full"
+                >
+                  <MapIcon className="w-4 h-4 mr-2" />
+                  기본 지도로 전환
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
