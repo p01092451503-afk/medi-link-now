@@ -235,8 +235,100 @@ const KakaoMapView = ({
   const ambulanceMarkersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
   const spiderfyManagerRef = useRef<SpiderfyManager | null>(null);
+  const distanceLineRef = useRef<any>(null);
+  const distanceLabelRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Calculate distance between two points in km
+  const calculateDistanceKm = useCallback((lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }, []);
+
+  // Show distance line from user location to target
+  const showDistanceLine = useCallback((targetLat: number, targetLng: number) => {
+    if (!mapRef.current || !window.kakao || !userLocation) return;
+
+    // Remove existing line and label
+    if (distanceLineRef.current) {
+      distanceLineRef.current.setMap(null);
+      distanceLineRef.current = null;
+    }
+    if (distanceLabelRef.current) {
+      distanceLabelRef.current.setMap(null);
+      distanceLabelRef.current = null;
+    }
+
+    const userPos = new window.kakao.maps.LatLng(userLocation[0], userLocation[1]);
+    const targetPos = new window.kakao.maps.LatLng(targetLat, targetLng);
+
+    // Create dashed polyline
+    const line = new window.kakao.maps.Polyline({
+      map: mapRef.current,
+      path: [userPos, targetPos],
+      strokeWeight: 3,
+      strokeColor: "#3B82F6",
+      strokeOpacity: 0.8,
+      strokeStyle: "shortdash",
+    });
+    distanceLineRef.current = line;
+
+    // Calculate distance
+    const distance = calculateDistanceKm(userLocation[0], userLocation[1], targetLat, targetLng);
+    const distanceText = distance < 1 
+      ? `${Math.round(distance * 1000)}m` 
+      : `${distance.toFixed(1)}km`;
+
+    // Create distance label at midpoint
+    const midLat = (userLocation[0] + targetLat) / 2;
+    const midLng = (userLocation[1] + targetLng) / 2;
+    
+    const labelContent = document.createElement("div");
+    labelContent.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
+        white-space: nowrap;
+        pointer-events: none;
+      ">
+        📏 ${distanceText}
+      </div>
+    `;
+
+    const label = new window.kakao.maps.CustomOverlay({
+      position: new window.kakao.maps.LatLng(midLat, midLng),
+      content: labelContent,
+      yAnchor: 0.5,
+      xAnchor: 0.5,
+      zIndex: 1000,
+    });
+    label.setMap(mapRef.current);
+    distanceLabelRef.current = label;
+  }, [userLocation, calculateDistanceKm]);
+
+  // Hide distance line
+  const hideDistanceLine = useCallback(() => {
+    if (distanceLineRef.current) {
+      distanceLineRef.current.setMap(null);
+      distanceLineRef.current = null;
+    }
+    if (distanceLabelRef.current) {
+      distanceLabelRef.current.setMap(null);
+      distanceLabelRef.current = null;
+    }
+  }, []);
 
   // Find overlapping marker groups
   const overlappingGroups = useMemo(() => {
@@ -644,6 +736,8 @@ const KakaoMapView = ({
           gradeLabel.style.opacity = "1";
           gradeLabel.style.visibility = "visible";
         }
+        // Show distance line from user location
+        showDistanceLine(hospital.lat, hospital.lng);
       });
 
       content.addEventListener("mouseleave", () => {
@@ -663,12 +757,14 @@ const KakaoMapView = ({
           gradeLabel.style.opacity = "0";
           gradeLabel.style.visibility = "hidden";
         }
+        // Hide distance line
+        hideDistanceLine();
       });
 
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick, showDistanceLine, hideDistanceLine]);
 
   // Update nursing hospital markers
   useEffect(() => {
@@ -741,16 +837,20 @@ const KakaoMapView = ({
       content.addEventListener("mouseenter", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1.15)";
+        // Show distance line from user location
+        showDistanceLine(hospital.lat, hospital.lng);
       });
       content.addEventListener("mouseleave", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1)";
+        // Hide distance line
+        hideDistanceLine();
       });
 
       overlay.setMap(mapRef.current);
       nursingMarkersRef.current.push(overlay);
     });
-  }, [nursingHospitals, isLoaded, onNursingHospitalClick]);
+  }, [nursingHospitals, isLoaded, onNursingHospitalClick, showDistanceLine, hideDistanceLine]);
 
   // Update pharmacy markers
   useEffect(() => {
@@ -835,16 +935,20 @@ const KakaoMapView = ({
       content.addEventListener("mouseenter", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1.15)";
+        // Show distance line from user location
+        showDistanceLine(pharmacy.lat, pharmacy.lng);
       });
       content.addEventListener("mouseleave", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1)";
+        // Hide distance line
+        hideDistanceLine();
       });
 
       overlay.setMap(mapRef.current);
       pharmacyMarkersRef.current.push(overlay);
     });
-  }, [nearbyPharmacies, isLoaded, onPharmacyClick]);
+  }, [nearbyPharmacies, isLoaded, onPharmacyClick, showDistanceLine, hideDistanceLine]);
 
   // Update ambulance trip markers
   useEffect(() => {
