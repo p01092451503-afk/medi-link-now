@@ -530,6 +530,8 @@ const MapPage = () => {
             center={mapCenter}
             zoom={mapZoom}
             activeFilter={activeFilter}
+            nursingHospitals={filteredNursingHospitals}
+            onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
           />
         ) : (
           <ClusteredMapView

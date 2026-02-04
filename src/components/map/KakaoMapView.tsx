@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
 import { Loader2 } from "lucide-react";
+import type { NursingHospital } from "@/hooks/useNursingHospitals";
 
 declare global {
   interface Window {
@@ -15,6 +16,8 @@ interface KakaoMapViewProps {
   center: [number, number];
   zoom: number;
   activeFilter: FilterType;
+  nursingHospitals?: NursingHospital[];
+  onNursingHospitalClick?: (hospital: NursingHospital) => void;
 }
 
 // Convert Leaflet zoom (0-18) to Kakao zoom (1-14, inverted)
@@ -97,10 +100,13 @@ const KakaoMapView = ({
   center,
   zoom,
   activeFilter,
+  nursingHospitals = [],
+  onNursingHospitalClick,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const nursingMarkersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -144,6 +150,11 @@ const KakaoMapView = ({
         if (marker.setMap) marker.setMap(null);
       });
       markersRef.current = [];
+      // Cleanup nursing markers
+      nursingMarkersRef.current.forEach((marker) => {
+        if (marker.setMap) marker.setMap(null);
+      });
+      nursingMarkersRef.current = [];
     };
   }, []);
 
@@ -304,6 +315,88 @@ const KakaoMapView = ({
       markersRef.current.push(overlay);
     });
   }, [hospitals, isLoaded, onHospitalClick]);
+
+  // Update nursing hospital markers
+  useEffect(() => {
+    if (!mapRef.current || !isLoaded) return;
+
+    // Clear existing nursing markers
+    nursingMarkersRef.current.forEach((marker) => {
+      if (marker.setMap) marker.setMap(null);
+    });
+    nursingMarkersRef.current = [];
+
+    // Create new nursing hospital markers
+    nursingHospitals.forEach((hospital) => {
+      const position = new window.kakao.maps.LatLng(hospital.lat, hospital.lng);
+
+      // Create custom marker element (purple with "요양" text)
+      const content = document.createElement("div");
+      content.className = "kakao-nursing-marker-wrapper";
+      content.style.cssText = "cursor: pointer;";
+      content.innerHTML = `
+        <div class="kakao-nursing-marker" style="
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        ">
+          <div class="marker-circle" style="
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+            border: 2px solid #7C3AED;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            transition: transform 0.2s;
+          ">
+            <span style="
+              color: white;
+              font-size: 14px;
+              font-weight: 700;
+              line-height: 1;
+            ">요양</span>
+          </div>
+          <div style="
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 8px solid #7C3AED;
+            margin-top: -2px;
+          "></div>
+        </div>
+      `;
+
+      const overlay = new window.kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 1.2,
+        xAnchor: 0.5,
+      });
+
+      // Add click event
+      content.addEventListener("click", () => {
+        onNursingHospitalClick?.(hospital);
+      });
+
+      // Add hover effect
+      content.addEventListener("mouseenter", () => {
+        const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
+        if (markerDiv) markerDiv.style.transform = "scale(1.15)";
+      });
+      content.addEventListener("mouseleave", () => {
+        const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
+        if (markerDiv) markerDiv.style.transform = "scale(1)";
+      });
+
+      overlay.setMap(mapRef.current);
+      nursingMarkersRef.current.push(overlay);
+    });
+  }, [nursingHospitals, isLoaded, onNursingHospitalClick]);
 
   return (
     <>
