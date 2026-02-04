@@ -1832,6 +1832,10 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
     case "moonlight":
       // 달빛어린이병원 (소아 진료 가능 병원) - 야간 소아 진료
       return hospitals.filter((h) => h.beds.pediatric > 0);
+    case "nightCare":
+      // 야간진료 병원 - nightCareHpids Set이 전달되면 해당 병원만 필터링
+      // (외부에서 필터링해야 함 - useHospitalDetails 데이터 필요)
+      return hospitals;
     // Legal emergency medical institution filters (법정 응급의료기관)
     case "legal_only":
       return hospitals.filter((h) => h.emergencyGrade !== null && h.emergencyGrade !== undefined);
