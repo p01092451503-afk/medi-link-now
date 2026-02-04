@@ -34,44 +34,70 @@ const KOREA_BOUNDS = {
 // Load Kakao Maps SDK dynamically
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // Already loaded
-    if (window.kakao && window.kakao.maps) {
-      window.kakao.maps.load(() => resolve());
-      return;
-    }
-
     const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
     if (!apiKey) {
       reject(new Error("VITE_KAKAO_MAP_API_KEY is not configured"));
       return;
     }
 
-    // Check if script is already in DOM
-    const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
-    if (existingScript) {
-      // Wait for it to load
-      const checkLoaded = setInterval(() => {
-        if (window.kakao && window.kakao.maps) {
-          clearInterval(checkLoaded);
-          window.kakao.maps.load(() => resolve());
-        }
-      }, 100);
+    // If SDK is already fully loaded and initialized
+    if (window.kakao && window.kakao.maps && window.kakao.maps.Map) {
+      console.log("Kakao SDK already fully initialized");
+      resolve();
       return;
     }
 
+    // If kakao object exists but maps not fully initialized
+    if (window.kakao && window.kakao.maps) {
+      console.log("Kakao SDK exists, calling maps.load()");
+      window.kakao.maps.load(() => {
+        console.log("Kakao maps.load() callback fired");
+        resolve();
+      });
+      return;
+    }
+
+    // Check if script is already in DOM
+    const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
+    if (existingScript) {
+      console.log("Kakao script found in DOM, waiting for load...");
+      const checkLoaded = setInterval(() => {
+        if (window.kakao && window.kakao.maps) {
+          clearInterval(checkLoaded);
+          window.kakao.maps.load(() => {
+            console.log("Kakao maps.load() callback fired (from existing script)");
+            resolve();
+          });
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        clearInterval(checkLoaded);
+        reject(new Error("Kakao Maps SDK load timeout"));
+      }, 10000);
+      return;
+    }
+
+    console.log("Loading Kakao SDK script...");
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
     
     script.onload = () => {
+      console.log("Kakao script onload fired");
       if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => resolve());
+        window.kakao.maps.load(() => {
+          console.log("Kakao maps.load() callback fired (new script)");
+          resolve();
+        });
       } else {
         reject(new Error("Kakao Maps SDK failed to initialize"));
       }
     };
     
-    script.onerror = () => {
+    script.onerror = (e) => {
+      console.error("Kakao script onerror:", e);
       reject(new Error("Failed to load Kakao Maps SDK"));
     };
 
@@ -97,27 +123,48 @@ const KakaoMapView = ({
   // Initialize Kakao Maps
   useEffect(() => {
     let mounted = true;
+    console.log("KakaoMapView: Starting initialization, mounted =", mounted);
 
     loadKakaoSDK()
       .then(() => {
-        if (!mounted || !mapContainerRef.current) return;
+        console.log("KakaoMapView: SDK promise resolved, mounted =", mounted, "ref =", !!mapContainerRef.current);
+        if (!mounted) {
+          console.log("KakaoMapView: Component unmounted, aborting");
+          return;
+        }
+        if (!mapContainerRef.current) {
+          console.error("KakaoMapView: Container ref is null!");
+          return;
+        }
+
+        const width = mapContainerRef.current.offsetWidth;
+        const height = mapContainerRef.current.offsetHeight;
+        console.log("KakaoMapView: Container dimensions:", width, "x", height);
+
+        if (width === 0 || height === 0) {
+          console.error("KakaoMapView: Container has zero dimensions!");
+          return;
+        }
 
         const options = {
           center: new window.kakao.maps.LatLng(center[0], center[1]),
           level: leafletToKakaoZoom(zoom),
         };
 
+        console.log("KakaoMapView: Creating map...");
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
         mapRef.current = map;
+        console.log("KakaoMapView: Map created!");
 
         // Add zoom control
         const zoomControl = new window.kakao.maps.ZoomControl();
         map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
         setIsLoaded(true);
+        console.log("KakaoMapView: Initialization complete!");
       })
       .catch((error) => {
-        console.error("Kakao Maps initialization error:", error);
+        console.error("KakaoMapView: Initialization error:", error);
         if (mounted) {
           setLoadError(error.message);
         }
@@ -291,29 +338,6 @@ const KakaoMapView = ({
     });
   }, [hospitals, isLoaded, onHospitalClick]);
 
-  // Loading state
-  if (loadError) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-        <div className="text-center p-6">
-          <p className="text-red-500 font-semibold mb-2">카카오맵 로드 실패</p>
-          <p className="text-sm text-gray-500">{loadError}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoaded) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
-          <p className="text-sm text-gray-600">카카오맵 로딩 중...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <style>{`
@@ -322,11 +346,30 @@ const KakaoMapView = ({
           100% { transform: scale(1.5); opacity: 0; }
         }
       `}</style>
+      {/* Always render container so ref is available */}
       <div 
         ref={mapContainerRef} 
         className="absolute inset-0" 
         style={{ height: "100vh", width: "100vw" }}
       />
+      {/* Loading overlay */}
+      {!isLoaded && !loadError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+            <p className="text-sm text-gray-600">카카오맵 로딩 중...</p>
+          </div>
+        </div>
+      )}
+      {/* Error overlay */}
+      {loadError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+          <div className="text-center p-6">
+            <p className="text-red-500 font-semibold mb-2">카카오맵 로드 실패</p>
+            <p className="text-sm text-gray-500">{loadError}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };
