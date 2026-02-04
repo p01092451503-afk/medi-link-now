@@ -40,11 +40,11 @@ export const clusterHospitals = (
   mapBounds: { sw: { lat: number; lng: number }; ne: { lat: number; lng: number } },
   zoomLevel: number
 ): HospitalCluster[] => {
-  // Skip clustering until zoomed out to regional/province level
+  // Clustering starts from zoom level 7
   // Kakao zoom: 1 = most zoomed in, 14 = most zoomed out
-  // Level 1-9: individual markers (city-wide and closer)
-  // Level 10+: clustering (province/regional view - beyond city boundaries)
-  if (zoomLevel <= 9) {
+  // Level 1-6: individual markers
+  // Level 7+: clustering
+  if (zoomLevel <= 6) {
     // Return individual hospitals as single-item clusters
     return hospitals.map((h) => ({
       hospitals: [h],
