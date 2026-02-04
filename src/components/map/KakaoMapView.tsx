@@ -451,12 +451,51 @@ const KakaoMapView = ({
           ? `<div class="congestion-badge" style="position: absolute; top: -32px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; white-space: nowrap; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5); animation: kakao-float 2s ease-in-out infinite; z-index: 20;">🏃 ${incomingCount}명 이동 중</div>`
           : "";
 
+        // Hospital name tooltip
+        const tooltipGradeText = gradeLabel ? `<span style="color: #6B7280; font-size: 10px;">${gradeLabel}</span>` : "";
+        
         const content = document.createElement("div");
         content.className = "kakao-hospital-marker-wrapper";
-        content.style.cssText = "cursor: pointer;";
+        content.style.cssText = "cursor: pointer; position: relative;";
         content.innerHTML = `
           <div class="kakao-hospital-marker" style="position: relative; display: flex; flex-direction: column; align-items: center;">
             ${congestionBadgeHtml}
+            <div class="marker-tooltip" style="
+              position: absolute;
+              bottom: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              margin-bottom: 8px;
+              background: rgba(0, 0, 0, 0.85);
+              color: white;
+              padding: 6px 10px;
+              border-radius: 6px;
+              white-space: nowrap;
+              font-size: 12px;
+              font-weight: 500;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              opacity: 0;
+              visibility: hidden;
+              transition: opacity 0.2s, visibility 0.2s;
+              z-index: 100;
+              pointer-events: none;
+            ">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                <span>${hospital.name}</span>
+                ${tooltipGradeText}
+              </div>
+              <div style="
+                position: absolute;
+                bottom: -4px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid rgba(0, 0, 0, 0.85);
+              "></div>
+            </div>
             <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s;">
               <span style="color: ${textColor}; font-size: 18px; font-weight: 800; line-height: 1;">${displayBeds}</span>
               ${isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
@@ -476,11 +515,21 @@ const KakaoMapView = ({
         content.addEventListener("click", () => onHospitalClick(hospital));
         content.addEventListener("mouseenter", () => {
           const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
+          const tooltip = content.querySelector(".marker-tooltip") as HTMLElement;
           if (markerDiv) markerDiv.style.transform = "scale(1.15)";
+          if (tooltip) {
+            tooltip.style.opacity = "1";
+            tooltip.style.visibility = "visible";
+          }
         });
         content.addEventListener("mouseleave", () => {
           const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
+          const tooltip = content.querySelector(".marker-tooltip") as HTMLElement;
           if (markerDiv) markerDiv.style.transform = "scale(1)";
+          if (tooltip) {
+            tooltip.style.opacity = "0";
+            tooltip.style.visibility = "hidden";
+          }
         });
 
         overlay.setMap(mapRef.current);
