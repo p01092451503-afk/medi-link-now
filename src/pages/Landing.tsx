@@ -4,7 +4,6 @@ import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus } from "@/data/hospitals";
@@ -20,7 +19,6 @@ const Landing = () => {
   const [activeTab, setActiveTab] = useState<"national" | "local">("national");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
-  const [isAIPredictionOpen, setIsAIPredictionOpen] = useState(false);
 
 
   // Get user location when switching to local tab
@@ -362,25 +360,26 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        {/* Trust Indicators */}
+        {/* Trust Indicators - 2x2 Grid */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
           className="w-full mb-8"
         >
-          <div className="flex items-center justify-center gap-6">
+          <div className="grid grid-cols-4 gap-2">
+            {/* 전국 응급실 */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-3 group cursor-pointer">
-                  <div className="w-16 h-16 rounded-3xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
-                    <Hospital className="w-7 h-7 text-slate-600 transition-all duration-300 group-hover:scale-110" />
+                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
+                    <Hospital className="w-6 h-6 text-slate-600 transition-all duration-300 group-hover:scale-110" />
                   </div>
                   <div className="text-center">
-                    <p className="text-lg font-bold text-slate-800 tracking-tight">
+                    <p className="text-base font-bold text-slate-800 tracking-tight leading-tight">
                       {isLoading ? "---" : `${hospitals.length}+`}
                     </p>
-                    <p className="text-[11px] text-slate-500 font-medium">전국 응급실</p>
+                    <p className="text-[10px] text-slate-500 font-medium">전국 응급실</p>
                   </div>
                 </div>
               </PopoverTrigger>
@@ -393,8 +392,7 @@ const Landing = () => {
                     <p className="text-sm font-bold text-slate-800">전국 응급실 네트워크</p>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    서울, 경기, 부산 등 전국 17개 시·도의 응급의료기관 정보를 실시간으로 제공합니다. 
-                    권역응급의료센터부터 지역응급의료기관까지 모든 등급의 응급실을 포함합니다.
+                    서울, 경기, 부산 등 전국 17개 시·도의 응급의료기관 정보를 실시간으로 제공합니다.
                   </p>
                   <div className="flex items-center gap-4 pt-1 text-[10px] text-slate-500">
                     <span className="flex items-center gap-1.5">
@@ -414,9 +412,21 @@ const Landing = () => {
               </PopoverContent>
             </Popover>
             
+            {/* 실시간 업데이트 */}
             <Popover>
               <PopoverTrigger asChild>
-                <DataFreshnessTimer lastUpdated={lastUpdated} isLoading={isLoading} />
+                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
+                    <Activity className="w-6 h-6 text-slate-600 transition-all duration-300 group-hover:scale-110" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-base font-bold text-slate-800 tracking-tight leading-tight">60초</p>
+                    <p className="text-[10px] text-slate-500 font-medium flex items-center justify-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      실시간
+                    </p>
+                  </div>
+                </div>
               </PopoverTrigger>
               <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
                 <div className="space-y-3">
@@ -428,7 +438,6 @@ const Landing = () => {
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
                     국립중앙의료원 응급의료포털과 직접 연동하여 60초마다 최신 병상 현황을 갱신합니다.
-                    일반병상, 소아병상, 음압격리병상 등 세부 정보까지 확인 가능합니다.
                   </p>
                   <div className="flex items-center gap-1.5 pt-1">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -440,15 +449,16 @@ const Landing = () => {
               </PopoverContent>
             </Popover>
             
+            {/* 24시간 운영 */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center gap-3 group cursor-pointer">
-                  <div className="w-16 h-16 rounded-3xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
-                    <Clock className="w-7 h-7 text-slate-600 transition-all duration-300 group-hover:scale-110" />
+                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-slate-300">
+                    <Clock className="w-6 h-6 text-slate-600 transition-all duration-300 group-hover:scale-110" />
                   </div>
                   <div className="text-center">
-                    <p className="text-lg font-bold text-slate-800 tracking-tight">24시간</p>
-                    <p className="text-[11px] text-slate-500 font-medium">연중무휴 운영</p>
+                    <p className="text-base font-bold text-slate-800 tracking-tight leading-tight">24h</p>
+                    <p className="text-[10px] text-slate-500 font-medium">연중무휴</p>
                   </div>
                 </div>
               </PopoverTrigger>
@@ -464,226 +474,62 @@ const Landing = () => {
                     응급상황은 시간을 가리지 않습니다. Find-ER은 새벽, 주말, 공휴일 관계없이 
                     언제든지 가장 가까운 응급실 정보를 제공합니다.
                   </p>
-                  <div className="grid grid-cols-3 gap-2 pt-1">
-                    <div className="text-center p-2 bg-slate-50 rounded-xl">
-                      <p className="text-sm font-bold text-slate-700">24h</p>
-                      <p className="text-[10px] text-slate-400">하루</p>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* AI 예측 분석 */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex flex-col items-center gap-2 group cursor-pointer p-2">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center shadow-sm border border-violet-200 transition-all duration-300 group-hover:scale-105 group-hover:border-violet-300">
+                    <Brain className="w-6 h-6 text-violet-600 transition-all duration-300 group-hover:scale-110" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-base font-bold text-violet-700 tracking-tight leading-tight">AI</p>
+                    <p className="text-[10px] text-violet-500 font-medium">예측 분석</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4 rounded-2xl border border-violet-200 shadow-lg" side="bottom">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center">
+                      <Brain className="w-4 h-4 text-violet-600" />
                     </div>
-                    <div className="text-center p-2 bg-slate-50 rounded-xl">
-                      <p className="text-sm font-bold text-slate-700">7일</p>
-                      <p className="text-[10px] text-slate-400">주간</p>
-                    </div>
-                    <div className="text-center p-2 bg-slate-50 rounded-xl">
-                      <p className="text-sm font-bold text-slate-700">365일</p>
-                      <p className="text-[10px] text-slate-400">연간</p>
+                    <div>
+                      <p className="text-sm font-bold text-slate-800">AI 예측 분석</p>
+                      <span className="px-1.5 py-0.5 text-[8px] font-bold text-white bg-violet-500 rounded">Beta</span>
                     </div>
                   </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    공식 데이터를 넘어선 스마트 분석으로 병상 확보 확률, 실시간 이동 현황, 병상 소진 트렌드를 제공합니다.
+                  </p>
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
+                    <div className="text-center p-2 bg-slate-50 rounded-xl">
+                      <Target className="w-4 h-4 text-slate-600 mx-auto mb-1" />
+                      <p className="text-[10px] font-medium text-slate-700">확보 확률</p>
+                    </div>
+                    <div className="text-center p-2 bg-slate-50 rounded-xl">
+                      <Ambulance className="w-4 h-4 text-slate-600 mx-auto mb-1" />
+                      <p className="text-[10px] font-medium text-slate-700">이동 현황</p>
+                    </div>
+                    <div className="text-center p-2 bg-slate-50 rounded-xl">
+                      <TrendingDown className="w-4 h-4 text-slate-600 mx-auto mb-1" />
+                      <p className="text-[10px] font-medium text-slate-700">소진 트렌드</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => navigate("/map")}
+                    className="w-full flex items-center justify-center gap-1.5 pt-2 text-[11px] text-violet-600 font-medium hover:text-violet-700"
+                  >
+                    <span>병원 상세정보에서 확인</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </PopoverContent>
             </Popover>
           </div>
-        </motion.div>
-
-        {/* AI Prediction Feature Promotion - Collapsible Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="w-full mb-8"
-        >
-          <Collapsible open={isAIPredictionOpen} onOpenChange={setIsAIPredictionOpen}>
-            <div className="relative bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
-              {/* Collapsed Banner - Always Visible */}
-              <CollapsibleTrigger asChild>
-                <button className="relative w-full p-3 flex items-center gap-2.5 hover:bg-slate-100/50 transition-colors">
-                  <div className="w-9 h-9 rounded-xl bg-slate-700 flex items-center justify-center">
-                    <Brain className="w-4.5 h-4.5 text-white" />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-bold text-slate-800">AI 예측 분석</h3>
-                      <span className="px-1.5 py-0.5 text-[8px] font-bold text-white bg-slate-500 rounded">Beta</span>
-                    </div>
-                    <p className="text-[10px] text-slate-500">공식 데이터를 넘어선 스마트 분석</p>
-                  </div>
-                  <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isAIPredictionOpen ? "rotate-90" : ""}`} />
-                </button>
-              </CollapsibleTrigger>
-
-              {/* Expanded Content */}
-              <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                <AnimatePresence mode="wait">
-                  {isAIPredictionOpen && (
-                    <motion.div 
-                      className="px-4 pb-4 pt-1"
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ 
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 30,
-                        mass: 0.8
-                      }}
-                    >
-                      {/* Feature Cards - Horizontal compact layout with descriptions */}
-                      <motion.div 
-                        className="relative grid grid-cols-3 gap-2"
-                        initial="hidden"
-                        animate="visible"
-                        variants={{
-                          hidden: { opacity: 0 },
-                          visible: {
-                            opacity: 1,
-                            transition: {
-                              staggerChildren: 0.08,
-                              delayChildren: 0.05
-                            }
-                          }
-                        }}
-                      >
-                        {/* Safe Arrival Score */}
-                        <motion.div
-                          variants={{
-                            hidden: { opacity: 0, y: 12, scale: 0.95 },
-                            visible: { opacity: 1, y: 0, scale: 1 }
-                          }}
-                          transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                        >
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button className="flex flex-col items-center p-2.5 bg-white rounded-xl border border-slate-200 text-center hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer w-full">
-                                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center mb-1">
-                                  <Target className="w-3.5 h-3.5 text-slate-600" />
-                                </div>
-                                <p className="text-[8px] text-slate-500 mb-0.5">병상 확보</p>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">95%</p>
-                                <p className="text-[8px] text-slate-500 leading-tight">예상 확률</p>
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-3 rounded-xl border border-slate-200 shadow-lg" side="top">
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <Target className="w-3.5 h-3.5 text-slate-600" />
-                                  </div>
-                                  <p className="text-sm font-bold text-slate-800">병상 확보 예상 확률</p>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">
-                                  현재 병상 가용률과 이동 중인 구급차를 분석하여, 도착 시 병상을 확보할 수 있는 확률을 예측합니다.
-                                </p>
-                                <div className="flex items-center gap-2 pt-1 text-[10px]">
-                                  <span className="flex items-center gap-1 text-emerald-600">🟢 95%+ 안전</span>
-                                  <span className="flex items-center gap-1 text-amber-600">🟡 70-94% 주의</span>
-                                  <span className="flex items-center gap-1 text-red-600">🔴 70%↓ 위험</span>
-                                </div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </motion.div>
-
-                        {/* Shadow Demand */}
-                        <motion.div
-                          variants={{
-                            hidden: { opacity: 0, y: 12, scale: 0.95 },
-                            visible: { opacity: 1, y: 0, scale: 1 }
-                          }}
-                          transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                        >
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button className="flex flex-col items-center p-2.5 bg-white rounded-xl border border-slate-200 text-center hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer w-full">
-                                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center mb-1">
-                                  <Ambulance className="w-3.5 h-3.5 text-slate-600" />
-                                </div>
-                                <p className="text-[8px] text-slate-500 mb-0.5">이동 중</p>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">2대</p>
-                                <p className="text-[8px] text-slate-500 leading-tight">구급차</p>
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-3 rounded-xl border border-slate-200 shadow-lg" side="top">
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <Ambulance className="w-3.5 h-3.5 text-slate-600" />
-                                  </div>
-                                  <p className="text-sm font-bold text-slate-800">실시간 이동 현황</p>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">
-                                  현재 병원으로 향하는 민간 구급차 수입니다. 공식 병상 수에서 이 숫자를 빼면 실제 가용 병상을 추정할 수 있습니다.
-                                </p>
-                                <div className="bg-slate-100 rounded-lg p-2 text-[10px] text-slate-600">
-                                  <p className="font-medium">⚠️ 주의사항</p>
-                                  <p>119 공공 구급차는 포함되지 않습니다.</p>
-                                </div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </motion.div>
-
-                        {/* Bed Trend */}
-                        <motion.div
-                          variants={{
-                            hidden: { opacity: 0, y: 12, scale: 0.95 },
-                            visible: { opacity: 1, y: 0, scale: 1 }
-                          }}
-                          transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                        >
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button className="flex flex-col items-center p-2.5 bg-white rounded-xl border border-slate-200 text-center hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer w-full">
-                                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center mb-1">
-                                  <TrendingDown className="w-3.5 h-3.5 text-slate-600" />
-                                </div>
-                                <p className="text-[8px] text-slate-500 mb-0.5">병상 소진</p>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">-3</p>
-                                <p className="text-[8px] text-slate-500 leading-tight">병상/시간</p>
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-3 rounded-xl border border-slate-200 shadow-lg" side="top">
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <TrendingDown className="w-3.5 h-3.5 text-slate-600" />
-                                  </div>
-                                  <p className="text-sm font-bold text-slate-800">병상 소진 트렌드</p>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">
-                                  최근 1시간 동안의 병상 변화율을 AI가 분석합니다. 음수(-)는 병상이 줄어드는 중, 양수(+)는 병상이 늘어나는 중입니다.
-                                </p>
-                                <div className="bg-slate-100 rounded-lg p-2 text-[10px] text-slate-600">
-                                  <p><span className="font-medium">-3 병상/시간</span> = 1시간에 평균 3개의 병상이 소진됨</p>
-                                </div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </motion.div>
-                      </motion.div>
-
-                      {/* Bottom CTA - Compact */}
-                      <button 
-                        onClick={() => navigate("/map")}
-                        className="relative mt-3 pt-2.5 border-t border-slate-200 w-full text-left hover:bg-slate-100/50 -mx-1 px-1 rounded-lg transition-colors"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <Sparkles className="w-3 h-3 text-slate-500" />
-                            <p className="text-[10px] text-slate-600 font-medium">
-                              병원 상세정보에서 확인
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
-                            <span>지도</span>
-                            <ChevronRight className="w-3 h-3" />
-                          </div>
-                        </div>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
         </motion.div>
 
         {/* Role Selection */}
