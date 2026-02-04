@@ -233,10 +233,6 @@ const KakaoMapView = ({
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
         mapRef.current = map;
 
-        // Add zoom control
-        const zoomControl = new window.kakao.maps.ZoomControl();
-        map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
-
         // Track zoom/pan changes for custom clustering - use 'idle' for stable bounds
         window.kakao.maps.event.addListener(map, "idle", () => {
           const level = map.getLevel();
