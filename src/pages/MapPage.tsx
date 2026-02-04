@@ -563,38 +563,47 @@ const MapPage = () => {
           />
         )}
 
-        {/* Zoom Controls */}
-        <div className="absolute right-4 top-1/3 -translate-y-1/2 z-[1000] flex flex-col gap-2">
-          <button
-            onClick={() => setMapZoom((prev) => Math.min(prev + 1, 18))}
-            disabled={mapZoom >= 18}
-            className={`bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center transition-colors border border-gray-100 ${
-              mapZoom >= 18 
-                ? "opacity-50 cursor-not-allowed" 
-                : "hover:bg-gray-50 active:bg-gray-100"
-            }`}
-            aria-label="확대"
-          >
-            <Plus className="w-5 h-5 text-gray-700" />
-          </button>
-          
-          {/* Zoom Level Display */}
-          <div className="bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center border border-gray-100">
-            <span className="text-sm font-semibold text-gray-700">{mapZoom}</span>
+        {/* Zoom Controls - Vertical Slider */}
+        <div className="absolute right-4 top-1/3 -translate-y-1/2 z-[1000]">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-2 flex flex-col items-center gap-2">
+            {/* Zoom Level Display */}
+            <span className="text-xs font-bold text-gray-600 tabular-nums">{mapZoom}</span>
+            
+            {/* Vertical Slider */}
+            <div className="h-32 flex items-center justify-center">
+              <input
+                type="range"
+                min={4}
+                max={18}
+                value={mapZoom}
+                onChange={(e) => setMapZoom(Number(e.target.value))}
+                className="h-28 w-2 appearance-none bg-gray-200 rounded-full cursor-pointer
+                  [writing-mode:vertical-lr] [direction:rtl]
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-5
+                  [&::-webkit-slider-thumb]:h-5
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-primary
+                  [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:cursor-pointer
+                  [&::-webkit-slider-thumb]:transition-transform
+                  [&::-webkit-slider-thumb]:hover:scale-110
+                  [&::-moz-range-thumb]:w-5
+                  [&::-moz-range-thumb]:h-5
+                  [&::-moz-range-thumb]:rounded-full
+                  [&::-moz-range-thumb]:bg-primary
+                  [&::-moz-range-thumb]:border-0
+                  [&::-moz-range-thumb]:shadow-md
+                  [&::-moz-range-thumb]:cursor-pointer"
+                aria-label="줌 레벨 조절"
+              />
+            </div>
+            
+            {/* Min/Max Labels */}
+            <div className="flex flex-col items-center text-[10px] text-gray-400 font-medium">
+              <span>−</span>
+            </div>
           </div>
-          
-          <button
-            onClick={() => setMapZoom((prev) => Math.max(prev - 1, 4))}
-            disabled={mapZoom <= 4}
-            className={`bg-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center transition-colors border border-gray-100 ${
-              mapZoom <= 4 
-                ? "opacity-50 cursor-not-allowed" 
-                : "hover:bg-gray-50 active:bg-gray-100"
-            }`}
-            aria-label="축소"
-          >
-            <Minus className="w-5 h-5 text-gray-700" />
-          </button>
         </div>
 
         {/* Utility Buttons (Legend + Map Toggle + Location) */}
