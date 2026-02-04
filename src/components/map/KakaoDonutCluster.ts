@@ -34,13 +34,15 @@ export const calculateClusterStats = (hospitals: Hospital[]): ClusterStats => {
 };
 
 // Grid-based clustering
+// Note: Kakao Maps zoom levels are inverted (1 = zoomed in, 14 = zoomed out)
 export const clusterHospitals = (
   hospitals: Hospital[],
   mapBounds: { sw: { lat: number; lng: number }; ne: { lat: number; lng: number } },
   zoomLevel: number
 ): HospitalCluster[] => {
-  // Skip clustering at high zoom levels (detailed view)
-  if (zoomLevel <= 4) {
+  // Skip clustering at low zoom levels (detailed/zoomed-in view)
+  // Kakao: level 1-5 = zoomed in, level 6+ = zoomed out
+  if (zoomLevel <= 5) {
     // Return individual hospitals as single-item clusters
     return hospitals.map((h) => ({
       hospitals: [h],
@@ -49,10 +51,11 @@ export const clusterHospitals = (
     }));
   }
 
-  // Grid size based on zoom level (higher zoom = smaller grid = less clustering)
-  const gridSizeFactor = Math.pow(2, zoomLevel - 5);
-  const latGridSize = 0.5 / gridSizeFactor;
-  const lngGridSize = 0.6 / gridSizeFactor;
+  // Grid size based on zoom level
+  // Higher Kakao zoom level = more zoomed out = larger grid = more clustering
+  const clusteringStrength = Math.max(1, zoomLevel - 5);
+  const latGridSize = 0.05 * Math.pow(1.8, clusteringStrength);
+  const lngGridSize = 0.06 * Math.pow(1.8, clusteringStrength);
 
   const grid = new Map<string, Hospital[]>();
 
