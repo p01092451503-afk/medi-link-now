@@ -455,13 +455,9 @@ const MapPage = () => {
         setUserLocation(newLocation);
         setMapCenter(newLocation);
         
-        // Set radius to 10km if not already set
-        if (activeRadius === "all") {
-          setActiveRadius(10);
-          setMapZoom(getZoomForRadius(10));
-        } else {
-          setMapZoom(getZoomForRadius(activeRadius as number));
-        }
+        // Always set radius to 10km as default when clicking "My Location"
+        setActiveRadius(10);
+        setMapZoom(getZoomForRadius(10));
         
         // Use "all" region to show nearby hospitals across boundaries
         // (radius filter handles distance-based filtering)
@@ -471,7 +467,7 @@ const MapPage = () => {
         setIsLocating(false);
         toast({
           title: "현재 위치를 찾았습니다!",
-          description: `반경 ${activeRadius === "all" ? "10" : activeRadius}km 내 병원을 표시합니다.`,
+          description: "반경 10km 내 병원을 표시합니다.",
         });
       },
       () => {
