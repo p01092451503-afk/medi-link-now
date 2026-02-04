@@ -237,12 +237,13 @@ const KakaoMapView = ({
         const zoomControl = new window.kakao.maps.ZoomControl();
         map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
-        // Track zoom changes for custom clustering
-        window.kakao.maps.event.addListener(map, "zoom_changed", () => {
+        // Track zoom/pan changes for custom clustering - use 'idle' for stable bounds
+        window.kakao.maps.event.addListener(map, "idle", () => {
           const level = map.getLevel();
           setCurrentZoom(level);
         });
 
+        // Initial zoom level
         setCurrentZoom(leafletToKakaoZoom(zoom));
 
         setIsLoaded(true);
