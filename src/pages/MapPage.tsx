@@ -25,7 +25,6 @@ import { toast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
 import ClusteredMapView from "@/components/map/ClusteredMapView";
 import RadiusChips from "@/components/map/RadiusChips";
-import HospitalListPanel from "@/components/map/HospitalListPanel";
 import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
@@ -92,8 +91,6 @@ const MapPage = () => {
   const [selectedDriver, setSelectedDriver] = useState<DriverPresence | null>(null);
   const [excludeFullHospitals, setExcludeFullHospitals] = useState(false);
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
-  const [visibleHospitals, setVisibleHospitals] = useState<Hospital[]>([]);
-  const [isListExpanded, setIsListExpanded] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
 
@@ -496,12 +493,8 @@ const MapPage = () => {
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
-    setIsListExpanded(false);
   }, []);
 
-  const handleBoundsChange = useCallback((bounds: L.LatLngBounds, visible: Hospital[]) => {
-    setVisibleHospitals(visible);
-  }, []);
 
   const selectedDistance = selectedHospital && userLocation
     ? calculateDistance(userLocation[0], userLocation[1], selectedHospital.lat, selectedHospital.lng)
@@ -512,11 +505,8 @@ const MapPage = () => {
       {/* Location Coachmark */}
       <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
 
-      {/* Map Container - 60% height when list expanded, 100% otherwise */}
-      <div
-        className="relative flex-1 transition-all duration-300"
-        style={{ height: isListExpanded ? "60%" : "100%" }}
-      >
+      {/* Map Container - Full height */}
+      <div className="relative flex-1 h-full">
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
@@ -553,7 +543,6 @@ const MapPage = () => {
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
-            onBoundsChange={handleBoundsChange}
             isMoonlightMode={activeFilter === "moonlight"}
             rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
             isDriverMode={isDriverMode}
@@ -800,18 +789,6 @@ const MapPage = () => {
         )}
       </div>
 
-      {/* Hospital List Panel - Sync with map viewport (hidden in transfer mode) */}
-      {!hideMode && (
-        <HospitalListPanel
-          hospitals={visibleHospitals.length > 0 ? visibleHospitals : filteredHospitals}
-          userLocation={userLocation}
-          onHospitalClick={handleHospitalClick}
-          selectedHospitalId={selectedHospital?.id}
-          isExpanded={isListExpanded}
-          onToggleExpand={() => setIsListExpanded(!isListExpanded)}
-          isTransferMode={isTransferMode}
-        />
-      )}
 
       {/* Bottom Sheet for Selected Hospital */}
       <HospitalBottomSheet
