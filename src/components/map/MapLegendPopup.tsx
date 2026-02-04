@@ -3,18 +3,28 @@ import { createPortal } from "react-dom";
 import { HelpCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const MapLegendPopup = () => {
+interface MapLegendPopupProps {
+  size?: "default" | "large";
+}
+
+const MapLegendPopup = ({ size = "default" }: MapLegendPopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const isLarge = size === "large";
 
   return (
     <>
       {/* Help Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-100"
+        className={`bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-all duration-300 border border-gray-100 ${
+          isLarge 
+            ? "w-12 h-12 rounded-2xl shadow-md" 
+            : "w-10 h-10 rounded-lg"
+        }`}
         aria-label="지도 범례 보기"
       >
-        <HelpCircle className="w-5 h-5 text-gray-600" />
+        <HelpCircle className={`text-gray-600 ${isLarge ? "w-6 h-6" : "w-5 h-5"}`} />
       </button>
 
       {/* Popup Overlay - Rendered via Portal to avoid parent container issues */}

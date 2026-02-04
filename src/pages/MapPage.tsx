@@ -563,9 +563,8 @@ const MapPage = () => {
           />
         )}
 
-        {/* Map Controls (Zoom + Legend + Location) */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000] flex flex-col gap-2">
-          {/* Zoom Controls */}
+        {/* Zoom Controls */}
+        <div className="absolute right-4 top-1/3 -translate-y-1/2 z-[1000] flex flex-col gap-2">
           <button
             onClick={() => setMapZoom((prev) => Math.min(prev + 1, 18))}
             disabled={mapZoom >= 18}
@@ -596,32 +595,32 @@ const MapPage = () => {
           >
             <Minus className="w-5 h-5 text-gray-700" />
           </button>
+        </div>
 
+        {/* Utility Buttons (Legend + Map Toggle + Location) */}
+        <div className="absolute right-4 bottom-48 z-[1000] flex flex-col gap-3">
           {/* Map Legend Help Button */}
-          <MapLegendPopup />
+          <MapLegendPopup size="large" />
 
-          {/* Map Provider Toggle (DEV) */}
+          {/* Map Provider Toggle */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={toggleMapProvider}
-                className={`w-10 h-10 rounded-lg shadow-lg flex items-center justify-center transition-colors border ${
+                className={`w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 ${
                   isKakao 
-                    ? "bg-yellow-400 border-yellow-500 hover:bg-yellow-300" 
-                    : "bg-white border-gray-100 hover:bg-gray-50"
+                    ? "bg-yellow-400 shadow-yellow-400/40 hover:bg-yellow-300" 
+                    : "bg-white shadow-md hover:bg-gray-50 border border-gray-100"
                 }`}
                 aria-label="지도 전환"
               >
-                <MapIcon className={`w-5 h-5 ${isKakao ? "text-yellow-800" : "text-gray-700"}`} />
+                <MapIcon className={`w-6 h-6 ${isKakao ? "text-yellow-800" : "text-gray-700"}`} />
               </button>
             </TooltipTrigger>
             <TooltipContent side="left" className="text-xs">
               {isKakao ? "Leaflet으로 전환" : "카카오맵으로 전환"}
             </TooltipContent>
           </Tooltip>
-
-          {/* Spacer for separation */}
-          <div className="h-4" />
 
           {/* My Location Button - Apple Maps style */}
           <HoverCard openDelay={100} closeDelay={100}>
