@@ -532,6 +532,7 @@ const MapPage = () => {
             activeFilter={activeFilter}
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
+            isMoonlightMode={activeFilter === "moonlight"}
           />
         ) : (
           <ClusteredMapView
