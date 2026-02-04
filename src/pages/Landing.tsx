@@ -517,58 +517,58 @@ const Landing = () => {
           <div className="space-y-3">
             {/* Guardian/Patient Card */}
             <motion.button
-              whileHover={{ scale: 1.01, y: -1 }}
-              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+              whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-300 group"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(59,130,246,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-blue-200 transition-all duration-300 group"
             >
               <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shrink-0 group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(59,130,246,0.1),0_2px_4px_rgba(59,130,246,0.15)] group-hover:from-blue-100 group-hover:to-blue-200 group-hover:shadow-[inset_0_-2px_4px_rgba(59,130,246,0.15),0_3px_6px_rgba(59,130,246,0.2)] transition-all">
                   <Users className="w-7 h-7 text-blue-500" />
                 </div>
                 <div className="text-left flex-1 ml-4">
                   <p className="text-base font-bold text-slate-800 leading-tight">보호자 / 환자</p>
                   <p className="text-sm text-slate-400 leading-tight mt-1">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-blue-400 transition-colors" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
               </div>
             </motion.button>
 
             {/* Private Ambulance Card */}
             <motion.button
-              whileHover={{ scale: 1.01, y: -1 }}
-              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+              whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-300 group"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(100,116,139,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-slate-300 transition-all duration-300 group"
             >
               <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shrink-0 group-hover:from-slate-100 group-hover:to-slate-200 transition-colors">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(100,116,139,0.1),0_2px_4px_rgba(100,116,139,0.15)] group-hover:from-slate-100 group-hover:to-slate-200 group-hover:shadow-[inset_0_-2px_4px_rgba(100,116,139,0.15),0_3px_6px_rgba(100,116,139,0.2)] transition-all">
                   <Truck className="w-7 h-7 text-slate-500" />
                 </div>
                 <div className="text-left flex-1 ml-4">
                   <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차</p>
                   <p className="text-sm text-slate-400 leading-tight mt-1">전원 · 퇴원 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-slate-500 transition-colors" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
               </div>
             </motion.button>
 
             {/* Paramedic Card */}
             <motion.button
-              whileHover={{ scale: 1.01, y: -1 }}
-              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+              whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-orange-100 transition-all duration-300 group"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-orange-50/30 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(249,115,22,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-orange-200 transition-all duration-300 group"
             >
               <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-100 flex items-center justify-center shrink-0 group-hover:from-orange-100 group-hover:to-amber-200 transition-colors">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(249,115,22,0.1),0_2px_4px_rgba(249,115,22,0.15)] group-hover:from-orange-100 group-hover:to-amber-200 group-hover:shadow-[inset_0_-2px_4px_rgba(249,115,22,0.15),0_3px_6px_rgba(249,115,22,0.2)] transition-all">
                   <Ambulance className="w-7 h-7 text-orange-500" />
                 </div>
                 <div className="text-left flex-1 ml-4">
                   <p className="text-base font-bold text-slate-800 leading-tight">구급대원</p>
                   <p className="text-sm text-slate-400 leading-tight mt-1">병상 현황 · 거절이력 공유</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-orange-400 transition-colors" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
               </div>
             </motion.button>
           </div>
