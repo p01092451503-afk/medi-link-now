@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Hospital, FilterType } from "@/data/hospitals";
+import { Loader2 } from "lucide-react";
 
 declare global {
   interface Window {
@@ -30,6 +31,54 @@ const KOREA_BOUNDS = {
   ne: { lat: 38.8, lng: 132.0 },
 };
 
+// Load Kakao Maps SDK dynamically
+const loadKakaoSDK = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // Already loaded
+    if (window.kakao && window.kakao.maps) {
+      window.kakao.maps.load(() => resolve());
+      return;
+    }
+
+    const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
+    if (!apiKey) {
+      reject(new Error("VITE_KAKAO_MAP_API_KEY is not configured"));
+      return;
+    }
+
+    // Check if script is already in DOM
+    const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
+    if (existingScript) {
+      // Wait for it to load
+      const checkLoaded = setInterval(() => {
+        if (window.kakao && window.kakao.maps) {
+          clearInterval(checkLoaded);
+          window.kakao.maps.load(() => resolve());
+        }
+      }, 100);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
+    script.async = true;
+    
+    script.onload = () => {
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(() => resolve());
+      } else {
+        reject(new Error("Kakao Maps SDK failed to initialize"));
+      }
+    };
+    
+    script.onerror = () => {
+      reject(new Error("Failed to load Kakao Maps SDK"));
+    };
+
+    document.head.appendChild(script);
+  });
+};
+
 const KakaoMapView = ({
   hospitals,
   onHospitalClick,
@@ -42,64 +91,44 @@ const KakaoMapView = ({
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
-  const clustererRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Initialize Kakao Maps
   useEffect(() => {
-    if (!window.kakao || !window.kakao.maps) {
-      console.error("Kakao Maps SDK not loaded");
-      return;
-    }
+    let mounted = true;
 
-    window.kakao.maps.load(() => {
-      if (!mapContainerRef.current) return;
+    loadKakaoSDK()
+      .then(() => {
+        if (!mounted || !mapContainerRef.current) return;
 
-      const options = {
-        center: new window.kakao.maps.LatLng(center[0], center[1]),
-        level: leafletToKakaoZoom(zoom),
-      };
+        const options = {
+          center: new window.kakao.maps.LatLng(center[0], center[1]),
+          level: leafletToKakaoZoom(zoom),
+        };
 
-      const map = new window.kakao.maps.Map(mapContainerRef.current, options);
-      mapRef.current = map;
+        const map = new window.kakao.maps.Map(mapContainerRef.current, options);
+        mapRef.current = map;
 
-      // Set bounds restriction to Korea
-      const bounds = new window.kakao.maps.LatLngBounds(
-        new window.kakao.maps.LatLng(KOREA_BOUNDS.sw.lat, KOREA_BOUNDS.sw.lng),
-        new window.kakao.maps.LatLng(KOREA_BOUNDS.ne.lat, KOREA_BOUNDS.ne.lng)
-      );
+        // Add zoom control
+        const zoomControl = new window.kakao.maps.ZoomControl();
+        map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
-      // Initialize clusterer
-      clustererRef.current = new window.kakao.maps.MarkerClusterer({
-        map: map,
-        averageCenter: true,
-        minLevel: 5,
-        disableClickZoom: false,
-        styles: [
-          {
-            width: "50px",
-            height: "50px",
-            background: "linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)",
-            borderRadius: "25px",
-            color: "#fff",
-            textAlign: "center",
-            fontWeight: "bold",
-            lineHeight: "50px",
-            fontSize: "14px",
-            boxShadow: "0 4px 12px rgba(59, 130, 246, 0.4)",
-          },
-        ],
+        setIsLoaded(true);
+      })
+      .catch((error) => {
+        console.error("Kakao Maps initialization error:", error);
+        if (mounted) {
+          setLoadError(error.message);
+        }
       });
 
-      setIsLoaded(true);
-    });
-
     return () => {
-      // Cleanup
-      if (clustererRef.current) {
-        clustererRef.current.clear();
-      }
-      markersRef.current.forEach((marker) => marker.setMap(null));
+      mounted = false;
+      // Cleanup markers
+      markersRef.current.forEach((marker) => {
+        if (marker.setMap) marker.setMap(null);
+      });
       markersRef.current = [];
     };
   }, []);
@@ -127,7 +156,8 @@ const KakaoMapView = ({
       const position = new window.kakao.maps.LatLng(userLocation[0], userLocation[1]);
       
       // Create user location marker with custom overlay
-      const content = `
+      const content = document.createElement("div");
+      content.innerHTML = `
         <div style="
           position: relative;
           width: 24px;
@@ -150,15 +180,9 @@ const KakaoMapView = ({
             top: -8px;
             background: rgba(59, 130, 246, 0.2);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: kakao-pulse 2s infinite;
           "></div>
         </div>
-        <style>
-          @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.5); opacity: 0; }
-          }
-        </style>
       `;
 
       const overlay = new window.kakao.maps.CustomOverlay({
@@ -175,15 +199,16 @@ const KakaoMapView = ({
 
   // Update hospital markers
   useEffect(() => {
-    if (!mapRef.current || !isLoaded || !clustererRef.current) return;
+    if (!mapRef.current || !isLoaded) return;
 
     // Clear existing markers
-    clustererRef.current.clear();
-    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current.forEach((marker) => {
+      if (marker.setMap) marker.setMap(null);
+    });
     markersRef.current = [];
 
     // Create new markers
-    const markers = hospitals.map((hospital) => {
+    hospitals.forEach((hospital) => {
       const position = new window.kakao.maps.LatLng(hospital.lat, hospital.lng);
       
       // Determine marker color based on bed availability
@@ -199,17 +224,18 @@ const KakaoMapView = ({
         borderColor = "#ca8a04";
       }
 
-      // Create custom marker
+      // Create custom marker element
       const content = document.createElement("div");
+      content.className = "kakao-hospital-marker-wrapper";
+      content.style.cssText = "cursor: pointer;";
       content.innerHTML = `
         <div class="kakao-hospital-marker" style="
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
-          cursor: pointer;
         ">
-          <div style="
+          <div class="marker-circle" style="
             width: 42px;
             height: 42px;
             background: ${bgColor};
@@ -246,37 +272,62 @@ const KakaoMapView = ({
       });
 
       // Add click event
-      content.onclick = () => {
+      content.addEventListener("click", () => {
         onHospitalClick(hospital);
-      };
+      });
 
       // Add hover effect
-      content.onmouseenter = () => {
-        const markerDiv = content.querySelector(".kakao-hospital-marker > div:first-child") as HTMLElement;
+      content.addEventListener("mouseenter", () => {
+        const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1.15)";
-      };
-      content.onmouseleave = () => {
-        const markerDiv = content.querySelector(".kakao-hospital-marker > div:first-child") as HTMLElement;
+      });
+      content.addEventListener("mouseleave", () => {
+        const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1)";
-      };
+      });
 
-      return overlay;
+      overlay.setMap(mapRef.current);
+      markersRef.current.push(overlay);
     });
+  }, [hospitals, isLoaded, onHospitalClick]);
 
-    // Add markers to clusterer
-    markersRef.current = markers;
-    markers.forEach((marker) => marker.setMap(mapRef.current));
+  // Loading state
+  if (loadError) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+        <div className="text-center p-6">
+          <p className="text-red-500 font-semibold mb-2">카카오맵 로드 실패</p>
+          <p className="text-sm text-gray-500">{loadError}</p>
+        </div>
+      </div>
+    );
+  }
 
-    // Note: Kakao clusterer with CustomOverlay requires different approach
-    // For now, show markers directly
-  }, [hospitals, isLoaded, onHospitalClick, activeFilter]);
+  if (!isLoaded) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+          <p className="text-sm text-gray-600">카카오맵 로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div 
-      ref={mapContainerRef} 
-      className="absolute inset-0" 
-      style={{ height: "100vh", width: "100vw" }}
-    />
+    <>
+      <style>{`
+        @keyframes kakao-pulse {
+          0% { transform: scale(1); opacity: 1; }
+          100% { transform: scale(1.5); opacity: 0; }
+        }
+      `}</style>
+      <div 
+        ref={mapContainerRef} 
+        className="absolute inset-0" 
+        style={{ height: "100vh", width: "100vw" }}
+      />
+    </>
   );
 };
 
