@@ -6,157 +6,157 @@ interface MiniMapOverlayProps {
   onRegionClick: (center: [number, number], zoom: number, name: string) => void;
 }
 
-// Korean provinces/metropolitan cities with approximate SVG paths and centers
+// Korean provinces with accurate SVG paths based on actual geography
 const REGIONS = [
   { 
     id: "seoul", 
     name: "서울", 
     center: [37.5665, 126.978] as [number, number], 
     zoom: 12,
-    path: "M38 28 L42 27 L43 30 L40 32 L37 30 Z",
-    labelPos: { x: 40, y: 29 }
+    path: "M47.5,32.5 L50,31.5 L51.5,33 L50,35 L47,34 Z",
+    color: "#6366F1"
   },
   { 
     id: "incheon", 
     name: "인천", 
     center: [37.4563, 126.7052] as [number, number], 
     zoom: 11,
-    path: "M32 28 L37 27 L38 32 L35 35 L30 32 Z",
-    labelPos: { x: 34, y: 31 }
+    path: "M40,33 L44,31 L47,33 L46,37 L42,40 L38,38 L36,35 Z",
+    color: "#8B5CF6"
   },
   { 
     id: "gyeonggi", 
     name: "경기", 
     center: [37.4138, 127.5183] as [number, number], 
     zoom: 9,
-    path: "M30 20 L50 18 L55 25 L52 35 L43 38 L35 36 L28 30 Z",
-    labelPos: { x: 48, y: 28 }
+    path: "M44,24 L58,22 L64,28 L62,38 L56,42 L50,40 L46,37 L44,32 L48,30 L52,32 L54,36 L52,38 L48,36 L46,34 L50,32 L48,30 L44,32 Z M51,33 L53,32 L54,34 L52,35 Z",
+    color: "#A78BFA"
   },
   { 
     id: "gangwon", 
     name: "강원", 
     center: [37.8228, 128.1555] as [number, number], 
     zoom: 9,
-    path: "M50 8 L72 5 L78 20 L70 35 L55 38 L50 30 L52 18 Z",
-    labelPos: { x: 62, y: 22 }
+    path: "M58,18 L78,12 L88,18 L86,32 L80,42 L68,48 L60,44 L56,38 L58,28 L62,24 Z",
+    color: "#34D399"
   },
   { 
     id: "chungbuk", 
     name: "충북", 
     center: [36.6357, 127.4912] as [number, number], 
     zoom: 10,
-    path: "M45 38 L60 36 L65 45 L55 52 L42 48 Z",
-    labelPos: { x: 52, y: 44 }
-  },
-  { 
-    id: "chungnam", 
-    name: "충남", 
-    center: [36.5184, 126.8] as [number, number], 
-    zoom: 10,
-    path: "M22 38 L42 36 L45 48 L38 55 L20 52 L18 45 Z",
-    labelPos: { x: 30, y: 46 }
+    path: "M52,42 L66,40 L72,48 L68,56 L58,60 L50,56 L48,48 Z",
+    color: "#FBBF24"
   },
   { 
     id: "sejong", 
     name: "세종", 
     center: [36.4801, 127.2892] as [number, number], 
     zoom: 12,
-    path: "M40 42 L45 41 L46 45 L42 47 Z",
-    labelPos: { x: 43, y: 44 }
+    path: "M48,52 L52,51 L53,54 L50,56 Z",
+    color: "#F472B6"
   },
   { 
     id: "daejeon", 
     name: "대전", 
     center: [36.3504, 127.3845] as [number, number], 
     zoom: 12,
-    path: "M42 48 L48 47 L49 52 L44 53 Z",
-    labelPos: { x: 45, y: 50 }
+    path: "M50,56 L55,55 L56,59 L52,61 Z",
+    color: "#FB923C"
+  },
+  { 
+    id: "chungnam", 
+    name: "충남", 
+    center: [36.5184, 126.8] as [number, number], 
+    zoom: 10,
+    path: "M28,42 L48,40 L50,48 L52,52 L50,58 L44,64 L32,66 L24,60 L22,50 Z",
+    color: "#38BDF8"
   },
   { 
     id: "jeonbuk", 
     name: "전북", 
     center: [35.8203, 127.1088] as [number, number], 
     zoom: 10,
-    path: "M18 52 L42 50 L48 58 L42 68 L22 70 L15 60 Z",
-    labelPos: { x: 30, y: 60 }
+    path: "M28,64 L46,62 L54,66 L52,76 L44,82 L30,84 L22,76 L20,68 Z",
+    color: "#4ADE80"
   },
   { 
     id: "gwangju", 
     name: "광주", 
     center: [35.1595, 126.8526] as [number, number], 
     zoom: 12,
-    path: "M25 72 L32 71 L33 76 L27 77 Z",
-    labelPos: { x: 29, y: 74 }
+    path: "M32,82 L38,80 L40,84 L36,87 Z",
+    color: "#F87171"
   },
   { 
     id: "jeonnam", 
     name: "전남", 
     center: [34.8161, 126.4629] as [number, number], 
     zoom: 9,
-    path: "M8 65 L25 62 L35 68 L40 78 L35 88 L15 92 L5 82 Z",
-    labelPos: { x: 20, y: 78 }
+    path: "M14,76 L30,72 L38,78 L44,84 L42,94 L32,100 L18,98 L8,90 L6,82 Z",
+    color: "#2DD4BF"
   },
   { 
     id: "gyeongbuk", 
     name: "경북", 
     center: [36.4919, 128.8889] as [number, number], 
     zoom: 9,
-    path: "M55 35 L75 32 L82 45 L78 60 L60 65 L50 55 L52 42 Z",
-    labelPos: { x: 65, y: 50 }
+    path: "M60,44 L78,40 L88,48 L86,64 L78,72 L68,76 L58,72 L54,62 L56,52 Z",
+    color: "#A3E635"
   },
   { 
     id: "daegu", 
     name: "대구", 
     center: [35.8714, 128.6014] as [number, number], 
     zoom: 11,
-    path: "M62 58 L70 56 L72 62 L66 65 Z",
-    labelPos: { x: 66, y: 61 }
+    path: "M66,68 L74,66 L76,72 L72,76 L66,74 Z",
+    color: "#E879F9"
   },
   { 
     id: "ulsan", 
     name: "울산", 
     center: [35.5384, 129.3114] as [number, number], 
     zoom: 11,
-    path: "M75 62 L82 60 L85 68 L78 72 Z",
-    labelPos: { x: 79, y: 66 }
+    path: "M80,70 L88,68 L90,76 L84,80 Z",
+    color: "#FB7185"
   },
   { 
     id: "gyeongnam", 
     name: "경남", 
     center: [35.4606, 128.2132] as [number, number], 
     zoom: 9,
-    path: "M40 68 L62 65 L75 72 L72 82 L55 88 L38 85 L35 75 Z",
-    labelPos: { x: 52, y: 76 }
+    path: "M44,76 L66,72 L78,78 L82,82 L78,92 L64,98 L48,96 L40,88 Z",
+    color: "#60A5FA"
   },
   { 
     id: "busan", 
     name: "부산", 
     center: [35.1796, 129.0756] as [number, number], 
     zoom: 11,
-    path: "M72 78 L80 75 L83 82 L76 86 Z",
-    labelPos: { x: 76, y: 80 }
+    path: "M78,86 L86,82 L90,88 L86,94 L80,92 Z",
+    color: "#C084FC"
   },
   { 
     id: "jeju", 
     name: "제주", 
     center: [33.4996, 126.5312] as [number, number], 
     zoom: 10,
-    path: "M20 95 L38 94 L40 98 L22 99 Z",
-    labelPos: { x: 30, y: 97 }
+    path: "M24,108 L42,106 L46,112 L40,116 L22,116 L18,112 Z",
+    color: "#FBBF24"
   },
 ];
 
-// Convert lat/lng to percentage position on the mini map
+// Korea bounds for coordinate conversion
 const KOREA_BOUNDS = {
-  minLat: 33.0,
-  maxLat: 38.8,
+  minLat: 32.5,
+  maxLat: 39.0,
   minLng: 124.0,
   maxLng: 132.0,
 };
 
 const latToY = (lat: number) => {
   const normalized = (lat - KOREA_BOUNDS.minLat) / (KOREA_BOUNDS.maxLat - KOREA_BOUNDS.minLat);
-  return (1 - normalized) * 100;
+  return (1 - normalized) * 120;
 };
 
 const lngToX = (lng: number) => {
@@ -168,17 +168,20 @@ const lngToX = (lng: number) => {
 function getCurrentRegionId(center: [number, number]): string {
   const [lat, lng] = center;
   
-  // Check each region's approximate bounds
+  let closestRegion = "";
+  let closestDist = Infinity;
+  
   for (const region of REGIONS) {
     const [rLat, rLng] = region.center;
-    const tolerance = region.zoom >= 11 ? 0.15 : 0.5;
+    const dist = Math.sqrt(Math.pow(lat - rLat, 2) + Math.pow(lng - rLng, 2));
     
-    if (Math.abs(lat - rLat) < tolerance && Math.abs(lng - rLng) < tolerance * 1.5) {
-      return region.id;
+    if (dist < closestDist) {
+      closestDist = dist;
+      closestRegion = region.id;
     }
   }
   
-  return "";
+  return closestDist < 1 ? closestRegion : "";
 }
 
 const MiniMapOverlay = memo(({ center, zoom, onRegionClick }: MiniMapOverlayProps) => {
@@ -196,71 +199,148 @@ const MiniMapOverlay = memo(({ center, zoom, onRegionClick }: MiniMapOverlayProp
   };
 
   return (
-    <div className="absolute left-4 bottom-52 z-[999] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <svg
-        viewBox="0 0 100 105"
-        className="w-24 h-28"
-        style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.1))" }}
+    <div 
+      className="absolute left-4 bottom-52 z-[999] rounded-2xl overflow-hidden"
+      style={{
+        background: "linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.7) 100%)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5)",
+        border: "1px solid rgba(255,255,255,0.6)",
+      }}
+    >
+      {/* Header */}
+      <div 
+        className="px-3 py-1.5 border-b"
+        style={{ 
+          borderColor: "rgba(0,0,0,0.06)",
+          background: "rgba(255,255,255,0.5)"
+        }}
       >
-        {/* Background */}
-        <rect x="0" y="0" width="100" height="105" fill="#F8FAFC" />
-        
-        {/* Regions */}
-        {REGIONS.map((region) => {
-          const isHovered = hoveredRegion === region.id;
-          const isCurrent = currentRegionId === region.id;
+        <span className="text-[10px] font-semibold text-gray-600 tracking-wide">대한민국</span>
+      </div>
+      
+      <div className="p-2">
+        <svg
+          viewBox="0 0 100 120"
+          className="w-36 h-44"
+        >
+          {/* Subtle grid background */}
+          <defs>
+            <pattern id="minimap-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="0.5"/>
+            </pattern>
+            <filter id="region-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1" stdDeviation="1" floodOpacity="0.15"/>
+            </filter>
+            <linearGradient id="current-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.8"/>
+              <stop offset="100%" stopColor="#1D4ED8" stopOpacity="0.9"/>
+            </linearGradient>
+          </defs>
           
-          return (
-            <g key={region.id}>
-              <path
-                d={region.path}
-                fill={isCurrent ? "#3B82F6" : isHovered ? "#93C5FD" : "#E2E8F0"}
-                stroke={isCurrent ? "#1D4ED8" : "#94A3B8"}
-                strokeWidth={isCurrent ? "1.5" : "0.5"}
-                className="cursor-pointer transition-colors duration-150"
-                onMouseEnter={() => setHoveredRegion(region.id)}
-                onMouseLeave={() => setHoveredRegion(null)}
-                onClick={() => handleRegionClick(region)}
-              />
-              {/* Region label - show on hover or if it's a major city */}
-              {(isHovered || isCurrent) && (
+          <rect x="0" y="0" width="100" height="120" fill="url(#minimap-grid)" />
+          
+          {/* Ocean hint */}
+          <rect x="0" y="0" width="100" height="120" fill="rgba(147, 197, 253, 0.1)" />
+          
+          {/* Regions */}
+          {REGIONS.map((region) => {
+            const isHovered = hoveredRegion === region.id;
+            const isCurrent = currentRegionId === region.id;
+            
+            return (
+              <g key={region.id} filter={isHovered || isCurrent ? "url(#region-shadow)" : undefined}>
+                <path
+                  d={region.path}
+                  fill={isCurrent ? "url(#current-glow)" : isHovered ? `${region.color}90` : "rgba(226, 232, 240, 0.8)"}
+                  stroke={isCurrent ? "#1E40AF" : isHovered ? region.color : "rgba(148, 163, 184, 0.6)"}
+                  strokeWidth={isCurrent ? "1.5" : isHovered ? "1" : "0.5"}
+                  className="cursor-pointer transition-all duration-200"
+                  style={{ 
+                    transform: isHovered && !isCurrent ? "scale(1.02)" : "scale(1)",
+                    transformOrigin: "center",
+                  }}
+                  onMouseEnter={() => setHoveredRegion(region.id)}
+                  onMouseLeave={() => setHoveredRegion(null)}
+                  onClick={() => handleRegionClick(region)}
+                />
+              </g>
+            );
+          })}
+
+          {/* Current view indicator - pulsing red dot */}
+          <g className="pointer-events-none">
+            <circle
+              cx={viewX}
+              cy={viewY}
+              r="6"
+              fill="rgba(239, 68, 68, 0.2)"
+              className="animate-ping"
+            />
+            <circle
+              cx={viewX}
+              cy={viewY}
+              r="4"
+              fill="#EF4444"
+              stroke="#FFFFFF"
+              strokeWidth="1.5"
+              style={{ filter: "drop-shadow(0 2px 4px rgba(239, 68, 68, 0.4))" }}
+            />
+          </g>
+          
+          {/* Region labels for hovered/current */}
+          {REGIONS.map((region) => {
+            const isHovered = hoveredRegion === region.id;
+            const isCurrent = currentRegionId === region.id;
+            
+            if (!isHovered && !isCurrent) return null;
+            
+            // Calculate label position from path center
+            const pathMatch = region.path.match(/M([\d.]+),([\d.]+)/);
+            if (!pathMatch) return null;
+            
+            const labelX = parseFloat(pathMatch[1]) + 8;
+            const labelY = parseFloat(pathMatch[2]) + 8;
+            
+            return (
+              <g key={`label-${region.id}`} className="pointer-events-none">
+                <rect
+                  x={labelX - 10}
+                  y={labelY - 5}
+                  width="20"
+                  height="10"
+                  rx="3"
+                  fill={isCurrent ? "#1E40AF" : "rgba(255,255,255,0.95)"}
+                  stroke={isCurrent ? "transparent" : "rgba(0,0,0,0.1)"}
+                  strokeWidth="0.5"
+                />
                 <text
-                  x={region.labelPos.x}
-                  y={region.labelPos.y}
+                  x={labelX}
+                  y={labelY + 3}
                   textAnchor="middle"
-                  fontSize="5"
+                  fontSize="6"
                   fontWeight="600"
-                  fill={isCurrent ? "#FFFFFF" : "#1E40AF"}
-                  className="pointer-events-none select-none"
-                  style={{ textShadow: isCurrent ? "none" : "0 0 2px white" }}
+                  fill={isCurrent ? "#FFFFFF" : "#374151"}
                 >
                   {region.name}
                 </text>
-              )}
-            </g>
-          );
-        })}
-
-        {/* Current view indicator */}
-        <circle
-          cx={viewX}
-          cy={viewY}
-          r="2.5"
-          fill="#EF4444"
-          stroke="#FFFFFF"
-          strokeWidth="1"
-          className="pointer-events-none"
-        />
-      </svg>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
       
-      {/* Hovered region name tooltip */}
-      {hoveredRegion && (
-        <div className="absolute bottom-1 left-0 right-0 text-center">
-          <span className="text-[9px] font-semibold text-primary bg-white/90 px-1.5 py-0.5 rounded shadow-sm">
-            {REGIONS.find(r => r.id === hoveredRegion)?.name}
-          </span>
-        </div>
-      )}
+      {/* Footer hint */}
+      <div 
+        className="px-3 py-1.5 border-t text-center"
+        style={{ 
+          borderColor: "rgba(0,0,0,0.06)",
+          background: "rgba(0,0,0,0.02)"
+        }}
+      >
+        <span className="text-[9px] text-gray-400">클릭하여 이동</span>
+      </div>
     </div>
   );
 });
