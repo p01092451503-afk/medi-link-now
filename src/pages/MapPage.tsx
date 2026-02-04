@@ -496,7 +496,6 @@ const MapPage = () => {
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
-    setMapZoom(16);
     setIsListExpanded(false);
   }, []);
 
