@@ -1753,7 +1753,7 @@ export type BedFilterType = "all" | "adult" | "pediatric" | "fever" | "ct";
 export type ProcedureFilterType = "heart" | "brainBleed" | "brainStroke" | "neuro" | "endoscopy" | "dialysis" | "trauma" | "cardio";
 
 // Special facility filters
-export type SpecialFilterType = "pharmacy" | "traumaCenter" | "moonlight";
+export type SpecialFilterType = "pharmacy" | "traumaCenter" | "moonlight" | "nightCare";
 
 // Legal emergency medical institution filters (법정 응급의료기관)
 export type LegalGradeFilterType = "legal_only" | "regional_center" | "local_center" | "local_institution";
@@ -1782,6 +1782,7 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   // Special facility types
   { id: "traumaCenter", label: "Trauma Center Only", labelKr: "외상센터", category: "special" },
   { id: "moonlight", label: "Night Pediatric", labelKr: "야간소아", category: "special" },
+  { id: "nightCare", label: "Night Care", labelKr: "야간진료", category: "special" },
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {
@@ -1831,6 +1832,10 @@ export const filterHospitals = (hospitals: Hospital[], filter: FilterType): Hosp
     case "moonlight":
       // 달빛어린이병원 (소아 진료 가능 병원) - 야간 소아 진료
       return hospitals.filter((h) => h.beds.pediatric > 0);
+    case "nightCare":
+      // 야간진료 병원 - nightCareHpids Set이 전달되면 해당 병원만 필터링
+      // (외부에서 필터링해야 함 - useHospitalDetails 데이터 필요)
+      return hospitals;
     // Legal emergency medical institution filters (법정 응급의료기관)
     case "legal_only":
       return hospitals.filter((h) => h.emergencyGrade !== null && h.emergencyGrade !== undefined);

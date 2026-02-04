@@ -38,6 +38,7 @@ import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import { useNursingHospitals } from "@/hooks/useNursingHospitals";
+import { useHospitalDetails } from "@/hooks/useHospitalDetails";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
@@ -124,6 +125,22 @@ const MapPage = () => {
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
 
+  // Fetch night care hospital data when filter is set to 'nightCare'
+  const isNightCareFilter = activeFilter === "nightCare";
+  const { data: hospitalDetailsData, isLoading: isLoadingNightCare } = useHospitalDetails({
+    enabled: isNightCareFilter,
+  });
+
+  // Create a Set of night care hospital names for efficient lookup
+  const nightCareHospitalNames = useMemo(() => {
+    if (!hospitalDetailsData) return new Set<string>();
+    return new Set(
+      hospitalDetailsData
+        .filter((h) => h.hasNightCare)
+        .map((h) => h.hospitalName)
+    );
+  }, [hospitalDetailsData]);
+
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
     setShowDispatchModal(true);
@@ -144,6 +161,11 @@ const MapPage = () => {
         const totalBeds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
         return totalBeds > 0;
       });
+    }
+
+    // Night care filter - filter by hospital names from API data
+    if (activeFilter === "nightCare" && nightCareHospitalNames.size > 0) {
+      result = result.filter((h) => nightCareHospitalNames.has(h.nameKr));
     }
 
     // Transfer mode filtering based on transfer filter
@@ -203,7 +225,7 @@ const MapPage = () => {
     }
 
     return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter, nightCareHospitalNames]);
 
   // Filter holiday pharmacies by selected region
   const filteredPharmacies = useMemo(() => {
@@ -735,6 +757,7 @@ const MapPage = () => {
                   const isActive = activeFilter === f.id;
                   const isTraumaCenter = f.id === "traumaCenter";
                   const isMoonlight = f.id === "moonlight";
+                  const isNightCare = f.id === "nightCare";
 
                   const handleFilterClick = () => {
                     setActiveFilter(f.id);
@@ -752,11 +775,14 @@ const MapPage = () => {
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
                             : isMoonlight
                               ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
-                              : "bg-primary text-white shadow-md"
+                              : isNightCare
+                                ? "bg-gradient-to-r from-indigo-500 to-blue-600 text-white shadow-md shadow-indigo-500/30"
+                                : "bg-primary text-white shadow-md"
                           : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
                       }`}
                     >
                       {isMoonlight && <span className="text-xs">🌙</span>}
+                      {isNightCare && <span className="text-xs">🌃</span>}
                       {isTraumaCenter && (
                         <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
                           isActive ? "bg-white/20" : "bg-purple-100"
