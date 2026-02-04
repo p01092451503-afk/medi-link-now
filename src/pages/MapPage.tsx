@@ -562,7 +562,7 @@ const MapPage = () => {
             <div className="h-32 flex items-center justify-center">
               <input
                 type="range"
-                min={6}
+                min={5}
                 max={18}
                 value={mapZoom}
                 onChange={(e) => setMapZoom(Number(e.target.value))}

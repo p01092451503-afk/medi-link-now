@@ -280,7 +280,7 @@ const KOREA_BOUNDS: KoreaBoundsLiteral = [
 ];
 
 // Minimum zoom level to ensure Korea stays in view (never show beyond Korea)
-const KOREA_MIN_ZOOM = 6;
+const KOREA_MIN_ZOOM = 5;
 
 const computeMinZoomToContainViewportInBounds = (map: L.Map, bounds: L.LatLngBounds) => {
   const size = map.getSize();

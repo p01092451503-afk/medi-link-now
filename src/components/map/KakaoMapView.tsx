@@ -319,7 +319,7 @@ const KakaoMapView = ({
           center: new window.kakao.maps.LatLng(center[0], center[1]),
           level: leafletToKakaoZoom(zoom),
           minLevel: 1,  // Most zoomed in (equivalent to Leaflet 17)
-          maxLevel: 12, // Most zoomed out - keeps Korea in view (equivalent to Leaflet ~6)
+          maxLevel: 13, // Most zoomed out - shows all of Korea including Jeju & Ulleungdo
         };
 
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
