@@ -18,7 +18,43 @@ interface KakaoMapViewProps {
   activeFilter: FilterType;
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
+  isMoonlightMode?: boolean;
 }
+
+// Get marker colors based on emergency grade
+const getGradeColors = (emergencyGrade?: string | null) => {
+  switch (emergencyGrade) {
+    case "regional_center":
+      return { bg: "#DC2626", border: "#B91C1C" }; // red
+    case "local_center":
+      return { bg: "#F97316", border: "#EA580C" }; // orange
+    case "local_institution":
+      return { bg: "#2563EB", border: "#1D4ED8" }; // blue
+    default:
+      return null; // use status-based colors
+  }
+};
+
+// Moonlight colors - pastel yellow
+const getMoonlightColors = () => ({
+  bg: "#FEF3C7",
+  border: "#F59E0B",
+  text: "#92400E",
+});
+
+// Get grade label for badge
+const getGradeLabel = (emergencyGrade?: string | null): string => {
+  switch (emergencyGrade) {
+    case "regional_center":
+      return "권역";
+    case "local_center":
+      return "지역센터";
+    case "local_institution":
+      return "지역기관";
+    default:
+      return "";
+  }
+};
 
 // Convert Leaflet zoom (0-18) to Kakao zoom (1-14, inverted)
 const leafletToKakaoZoom = (leafletZoom: number): number => {
@@ -102,6 +138,7 @@ const KakaoMapView = ({
   activeFilter,
   nursingHospitals = [],
   onNursingHospitalClick,
+  isMoonlightMode = false,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -236,18 +273,102 @@ const KakaoMapView = ({
     hospitals.forEach((hospital) => {
       const position = new window.kakao.maps.LatLng(hospital.lat, hospital.lng);
       
-      // Determine marker color based on bed availability
+      // Determine marker color based on mode and status
       const totalBeds = (hospital.beds?.general || 0) + (hospital.beds?.pediatric || 0);
-      let bgColor = "#22c55e"; // green
-      let borderColor = "#16a34a";
-      
-      if (totalBeds === 0) {
-        bgColor = "#ef4444"; // red
-        borderColor = "#dc2626";
-      } else if (totalBeds <= 3) {
-        bgColor = "#eab308"; // yellow
-        borderColor = "#ca8a04";
+      let bgColor: string;
+      let borderColor: string;
+      let textColor = "white";
+
+      if (isMoonlightMode) {
+        // Moonlight mode - pastel yellow
+        const moonlightColors = getMoonlightColors();
+        bgColor = moonlightColors.bg;
+        borderColor = moonlightColors.border;
+        textColor = moonlightColors.text;
+      } else {
+        // Check emergency grade colors first
+        const gradeColors = getGradeColors(hospital.emergencyGrade);
+        if (gradeColors) {
+          bgColor = gradeColors.bg;
+          borderColor = gradeColors.border;
+        } else {
+          // Default status-based colors
+          if (totalBeds === 0) {
+            bgColor = "#ef4444"; // red
+            borderColor = "#dc2626";
+          } else if (totalBeds <= 3) {
+            bgColor = "#eab308"; // yellow
+            borderColor = "#ca8a04";
+          } else {
+            bgColor = "#22c55e"; // green
+            borderColor = "#16a34a";
+          }
+        }
       }
+
+      // Grade label badge (only for non-moonlight mode)
+      const gradeLabel = !isMoonlightMode ? getGradeLabel(hospital.emergencyGrade) : "";
+      const gradeBadgeHtml = gradeLabel
+        ? `<div style="
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+          ">${gradeLabel}</div>`
+        : "";
+
+      // Trauma center badge (purple + icon)
+      const traumaBadgeHtml = hospital.isTraumaCenter && !isMoonlightMode
+        ? `<div style="
+            position: absolute;
+            top: -14px;
+            left: -14px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(124, 58, 237, 0.6);
+            z-index: 10;
+          ">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <rect x="10" y="4" width="4" height="16" rx="1" fill="white"/>
+              <rect x="4" y="10" width="16" height="4" rx="1" fill="white"/>
+            </svg>
+          </div>`
+        : "";
+
+      // Moonlight badge (moon icon)
+      const moonlightBadgeHtml = isMoonlightMode
+        ? `<div style="
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #312E81 0%, #4338CA 100%);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.5);
+            z-index: 10;
+          ">
+            <span style="font-size: 12px;">🌙</span>
+          </div>`
+        : "";
 
       // Create custom marker element
       const content = document.createElement("div");
@@ -261,6 +382,7 @@ const KakaoMapView = ({
           align-items: center;
         ">
           <div class="marker-circle" style="
+            position: relative;
             width: 42px;
             height: 42px;
             background: ${bgColor};
@@ -273,10 +395,12 @@ const KakaoMapView = ({
             transition: transform 0.2s;
           ">
             <span style="
-              color: white;
-              font-size: 14px;
-              font-weight: 700;
+              color: ${textColor};
+              font-size: 18px;
+              font-weight: 800;
+              line-height: 1;
             ">${totalBeds}</span>
+            ${isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
           </div>
           <div style="
             width: 0;
@@ -286,6 +410,7 @@ const KakaoMapView = ({
             border-top: 8px solid ${borderColor};
             margin-top: -2px;
           "></div>
+          ${gradeBadgeHtml}
         </div>
       `;
 
@@ -314,7 +439,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode]);
 
   // Update nursing hospital markers
   useEffect(() => {
