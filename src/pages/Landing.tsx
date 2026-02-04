@@ -510,84 +510,78 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        {/* Role Selection - Premium Cards */}
+        {/* Role Selection - Compact Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
           className="w-full"
         >
-          <div className="flex items-center gap-2 mb-5">
-            <div className="w-1 h-5 rounded-full bg-gradient-to-b from-primary to-blue-600" />
-            <p className="text-sm font-bold text-slate-700">어떤 서비스가 필요하신가요?</p>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-blue-600" />
+            <p className="text-xs font-bold text-slate-600">서비스 선택</p>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Guardian Button - Primary CTA */}
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               onClick={() => navigate("/guardian")}
-              className="w-full py-5 px-5 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 relative overflow-hidden group transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30"
+              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 relative overflow-hidden group transition-all duration-300 shadow-md shadow-blue-500/20"
             >
-              {/* Decorative circles */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
               
               <div className="relative flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
-                  <Users className="w-7 h-7 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                  <Users className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-left flex-1 ml-4">
-                  <p className="text-lg font-bold text-white leading-tight">보호자 / 환자</p>
-                  <p className="text-sm text-blue-100 leading-tight mt-1">응급실 찾기 · 가족 건강관리</p>
+                <div className="text-left flex-1 ml-3">
+                  <p className="text-sm font-bold text-white leading-tight">보호자 / 환자</p>
+                  <p className="text-[11px] text-blue-100 leading-tight">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-all group-hover:translate-x-1">
-                  <ChevronRight className="w-5 h-5 text-white" />
-                </div>
+                <ChevronRight className="w-4 h-4 text-white/70 shrink-0" />
               </div>
             </motion.button>
 
-            {/* Private Transfer Mode Button */}
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-white border-2 border-slate-200 relative overflow-hidden group transition-all duration-300 shadow-sm hover:border-slate-300 hover:shadow-md"
-            >
-              <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-colors">
-                  <Truck className="w-6 h-6 text-slate-600" />
-                </div>
-                <div className="text-left flex-1 ml-3.5">
-                  <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차 이송</p>
-                  <p className="text-xs text-slate-500 leading-tight mt-0.5">전원 · 퇴원 · 비응급 이송</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-slate-600" />
-              </div>
-            </motion.button>
-
-            {/* Ambulance Driver Button */}
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => navigate("/paramedic")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 relative overflow-hidden group transition-all duration-300 shadow-sm hover:border-orange-300 hover:shadow-md"
-            >
-              <div className="flex items-center w-full">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center shrink-0 group-hover:from-orange-200 group-hover:to-amber-200 transition-colors">
-                  <Ambulance className="w-6 h-6 text-orange-600" />
-                </div>
-                <div className="text-left flex-1 ml-3.5">
-                  <div className="flex items-center gap-2">
-                    <p className="text-base font-bold text-slate-800 leading-tight">구급대원</p>
-                    <span className="px-1.5 py-0.5 text-[9px] font-bold text-orange-600 bg-orange-100 rounded">PRO</span>
+            {/* Two Column - Private Transfer & Paramedic */}
+            <div className="grid grid-cols-2 gap-2">
+              {/* Private Transfer Mode Button */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate("/driver-intro")}
+                className="py-3 px-3 rounded-xl bg-white border border-slate-200 group transition-all duration-300 hover:border-slate-300 hover:shadow-sm"
+              >
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                    <Truck className="w-5 h-5 text-slate-600" />
                   </div>
-                  <p className="text-xs text-slate-500 leading-tight mt-0.5">실시간 병상 · 거절 이력 공유</p>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">민간 구급차</p>
+                    <p className="text-[10px] text-slate-400 leading-tight">전원 · 퇴원 이송</p>
+                  </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-orange-400 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-orange-600" />
-              </div>
-            </motion.button>
+              </motion.button>
+
+              {/* Ambulance Driver Button */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate("/paramedic")}
+                className="py-3 px-3 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 group transition-all duration-300 hover:border-orange-300 hover:shadow-sm"
+              >
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                    <Ambulance className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">구급대원</p>
+                    <p className="text-[10px] text-slate-400 leading-tight">병상 · 거절이력</p>
+                  </div>
+                </div>
+              </motion.button>
+            </div>
           </div>
         </motion.div>
       </main>
