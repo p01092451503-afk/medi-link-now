@@ -324,8 +324,7 @@ export const createHospitalIcon = (
           cursor: pointer;
           ${rejectionBorderStyle}
         ">
-          <span style="font-weight: 800; font-size: 16px; line-height: 1;">${beds}</span>
-          <span style="font-size: 9px; font-weight: 500; opacity: 0.85; margin-top: -1px;">석</span>
+          <span style="font-weight: 800; font-size: 18px; line-height: 1;">${beds}</span>
           ${isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
           ${highTrafficBadge}
