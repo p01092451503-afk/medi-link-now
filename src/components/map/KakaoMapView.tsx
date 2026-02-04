@@ -981,36 +981,7 @@ const KakaoMapView = ({
         <div className="absolute inset-0 flex items-center justify-center bg-background z-10">
           <div className="text-center p-6 max-w-sm">
             <p className="text-destructive font-semibold mb-2">카카오맵 로드 실패</p>
-            <p className="text-sm text-muted-foreground mb-6">{loadError}</p>
-            <div className="flex flex-col gap-3">
-              <Button 
-                onClick={handleRetry} 
-                disabled={isRetrying}
-                className="w-full"
-              >
-                {isRetrying ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    재시도 중...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    다시 시도
-                  </>
-                )}
-              </Button>
-              {onFallbackToLeaflet && (
-                <Button 
-                  onClick={onFallbackToLeaflet} 
-                  variant="outline"
-                  className="w-full"
-                >
-                  <MapIcon className="w-4 h-4 mr-2" />
-                  기본 지도로 전환
-                </Button>
-              )}
-            </div>
+            <p className="text-sm text-muted-foreground">{loadError}</p>
           </div>
         </div>
       )}
