@@ -74,7 +74,7 @@ const MapPage = () => {
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
-  const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao } = useMapProvider();
+  const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao, setMapProvider } = useMapProvider();
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -522,6 +522,7 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             onZoomChange={setMapZoom}
+            onFallbackToLeaflet={() => setMapProvider("leaflet")}
           />
         ) : (
           <ClusteredMapView
