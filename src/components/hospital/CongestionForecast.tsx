@@ -57,7 +57,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         return {
           gradient: "from-emerald-500 to-green-400",
           bgGlow: "bg-emerald-500/20",
-          text: "text-emerald-600",
+          text: "text-emerald-600 dark:text-emerald-400",
           icon: TrendingUp,
           ringColor: "ring-emerald-500/30",
         };
@@ -65,7 +65,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         return {
           gradient: "from-amber-500 to-yellow-400",
           bgGlow: "bg-amber-500/20",
-          text: "text-amber-600",
+          text: "text-amber-600 dark:text-amber-400",
           icon: AlertTriangle,
           ringColor: "ring-amber-500/30",
         };
@@ -73,7 +73,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         return {
           gradient: "from-red-500 to-orange-400",
           bgGlow: "bg-red-500/20",
-          text: "text-red-600",
+          text: "text-red-600 dark:text-red-400",
           icon: TrendingDown,
           ringColor: "ring-red-500/30",
         };
@@ -87,7 +87,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
   const needleRotation = (scoreData.score / 100) * 180 - 90;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/50 shadow-lg">
+    <div className="relative overflow-hidden rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/50 dark:border-slate-700/50 shadow-lg">
       {/* Decorative background elements */}
       <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full ${config.bgGlow} blur-3xl`} />
       <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-primary/5 blur-2xl" />
@@ -109,7 +109,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
               <path
                 d="M 10 50 A 40 40 0 0 1 90 50"
                 fill="none"
-                stroke="#e5e7eb"
+                className="stroke-slate-200 dark:stroke-slate-600"
                 strokeWidth="8"
                 strokeLinecap="round"
               />
@@ -148,7 +148,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
 
           {/* Status Badge */}
           <motion.div 
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl ring-2 ${config.ringColor} bg-white/50`}
+            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl ring-2 ${config.ringColor} bg-white/50 dark:bg-slate-700/50`}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -162,10 +162,10 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         <motion.div 
           className={`p-3 rounded-xl bg-gradient-to-r ${
             scoreData.status === "smooth" 
-              ? "from-emerald-50 to-green-50 border border-emerald-200/50" 
+              ? "from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50 border border-emerald-200/50 dark:border-emerald-800/50" 
               : scoreData.status === "moderate" 
-              ? "from-amber-50 to-yellow-50 border border-amber-200/50" 
-              : "from-red-50 to-orange-50 border border-red-200/50"
+              ? "from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50 border border-amber-200/50 dark:border-amber-800/50" 
+              : "from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50 border border-red-200/50 dark:border-red-800/50"
           }`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
