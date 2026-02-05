@@ -274,8 +274,8 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
 
   if (!isSupported) {
     return (
-      <div className="text-center p-4 bg-gray-100 rounded-xl">
-        <MicOff className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+      <div className="text-center p-4 bg-muted rounded-xl">
+        <MicOff className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">
           이 브라우저에서는 음성 인식을 지원하지 않습니다
         </p>
@@ -395,15 +395,15 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
                   exit={{ opacity: 0, height: 0 }}
                   className={`border rounded-xl p-3 mt-3 ${
                     isProcessingAI 
-                      ? "bg-purple-50 border-purple-200" 
+                      ? "bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800" 
                       : "bg-primary/5 border-primary/20"
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     {isProcessingAI ? (
                       <>
-                        <Loader2 className="w-4 h-4 text-purple-500 animate-spin" />
-                        <span className="text-xs font-medium text-purple-600">AI 분석 중...</span>
+                        <Loader2 className="w-4 h-4 text-purple-500 dark:text-purple-400 animate-spin" />
+                        <span className="text-xs font-medium text-purple-600 dark:text-purple-400">AI 분석 중...</span>
                       </>
                     ) : (
                       <>
