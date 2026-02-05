@@ -711,7 +711,7 @@ const MapPage = () => {
           <div className="flex items-center gap-3 min-w-max">
             <button
               onClick={() => navigate("/")}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-card rounded-full shadow-lg border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-colors whitespace-nowrap flex-shrink-0"
+              className="flex items-center gap-1.5 h-8 px-3 bg-card rounded-full shadow-lg border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-colors whitespace-nowrap flex-shrink-0"
             >
               <ArrowLeft className="w-3.5 h-3.5 flex-shrink-0" />
               <span>파인더</span>
