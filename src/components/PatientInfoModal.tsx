@@ -248,7 +248,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
                   <SelectTrigger className="rounded-xl">
                     <SelectValue placeholder="주 호소 증상 선택" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white z-[2100]">
+                  <SelectContent className="bg-card z-[2100]">
                     {chiefComplaints.map((complaint) => (
                       <SelectItem key={complaint} value={complaint}>
                         {complaint}
