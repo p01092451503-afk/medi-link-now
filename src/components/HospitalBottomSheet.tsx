@@ -238,10 +238,10 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
                         status === "unavailable"
-                          ? "bg-red-100 text-red-600"
+                          ? "bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400"
                           : status === "limited"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-green-100 text-green-600"
+                          ? "bg-yellow-100 dark:bg-yellow-950/50 text-yellow-600 dark:text-yellow-400"
+                          : "bg-green-100 dark:bg-green-950/50 text-green-600 dark:text-green-400"
                       }`}
                     >
                       <span
@@ -260,12 +260,12 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                         : "여유"}
                     </span>
                     {hospital.isTraumaCenter && (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
                         🏥 권역외상센터
                       </span>
                     )}
                     {hasPediatric && (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
                         👶 아이 진료
                       </span>
                     )}
@@ -348,7 +348,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 text-orange-600">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400">
                             <Truck className="w-3 h-3" />
                             이송 중 {incomingCount}대
                           </span>
@@ -475,10 +475,10 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 existingRequest ? (
                   <div className={`w-full mb-3 py-4 px-4 rounded-xl border-2 flex items-center justify-center gap-2 ${
                     existingRequest.status === "pending" 
-                      ? "bg-yellow-50 border-yellow-300 text-yellow-700"
+                      ? "bg-yellow-50 dark:bg-yellow-950/50 border-yellow-300 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400"
                       : existingRequest.status === "accepted"
-                      ? "bg-green-50 border-green-300 text-green-700"
-                      : "bg-red-50 border-red-300 text-red-700"
+                      ? "bg-green-50 dark:bg-green-950/50 border-green-300 dark:border-green-700 text-green-700 dark:text-green-400"
+                      : "bg-red-50 dark:bg-red-950/50 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400"
                   }`}>
                     {existingRequest.status === "pending" ? (
                       <>
