@@ -233,7 +233,7 @@ const Landing = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="p-3 bg-slate-200 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 mx-2 mb-2"
+                className="p-3 bg-slate-200 dark:bg-slate-700 rounded-xl border border-slate-400 dark:border-slate-500 mx-2 mb-2"
               >
                 <div className="grid grid-cols-4 gap-2">
                   {/* 응급실 */}
