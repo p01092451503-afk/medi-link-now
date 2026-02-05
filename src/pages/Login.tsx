@@ -92,12 +92,12 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col">
       {/* Header */}
       <header className="p-4 flex items-center gap-4">
         <button
           onClick={() => navigate("/")}
-          className="p-2 rounded-xl hover:bg-white/50 transition-colors"
+          className="p-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
@@ -149,7 +149,7 @@ const Login = () => {
                   placeholder="driver@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 py-6 rounded-xl bg-white"
+                className="pl-10 py-6 rounded-xl bg-white dark:bg-slate-800 text-foreground"
                 />
               </div>
             </div>
@@ -164,7 +164,7 @@ const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 py-6 rounded-xl bg-white"
+                className="pl-10 py-6 rounded-xl bg-white dark:bg-slate-800 text-foreground"
                 />
               </div>
             </div>
