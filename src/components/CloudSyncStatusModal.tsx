@@ -95,9 +95,9 @@ const CloudSyncStatusModal = ({
 
           {/* Info Grid */}
           <div className="space-y-3 mb-6">
-            <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-slate-700">
               <span className="text-sm text-muted-foreground">저장된 가족 수</span>
-              <span className="font-medium">{itemCount}명</span>
+              <span className="font-medium text-foreground">{itemCount}명</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="text-sm text-muted-foreground">마지막 동기화</span>
