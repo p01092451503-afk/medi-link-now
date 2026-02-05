@@ -54,20 +54,20 @@ const DriverLanding = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
         <div className="px-4 py-3 flex items-center justify-between max-w-lg mx-auto">
           <button 
             onClick={() => navigate("/")}
-            className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 transition-colors text-sm font-medium"
+            className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors text-sm font-medium"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
             돌아가기
           </button>
           <div className="flex items-baseline gap-1">
-            <span className="font-logo font-extrabold text-slate-800">Find-ER</span>
-            <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-full">Pro</span>
+            <span className="font-logo font-extrabold text-slate-800 dark:text-white">Find-ER</span>
+            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-full">Pro</span>
           </div>
         </div>
       </header>
@@ -84,19 +84,19 @@ const DriverLanding = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full text-slate-600 text-sm font-semibold mb-5 border border-slate-200"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-300 text-sm font-semibold mb-5 border border-slate-200 dark:border-slate-700"
           >
             <Ambulance className="w-4 h-4" />
             구급대원 / 기사님 전용
           </motion.div>
           
-          <h1 className="text-[2rem] leading-tight font-extrabold text-slate-900 mb-4 tracking-tight">
-            운행 효율 <span className="text-slate-600">극대화</span>,<br />
-            수익은 <span className="text-slate-600">2배로</span>
+          <h1 className="text-[2rem] leading-tight font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
+            운행 효율 <span className="text-slate-600 dark:text-slate-300">극대화</span>,<br />
+            수익은 <span className="text-slate-600 dark:text-slate-300">2배로</span>
           </h1>
           
-          <p className="text-slate-500 text-base leading-relaxed max-w-xs mx-auto">
-            빈 차 회송? 이제 <span className="text-slate-700 font-medium">수익으로</span> 바꾸세요<br />
+          <p className="text-slate-500 dark:text-slate-400 text-base leading-relaxed max-w-xs mx-auto">
+            빈 차 회송? 이제 <span className="text-slate-700 dark:text-slate-200 font-medium">수익으로</span> 바꾸세요<br />
             운행일지 작성에 시간 낭비 그만!
           </p>
         </motion.div>
@@ -114,14 +114,14 @@ const DriverLanding = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 + index * 0.05, duration: 0.3 }}
-              className="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200 text-center group hover:shadow-md hover:border-slate-300 transition-all duration-300"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-700 text-center group hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300"
             >
-              <div className="w-11 h-11 rounded-xl bg-slate-700 flex items-center justify-center mx-auto mb-2.5 group-hover:bg-slate-800 transition-colors duration-300">
+              <div className="w-11 h-11 rounded-xl bg-slate-700 dark:bg-violet-600 flex items-center justify-center mx-auto mb-2.5 group-hover:bg-slate-800 dark:group-hover:bg-violet-700 transition-colors duration-300">
                 <benefit.icon className="w-5 h-5 text-white" />
               </div>
-              <p className="text-2xl font-extrabold text-slate-800">{benefit.value}</p>
-              <p className="text-xs font-semibold text-slate-700 mt-0.5">{benefit.label}</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{benefit.desc}</p>
+              <p className="text-2xl font-extrabold text-slate-800 dark:text-white">{benefit.value}</p>
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mt-0.5">{benefit.label}</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{benefit.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -135,7 +135,7 @@ const DriverLanding = () => {
         >
           <Button
             onClick={() => navigate("/login")}
-            className="w-full py-7 rounded-2xl text-lg font-bold bg-slate-800 hover:bg-slate-900 shadow-lg border-0 group"
+            className="w-full py-7 rounded-2xl text-lg font-bold bg-slate-800 dark:bg-violet-600 hover:bg-slate-900 dark:hover:bg-violet-700 shadow-lg border-0 group"
           >
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
               <Ambulance className="w-5 h-5" />
@@ -143,7 +143,7 @@ const DriverLanding = () => {
             드라이버 로그인
             <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <p className="text-xs text-center text-slate-400 mt-3">
+          <p className="text-xs text-center text-slate-400 dark:text-slate-500 mt-3">
             아직 계정이 없으신가요? 로그인 화면에서 가입할 수 있습니다
           </p>
         </motion.div>
@@ -161,13 +161,13 @@ const DriverLanding = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.35 + index * 0.05, duration: 0.3 }}
-              className="relative bg-white rounded-2xl p-4 border border-slate-200 overflow-hidden group hover:shadow-md hover:border-slate-300 transition-all duration-300"
+              className="relative bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 overflow-hidden group hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300"
             >
-              <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center mb-3 group-hover:bg-slate-200 transition-colors duration-300">
-                <feature.icon className="w-5 h-5 text-slate-600" />
+              <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-3 group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors duration-300">
+                <feature.icon className="w-5 h-5 text-slate-600 dark:text-slate-300" />
               </div>
-              <h3 className="font-bold text-sm text-slate-800 mb-1">{feature.title}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{feature.description}</p>
+              <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-1">{feature.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -180,8 +180,8 @@ const DriverLanding = () => {
           className="mb-8"
         >
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 rounded-full bg-slate-400" />
-            <h2 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+            <div className="w-1 h-5 rounded-full bg-slate-400 dark:bg-violet-500" />
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
               현직 기사님들의 후기
             </h2>
@@ -194,15 +194,15 @@ const DriverLanding = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + index * 0.08, duration: 0.3 }}
-                className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm"
+                className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm"
               >
                 <div className="flex items-center gap-3 mb-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-slate-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-slate-700 dark:bg-violet-600 flex items-center justify-center">
                     <span className="text-sm font-bold text-white">{testimonial.name[0]}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-sm text-slate-800">{testimonial.name}</p>
-                    <p className="text-xs text-slate-400">{testimonial.region} 지역</p>
+                    <p className="font-semibold text-sm text-slate-800 dark:text-white">{testimonial.name}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{testimonial.region} 지역</p>
                   </div>
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map((i) => (
@@ -210,7 +210,7 @@ const DriverLanding = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed">"{testimonial.comment}"</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">"{testimonial.comment}"</p>
               </motion.div>
             ))}
           </div>
@@ -222,15 +222,15 @@ const DriverLanding = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <div className="bg-slate-100 rounded-2xl p-4 flex items-center gap-3.5 border border-slate-200">
-            <div className="w-12 h-12 rounded-xl bg-slate-700 flex items-center justify-center">
+          <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3.5 border border-slate-200 dark:border-slate-700">
+            <div className="w-12 h-12 rounded-xl bg-slate-700 dark:bg-violet-600 flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-slate-800">안전하고 검증된 서비스</p>
-              <p className="text-xs text-slate-500 mt-0.5">개인정보 보호 및 운행 데이터 암호화</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">안전하고 검증된 서비스</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">개인정보 보호 및 운행 데이터 암호화</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300" />
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600" />
           </div>
         </motion.div>
       </main>

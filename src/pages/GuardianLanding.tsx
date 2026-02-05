@@ -49,18 +49,18 @@ const GuardianLanding = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-blue-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-blue-100">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-blue-100 dark:border-slate-800">
         <div className="px-4 py-3 flex items-center justify-between max-w-lg mx-auto">
           <button 
             onClick={() => navigate("/")}
-            className="flex items-center gap-1.5 text-blue-500 hover:text-blue-700 transition-colors text-sm font-medium"
+            className="flex items-center gap-1.5 text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm font-medium"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
             돌아가기
           </button>
-          <span className="font-logo font-extrabold text-slate-800">Find-ER</span>
+          <span className="font-logo font-extrabold text-slate-800 dark:text-white">Find-ER</span>
         </div>
       </header>
 
@@ -76,20 +76,20 @@ const GuardianLanding = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full text-blue-600 text-sm font-semibold mb-5 border border-blue-200"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/40 rounded-full text-blue-600 dark:text-blue-400 text-sm font-semibold mb-5 border border-blue-200 dark:border-blue-800"
           >
             <Users className="w-4 h-4" />
             보호자 / 환자 모드
           </motion.div>
           
-          <h1 className="text-[2rem] leading-tight font-extrabold text-slate-900 mb-4 tracking-tight">
+          <h1 className="text-[2rem] leading-tight font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
             응급 상황,<br />
             <span className="text-blue-600">1분 1초</span>가 생명입니다
           </h1>
           
-          <p className="text-slate-500 text-base leading-relaxed max-w-xs mx-auto">
+          <p className="text-slate-500 dark:text-slate-400 text-base leading-relaxed max-w-xs mx-auto">
             아이가 아플 때, 부모님이 쓰러지셨을 때<br />
-            <span className="text-blue-700 font-medium">가장 가까운 응급실</span>을 빠르게 찾아드립니다
+            <span className="text-blue-700 dark:text-blue-400 font-medium">가장 가까운 응급실</span>을 빠르게 찾아드립니다
           </p>
         </motion.div>
 
@@ -125,13 +125,13 @@ const GuardianLanding = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.25 + index * 0.05, duration: 0.3 }}
-              className="relative bg-white rounded-2xl p-4 border border-blue-100 overflow-hidden group hover:shadow-md hover:border-blue-200 transition-all duration-300"
+              className="relative bg-white dark:bg-slate-800 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 overflow-hidden group hover:shadow-md hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-300"
             >
-              <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors duration-300">
+              <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors duration-300">
                 <feature.icon className="w-5 h-5 text-blue-600" />
               </div>
-              <h3 className="font-bold text-sm text-slate-800 mb-1">{feature.title}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{feature.description}</p>
+              <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-1">{feature.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -145,7 +145,7 @@ const GuardianLanding = () => {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-5 rounded-full bg-gradient-to-b from-blue-500 to-blue-600" />
-            <h2 className="text-sm font-bold text-slate-700">이런 분들을 위한 서비스입니다</h2>
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">이런 분들을 위한 서비스입니다</h2>
           </div>
           
           <div className="space-y-2.5">
@@ -155,14 +155,14 @@ const GuardianLanding = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.08, duration: 0.3 }}
-                className="flex items-center gap-3.5 bg-white rounded-2xl p-4 border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group"
+                className="flex items-center gap-3.5 bg-white dark:bg-slate-800 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-300 group"
               >
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
                   <user.icon className="w-5 h-5 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm text-slate-800">{user.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{user.desc}</p>
+                  <p className="font-semibold text-sm text-slate-800 dark:text-white">{user.label}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{user.desc}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-blue-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all" />
               </motion.div>
@@ -180,9 +180,9 @@ const GuardianLanding = () => {
           <Button
             onClick={() => navigate("/family")}
             variant="outline"
-            className="w-full py-5 rounded-2xl text-base font-semibold border-2 border-blue-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all group"
+            className="w-full py-5 rounded-2xl text-base font-semibold border-2 border-blue-200 dark:border-blue-800 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition-all group dark:text-white"
           >
-            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3 group-hover:bg-blue-100 transition-colors">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mr-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
               <Heart className="w-4 h-4 text-blue-600" />
             </div>
             가족 의료정보 등록하기
@@ -191,9 +191,9 @@ const GuardianLanding = () => {
           <Button
             onClick={() => navigate("/fare-calculator")}
             variant="outline"
-            className="w-full py-5 rounded-2xl text-base font-semibold border-2 border-blue-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all group"
+            className="w-full py-5 rounded-2xl text-base font-semibold border-2 border-blue-200 dark:border-blue-800 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition-all group dark:text-white"
           >
-            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3 group-hover:bg-blue-100 transition-colors">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mr-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
               <Calculator className="w-4 h-4 text-blue-600" />
             </div>
             구급차 요금 계산기
@@ -207,21 +207,21 @@ const GuardianLanding = () => {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="text-center"
         >
-          <div className="inline-flex flex-col items-center gap-3 px-6 py-5 bg-blue-50 rounded-2xl border border-blue-100">
+          <div className="inline-flex flex-col items-center gap-3 px-6 py-5 bg-blue-50 dark:bg-slate-800 rounded-2xl border border-blue-100 dark:border-slate-700">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4 text-red-500 animate-pulse" />
-              <span className="text-xs font-medium text-blue-600">긴급 상황 시</span>
+              <span className="text-xs font-medium text-blue-600 dark:text-blue-400">긴급 상황 시</span>
             </div>
             <a
               href="tel:119"
-              className="flex items-center gap-2.5 text-slate-800 font-bold text-xl hover:text-slate-900 transition-colors"
+              className="flex items-center gap-2.5 text-slate-800 dark:text-white font-bold text-xl hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
               <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center shadow-lg">
                 <Phone className="w-5 h-5 text-white" />
               </div>
               119 바로 전화
             </a>
-            <p className="text-xs text-blue-500">
+            <p className="text-xs text-blue-500 dark:text-blue-400">
               생명이 위급한 상황에서는 즉시 119에 신고하세요
             </p>
           </div>
