@@ -69,14 +69,14 @@ const BedStatusCard = ({
   let textColor: string;
   
   if (isAvailable) {
-    bgColor = "bg-green-50";
-    textColor = "text-green-600";
+    bgColor = "bg-green-50 dark:bg-green-950/50";
+    textColor = "text-green-600 dark:text-green-400";
   } else if (isHospitalFull) {
-    bgColor = "bg-red-50";
-    textColor = "text-red-500";
+    bgColor = "bg-red-50 dark:bg-red-950/50";
+    textColor = "text-red-500 dark:text-red-400";
   } else {
-    bgColor = "bg-gray-50";
-    textColor = "text-gray-400";
+    bgColor = "bg-gray-50 dark:bg-slate-800";
+    textColor = "text-gray-400 dark:text-slate-500";
   }
 
   return (
