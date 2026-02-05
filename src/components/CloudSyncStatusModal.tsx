@@ -101,7 +101,7 @@ const CloudSyncStatusModal = ({
             </div>
             <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-slate-700">
               <span className="text-sm text-muted-foreground">마지막 동기화</span>
-              <span className={`font-medium ${isStale ? "text-yellow-600" : "text-green-600"}`}>
+              <span className={`font-medium ${isStale ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
                 {lastSyncTime ? formatElapsed(elapsed) : "없음"}
               </span>
             </div>

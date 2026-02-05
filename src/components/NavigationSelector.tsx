@@ -77,7 +77,7 @@ const NavigationSelector = ({
           ))}
         </div>
         
-        <div className="mt-2 pt-2 border-t">
+        <div className="mt-2 pt-2 border-t dark:border-slate-700">
           <p className="text-[10px] text-muted-foreground text-center px-2">
             <MapPin className="w-3 h-3 inline mr-1" />
             {destination.name}

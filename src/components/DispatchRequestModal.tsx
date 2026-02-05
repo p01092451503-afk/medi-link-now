@@ -127,7 +127,7 @@ const DispatchRequestModal = ({
             <div className="p-6 space-y-4">
               {/* Location Warning */}
               {!userLocation && (
-                <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+                <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-700 dark:text-yellow-400">
                   <Navigation className="w-4 h-4" />
                   <span>위치 서비스를 켜주세요</span>
                 </div>

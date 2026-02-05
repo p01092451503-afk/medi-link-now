@@ -200,7 +200,7 @@ const ERRoadviewModal = ({
 
             {/* Footer Actions */}
             {!hasError && !isLoading && (
-              <div className="p-4 border-t border-border bg-white">
+              <div className="p-4 border-t border-border dark:border-slate-700 bg-white dark:bg-slate-900">
                 <div className="flex gap-3">
                   <Button
                     onClick={handleOpenKakaoMap}

@@ -62,9 +62,9 @@ const GeofenceArrivalModal = ({
 
               {/* Content */}
               <div className="p-6">
-                <div className="flex items-start gap-3 mb-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-amber-800">
+                <div className="flex items-start gap-3 mb-6 p-4 bg-amber-50 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-amber-800 dark:text-amber-300">
                     목적지 반경 500m 내에 진입했습니다. 이송을 완료 처리하시겠습니까?
                   </p>
                 </div>

@@ -151,8 +151,8 @@ const FareInputModal = ({ isOpen, onClose, onSubmit, hospitalName }: FareInputMo
                     className={`flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all ${
                       paymentMethod === value
                         ? value === "unpaid"
-                          ? "border-red-500 bg-red-50 text-red-700"
-                          : "border-primary bg-primary/5 text-primary"
+                          ? "border-red-500 bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400"
+                          : "border-primary bg-primary/5 dark:bg-primary/10 text-primary"
                         : "border-border hover:border-muted-foreground/50"
                     }`}
                   >

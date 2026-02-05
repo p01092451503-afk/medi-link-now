@@ -191,7 +191,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   </div>
 
                   {/* Driver Info */}
-                  <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                         <span className="text-lg font-bold text-primary">김</span>

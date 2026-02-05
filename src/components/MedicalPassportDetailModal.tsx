@@ -271,7 +271,7 @@ const MedicalPassportDetailModal = ({
             </div>
 
             {/* Bottom Actions - Compact */}
-            <div className="border-t border-border p-3 space-y-2 bg-gray-50 shrink-0">
+            <div className="border-t border-border dark:border-slate-700 p-3 space-y-2 bg-gray-50 dark:bg-slate-800 shrink-0">
               {/* Copy for 119 Button */}
               <Button
                 onClick={handleCopy}
