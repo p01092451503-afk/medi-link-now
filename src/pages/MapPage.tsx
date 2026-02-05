@@ -131,12 +131,12 @@ const MapPage = () => {
     enabled: isNightCareFilter,
   });
 
-  // Create a Set of night care hospital names for efficient lookup
+  // Create a Set of night care hospital names for efficient lookup (non-emergency only)
   const nightCareHospitalNames = useMemo(() => {
     if (!hospitalDetailsData) return new Set<string>();
     return new Set(
       hospitalDetailsData
-        .filter((h) => h.hasNightCare)
+        .filter((h) => h.hasNightCare && !h.emergencyRoomType) // 응급실 없는 일반병원만
         .map((h) => h.hospitalName)
     );
   }, [hospitalDetailsData]);
