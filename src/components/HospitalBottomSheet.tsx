@@ -289,6 +289,13 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 </button>
               </div>
 
+              {/* 119 Verified Badge - Historical Transfer Data */}
+              <Fire119VerifiedBadge 
+                hospitalName={hospital.nameKr}
+                hospitalId={hospital.id}
+                showChart={true}
+              />
+
               {/* AI Predictive Features Section - Premium Design */}
               <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-xl shadow-violet-500/10 overflow-hidden">
                 {/* Decorative background elements */}
