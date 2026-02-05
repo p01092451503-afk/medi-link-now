@@ -106,7 +106,7 @@ const DispatchRequestModal = ({
                     <Ambulance className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold">구급대원 호출</h2>
+                    <h2 className="text-lg font-bold text-foreground">구급대원 호출</h2>
                     {selectedDriver && (
                       <p className="text-sm text-muted-foreground">
                         {selectedDriver.name}님에게 요청
