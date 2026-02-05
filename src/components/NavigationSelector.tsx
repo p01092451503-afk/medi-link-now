@@ -57,7 +57,7 @@ const NavigationSelector = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-56 p-2 rounded-xl border-0 shadow-xl z-[2000]" 
+        className="w-56 p-2 rounded-xl border-0 shadow-xl z-[2000] bg-white dark:bg-slate-900" 
         align="center"
         side="top"
         sideOffset={8}
