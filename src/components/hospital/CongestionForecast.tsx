@@ -87,7 +87,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
   const needleRotation = (scoreData.score / 100) * 180 - 90;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/50 shadow-lg">
+    <div className="relative overflow-hidden rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/50 dark:border-slate-700/50 shadow-lg">
       {/* Decorative background elements */}
       <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full ${config.bgGlow} blur-3xl`} />
       <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-primary/5 blur-2xl" />
