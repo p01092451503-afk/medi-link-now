@@ -83,7 +83,7 @@
    };
    
    return (
-     <div className={`absolute top-4 right-20 z-[1002] ${className}`}>
+     <div className={`absolute top-[72px] right-4 z-[1000] ${className}`}>
        {/* Collapsed Button */}
        <AnimatePresence mode="wait">
          {!isExpanded ? (
