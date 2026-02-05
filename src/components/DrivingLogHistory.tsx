@@ -415,9 +415,9 @@ const DrivingLogHistory = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               onClick={() => toggleLogSelection(log.id)}
-              className={`bg-white rounded-xl p-4 border cursor-pointer transition-all ${
+              className={`bg-white dark:bg-slate-800 rounded-xl p-4 border cursor-pointer transition-all ${
                 selectedLogs.includes(log.id)
-                  ? "border-primary bg-primary/5 ring-1 ring-primary"
+                  ? "border-primary bg-primary/5 dark:bg-primary/10 ring-1 ring-primary"
                   : "border-border hover:border-primary/50"
               }`}
             >
