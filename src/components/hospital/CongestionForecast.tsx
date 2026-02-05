@@ -57,7 +57,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         return {
           gradient: "from-emerald-500 to-green-400",
           bgGlow: "bg-emerald-500/20",
-          text: "text-emerald-600",
+          text: "text-emerald-600 dark:text-emerald-400",
           icon: TrendingUp,
           ringColor: "ring-emerald-500/30",
         };
@@ -65,7 +65,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         return {
           gradient: "from-amber-500 to-yellow-400",
           bgGlow: "bg-amber-500/20",
-          text: "text-amber-600",
+          text: "text-amber-600 dark:text-amber-400",
           icon: AlertTriangle,
           ringColor: "ring-amber-500/30",
         };
@@ -73,7 +73,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         return {
           gradient: "from-red-500 to-orange-400",
           bgGlow: "bg-red-500/20",
-          text: "text-red-600",
+          text: "text-red-600 dark:text-red-400",
           icon: TrendingDown,
           ringColor: "ring-red-500/30",
         };
