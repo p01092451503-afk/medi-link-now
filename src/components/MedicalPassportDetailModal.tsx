@@ -242,9 +242,9 @@ const MedicalPassportDetailModal = ({
 
               {/* Guardian Contact */}
               {member.guardianContact && (
-                <div className="bg-gray-50 rounded-2xl p-4">
+                <div className="bg-gray-50 dark:bg-slate-800 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-1">
-                    <Phone className="w-5 h-5 text-gray-600" />
+                    <Phone className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     <span className="text-base font-bold text-foreground">보호자 연락처</span>
                   </div>
                   <a 
