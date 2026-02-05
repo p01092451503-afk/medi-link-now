@@ -135,7 +135,7 @@ const MapPage = () => {
 
   // Filter night care hospitals (non-emergency only, with valid coordinates)
   const nightCareHospitals = useMemo(() => {
-    if (!hospitalDetailsData) return new Set<string>();
+    if (!hospitalDetailsData) return [];
     return hospitalDetailsData.filter((h) => 
       h.hasNightCare && 
       !h.emergencyRoomType && 
@@ -146,14 +146,8 @@ const MapPage = () => {
 
   // Create a Set of night care hospital names for efficient lookup (kept for backward compat)
   const nightCareHospitalNames = useMemo(() => {
-    if (!nightCareHospitals || nightCareHospitals.size === undefined) return new Set<string>();
-    return new Set(Array.isArray(nightCareHospitals) ? 
-      hospitalDetailsData
-        ?.filter((h) => h.hasNightCare && !h.emergencyRoomType)
-        .map((h) => h.hospitalName)
-      : []
-    );
-  }, [hospitalDetailsData, nightCareHospitals]);
+    return new Set(nightCareHospitals.map((h) => h.hospitalName));
+  }, [nightCareHospitals]);
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
