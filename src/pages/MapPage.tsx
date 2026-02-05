@@ -171,9 +171,9 @@ const MapPage = () => {
       });
     }
 
-    // Night care filter - filter by hospital names from API data
-    if (activeFilter === "nightCare" && nightCareHospitalNames.size > 0) {
-      result = result.filter((h) => nightCareHospitalNames.has(h.nameKr));
+    // Night care filter - hide emergency hospitals, show separate night care markers
+    if (activeFilter === "nightCare" || activeFilter === "nonEmergency") {
+      result = []; // Hide all emergency hospitals, show night care markers separately
     }
 
     // Transfer mode filtering based on transfer filter
