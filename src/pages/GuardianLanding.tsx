@@ -155,12 +155,13 @@ const GuardianLanding = () => {
           
           <div className="space-y-2.5">
             {targetUsers.map((user, index) => (
-              <motion.div
+              <motion.button
                 key={user.label}
+                onClick={() => setSelectedUserType(user.type)}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.08, duration: 0.3 }}
-                className="flex items-center gap-3.5 bg-white dark:bg-slate-800 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-300 group"
+                className="w-full flex items-center gap-3.5 bg-white dark:bg-slate-800 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-slate-600 transition-all duration-300 group text-left"
               >
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
                   <user.icon className="w-5 h-5 text-blue-600" />
@@ -170,7 +171,7 @@ const GuardianLanding = () => {
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{user.desc}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-blue-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all" />
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         </motion.div>
