@@ -501,7 +501,7 @@ const VoiceEmergencyLogFAB = () => {
             </SheetHeader>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 dark:bg-slate-900">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white dark:bg-slate-900">
               {/* KTAS Alert */}
               <AnimatePresence>
                 {ktasAlert && (
