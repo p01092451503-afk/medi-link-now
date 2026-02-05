@@ -63,7 +63,7 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
 
       {/* Today Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-white rounded-xl p-3 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
             <Calendar className="w-3 h-3" />
             오늘
@@ -78,7 +78,7 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-3 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
             <Clock className="w-3 h-3" />
             이번 주
@@ -95,7 +95,7 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
       </div>
 
       {/* Average Stats */}
-      <div className="bg-white/60 rounded-xl p-3 flex items-center justify-between">
+      <div className="bg-white/60 dark:bg-slate-800/60 rounded-xl p-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-success" />
           <span className="text-sm text-muted-foreground">일 평균</span>

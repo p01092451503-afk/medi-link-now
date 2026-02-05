@@ -93,10 +93,10 @@ const HotlineManager = ({ isOpen, onClose, contacts, onToggleFavorite }: Hotline
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[2001] max-h-[70vh] overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl z-[2001] max-h-[70vh] overflow-hidden"
           >
             <div className="flex justify-center py-3">
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+              <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-700 rounded-full" />
             </div>
 
             <div className="px-5 pb-8">
@@ -107,7 +107,7 @@ const HotlineManager = ({ isOpen, onClose, contacts, onToggleFavorite }: Hotline
                 </h3>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-full"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
@@ -125,7 +125,7 @@ const HotlineManager = ({ isOpen, onClose, contacts, onToggleFavorite }: Hotline
                     <motion.div
                       key={contact.id}
                       layout
-                      className="bg-gray-50 rounded-xl p-4 flex items-center gap-3"
+                      className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 flex items-center gap-3"
                     >
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                         <Building2 className="w-6 h-6 text-primary" />
@@ -149,7 +149,7 @@ const HotlineManager = ({ isOpen, onClose, contacts, onToggleFavorite }: Hotline
                         </Button>
                         <button
                           onClick={() => onToggleFavorite(contact.id)}
-                          className="p-2 hover:bg-gray-200 rounded-full"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full"
                         >
                           <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
                         </button>
