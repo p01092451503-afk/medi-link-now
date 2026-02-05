@@ -440,7 +440,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   {hospital.equipment.map((item) => (
                     <span
                       key={item}
-                      className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
+                      className="px-3 py-1 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full"
                     >
                       {item}
                     </span>
