@@ -190,41 +190,41 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
 
               {/* Weekly Hours (Collapsible) */}
               <details className="group">
-                <summary className="flex items-center justify-between p-3 bg-gray-50 rounded-xl cursor-pointer list-none">
+                <summary className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800 rounded-xl cursor-pointer list-none">
                   <span className="text-sm font-medium text-foreground">주간 운영시간 보기</span>
-                  <span className="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="text-gray-400 dark:text-slate-500 group-open:rotate-180 transition-transform">▼</span>
                 </summary>
-                <div className="mt-2 p-3 bg-gray-50 rounded-xl space-y-2 text-sm">
+                <div className="mt-2 p-3 bg-gray-50 dark:bg-slate-800 rounded-xl space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">월요일</span>
-                    <span>{formatTime(pharmacy.dutyTime1s)} - {formatTime(pharmacy.dutyTime1c)}</span>
+                    <span className="text-foreground">{formatTime(pharmacy.dutyTime1s)} - {formatTime(pharmacy.dutyTime1c)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">화요일</span>
-                    <span>{formatTime(pharmacy.dutyTime2s)} - {formatTime(pharmacy.dutyTime2c)}</span>
+                    <span className="text-foreground">{formatTime(pharmacy.dutyTime2s)} - {formatTime(pharmacy.dutyTime2c)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">수요일</span>
-                    <span>{formatTime(pharmacy.dutyTime3s)} - {formatTime(pharmacy.dutyTime3c)}</span>
+                    <span className="text-foreground">{formatTime(pharmacy.dutyTime3s)} - {formatTime(pharmacy.dutyTime3c)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">목요일</span>
-                    <span>{formatTime(pharmacy.dutyTime4s)} - {formatTime(pharmacy.dutyTime4c)}</span>
+                    <span className="text-foreground">{formatTime(pharmacy.dutyTime4s)} - {formatTime(pharmacy.dutyTime4c)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">금요일</span>
-                    <span>{formatTime(pharmacy.dutyTime5s)} - {formatTime(pharmacy.dutyTime5c)}</span>
+                    <span className="text-foreground">{formatTime(pharmacy.dutyTime5s)} - {formatTime(pharmacy.dutyTime5c)}</span>
                   </div>
-                  <div className="flex justify-between text-blue-600">
+                  <div className="flex justify-between text-blue-600 dark:text-blue-400">
                     <span>토요일</span>
                     <span>{formatTime(pharmacy.dutyTime6s)} - {formatTime(pharmacy.dutyTime6c)}</span>
                   </div>
-                  <div className="flex justify-between text-red-600">
+                  <div className="flex justify-between text-red-600 dark:text-red-400">
                     <span>일요일</span>
                     <span>{formatTime(pharmacy.dutyTime7s)} - {formatTime(pharmacy.dutyTime7c)}</span>
                   </div>
                   {(pharmacy.dutyTime8s || pharmacy.dutyTime8c) && (
-                    <div className="flex justify-between text-amber-600 font-medium">
+                    <div className="flex justify-between text-amber-600 dark:text-amber-400 font-medium">
                       <span>공휴일</span>
                       <span>{formatTime(pharmacy.dutyTime8s)} - {formatTime(pharmacy.dutyTime8c)}</span>
                     </div>

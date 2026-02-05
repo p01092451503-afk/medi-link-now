@@ -109,7 +109,7 @@ const NursingHospitalBottomSheet = ({
                 }}
                 variant="outline"
                 size="lg"
-                className="w-full h-14 justify-center border-purple-300 text-purple-600 hover:bg-purple-50 rounded-2xl"
+                className="w-full h-14 justify-center border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 rounded-2xl"
               />
             </div>
           </div>
