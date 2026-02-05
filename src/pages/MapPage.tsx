@@ -718,7 +718,7 @@ const MapPage = () => {
               }`}
             >
               <ArrowLeft className="w-5 h-5 flex-shrink-0" />
-              <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">Find-ER</span>
+              <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">파인더</span>
             </button>
 
 
