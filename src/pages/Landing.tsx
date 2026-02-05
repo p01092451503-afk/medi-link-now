@@ -539,17 +539,17 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(100,116,139,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-slate-300 transition-all duration-300 group"
+              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-violet-50/30 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(139,92,246,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-violet-200 transition-all duration-300 group"
             >
               <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(100,116,139,0.1),0_2px_4px_rgba(100,116,139,0.15)] group-hover:from-slate-100 group-hover:to-slate-200 group-hover:shadow-[inset_0_-2px_4px_rgba(100,116,139,0.15),0_3px_6px_rgba(100,116,139,0.2)] transition-all">
-                  <Ambulance className="w-7 h-7 text-slate-500" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(139,92,246,0.1),0_2px_4px_rgba(139,92,246,0.15)] group-hover:from-violet-100 group-hover:to-purple-200 group-hover:shadow-[inset_0_-2px_4px_rgba(139,92,246,0.15),0_3px_6px_rgba(139,92,246,0.2)] transition-all">
+                  <Ambulance className="w-7 h-7 text-violet-500" />
                 </div>
                 <div className="text-left flex-1 ml-4">
                   <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차</p>
                   <p className="text-sm text-slate-400 leading-tight mt-1">전원 · 퇴원 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
               </div>
             </motion.button>
 
