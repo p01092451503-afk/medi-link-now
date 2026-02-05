@@ -539,8 +539,6 @@ const MapPage = () => {
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
             onZoomChange={setMapZoom}
-            nightCareHospitals={isNightCareFilter ? nightCareHospitals : []}
-            onNightCareHospitalClick={(hospital) => setSelectedNightCareHospital(hospital)}
           />
         )}
 
