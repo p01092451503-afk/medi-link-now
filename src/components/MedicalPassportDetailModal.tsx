@@ -258,9 +258,9 @@ const MedicalPassportDetailModal = ({
 
               {/* Notes */}
               {member.notes && (
-                <div className="bg-gray-50 rounded-2xl p-4">
+                <div className="bg-gray-50 dark:bg-slate-800 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-1">
-                    <FileText className="w-5 h-5 text-gray-600" />
+                    <FileText className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     <span className="text-base font-bold text-foreground">특이사항</span>
                   </div>
                   <p className="text-base text-foreground whitespace-pre-wrap">
