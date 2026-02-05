@@ -160,8 +160,8 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-8"
                 >
-                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-10 h-10 text-green-600" />
+                  <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/50 flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
                   </div>
                   <h4 className="text-lg font-semibold text-foreground mb-2">
                     드라이버를 찾았습니다!
