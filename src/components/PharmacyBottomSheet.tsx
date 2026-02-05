@@ -118,19 +118,19 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
               {/* Info Grid */}
               <div className="space-y-3">
                 {/* Today's Hours */}
-                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
-                  <Clock className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950/50 rounded-xl">
+                  <Clock className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="text-sm text-green-600 font-medium">{getTodayName()} 운영시간</p>
-                    <p className="text-lg font-bold text-green-700">
+                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">{getTodayName()} 운영시간</p>
+                    <p className="text-lg font-bold text-green-700 dark:text-green-300">
                       {formatTime(pharmacy.todayOpenTime)} - {formatTime(pharmacy.todayCloseTime)}
                     </p>
                   </div>
                 </div>
 
                 {/* Address */}
-                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-                  <MapPin className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                  <MapPin className="w-5 h-5 text-gray-500 dark:text-slate-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm text-muted-foreground">주소</p>
                     <p className="text-base text-foreground">{pharmacy.address}</p>
@@ -144,8 +144,8 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
 
                 {/* Phone */}
                 {pharmacy.phone && (
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                    <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                    <Phone className="w-5 h-5 text-gray-500 dark:text-slate-400 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-sm text-muted-foreground">전화번호</p>
                       <p className="text-base text-foreground font-medium">{pharmacy.phone}</p>
