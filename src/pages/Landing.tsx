@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -359,7 +359,7 @@ const Landing = () => {
           transition={{ duration: 0.5, delay: 0.15 }}
           className="w-full mb-8"
         >
-          <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
+         <div className="flex flex-wrap justify-center gap-2 max-w-sm mx-auto">
             {/* 전국 응급실 */}
             <Popover>
               <PopoverTrigger asChild>
@@ -499,6 +499,49 @@ const Landing = () => {
                 </div>
               </PopoverContent>
             </Popover>
+
+           {/* 119 통계 인사이트 */}
+           <Popover>
+             <PopoverTrigger asChild>
+               <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 hover:from-amber-100 hover:to-orange-100 transition-colors cursor-pointer">
+                 <BarChart3 className="w-3.5 h-3.5 text-amber-600" />
+                 <span className="text-xs font-semibold text-amber-700">119 통계</span>
+               </button>
+             </PopoverTrigger>
+             <PopoverContent className="w-80 p-4 rounded-2xl border border-amber-200 shadow-lg" side="bottom">
+               <div className="space-y-3">
+                 <div className="flex items-center gap-2.5">
+                   <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
+                     <BarChart3 className="w-4 h-4 text-amber-600" />
+                   </div>
+                   <div>
+                     <p className="text-sm font-bold text-slate-800">119 통계 인사이트</p>
+                     <span className="text-[10px] text-slate-500">소방청 구급 데이터 기반</span>
+                   </div>
+                 </div>
+                 <p className="text-xs text-slate-500 leading-relaxed">
+                   과거 3년간의 119 구급 출동 통계를 분석하여 지역별 응급 수요 패턴과 병원별 이송 현황을 제공합니다.
+                 </p>
+                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                   <div className="text-center p-2 bg-amber-50 rounded-xl">
+                     <AlertTriangle className="w-4 h-4 text-amber-600 mx-auto mb-1" />
+                     <p className="text-[10px] font-medium text-slate-700">수요 예측</p>
+                   </div>
+                   <div className="text-center p-2 bg-amber-50 rounded-xl">
+                     <TrendingUp className="w-4 h-4 text-amber-600 mx-auto mb-1" />
+                     <p className="text-[10px] font-medium text-slate-700">혼잡 시간대</p>
+                   </div>
+                 </div>
+                 <button 
+                   onClick={() => navigate("/map?role=paramedic")}
+                   className="w-full flex items-center justify-center gap-1.5 pt-2 text-[11px] text-amber-600 font-medium hover:text-amber-700"
+                 >
+                   <span>지도에서 확인하기</span>
+                   <ChevronRight className="w-3.5 h-3.5" />
+                 </button>
+               </div>
+             </PopoverContent>
+           </Popover>
           </div>
         </motion.div>
 
