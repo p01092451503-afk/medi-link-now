@@ -202,7 +202,7 @@ const MedicalPassportDetailModal = ({
 
               {/* Chronic Diseases */}
               {member.chronicDiseases.length > 0 && (
-                <div className="bg-primary/5 rounded-2xl p-4">
+                <div className="bg-primary/5 dark:bg-primary/10 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Heart className="w-5 h-5 text-primary" />
                     <span className="text-base font-bold text-foreground">기저질환</span>
@@ -211,7 +211,7 @@ const MedicalPassportDetailModal = ({
                     {member.chronicDiseases.map((disease) => (
                       <span
                         key={disease}
-                        className="px-3 py-1.5 bg-primary/20 text-primary text-base font-semibold rounded-full"
+                        className="px-3 py-1.5 bg-primary/20 dark:bg-primary/30 text-primary text-base font-semibold rounded-full"
                       >
                         {disease}
                       </span>
