@@ -182,16 +182,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Allergies - Warning Style */}
               {member.allergies.length > 0 && (
-                <div className="bg-orange-50 border-2 border-orange-300 rounded-2xl p-4">
+                <div className="bg-orange-50 dark:bg-orange-950/50 border-2 border-orange-300 dark:border-orange-700 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className="w-5 h-5 text-orange-500" />
-                    <span className="text-base font-bold text-orange-700">⚠️ 알레르기</span>
+                    <AlertTriangle className="w-5 h-5 text-orange-500 dark:text-orange-400" />
+                    <span className="text-base font-bold text-orange-700 dark:text-orange-400">⚠️ 알레르기</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.allergies.map((allergy) => (
                       <span
                         key={allergy}
-                        className="px-3 py-1.5 bg-orange-200 text-orange-800 text-base font-bold rounded-full"
+                        className="px-3 py-1.5 bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 text-base font-bold rounded-full"
                       >
                         {allergy}
                       </span>
