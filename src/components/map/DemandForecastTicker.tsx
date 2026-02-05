@@ -84,11 +84,11 @@
      <Popover>
        <PopoverTrigger asChild>
           <button
-            className={`flex items-center gap-1.5 px-3 py-1.5 bg-card rounded-full shadow-lg border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-colors whitespace-nowrap flex-shrink-0 ${className}`}
+            className={`flex items-center gap-1.5 h-8 px-3 bg-card rounded-full shadow-lg border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-colors whitespace-nowrap flex-shrink-0 ${className}`}
           >
             <BarChart3 className="w-3.5 h-3.5 flex-shrink-0" />
             <span>119 통계</span>
-            <span className={`w-2 h-2 rounded-full ${getLevelBadgeColor(forecast.demandLevel)}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${getLevelBadgeColor(forecast.demandLevel)}`} />
           </button>
        </PopoverTrigger>
        <PopoverContent 
