@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -18,10 +19,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTransferMode } from "@/contexts/TransferModeContext";
+import PublicDataInfoModal from "@/components/PublicDataInfoModal";
 
 const ParamedicLanding = () => {
   const navigate = useNavigate();
   const { setMode } = useTransferMode();
+  const [isPublicDataModalOpen, setIsPublicDataModalOpen] = useState(false);
 
   const features = [
     {
@@ -231,7 +234,10 @@ const ParamedicLanding = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <div className="bg-orange-50 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3.5 border border-orange-200 dark:border-slate-700">
+          <button
+            onClick={() => setIsPublicDataModalOpen(true)}
+            className="w-full bg-orange-50 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3.5 border border-orange-200 dark:border-slate-700 hover:bg-orange-100 dark:hover:bg-slate-700 hover:border-orange-300 dark:hover:border-slate-600 transition-all duration-200 text-left"
+          >
             <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
@@ -239,10 +245,16 @@ const ParamedicLanding = () => {
               <p className="text-sm font-semibold text-slate-800 dark:text-white">공공데이터 기반 서비스</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">국가응급진료정보망(NEDIS) 데이터 활용</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-orange-300 dark:text-slate-600" />
-          </div>
+            <ChevronRight className="w-4 h-4 text-orange-400 dark:text-slate-500" />
+          </button>
         </motion.div>
       </main>
+
+      {/* Public Data Info Modal */}
+      <PublicDataInfoModal 
+        isOpen={isPublicDataModalOpen} 
+        onClose={() => setIsPublicDataModalOpen(false)} 
+      />
     </div>
   );
 };
