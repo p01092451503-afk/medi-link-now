@@ -475,10 +475,10 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 existingRequest ? (
                   <div className={`w-full mb-3 py-4 px-4 rounded-xl border-2 flex items-center justify-center gap-2 ${
                     existingRequest.status === "pending" 
-                      ? "bg-yellow-50 border-yellow-300 text-yellow-700"
+                      ? "bg-yellow-50 dark:bg-yellow-950/50 border-yellow-300 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400"
                       : existingRequest.status === "accepted"
-                      ? "bg-green-50 border-green-300 text-green-700"
-                      : "bg-red-50 border-red-300 text-red-700"
+                      ? "bg-green-50 dark:bg-green-950/50 border-green-300 dark:border-green-700 text-green-700 dark:text-green-400"
+                      : "bg-red-50 dark:bg-red-950/50 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400"
                   }`}>
                     {existingRequest.status === "pending" ? (
                       <>
