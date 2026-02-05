@@ -47,10 +47,10 @@ const GuardianLanding = () => {
     },
   ];
 
-  const targetUsers = [
-    { icon: Baby, label: "아이를 키우는 부모님", desc: "소아응급 병원 빠르게 찾기" },
-    { icon: Users, label: "어르신을 모시는 분", desc: "24시간 응급실 현황 확인" },
-    { icon: Heart, label: "만성질환 환자 가족", desc: "전문 진료 가능 병원 검색" },
+  const targetUsers: { icon: typeof Baby; label: string; desc: string; type: TargetUserType }[] = [
+    { icon: Baby, label: "아이를 키우는 부모님", desc: "소아응급 병원 빠르게 찾기", type: "parents" },
+    { icon: Users, label: "어르신을 모시는 분", desc: "24시간 응급실 현황 확인", type: "elderly" },
+    { icon: Heart, label: "만성질환 환자 가족", desc: "전문 진료 가능 병원 검색", type: "chronic" },
   ];
 
   return (
