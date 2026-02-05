@@ -102,15 +102,15 @@ const LocationCoachmark = ({ show, onDismiss, targetRef }: LocationCoachmarkProp
                     <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm sm:text-base" style={{ color: '#1e293b' }}>내 주변 병원 찾기</p>
-                    <p className="text-xs" style={{ color: '#64748b' }}>빠른 응급실 안내</p>
+                    <p className="font-bold text-sm sm:text-base text-[#1e293b] dark:text-white">내 주변 병원 찾기</p>
+                    <p className="text-xs text-[#64748b] dark:text-slate-400">빠른 응급실 안내</p>
                   </div>
                 </div>
 
                 {/* Description */}
-                <div className="space-y-2 text-xs sm:text-sm leading-relaxed" style={{ color: '#475569' }}>
+                <div className="space-y-2 text-xs sm:text-sm leading-relaxed text-[#475569] dark:text-slate-300">
                   <p>
-                    <span className="font-semibold" style={{ color: '#1e293b' }}>이 버튼을 탭하면</span> 현재 위치를 기준으로 가장 가까운 응급실을 거리순으로 안내합니다.
+                    <span className="font-semibold text-[#1e293b] dark:text-white">이 버튼을 탭하면</span> 현재 위치를 기준으로 가장 가까운 응급실을 거리순으로 안내합니다.
                   </p>
                 </div>
               </div>
