@@ -182,7 +182,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col"
+            className="fixed inset-x-4 top-4 bottom-4 bg-background rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="sticky top-0 bg-gradient-to-r from-primary to-primary/80 p-5 text-white z-10">
@@ -214,10 +214,10 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
+                  <div className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-muted-foreground">또는 직접 입력</span>
+                  <span className="bg-background px-2 text-muted-foreground">또는 직접 입력</span>
                 </div>
               </div>
 
