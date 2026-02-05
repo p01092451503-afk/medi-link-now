@@ -93,13 +93,13 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       {isNightPharmacy(pharmacy) && (
-                        <Badge variant="outline" className="border-indigo-300 text-indigo-600 bg-indigo-50">
+                        <Badge variant="outline" className="border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50">
                           <Moon className="w-3 h-3 mr-1" />
                           심야약국
                         </Badge>
                       )}
                       {hasHolidayHours(pharmacy) && (
-                        <Badge variant="outline" className="border-amber-300 text-amber-600 bg-amber-50">
+                        <Badge variant="outline" className="border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50">
                           <Calendar className="w-3 h-3 mr-1" />
                           휴일지킴이
                         </Badge>
@@ -109,7 +109,7 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
