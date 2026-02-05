@@ -147,14 +147,14 @@ const DrivingLogWidget = ({ onLogComplete, isSimulateMode = false }: DrivingLogW
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-white rounded-2xl shadow-xl border border-border p-4 min-w-[180px]"
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-border p-4 min-w-[180px]"
           >
             <div className="flex items-center gap-2 mb-3">
               <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
               <span className="text-sm font-semibold text-foreground">운행 중</span>
             </div>
             
-            <div className="flex items-center gap-2 mb-3 bg-gray-50 rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-3 bg-gray-50 dark:bg-slate-700 rounded-xl p-3">
               <Clock className="w-5 h-5 text-primary" />
               <span className="text-xl font-mono font-bold text-foreground">
                 {formatTime(elapsedTime)}

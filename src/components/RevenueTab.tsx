@@ -108,11 +108,11 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-white rounded-xl p-4 border-2 transition-colors ${
+      className={`bg-white dark:bg-slate-800 rounded-xl p-4 border-2 transition-colors ${
         acceptedTrips.includes(trip.id) 
-          ? "border-green-500 bg-green-50" 
+          ? "border-green-500 bg-green-50 dark:bg-green-950/50" 
           : isHot
-            ? "border-orange-400 bg-orange-50/50"
+            ? "border-orange-400 bg-orange-50/50 dark:bg-orange-950/30"
             : "border-primary/30 hover:border-primary"
       }`}
     >
@@ -159,7 +159,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
 
       {/* Detour Info - only show when returning empty */}
       {isReturningEmpty && trip.detourTimeMinutes !== undefined && (
-        <div className="flex items-center gap-3 text-xs mb-3 py-2 px-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 text-xs mb-3 py-2 px-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
           <div className="flex items-center gap-1 text-muted-foreground">
             <Route className="w-3.5 h-3.5" />
             <span>우회: +{trip.detourDistance}km</span>
@@ -227,7 +227,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
       </div>
 
       {/* Empty Return Toggle Section */}
-      <div className="bg-white rounded-2xl p-5 border border-border">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-border">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Navigation className="w-5 h-5 text-primary" />
@@ -238,7 +238,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
               isReturningEmpty 
                 ? "bg-orange-500 text-white" 
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600"
             }`}
           >
             {isReturningEmpty ? (
@@ -269,7 +269,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
                   <select
                     value={currentLocation}
                     onChange={(e) => setCurrentLocation(e.target.value)}
-                    className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="w-full rounded-xl border border-input bg-background dark:bg-slate-700 dark:border-slate-600 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     {MAJOR_CITIES.map(city => (
                       <option key={city} value={city}>{city}</option>
@@ -284,7 +284,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
                   <select
                     value={homeBase}
                     onChange={(e) => setHomeBase(e.target.value)}
-                    className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="w-full rounded-xl border border-input bg-background dark:bg-slate-700 dark:border-slate-600 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     {MAJOR_CITIES.map(city => (
                       <option key={city} value={city}>{city}</option>
@@ -293,7 +293,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
                 </div>
               </div>
               
-              <div className="text-xs text-muted-foreground bg-orange-50 rounded-lg p-3 flex items-center gap-2">
+              <div className="text-xs text-muted-foreground bg-orange-50 dark:bg-orange-950/30 rounded-lg p-3 flex items-center gap-2">
                 <Flame className="w-4 h-4 text-orange-500" />
                 <span>
                   <strong className="text-orange-600">{currentLocation} → {homeBase}</strong> 경로상의 환자를 자동으로 매칭합니다
@@ -305,7 +305,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
       </div>
 
       {/* Return Trip Matching Section */}
-      <div className="bg-white rounded-2xl p-5 border border-border">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-border">
         <div className="flex items-center gap-2 mb-4">
           <RotateCcw className="w-5 h-5 text-primary" />
           <h3 className="font-bold text-foreground">귀경길 콜 매칭</h3>
@@ -313,7 +313,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
             <button
               onClick={() => refetch()}
               disabled={isLoading}
-              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
             >
               <RefreshCw className={`w-4 h-4 text-muted-foreground ${isLoading ? "animate-spin" : ""}`} />
             </button>
@@ -325,12 +325,12 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
         </div>
 
         {/* Potential Revenue */}
-        <div className="bg-green-50 rounded-xl p-3 mb-4 flex items-center justify-between">
+        <div className="bg-green-50 dark:bg-green-950/30 rounded-xl p-3 mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-green-600" />
-            <span className="text-sm text-green-700">예상 추가 수익</span>
+            <span className="text-sm text-green-700 dark:text-green-400">예상 추가 수익</span>
           </div>
-          <span className="text-lg font-bold text-green-600">
+          <span className="text-lg font-bold text-green-600 dark:text-green-400">
             +₩{potentialRevenue.toLocaleString()}
           </span>
         </div>
@@ -389,14 +389,14 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
       </div>
 
       {/* Weekly Stats */}
-      <div className="bg-white rounded-2xl p-4 border border-border">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-border">
         <h3 className="font-semibold text-foreground mb-4">이번 주 요약</h3>
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
+          <div className="text-center p-3 bg-gray-50 dark:bg-slate-700 rounded-xl">
             <p className="text-2xl font-bold text-foreground">12</p>
             <p className="text-xs text-muted-foreground">총 운행</p>
           </div>
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
+          <div className="text-center p-3 bg-gray-50 dark:bg-slate-700 rounded-xl">
             <p className="text-2xl font-bold text-primary">₩890,000</p>
             <p className="text-xs text-muted-foreground">총 수입</p>
           </div>

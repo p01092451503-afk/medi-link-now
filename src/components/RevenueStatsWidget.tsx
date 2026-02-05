@@ -166,7 +166,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       <Button
         variant="outline"
         onClick={() => setShowCharts(!showCharts)}
-        className="w-full rounded-xl py-5 flex items-center justify-center gap-2"
+        className="w-full rounded-xl py-5 flex items-center justify-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700"
       >
         <BarChart3 className="w-5 h-5 text-primary" />
         <span>상세 통계 보기</span>
@@ -189,7 +189,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
               {/* Daily Revenue Bar Chart */}
-              <div className="bg-white rounded-2xl p-5 border border-border">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-border">
                 <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                   <Banknote className="w-5 h-5 text-primary" />
                   일별 매출
@@ -236,7 +236,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
               </div>
 
               {/* Payment Method Pie Chart */}
-              <div className="bg-white rounded-2xl p-5 border border-border">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-border">
                 <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-primary" />
                   결제 수단별 비율
@@ -293,13 +293,13 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
 
       {/* Unpaid List */}
       {unpaidLogs.length > 0 && (
-        <div className="bg-red-50 rounded-2xl p-5 border border-red-200">
+        <div className="bg-red-50 dark:bg-red-950/30 rounded-2xl p-5 border border-red-200 dark:border-red-800">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-red-700 flex items-center gap-2">
+            <h3 className="font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
               <AlertCircle className="w-5 h-5" />
               미수금 내역
             </h3>
-            <span className="text-lg font-bold text-red-600">
+            <span className="text-lg font-bold text-red-600 dark:text-red-400">
               총 ₩{totalUnpaid.toLocaleString()}
             </span>
           </div>
@@ -307,7 +307,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
             {unpaidLogs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-center justify-between bg-white rounded-xl p-3 border border-red-100"
+                className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-xl p-3 border border-red-100 dark:border-red-900"
               >
                 <div>
                   <p className="font-medium text-foreground text-sm">
