@@ -63,20 +63,20 @@ const ParamedicLanding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 via-white to-slate-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 via-white to-slate-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-orange-100">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-orange-100 dark:border-slate-800">
         <div className="px-4 py-3 flex items-center justify-between max-w-lg mx-auto">
           <button 
             onClick={() => navigate("/")}
-            className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 transition-colors text-sm font-medium"
+            className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors text-sm font-medium"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
             돌아가기
           </button>
           <div className="flex items-baseline gap-1">
-            <span className="font-logo font-extrabold text-slate-800">Find-ER</span>
-            <span className="text-[10px] font-bold text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded-full">119</span>
+            <span className="font-logo font-extrabold text-slate-800 dark:text-white">Find-ER</span>
+            <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-1.5 py-0.5 rounded-full">119</span>
           </div>
         </div>
       </header>
@@ -93,20 +93,20 @@ const ParamedicLanding = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-full text-orange-700 text-sm font-semibold mb-5 border border-orange-200"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-900/40 rounded-full text-orange-700 dark:text-orange-300 text-sm font-semibold mb-5 border border-orange-200 dark:border-orange-800"
           >
             <Siren className="w-4 h-4" />
             119 구급대원 전용
           </motion.div>
           
-          <h1 className="text-[2rem] leading-tight font-extrabold text-slate-900 mb-4 tracking-tight">
-            <span className="text-orange-600">골든타임</span>을 지키는<br />
+          <h1 className="text-[2rem] leading-tight font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
+            <span className="text-orange-600 dark:text-orange-400">골든타임</span>을 지키는<br />
             실시간 병상 정보
           </h1>
           
-          <p className="text-slate-500 text-base leading-relaxed max-w-xs mx-auto">
+          <p className="text-slate-500 dark:text-slate-400 text-base leading-relaxed max-w-xs mx-auto">
             병원 거절로 인한 시간 낭비 없이<br />
-            <span className="text-orange-600 font-medium">환자를 가장 빠르게</span> 이송하세요
+            <span className="text-orange-600 dark:text-orange-400 font-medium">환자를 가장 빠르게</span> 이송하세요
           </p>
         </motion.div>
 
@@ -123,14 +123,14 @@ const ParamedicLanding = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 + index * 0.05, duration: 0.3 }}
-              className="bg-white rounded-2xl p-3.5 shadow-sm border border-orange-100 text-center group hover:shadow-md hover:border-orange-200 transition-all duration-300"
+              className="bg-white dark:bg-slate-800 rounded-2xl p-3.5 shadow-sm border border-orange-100 dark:border-slate-700 text-center group hover:shadow-md hover:border-orange-200 dark:hover:border-slate-600 transition-all duration-300"
             >
-              <div className="w-11 h-11 rounded-xl bg-orange-500 flex items-center justify-center mx-auto mb-2.5 group-hover:bg-orange-600 transition-colors duration-300">
+              <div className="w-11 h-11 rounded-xl bg-orange-500 dark:bg-orange-600 flex items-center justify-center mx-auto mb-2.5 group-hover:bg-orange-600 dark:group-hover:bg-orange-500 transition-colors duration-300">
                 <benefit.icon className="w-5 h-5 text-white" />
               </div>
-              <p className="text-2xl font-extrabold text-slate-800">{benefit.value}</p>
-              <p className="text-xs font-semibold text-slate-700 mt-0.5">{benefit.label}</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{benefit.desc}</p>
+              <p className="text-2xl font-extrabold text-slate-800 dark:text-white">{benefit.value}</p>
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mt-0.5">{benefit.label}</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{benefit.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -144,7 +144,7 @@ const ParamedicLanding = () => {
         >
           <Button
             onClick={handleStartService}
-            className="w-full py-7 rounded-2xl text-lg font-bold bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/25 border-0 group"
+            className="w-full py-7 rounded-2xl text-lg font-bold bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 shadow-lg shadow-orange-500/25 dark:shadow-orange-600/20 border-0 group"
           >
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
               <Siren className="w-5 h-5" />
