@@ -348,7 +348,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 text-orange-600">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400">
                             <Truck className="w-3 h-3" />
                             이송 중 {incomingCount}대
                           </span>
