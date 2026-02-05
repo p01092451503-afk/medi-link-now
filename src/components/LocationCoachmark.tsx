@@ -80,18 +80,18 @@ const LocationCoachmark = ({ show, onDismiss, targetRef }: LocationCoachmarkProp
             className="fixed z-[1101] w-64 sm:w-72"
             style={tooltipStyle}
           >
-            <div className="relative bg-white rounded-2xl shadow-2xl p-4 sm:p-5 border border-gray-100">
+            <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700">
               {/* Arrow pointing right */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full">
-                <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[12px] border-l-white drop-shadow-lg" />
+                <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[12px] border-l-white dark:border-l-slate-900 drop-shadow-lg" />
               </div>
 
               {/* Close button - larger for mobile touch */}
               <button
                 onClick={onDismiss}
-                className="absolute -top-3 -right-3 w-11 h-11 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors shadow-md active:scale-95"
+                className="absolute -top-3 -right-3 w-11 h-11 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-full flex items-center justify-center transition-colors shadow-md active:scale-95"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
 
               {/* Content */}
@@ -102,15 +102,15 @@ const LocationCoachmark = ({ show, onDismiss, targetRef }: LocationCoachmarkProp
                     <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-foreground text-sm sm:text-base">내 주변 병원 찾기</p>
-                    <p className="text-xs text-muted-foreground">빠른 응급실 안내</p>
+                    <p className="font-bold text-slate-800 dark:text-white text-sm sm:text-base">내 주변 병원 찾기</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">빠른 응급실 안내</p>
                   </div>
                 </div>
 
                 {/* Description */}
-                <div className="space-y-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                <div className="space-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                   <p>
-                    <span className="font-semibold text-foreground">이 버튼을 탭하면</span> 현재 위치를 기준으로 가장 가까운 응급실을 거리순으로 안내합니다.
+                    <span className="font-semibold text-slate-800 dark:text-white">이 버튼을 탭하면</span> 현재 위치를 기준으로 가장 가까운 응급실을 거리순으로 안내합니다.
                   </p>
                 </div>
               </div>
