@@ -48,6 +48,7 @@ import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";
 import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
+import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
 
 
 // Map default center (Seoul)
@@ -94,6 +95,7 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
+  const [selectedNightCareHospital, setSelectedNightCareHospital] = useState<HospitalDetailData | null>(null);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -125,21 +127,33 @@ const MapPage = () => {
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
 
-  // Fetch night care hospital data when filter is set to 'nightCare'
-  const isNightCareFilter = activeFilter === "nightCare";
+  // Fetch night care hospital data when filter is set to 'nightCare' or 'nonEmergency'
+  const isNightCareFilter = activeFilter === "nightCare" || activeFilter === "nonEmergency";
   const { data: hospitalDetailsData, isLoading: isLoadingNightCare } = useHospitalDetails({
     enabled: isNightCareFilter,
   });
 
-  // Create a Set of night care hospital names for efficient lookup (non-emergency only)
-  const nightCareHospitalNames = useMemo(() => {
+  // Filter night care hospitals (non-emergency only, with valid coordinates)
+  const nightCareHospitals = useMemo(() => {
     if (!hospitalDetailsData) return new Set<string>();
-    return new Set(
-      hospitalDetailsData
-        .filter((h) => h.hasNightCare && !h.emergencyRoomType) // 응급실 없는 일반병원만
-        .map((h) => h.hospitalName)
+    return hospitalDetailsData.filter((h) => 
+      h.hasNightCare && 
+      !h.emergencyRoomType && 
+      h.lat && 
+      h.lng
     );
   }, [hospitalDetailsData]);
+
+  // Create a Set of night care hospital names for efficient lookup (kept for backward compat)
+  const nightCareHospitalNames = useMemo(() => {
+    if (!nightCareHospitals || nightCareHospitals.size === undefined) return new Set<string>();
+    return new Set(Array.isArray(nightCareHospitals) ? 
+      hospitalDetailsData
+        ?.filter((h) => h.hasNightCare && !h.emergencyRoomType)
+        .map((h) => h.hospitalName)
+      : []
+    );
+  }, [hospitalDetailsData, nightCareHospitals]);
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
