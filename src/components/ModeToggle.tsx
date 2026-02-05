@@ -46,7 +46,7 @@ const ModeToggle = () => {
           />
         )}
         <Truck className="w-3.5 h-3.5 relative z-10 flex-shrink-0" />
-        <span className="relative z-10 whitespace-nowrap">비응급 이송</span>
+       <span className="relative z-10 whitespace-nowrap">비응급</span>
       </button>
     </div>
   );
