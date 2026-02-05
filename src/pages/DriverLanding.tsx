@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -15,8 +16,10 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SecurityInfoModal from "@/components/SecurityInfoModal";
 
 const DriverLanding = () => {
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const features = [
