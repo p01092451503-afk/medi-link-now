@@ -77,7 +77,7 @@ const VoiceEmergencyLogFAB = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isProcessingAI, setIsProcessingAI] = useState(false);
-  const [isSupported, setIsSupported] = useState(true);
+  const [isSupported, setIsSupported] = useState(isSpeechRecognitionSupported);
   const [recognition, setRecognition] = useState<any>(null);
   const [transcript, setTranscript] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
