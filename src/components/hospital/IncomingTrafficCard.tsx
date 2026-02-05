@@ -26,17 +26,17 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
       {/* Incoming Traffic Section */}
       <div className={`p-4 rounded-xl border-2 ${
         highTraffic 
-          ? "bg-amber-50 border-amber-300" 
+          ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700" 
           : trafficCount > 0 
-            ? "bg-blue-50 border-blue-200" 
-            : "bg-gray-50 border-gray-200"
+            ? "bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800" 
+            : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-700"
       }`}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-              highTraffic ? "bg-amber-200" : "bg-blue-100"
+              highTraffic ? "bg-amber-200 dark:bg-amber-900/50" : "bg-blue-100 dark:bg-blue-900/50"
             }`}>
-              <Truck className={`w-4 h-4 ${highTraffic ? "text-amber-700" : "text-blue-600"}`} />
+              <Truck className={`w-4 h-4 ${highTraffic ? "text-amber-700 dark:text-amber-400" : "text-blue-600 dark:text-blue-400"}`} />
             </div>
             <div>
               <h4 className="text-sm font-semibold text-foreground">민간 구급차 이송 현황</h4>
@@ -47,10 +47,10 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="flex items-center gap-1 px-2 py-1 bg-amber-200 rounded-full"
+              className="flex items-center gap-1 px-2 py-1 bg-amber-200 dark:bg-amber-900/50 rounded-full"
             >
-              <AlertTriangle className="w-3 h-3 text-amber-700" />
-              <span className="text-[10px] font-bold text-amber-700">혼잡 주의</span>
+              <AlertTriangle className="w-3 h-3 text-amber-700 dark:text-amber-400" />
+              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">혼잡 주의</span>
             </motion.div>
           )}
         </div>
@@ -60,7 +60,7 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
           <div className="text-center">
             <div className="flex items-center justify-center gap-2">
               <span className={`text-4xl font-bold ${
-                highTraffic ? "text-amber-600" : trafficCount > 0 ? "text-blue-600" : "text-gray-400"
+                highTraffic ? "text-amber-600 dark:text-amber-400" : trafficCount > 0 ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-slate-500"
               }`}>
                 {trafficCount}
               </span>
@@ -79,14 +79,14 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
       {/* Real-time Estimated Availability */}
       <div className={`p-4 rounded-xl border-2 ${
         isFull 
-          ? "bg-red-50 border-red-300" 
+          ? "bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-800" 
           : adjustedBeds <= 2 
-            ? "bg-amber-50 border-amber-200" 
-            : "bg-emerald-50 border-emerald-200"
+            ? "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800" 
+            : "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800"
       }`}>
         <div className="flex items-center gap-2 mb-3">
           <TrendingDown className={`w-4 h-4 ${
-            isFull ? "text-red-600" : adjustedBeds <= 2 ? "text-amber-600" : "text-emerald-600"
+            isFull ? "text-red-600 dark:text-red-400" : adjustedBeds <= 2 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
           }`} />
           <h4 className="text-sm font-semibold text-foreground">실시간 추정 가용량</h4>
           <TooltipProvider>
@@ -106,29 +106,29 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
 
         {/* Calculation Display */}
         <div className="flex items-center justify-center gap-2 py-2">
-          <div className="text-center px-3 py-2 bg-white rounded-lg shadow-sm">
-            <p className="text-lg font-bold text-gray-700">{officialBeds}</p>
+          <div className="text-center px-3 py-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+            <p className="text-lg font-bold text-gray-700 dark:text-slate-200">{officialBeds}</p>
             <p className="text-[9px] text-muted-foreground">공식 병상</p>
           </div>
-          <span className="text-xl font-bold text-gray-400">−</span>
-          <div className="text-center px-3 py-2 bg-white rounded-lg shadow-sm">
-            <p className="text-lg font-bold text-blue-600">{trafficCount}</p>
+          <span className="text-xl font-bold text-gray-400 dark:text-slate-500">−</span>
+          <div className="text-center px-3 py-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+            <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{trafficCount}</p>
             <p className="text-[9px] text-muted-foreground">이송 중</p>
           </div>
-          <span className="text-xl font-bold text-gray-400">=</span>
+          <span className="text-xl font-bold text-gray-400 dark:text-slate-500">=</span>
           <div className={`text-center px-4 py-2 rounded-lg shadow-sm ${
             isFull 
-              ? "bg-red-100" 
+              ? "bg-red-100 dark:bg-red-900/50" 
               : adjustedBeds <= 2 
-                ? "bg-amber-100" 
-                : "bg-emerald-100"
+                ? "bg-amber-100 dark:bg-amber-900/50" 
+                : "bg-emerald-100 dark:bg-emerald-900/50"
           }`}>
             <p className={`text-2xl font-bold ${
               isFull 
-                ? "text-red-600" 
+                ? "text-red-600 dark:text-red-400" 
                 : adjustedBeds <= 2 
-                  ? "text-amber-600" 
-                  : "text-emerald-600"
+                  ? "text-amber-600 dark:text-amber-400" 
+                  : "text-emerald-600 dark:text-emerald-400"
             }`}>
               {adjustedBeds}
             </p>
@@ -140,9 +140,9 @@ const IncomingTrafficCard = ({ hospitalId, officialBeds }: IncomingTrafficCardPr
           <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-3 p-2 bg-red-100 rounded-lg text-center"
+            className="mt-3 p-2 bg-red-100 dark:bg-red-900/50 rounded-lg text-center"
           >
-            <p className="text-xs font-semibold text-red-700">
+            <p className="text-xs font-semibold text-red-700 dark:text-red-400">
               ⚠️ 추정 만실 - 다른 병원을 고려해주세요
             </p>
           </motion.div>
