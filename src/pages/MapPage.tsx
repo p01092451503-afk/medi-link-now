@@ -48,6 +48,8 @@ import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";
 import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
+import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
+import NightCareHospitalBottomSheet from "@/components/NightCareHospitalBottomSheet";
 
 
 // Map default center (Seoul)
@@ -94,6 +96,7 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
+  const [selectedNightCareHospital, setSelectedNightCareHospital] = useState<HospitalDetailData | null>(null);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -125,21 +128,27 @@ const MapPage = () => {
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
 
-  // Fetch night care hospital data when filter is set to 'nightCare'
-  const isNightCareFilter = activeFilter === "nightCare";
+  // Fetch night care hospital data when filter is set to 'nightCare' or 'nonEmergency'
+  const isNightCareFilter = activeFilter === "nightCare" || activeFilter === "nonEmergency";
   const { data: hospitalDetailsData, isLoading: isLoadingNightCare } = useHospitalDetails({
     enabled: isNightCareFilter,
   });
 
-  // Create a Set of night care hospital names for efficient lookup (non-emergency only)
-  const nightCareHospitalNames = useMemo(() => {
-    if (!hospitalDetailsData) return new Set<string>();
-    return new Set(
-      hospitalDetailsData
-        .filter((h) => h.hasNightCare && !h.emergencyRoomType) // 응급실 없는 일반병원만
-        .map((h) => h.hospitalName)
+  // Filter night care hospitals (non-emergency only, with valid coordinates)
+  const nightCareHospitals = useMemo(() => {
+    if (!hospitalDetailsData) return [];
+    return hospitalDetailsData.filter((h) => 
+      h.hasNightCare && 
+      !h.emergencyRoomType && 
+      h.lat && 
+      h.lng
     );
   }, [hospitalDetailsData]);
+
+  // Create a Set of night care hospital names for efficient lookup (kept for backward compat)
+  const nightCareHospitalNames = useMemo(() => {
+    return new Set(nightCareHospitals.map((h) => h.hospitalName));
+  }, [nightCareHospitals]);
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
@@ -163,9 +172,9 @@ const MapPage = () => {
       });
     }
 
-    // Night care filter - filter by hospital names from API data
-    if (activeFilter === "nightCare" && nightCareHospitalNames.size > 0) {
-      result = result.filter((h) => nightCareHospitalNames.has(h.nameKr));
+    // Night care filter - hide emergency hospitals, show separate night care markers
+    if (activeFilter === "nightCare" || activeFilter === "nonEmergency") {
+      result = []; // Hide all emergency hospitals, show night care markers separately
     }
 
     // Transfer mode filtering based on transfer filter
@@ -567,6 +576,8 @@ const MapPage = () => {
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
             onZoomChange={setMapZoom}
+            nightCareHospitals={isNightCareFilter ? nightCareHospitals : []}
+            onNightCareHospitalClick={(hospital) => setSelectedNightCareHospital(hospital)}
           />
         )}
 
@@ -751,18 +762,25 @@ const MapPage = () => {
           <div className="absolute top-20 left-0 right-0 z-[999] px-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {filterOptions
-                .filter((f) => f.category === "bed" || f.category === "special")
+                .filter((f) => (f.category === "bed" || f.category === "special" || f.category === "nonEmergency") && !f.parent)
                 .filter((f) => f.id !== "pharmacy")
                 .map((f) => {
-                  const isActive = activeFilter === f.id;
+                  const isActive = activeFilter === f.id || 
+                    (f.id === "nonEmergency" && (activeFilter === "nightCare" || activeFilter === "nonEmergency"));
                   const isTraumaCenter = f.id === "traumaCenter";
                   const isMoonlight = f.id === "moonlight";
-                  const isNightCare = f.id === "nightCare";
+                  const isNonEmergency = f.id === "nonEmergency";
 
                   const handleFilterClick = () => {
-                    setActiveFilter(f.id);
+                    // For nonEmergency parent, toggle to nightCare directly
+                    if (f.id === "nonEmergency") {
+                      setActiveFilter("nightCare");
+                    } else {
+                      setActiveFilter(f.id);
+                    }
                     setSelectedHospital(null);
                     setSelectedPharmacy(null);
+                    setSelectedNightCareHospital(null);
                   };
 
                   return (
@@ -775,20 +793,20 @@ const MapPage = () => {
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
                             : isMoonlight
                               ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
-                              : isNightCare
+                              : isNonEmergency
                                 ? "bg-gradient-to-r from-indigo-500 to-blue-600 text-white shadow-md shadow-indigo-500/30"
                                 : "bg-primary text-white shadow-md"
                           : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
                       }`}
                     >
                       {isMoonlight && <span className="text-xs">🌙</span>}
-                      {isNightCare && <span className="text-xs">🌃</span>}
+                      {isNonEmergency && <span className="text-xs">🌃</span>}
                       {isTraumaCenter && (
                         <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
                           isActive ? "bg-white/20" : "bg-purple-100"
                         }`}>+</span>
                       )}
-                      {f.labelKr}
+                      {isNonEmergency ? "야간진료 (비응급)" : f.labelKr}
                     </button>
                   );
                 })}
@@ -850,6 +868,13 @@ const MapPage = () => {
         hospital={selectedNursingHospital}
         isOpen={!!selectedNursingHospital}
         onClose={() => setSelectedNursingHospital(null)}
+      />
+
+      {/* Night Care Hospital Bottom Sheet */}
+      <NightCareHospitalBottomSheet
+        hospital={selectedNightCareHospital}
+        isOpen={!!selectedNightCareHospital}
+        onClose={() => setSelectedNightCareHospital(null)}
       />
 
       {/* My Requests Panel - Floating */}

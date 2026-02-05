@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
+import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
 import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
 import { cleanHospitalName } from "@/lib/utils";
 
@@ -28,6 +29,8 @@ interface KakaoMapViewProps {
   activeAmbulanceTrips?: AmbulanceTrip[];
   incomingByHospital?: Map<number, number>;
   onZoomChange?: (zoom: number) => void;
+  nightCareHospitals?: HospitalDetailData[];
+  onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
 }
 
 // Get marker colors based on emergency grade

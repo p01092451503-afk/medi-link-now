@@ -1759,9 +1759,9 @@ export type SpecialFilterType = "pharmacy" | "traumaCenter" | "moonlight" | "nig
 export type LegalGradeFilterType = "legal_only" | "regional_center" | "local_center" | "local_institution";
 
 // Combined filter type
-export type FilterType = BedFilterType | ProcedureFilterType | SpecialFilterType | LegalGradeFilterType;
+export type FilterType = BedFilterType | ProcedureFilterType | SpecialFilterType | LegalGradeFilterType | "nonEmergency";
 
-export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" | "special" | "grade" }[] = [
+export const filterOptions: { id: FilterType; label: string; labelKr: string; category: "bed" | "procedure" | "special" | "grade" | "nonEmergency"; parent?: FilterType }[] = [
   // Bed availability filters
   { id: "all", label: "All", labelKr: "전체", category: "bed" },
   { id: "legal_only", label: "Legal Only", labelKr: "법정기관", category: "grade" },
@@ -1782,7 +1782,9 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   // Special facility types
   { id: "traumaCenter", label: "Trauma Center Only", labelKr: "외상센터", category: "special" },
   { id: "moonlight", label: "Night Pediatric", labelKr: "야간소아", category: "special" },
-  { id: "nightCare", label: "Night Care", labelKr: "야간진료", category: "special" },
+  // Non-emergency general hospitals
+  { id: "nonEmergency", label: "Non-Emergency", labelKr: "비응급", category: "nonEmergency" },
+  { id: "nightCare", label: "Night Care", labelKr: "야간진료", category: "nonEmergency", parent: "nonEmergency" },
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {
