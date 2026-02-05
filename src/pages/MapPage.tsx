@@ -756,9 +756,12 @@ const MapPage = () => {
                   };
 
                   return (
-                    <button
+                    <motion.button
                       key={f.id}
                       onClick={handleFilterClick}
+                      whileTap={{ scale: 0.95 }}
+                      animate={isActive ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+                      transition={{ duration: 0.2 }}
                       className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 flex-shrink-0 ${
                         isActive
                           ? isTraumaCenter
@@ -779,7 +782,7 @@ const MapPage = () => {
                         }`}>+</span>
                       )}
                       {isNonEmergency ? "야간진료 (비응급)" : f.labelKr}
-                    </button>
+                    </motion.button>
                   );
                 })}
             </div>

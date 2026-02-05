@@ -32,6 +32,8 @@ const TransferFilterChips = () => {
             <motion.button
               key={filter.id}
               whileTap={{ scale: 0.95 }}
+              animate={isActive ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setTransferFilter(filter.id)}
               className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
                 isActive
