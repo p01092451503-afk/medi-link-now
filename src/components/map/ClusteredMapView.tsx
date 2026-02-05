@@ -368,8 +368,6 @@ const ClusteredMapView = ({
   nursingHospitals = [],
   onNursingHospitalClick,
   onZoomChange,
-  nightCareHospitals = [],
-  onNightCareHospitalClick,
 }: ClusteredMapViewProps) => {
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
