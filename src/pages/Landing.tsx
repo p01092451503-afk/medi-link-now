@@ -520,10 +520,10 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-              className="w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50/80 via-white to-white border border-blue-100/60 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group"
             >
-              {/* Left accent bar */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+             {/* Left accent bar - always visible */}
+             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-2xl" />
               
               <div className="flex items-center w-full py-4 px-5">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 via-blue-100/80 to-indigo-100/50 flex items-center justify-center shrink-0 ring-1 ring-blue-100/50 group-hover:ring-blue-200 transition-all">
@@ -542,10 +542,10 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-              className="w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-50/80 via-white to-white border border-violet-100/60 shadow-sm hover:shadow-md hover:border-violet-200 transition-all duration-300 group"
             >
-              {/* Left accent bar */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+             {/* Left accent bar - always visible */}
+             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-2xl" />
               
               <div className="flex items-center w-full py-4 px-5">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-50 via-violet-100/80 to-purple-100/50 flex items-center justify-center shrink-0 ring-1 ring-violet-100/50 group-hover:ring-violet-200 transition-all">
@@ -564,10 +564,10 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-              className="w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50/80 via-white to-white border border-orange-100/60 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-300 group"
             >
-              {/* Left accent bar */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+             {/* Left accent bar - always visible */}
+             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-2xl" />
               
               <div className="flex items-center w-full py-4 px-5">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-50 via-orange-100/80 to-orange-100/50 flex items-center justify-center shrink-0 ring-1 ring-orange-100/50 group-hover:ring-orange-200 transition-all">
