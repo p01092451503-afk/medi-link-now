@@ -13,10 +13,10 @@ const RejectionLoggerFAB = () => {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-40 right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white shadow-lg shadow-red-500/30 flex items-center justify-center hover:from-red-600 hover:to-red-700 transition-all active:scale-95"
+        className="fixed bottom-24 left-1/2 translate-x-[calc(-50%+2rem)] z-50 w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white shadow-lg shadow-red-500/30 flex items-center justify-center hover:from-red-600 hover:to-red-700 transition-all active:scale-95"
         aria-label="거부 기록"
       >
-        <Ban className="w-6 h-6" />
+        <Ban className="w-7 h-7" />
       </motion.button>
 
       <AnimatePresence>
