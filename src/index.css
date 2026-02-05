@@ -393,3 +393,55 @@
 .noise-texture-strong::before {
   opacity: 0.07;
 }
+
+/* Gradient Mesh/Blob Pattern Overlays */
+.mesh-gradient-blue {
+  position: relative;
+  overflow: hidden;
+}
+
+.mesh-gradient-blue::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 60% at 60% 80%, rgba(147, 197, 253, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mesh-gradient-violet {
+  position: relative;
+  overflow: hidden;
+}
+
+.mesh-gradient-violet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 70% 60% at 25% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 70% at 75% 70%, rgba(192, 132, 252, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 50% 10%, rgba(167, 139, 250, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mesh-gradient-orange {
+  position: relative;
+  overflow: hidden;
+}
+
+.mesh-gradient-orange::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 75% 55% at 30% 35%, rgba(251, 146, 60, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 55% 75% at 70% 65%, rgba(253, 186, 116, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(254, 215, 170, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
