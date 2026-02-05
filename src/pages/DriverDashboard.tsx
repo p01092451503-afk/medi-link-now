@@ -148,7 +148,7 @@ const DriverDashboard = () => {
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-border px-4 py-3">
+      <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -182,7 +182,7 @@ const DriverDashboard = () => {
       </header>
 
       {/* Quick Actions Bar */}
-      <div className="sticky top-[60px] z-40 bg-white border-b border-border px-4 py-2">
+      <div className="sticky top-[60px] z-40 bg-white dark:bg-slate-900 border-b border-border px-4 py-2">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -197,8 +197,8 @@ const DriverDashboard = () => {
             onClick={() => setIsSimulateMode(!isSimulateMode)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               isSimulateMode 
-                ? "bg-green-100 text-green-700" 
-                : "bg-gray-100 text-gray-500"
+                ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400" 
+                : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
             }`}
           >
             {isSimulateMode ? (
@@ -221,7 +221,7 @@ const DriverDashboard = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               isTracking 
                 ? "bg-green-500 text-white" 
-                : "bg-gray-100 text-gray-500"
+                : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
             }`}
           >
             <Radio className={`w-4 h-4 ${isTracking ? "animate-pulse" : ""}`} />
@@ -231,7 +231,7 @@ const DriverDashboard = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="sticky top-[108px] z-40 bg-white border-b border-border">
+      <div className="sticky top-[108px] z-40 bg-white dark:bg-slate-900 border-b border-border">
         <div className="flex">
           {[
             { id: "calls", label: "호출", icon: Phone },
@@ -281,7 +281,7 @@ const DriverDashboard = () => {
                 대기 중인 호출 ({pendingRequests.length})
               </h3>
               {pendingRequests.length === 0 ? (
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-border text-center">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-border text-center">
                   <Phone className="w-10 h-10 text-muted-foreground mx-auto mb-2 opacity-50" />
                   <p className="text-muted-foreground text-sm">대기 중인 호출이 없습니다</p>
                 </div>
@@ -290,7 +290,7 @@ const DriverDashboard = () => {
                   {pendingRequests.map((request) => (
                     <div
                       key={request.id}
-                      className="bg-white rounded-2xl p-4 shadow-sm border border-border"
+                      className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-border"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
@@ -301,7 +301,7 @@ const DriverDashboard = () => {
                             {formatTimeAgo(request.created_at)}
                           </p>
                         </div>
-                        <span className="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-medium rounded-full">
+                        <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 text-xs font-medium rounded-full">
                           대기 중
                         </span>
                       </div>
@@ -359,7 +359,7 @@ const DriverDashboard = () => {
                 {completedRequests.map((request) => (
                   <div
                     key={request.id}
-                    className="bg-gray-50 rounded-2xl p-4 border border-border opacity-75"
+                    className="bg-gray-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-border opacity-75"
                   >
                     <div className="flex items-center justify-between">
                       <div>

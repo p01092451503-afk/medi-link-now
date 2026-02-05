@@ -368,7 +368,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   if (isLoading) {
     return (
       <div className="fixed bottom-20 left-4 right-4 z-40">
-        <div className="bg-white rounded-2xl shadow-lg border border-border p-4 flex items-center justify-center">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-border p-4 flex items-center justify-center">
           <Loader2 className="w-5 h-5 animate-spin text-primary mr-2" />
           <span className="text-sm text-muted-foreground">로딩 중...</span>
         </div>
@@ -393,7 +393,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
             exit={{ opacity: 0, y: 50 }}
             className="fixed bottom-20 left-4 right-4 z-40"
           >
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-primary p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-primary p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -407,7 +407,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
                     </div>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
+                <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-400 text-xs font-medium rounded-full flex items-center gap-1">
                   <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
                   운행 중 (Busy)
                 </span>
@@ -467,9 +467,9 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
             exit={{ opacity: 0, y: 50 }}
             className="fixed bottom-20 left-4 right-4 z-40"
           >
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-green-500 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-green-500 p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
                 </div>
                 <div className="flex-1">
