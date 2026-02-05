@@ -75,7 +75,7 @@ const CloudSyncStatusModal = ({
           {/* Status Icon */}
           <div className="flex flex-col items-center mb-6">
             <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${
-              isStale ? "bg-yellow-100" : "bg-green-100"
+              isStale ? "bg-yellow-100 dark:bg-yellow-950/50" : "bg-green-100 dark:bg-green-950/50"
             }`}>
               {isLoading ? (
                 <RefreshCw className="w-10 h-10 text-primary animate-spin" />
