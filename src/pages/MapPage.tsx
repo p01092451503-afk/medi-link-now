@@ -711,14 +711,10 @@ const MapPage = () => {
           <div className="flex items-center gap-3 min-w-max">
             <button
               onClick={() => navigate("/")}
-              className={`backdrop-blur-sm rounded-xl p-2.5 shadow-lg border hover:bg-white/60 transition-colors flex items-center gap-2 flex-shrink-0 ${
-                isTransferMode 
-                  ? "bg-violet-100/70 border-violet-200/50" 
-                  : "bg-white/50 border-white/30"
-              }`}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-card rounded-full shadow-lg border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-colors whitespace-nowrap flex-shrink-0"
             >
-              <ArrowLeft className="w-5 h-5 flex-shrink-0" />
-              <span className="font-logo font-extrabold text-foreground text-sm whitespace-nowrap">파인더</span>
+              <ArrowLeft className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>파인더</span>
             </button>
 
 
