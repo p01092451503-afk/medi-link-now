@@ -198,7 +198,7 @@ const MapPage = () => {
     }
 
     return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter, nightCareHospitalNames]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter]);
 
   // Filter holiday pharmacies by selected region
   const filteredPharmacies = useMemo(() => {
