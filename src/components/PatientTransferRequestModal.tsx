@@ -141,17 +141,17 @@ const PatientTransferRequestModal = ({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
+            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between rounded-t-2xl">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700 px-5 py-4 flex items-center justify-between rounded-t-2xl">
               <div>
                 <h2 className="text-lg font-bold text-foreground">디지털 이송 요청</h2>
                 <p className="text-xs text-muted-foreground">{hospitalName}</p>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>

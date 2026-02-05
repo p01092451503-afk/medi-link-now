@@ -116,10 +116,10 @@ const ERRoadviewModal = ({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-[10%] bottom-[10%] md:inset-auto md:top-[50%] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2 md:w-[90vw] md:max-w-2xl md:h-auto md:max-h-[80vh] bg-white rounded-2xl shadow-2xl z-[2001] flex flex-col overflow-hidden"
+            className="fixed inset-x-4 top-[10%] bottom-[10%] md:inset-auto md:top-[50%] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2 md:w-[90vw] md:max-w-2xl md:h-auto md:max-h-[80vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[2001] flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
+            <div className="flex items-center justify-between p-4 border-b border-border dark:border-slate-700">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Ambulance className="w-5 h-5 text-primary" />
@@ -133,7 +133,7 @@ const ERRoadviewModal = ({
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -141,8 +141,8 @@ const ERRoadviewModal = ({
 
             {/* Entrance Info Badge */}
             {entranceLat && entranceLng && (
-              <div className="px-4 py-2 bg-green-50 border-b border-green-100">
-                <div className="flex items-center gap-2 text-sm text-green-700">
+              <div className="px-4 py-2 bg-green-50 dark:bg-green-950/50 border-b border-green-100 dark:border-green-900">
+                <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
                   <MapPin className="w-4 h-4" />
                   <span className="font-medium">
                     응급실 전용 입구 위치 (정문과 다를 수 있음)
@@ -152,9 +152,9 @@ const ERRoadviewModal = ({
             )}
 
             {/* Content */}
-            <div className="flex-1 relative bg-gray-100 min-h-[280px] md:min-h-[350px]">
+            <div className="flex-1 relative bg-gray-100 dark:bg-slate-800 min-h-[280px] md:min-h-[350px]">
               {isLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-800">
                   <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
                   <p className="text-sm text-muted-foreground">
                     로드뷰를 불러오는 중...
@@ -163,7 +163,7 @@ const ERRoadviewModal = ({
               )}
 
               {hasError && !isLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 p-4 md:p-6 overflow-y-auto">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-800 p-4 md:p-6 overflow-y-auto">
                   <AlertTriangle className="w-12 h-12 md:w-16 md:h-16 text-yellow-500 mb-3 md:mb-4 flex-shrink-0" />
                   <h3 className="font-semibold text-foreground text-base md:text-lg mb-2 text-center">
                     로드뷰를 불러올 수 없습니다
@@ -200,7 +200,7 @@ const ERRoadviewModal = ({
 
             {/* Footer Actions */}
             {!hasError && !isLoading && (
-              <div className="p-4 border-t border-border bg-white">
+              <div className="p-4 border-t border-border dark:border-slate-700 bg-white dark:bg-slate-900">
                 <div className="flex gap-3">
                   <Button
                     onClick={handleOpenKakaoMap}

@@ -57,7 +57,7 @@ const NavigationSelector = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-56 p-2 rounded-xl border-0 shadow-xl z-[2000]" 
+        className="w-56 p-2 rounded-xl border-0 shadow-xl z-[2000] bg-white dark:bg-slate-900" 
         align="center"
         side="top"
         sideOffset={8}
@@ -70,14 +70,14 @@ const NavigationSelector = ({
             <button
               key={app.id}
               onClick={() => handleSelectApp(app.id)}
-              className="w-full px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+              className="w-full px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors text-left"
             >
               <p className="text-sm font-medium text-foreground">{app.name}</p>
             </button>
           ))}
         </div>
         
-        <div className="mt-2 pt-2 border-t">
+        <div className="mt-2 pt-2 border-t dark:border-slate-700">
           <p className="text-[10px] text-muted-foreground text-center px-2">
             <MapPin className="w-3 h-3 inline mr-1" />
             {destination.name}

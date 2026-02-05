@@ -37,7 +37,7 @@ const GeofenceArrivalModal = ({
             transition={{ type: "spring", damping: 25, stiffness: 400 }}
             className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-[2001] max-w-sm mx-auto"
           >
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-br from-emerald-500 to-green-500 p-6 text-center relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
@@ -62,9 +62,9 @@ const GeofenceArrivalModal = ({
 
               {/* Content */}
               <div className="p-6">
-                <div className="flex items-start gap-3 mb-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-amber-800">
+                <div className="flex items-start gap-3 mb-6 p-4 bg-amber-50 dark:bg-amber-950/50 rounded-xl border border-amber-200 dark:border-amber-800">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-amber-800 dark:text-amber-300">
                     목적지 반경 500m 내에 진입했습니다. 이송을 완료 처리하시겠습니까?
                   </p>
                 </div>

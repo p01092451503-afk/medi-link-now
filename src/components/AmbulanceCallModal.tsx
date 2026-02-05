@@ -62,7 +62,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
              // Mobile: pin to safe viewport with internal scroll (prevents cut-off)
              // sm+: center like a classic modal
-             className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
+             className="fixed inset-x-4 top-4 bottom-4 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
           >
             {/* Header */}
              <div className="relative bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white shrink-0">
@@ -93,7 +93,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   className="space-y-4"
                 >
                   {/* Destination */}
-                  <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4">
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-primary mt-0.5" />
                       <div>
@@ -105,7 +105,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   </div>
 
                   {/* Cost Estimate */}
-                  <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                  <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-4 border border-primary/20">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm text-muted-foreground">예상 비용</span>
                       <span className="text-2xl font-bold text-primary">
@@ -160,8 +160,8 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-8"
                 >
-                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-10 h-10 text-green-600" />
+                  <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/50 flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
                   </div>
                   <h4 className="text-lg font-semibold text-foreground mb-2">
                     드라이버를 찾았습니다!
@@ -191,7 +191,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   </div>
 
                   {/* Driver Info */}
-                  <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                         <span className="text-lg font-bold text-primary">김</span>
