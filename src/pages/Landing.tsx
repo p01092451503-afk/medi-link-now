@@ -566,13 +566,13 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-             className="w-full relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-blue-100/60 dark:border-blue-900/40 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 group mesh-gradient-blue"
+             className="w-full relative overflow-hidden rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-2xl" />
               
               <div className="flex items-center w-full py-4 px-5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 via-blue-100/80 to-indigo-100/50 flex items-center justify-center shrink-0 ring-1 ring-blue-100/50 group-hover:ring-blue-200 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 ring-1 ring-blue-200/50 dark:ring-blue-800/50 group-hover:ring-blue-300 dark:group-hover:ring-blue-700 transition-all">
                   <Users className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
@@ -588,13 +588,13 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-             className="w-full relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-violet-100/60 dark:border-violet-900/40 shadow-sm hover:shadow-md hover:border-violet-200 dark:hover:border-violet-800 transition-all duration-300 group mesh-gradient-violet"
+             className="w-full relative overflow-hidden rounded-2xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-900/50 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-2xl" />
               
               <div className="flex items-center w-full py-4 px-5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-50 via-violet-100/80 to-purple-100/50 flex items-center justify-center shrink-0 ring-1 ring-violet-100/50 group-hover:ring-violet-200 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center shrink-0 ring-1 ring-violet-200/50 dark:ring-violet-800/50 group-hover:ring-violet-300 dark:group-hover:ring-violet-700 transition-all">
                   <Ambulance className="w-6 h-6 text-violet-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
@@ -610,13 +610,13 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-             className="w-full relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-orange-900/40 shadow-sm hover:shadow-md hover:border-orange-200 dark:hover:border-orange-800 transition-all duration-300 group mesh-gradient-orange"
+             className="w-full relative overflow-hidden rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-2xl" />
               
               <div className="flex items-center w-full py-4 px-5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-50 via-orange-100/80 to-orange-100/50 flex items-center justify-center shrink-0 ring-1 ring-orange-100/50 group-hover:ring-orange-200 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0 ring-1 ring-amber-200/50 dark:ring-amber-800/50 group-hover:ring-amber-300 dark:group-hover:ring-amber-700 transition-all">
                   <Ambulance className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
