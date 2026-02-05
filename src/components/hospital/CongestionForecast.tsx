@@ -109,7 +109,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
               <path
                 d="M 10 50 A 40 40 0 0 1 90 50"
                 fill="none"
-                stroke="#e5e7eb"
+                className="stroke-slate-200 dark:stroke-slate-600"
                 strokeWidth="8"
                 strokeLinecap="round"
               />
