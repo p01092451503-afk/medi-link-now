@@ -619,29 +619,6 @@ const MapPage = () => {
 
         {/* Utility Buttons (Legend + Map Toggle + Location) */}
         <div className="absolute right-4 bottom-48 z-[1000] flex flex-col gap-3">
-          {/* Map Legend Help Button */}
-          <MapLegendPopup size="large" />
-
-          {/* Map Provider Toggle */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={toggleMapProvider}
-                className={`w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 ${
-                  isKakao 
-                    ? "bg-yellow-400 shadow-yellow-400/40 hover:bg-yellow-300" 
-                    : "bg-white shadow-md hover:bg-gray-50 border border-gray-100"
-                }`}
-                aria-label="지도 전환"
-              >
-                <MapIcon className={`w-6 h-6 ${isKakao ? "text-yellow-800" : "text-gray-700"}`} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="text-xs">
-              {isKakao ? "Leaflet으로 전환" : "카카오맵으로 전환"}
-            </TooltipContent>
-          </Tooltip>
-
           {/* My Location Button - Apple Maps style */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
