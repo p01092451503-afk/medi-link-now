@@ -139,14 +139,14 @@ const Landing = () => {
   const stats = activeTab === "local" ? localStats : nationalStats;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
         <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
           <div className="flex items-center">
             <div className="text-center">
-              <h1 className="font-logo text-[26px] font-extrabold text-slate-800">Find-ER</h1>
-              <p className="text-xs text-slate-500">실시간 응급실 병상 정보</p>
+              <h1 className="font-logo text-[26px] font-extrabold text-slate-800 dark:text-white">Find-ER</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">실시간 응급실 병상 정보</p>
             </div>
           </div>
         </div>
@@ -160,12 +160,12 @@ const Landing = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-8"
         >
-          <h2 className="text-[1.75rem] leading-tight font-extrabold text-slate-900 mb-3 tracking-tight">
+          <h2 className="text-[1.75rem] leading-tight font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight">
             응급상황,<br />
             가장 가까운 병상을<br />
             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">파인더</span>가 찾아드립니다
           </h2>
-          <p className="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
             전국 응급실 실시간 병상 현황을 확인하고<br />가장 빠른 경로를 안내받으세요
           </p>
         </motion.div>
@@ -177,16 +177,16 @@ const Landing = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="w-full mb-8"
         >
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             {/* Tab Header - Grayscale */}
-            <div className="bg-slate-700 p-1.5">
+            <div className="bg-slate-700 dark:bg-slate-900 p-1.5">
               <div className="flex gap-1">
                 {/* National Tab */}
                 <button
                   onClick={() => setActiveTab("national")}
                   className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeTab === "national"
-                      ? "bg-white text-slate-800 shadow-sm"
+                      ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm"
                       : "text-white/80 hover:bg-white/10"
                   }`}
                 >
@@ -200,7 +200,7 @@ const Landing = () => {
                   disabled={isLocating}
                   className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeTab === "local"
-                      ? "bg-white text-slate-800 shadow-sm"
+                      ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm"
                       : "text-white/80 hover:bg-white/10"
                   } disabled:opacity-50`}
                 >
@@ -215,15 +215,15 @@ const Landing = () => {
             </div>
 
             {/* Info Bar */}
-            <div className="bg-slate-50 px-4 py-2 flex items-center justify-between border-b border-slate-100">
+            <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-700">
               <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-slate-500" />
-                <span className="text-xs font-medium text-slate-600">
+                <Activity className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
                   {activeTab === "national" ? "실시간 전국 현황" : "실시간 내 주변 10km 현황"}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-400 dark:text-slate-500">
                   {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
                 </span>
                 <div className="relative flex items-center justify-center">
@@ -241,53 +241,53 @@ const Landing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="grid grid-cols-2 divide-x divide-y divide-slate-100"
+                  className="grid grid-cols-2 divide-x divide-y divide-slate-100 dark:divide-slate-700"
                 >
                   {/* 응급실 */}
-                  <div className="p-4 hover:bg-slate-50/50 transition-colors">
+                  <div className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Hospital className="w-4 h-4 text-blue-500" />
-                      <span className="text-[11px] font-medium text-slate-500">응급실</span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">응급실</span>
                     </div>
-                    <p className="text-[1.75rem] font-black text-slate-900 leading-none">
+                    <p className="text-[1.75rem] font-black text-slate-900 dark:text-white leading-none">
                       {stats?.totalHospitals !== undefined ? stats.totalHospitals : "---"}
-                      <span className="text-xs font-medium text-slate-400 ml-1">개소</span>
+                      <span className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">개소</span>
                     </p>
                   </div>
                   
                   {/* 병상 */}
-                  <div className="p-4 hover:bg-slate-50/50 transition-colors">
+                  <div className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <Bed className="w-4 h-4 text-slate-500" />
-                      <span className="text-[11px] font-medium text-slate-500">총 병상</span>
+                      <Bed className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">총 병상</span>
                     </div>
-                    <p className="text-[1.75rem] font-black text-slate-900 leading-none">
+                    <p className="text-[1.75rem] font-black text-slate-900 dark:text-white leading-none">
                       {stats?.totalBeds !== undefined ? stats.totalBeds.toLocaleString() : "---"}
-                      <span className="text-xs font-medium text-slate-400 ml-1">개</span>
+                      <span className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">개</span>
                     </p>
                   </div>
                   
                   {/* 여유 - Highlighted with gradient background */}
-                  <div className="p-4 bg-gradient-to-br from-emerald-50/80 to-green-50/50 hover:from-emerald-50 hover:to-green-50 transition-colors">
+                  <div className="p-4 bg-gradient-to-br from-emerald-50/80 to-green-50/50 dark:from-emerald-900/30 dark:to-green-900/20 hover:from-emerald-50 hover:to-green-50 dark:hover:from-emerald-900/40 dark:hover:to-green-900/30 transition-colors">
                     <div className="flex items-center gap-2 mb-1.5">
                       <TrendingUp className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[11px] font-medium text-emerald-600">여유 병원</span>
+                      <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">여유 병원</span>
                     </div>
-                    <p className="text-[1.75rem] font-black text-emerald-700 leading-none">
+                    <p className="text-[1.75rem] font-black text-emerald-700 dark:text-emerald-400 leading-none">
                       {stats?.availableHospitals !== undefined ? stats.availableHospitals : "---"}
-                      <span className="text-xs font-medium text-emerald-500 ml-1">개소</span>
+                      <span className="text-xs font-medium text-emerald-500 dark:text-emerald-500 ml-1">개소</span>
                     </p>
                   </div>
                   
                   {/* 소아 */}
-                  <div className="p-4 hover:bg-slate-50/50 transition-colors">
+                  <div className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
                     <div className="flex items-center gap-2 mb-1.5">
                       <Users className="w-4 h-4 text-orange-500" />
-                      <span className="text-[11px] font-medium text-slate-500">소아 병상</span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">소아 병상</span>
                     </div>
-                    <p className="text-[1.75rem] font-black text-slate-900 leading-none">
+                    <p className="text-[1.75rem] font-black text-slate-900 dark:text-white leading-none">
                       {stats?.pediatricBeds !== undefined ? stats.pediatricBeds.toLocaleString() : "---"}
-                      <span className="text-xs font-medium text-slate-400 ml-1">개</span>
+                      <span className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">개</span>
                     </p>
                   </div>
                 </motion.div>
@@ -301,10 +301,10 @@ const Landing = () => {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="border-t border-gray-100"
+                  className="border-t border-gray-100 dark:border-slate-700"
                 >
-                  <div className="p-2 space-y-1.5">
-                    <p className="text-[10px] font-medium text-muted-foreground px-1">가까운 응급실</p>
+                  <div className="p-2 space-y-1.5 dark:bg-slate-800">
+                    <p className="text-[10px] font-medium text-muted-foreground dark:text-slate-400 px-1">가까운 응급실</p>
                     {nearestHospitals.map((hospital, index) => {
                       const status = getHospitalStatus(hospital);
                       const statusColor = status === "available" ? "bg-green-500" : status === "limited" ? "bg-yellow-500" : "bg-red-500";
@@ -314,7 +314,7 @@ const Landing = () => {
                         <button
                           key={hospital.id}
                           onClick={() => navigate(`/map?hospital=${hospital.id}`)}
-                          className="w-full flex items-center gap-2 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors text-left"
+                          className="w-full flex items-center gap-2 p-2 bg-white dark:bg-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors text-left"
                         >
                           <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold shrink-0">
                             {index + 1}
@@ -322,11 +322,11 @@ const Landing = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
                               <div className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
-                              <p className="text-[11px] font-medium text-foreground truncate">
+                              <p className="text-[11px] font-medium text-foreground dark:text-white truncate">
                                 {cleanHospitalName(hospital.nameKr)}
                               </p>
                             </div>
-                            <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-0.5">
+                            <div className="flex items-center gap-2 text-[9px] text-muted-foreground dark:text-slate-400 mt-0.5">
                               <span className="flex items-center gap-0.5">
                                 <MapPin className="w-2.5 h-2.5" />
                                 {hospital.distance.toFixed(1)}km
@@ -363,25 +363,25 @@ const Landing = () => {
             {/* 전국 응급실 */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-slate-100 border border-slate-200 hover:bg-slate-200 transition-colors cursor-pointer">
-                  <Hospital className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="text-xs font-semibold text-slate-700">
+                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                  <Hospital className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
                     {isLoading ? "---" : `${hospitals.length}+ 응급실`}
                   </span>
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
+              <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-lg" side="bottom">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                      <Globe className="w-4 h-4 text-slate-600" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                      <Globe className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                     </div>
-                    <p className="text-sm font-bold text-slate-800">전국 응급실 네트워크</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-white">전국 응급실 네트워크</p>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     서울, 경기, 부산 등 전국 17개 시·도의 응급의료기관 정보를 실시간으로 제공합니다.
                   </p>
-                  <div className="flex items-center gap-4 pt-1 text-[10px] text-slate-500">
+                  <div className="flex items-center gap-4 pt-1 text-[10px] text-slate-500 dark:text-slate-400">
                     <span className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded-full bg-red-500" />
                       권역센터
@@ -402,25 +402,25 @@ const Landing = () => {
             {/* 실시간 업데이트 */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer">
+                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors cursor-pointer">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs font-semibold text-emerald-700">60초 실시간</span>
+                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">60초 실시간</span>
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
+              <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-lg" side="bottom">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-slate-600" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                     </div>
-                    <p className="text-sm font-bold text-slate-800">실시간 병상 정보</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-white">실시간 병상 정보</p>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     국립중앙의료원 응급의료포털과 직접 연동하여 60초마다 최신 병상 현황을 갱신합니다.
                   </p>
                   <div className="flex items-center gap-1.5 pt-1">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[11px] text-slate-600 font-medium">
+                    <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                       {lastUpdated ? `마지막 업데이트: ${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : "연결 중..."}
                     </span>
                   </div>
@@ -431,20 +431,20 @@ const Landing = () => {
             {/* 24시간 운영 */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-slate-100 border border-slate-200 hover:bg-slate-200 transition-colors cursor-pointer">
-                  <Clock className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="text-xs font-semibold text-slate-700">24h 연중무휴</span>
+                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                  <Clock className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">24h 연중무휴</span>
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 shadow-lg" side="bottom">
+              <PopoverContent className="w-72 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 shadow-lg" side="bottom">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                      <HeartPulse className="w-4 h-4 text-slate-600" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                      <HeartPulse className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                     </div>
-                    <p className="text-sm font-bold text-slate-800">365일 24시간 서비스</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-white">365일 24시간 서비스</p>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     응급상황은 시간을 가리지 않습니다. Find-ER은 새벽, 주말, 공휴일 관계없이 
                     언제든지 가장 가까운 응급실 정보를 제공합니다.
                   </p>
@@ -455,38 +455,38 @@ const Landing = () => {
             {/* AI 예측 분석 */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 hover:from-violet-100 hover:to-indigo-100 transition-colors cursor-pointer">
+                <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-900/30 dark:to-indigo-900/30 border border-violet-200 dark:border-violet-800 hover:from-violet-100 hover:to-indigo-100 dark:hover:from-violet-900/50 dark:hover:to-indigo-900/50 transition-colors cursor-pointer">
                   <Brain className="w-3.5 h-3.5 text-violet-600" />
-                  <span className="text-xs font-semibold text-violet-700">AI 예측</span>
+                  <span className="text-xs font-semibold text-violet-700 dark:text-violet-400">AI 예측</span>
                   <span className="px-1 py-0.5 text-[8px] font-bold text-white bg-violet-500 rounded">β</span>
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-4 rounded-2xl border border-violet-200 shadow-lg" side="bottom">
+              <PopoverContent className="w-80 p-4 rounded-2xl border border-violet-200 dark:border-violet-800 dark:bg-slate-800 shadow-lg" side="bottom">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-xl bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
                       <Brain className="w-4 h-4 text-violet-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-800">AI 예측 분석</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-white">AI 예측 분석</p>
                       <span className="px-1.5 py-0.5 text-[8px] font-bold text-white bg-violet-500 rounded">Beta</span>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     공식 데이터를 넘어선 스마트 분석으로 병상 확보 확률, 실시간 이동 현황, 병상 소진 트렌드를 제공합니다.
                   </p>
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
-                    <div className="text-center p-2 bg-slate-50 rounded-xl">
-                      <Target className="w-4 h-4 text-slate-600 mx-auto mb-1" />
-                      <p className="text-[10px] font-medium text-slate-700">확보 확률</p>
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <div className="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-xl">
+                      <Target className="w-4 h-4 text-slate-600 dark:text-slate-300 mx-auto mb-1" />
+                      <p className="text-[10px] font-medium text-slate-700 dark:text-slate-300">확보 확률</p>
                     </div>
-                    <div className="text-center p-2 bg-slate-50 rounded-xl">
-                      <Ambulance className="w-4 h-4 text-slate-600 mx-auto mb-1" />
-                      <p className="text-[10px] font-medium text-slate-700">이동 현황</p>
+                    <div className="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-xl">
+                      <Ambulance className="w-4 h-4 text-slate-600 dark:text-slate-300 mx-auto mb-1" />
+                      <p className="text-[10px] font-medium text-slate-700 dark:text-slate-300">이동 현황</p>
                     </div>
-                    <div className="text-center p-2 bg-slate-50 rounded-xl">
-                      <TrendingDown className="w-4 h-4 text-slate-600 mx-auto mb-1" />
-                      <p className="text-[10px] font-medium text-slate-700">소진 트렌드</p>
+                    <div className="text-center p-2 bg-slate-50 dark:bg-slate-700 rounded-xl">
+                      <TrendingDown className="w-4 h-4 text-slate-600 dark:text-slate-300 mx-auto mb-1" />
+                      <p className="text-[10px] font-medium text-slate-700 dark:text-slate-300">소진 트렌드</p>
                     </div>
                   </div>
                   <button 
@@ -503,33 +503,33 @@ const Landing = () => {
            {/* 119 통계 인사이트 */}
            <Popover>
              <PopoverTrigger asChild>
-               <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 hover:from-amber-100 hover:to-orange-100 transition-colors cursor-pointer">
+               <button className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 border border-amber-200 dark:border-amber-800 hover:from-amber-100 hover:to-orange-100 dark:hover:from-amber-900/50 dark:hover:to-orange-900/50 transition-colors cursor-pointer">
                  <BarChart3 className="w-3.5 h-3.5 text-amber-600" />
-                 <span className="text-xs font-semibold text-amber-700">119 통계</span>
+                 <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">119 통계</span>
                </button>
              </PopoverTrigger>
-             <PopoverContent className="w-80 p-4 rounded-2xl border border-amber-200 shadow-lg" side="bottom">
+             <PopoverContent className="w-80 p-4 rounded-2xl border border-amber-200 dark:border-amber-800 dark:bg-slate-800 shadow-lg" side="bottom">
                <div className="space-y-3">
                  <div className="flex items-center gap-2.5">
-                   <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
+                   <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/50 dark:to-orange-900/50 flex items-center justify-center">
                      <BarChart3 className="w-4 h-4 text-amber-600" />
                    </div>
                    <div>
-                     <p className="text-sm font-bold text-slate-800">119 통계 인사이트</p>
-                     <span className="text-[10px] text-slate-500">소방청 구급 데이터 기반</span>
+                     <p className="text-sm font-bold text-slate-800 dark:text-white">119 통계 인사이트</p>
+                     <span className="text-[10px] text-slate-500 dark:text-slate-400">소방청 구급 데이터 기반</span>
                    </div>
                  </div>
-                 <p className="text-xs text-slate-500 leading-relaxed">
+                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                    과거 3년간의 119 구급 출동 통계를 분석하여 지역별 응급 수요 패턴과 병원별 이송 현황을 제공합니다.
                  </p>
-                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                   <div className="text-center p-2 bg-amber-50 rounded-xl">
+                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                   <div className="text-center p-2 bg-amber-50 dark:bg-amber-900/30 rounded-xl">
                      <AlertTriangle className="w-4 h-4 text-amber-600 mx-auto mb-1" />
-                     <p className="text-[10px] font-medium text-slate-700">수요 예측</p>
+                     <p className="text-[10px] font-medium text-slate-700 dark:text-slate-300">수요 예측</p>
                    </div>
-                   <div className="text-center p-2 bg-amber-50 rounded-xl">
+                   <div className="text-center p-2 bg-amber-50 dark:bg-amber-900/30 rounded-xl">
                      <TrendingUp className="w-4 h-4 text-amber-600 mx-auto mb-1" />
-                     <p className="text-[10px] font-medium text-slate-700">혼잡 시간대</p>
+                     <p className="text-[10px] font-medium text-slate-700 dark:text-slate-300">혼잡 시간대</p>
                    </div>
                  </div>
                  <button 
@@ -554,7 +554,7 @@ const Landing = () => {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-blue-600" />
-            <p className="text-xs font-bold text-slate-600">서비스 선택</p>
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-300">서비스 선택</p>
           </div>
           
           <div className="space-y-3">
@@ -563,7 +563,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-             className="w-full relative overflow-hidden rounded-2xl bg-white border border-blue-100/60 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group mesh-gradient-blue"
+             className="w-full relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-blue-100/60 dark:border-blue-900/40 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 group mesh-gradient-blue"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-2xl" />
@@ -573,10 +573,10 @@ const Landing = () => {
                   <Users className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-[15px] font-semibold text-slate-800 tracking-tight">보호자 / 환자</p>
-                  <p className="text-[13px] text-slate-400 mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                  <p className="text-[15px] font-semibold text-slate-800 dark:text-white tracking-tight">보호자 / 환자</p>
+                  <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300" />
+                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
 
@@ -585,7 +585,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-             className="w-full relative overflow-hidden rounded-2xl bg-white border border-violet-100/60 shadow-sm hover:shadow-md hover:border-violet-200 transition-all duration-300 group mesh-gradient-violet"
+             className="w-full relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-violet-100/60 dark:border-violet-900/40 shadow-sm hover:shadow-md hover:border-violet-200 dark:hover:border-violet-800 transition-all duration-300 group mesh-gradient-violet"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-2xl" />
@@ -595,10 +595,10 @@ const Landing = () => {
                   <Ambulance className="w-6 h-6 text-violet-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-[15px] font-semibold text-slate-800 tracking-tight">민간 구급차</p>
-                  <p className="text-[13px] text-slate-400 mt-0.5">전원 · 퇴원 이송</p>
+                  <p className="text-[15px] font-semibold text-slate-800 dark:text-white tracking-tight">민간 구급차</p>
+                  <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">전원 · 퇴원 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-violet-500 group-hover:translate-x-1 transition-all duration-300" />
+                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-violet-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
 
@@ -607,7 +607,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-             className="w-full relative overflow-hidden rounded-2xl bg-white border border-orange-100/60 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-300 group mesh-gradient-orange"
+             className="w-full relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-orange-900/40 shadow-sm hover:shadow-md hover:border-orange-200 dark:hover:border-orange-800 transition-all duration-300 group mesh-gradient-orange"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-2xl" />
@@ -617,10 +617,10 @@ const Landing = () => {
                   <Ambulance className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="text-left flex-1 ml-3.5">
-                  <p className="text-[15px] font-semibold text-slate-800 tracking-tight">구급대원</p>
-                  <p className="text-[13px] text-slate-400 mt-0.5">병상 현황 · 거절이력 공유</p>
+                  <p className="text-[15px] font-semibold text-slate-800 dark:text-white tracking-tight">구급대원</p>
+                  <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">병상 현황 · 거절이력 공유</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300" />
+                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
           </div>
@@ -628,30 +628,30 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="relative mt-auto bg-white border-t border-slate-100">
+      <footer className="relative mt-auto bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
         <div className="px-5 py-6 space-y-4 max-w-lg mx-auto">
           {/* Brand */}
           <div className="flex items-center justify-center gap-1">
-            <span className="font-logo text-sm font-extrabold text-slate-700">Find-ER</span>
+            <span className="font-logo text-sm font-extrabold text-slate-700 dark:text-slate-300">Find-ER</span>
           </div>
           
           {/* Links */}
           <div className="flex items-center justify-center gap-6">
             <a 
               href="/terms" 
-              className="text-xs text-slate-400 hover:text-primary transition-colors duration-200"
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-primary transition-colors duration-200"
             >
               이용약관
             </a>
             <a 
               href="/privacy" 
-              className="text-xs text-slate-400 hover:text-primary transition-colors duration-200"
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-primary transition-colors duration-200"
             >
               개인정보처리방침
             </a>
             <a 
               href="tel:119" 
-              className="text-xs text-slate-400 hover:text-red-500 transition-colors duration-200 flex items-center gap-1"
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors duration-200 flex items-center gap-1"
             >
               <Phone className="w-3 h-3" />
               119
@@ -659,11 +659,11 @@ const Landing = () => {
           </div>
           
           {/* Copyright */}
-          <div className="pt-3 border-t border-slate-100">
-            <p className="text-[10px] text-slate-400 text-center">
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center">
               © 2026 Find-ER · 실시간 응급실 병상 정보 서비스
             </p>
-            <p className="text-[9px] text-slate-400/70 text-center mt-1">
+            <p className="text-[9px] text-slate-400/70 dark:text-slate-500/70 text-center mt-1">
               본 서비스는 정보 제공 목적이며, 응급 시 <span className="font-bold text-red-500">119에 신고</span>하세요
             </p>
           </div>
