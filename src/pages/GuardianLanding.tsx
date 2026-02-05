@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -15,6 +16,9 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TargetUserInfoModal from "@/components/TargetUserInfoModal";
+
+type TargetUserType = "parents" | "elderly" | "chronic" | null;
 
 const GuardianLanding = () => {
   const navigate = useNavigate();
