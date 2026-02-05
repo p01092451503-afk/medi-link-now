@@ -162,10 +162,10 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
         <motion.div 
           className={`p-3 rounded-xl bg-gradient-to-r ${
             scoreData.status === "smooth" 
-              ? "from-emerald-50 to-green-50 border border-emerald-200/50" 
+              ? "from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50 border border-emerald-200/50 dark:border-emerald-800/50" 
               : scoreData.status === "moderate" 
-              ? "from-amber-50 to-yellow-50 border border-amber-200/50" 
-              : "from-red-50 to-orange-50 border border-red-200/50"
+              ? "from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50 border border-amber-200/50 dark:border-amber-800/50" 
+              : "from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50 border border-red-200/50 dark:border-red-800/50"
           }`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
