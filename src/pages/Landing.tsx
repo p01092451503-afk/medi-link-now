@@ -10,6 +10,7 @@ import { getHospitalStatus } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import DataFreshnessTimer from "@/components/DataFreshnessTimer";
 import { cleanHospitalName } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 
 const Landing = () => {
@@ -142,13 +143,15 @@ const Landing = () => {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
-        <div className="px-4 py-3 flex items-center justify-center max-w-lg mx-auto">
-          <div className="flex items-center">
+        <div className="px-4 py-3 flex items-center justify-between max-w-lg mx-auto">
+          <div className="w-10" /> {/* Spacer for balance */}
+          <div className="flex items-center flex-1 justify-center">
             <div className="text-center">
               <h1 className="font-logo text-[26px] font-extrabold text-slate-800 dark:text-white">Find-ER</h1>
               <p className="text-xs text-slate-500 dark:text-slate-400">실시간 응급실 병상 정보</p>
             </div>
           </div>
+          <ThemeToggle />
         </div>
       </header>
 
