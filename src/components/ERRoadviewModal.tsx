@@ -163,7 +163,7 @@ const ERRoadviewModal = ({
               )}
 
               {hasError && !isLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 p-4 md:p-6 overflow-y-auto">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-800 p-4 md:p-6 overflow-y-auto">
                   <AlertTriangle className="w-12 h-12 md:w-16 md:h-16 text-yellow-500 mb-3 md:mb-4 flex-shrink-0" />
                   <h3 className="font-semibold text-foreground text-base md:text-lg mb-2 text-center">
                     로드뷰를 불러올 수 없습니다
