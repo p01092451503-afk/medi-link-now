@@ -31,7 +31,7 @@ const NursingHospitalBottomSheet = ({
           {/* Hospital Name & Type */}
           <div className="text-left">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 px-2 py-0.5 rounded-full">
                 {hospital.type}
               </span>
             </div>
