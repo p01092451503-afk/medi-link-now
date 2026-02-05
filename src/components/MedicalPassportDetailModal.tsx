@@ -146,10 +146,10 @@ const MedicalPassportDetailModal = ({
             {/* Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {/* Blood Type - Large but not too big */}
-              <div className="bg-red-50 rounded-2xl p-4 text-center">
-                <Droplets className="w-8 h-8 text-red-500 mx-auto mb-1" />
+              <div className="bg-red-50 dark:bg-red-950/50 rounded-2xl p-4 text-center">
+                <Droplets className="w-8 h-8 text-red-500 dark:text-red-400 mx-auto mb-1" />
                 <p className="text-xs text-muted-foreground mb-0.5">혈액형</p>
-                <p className="text-3xl font-black text-red-600">
+                <p className="text-3xl font-black text-red-600 dark:text-red-400">
                   {BLOOD_TYPE_LABELS[member.bloodType]}
                 </p>
               </div>
