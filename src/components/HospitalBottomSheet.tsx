@@ -19,6 +19,7 @@ import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 import IncomingTrafficCard from "@/components/hospital/IncomingTrafficCard";
 import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
+import Fire119VerifiedBadge from "@/components/hospital/Fire119VerifiedBadge";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import PatientTransferRequestModal from "@/components/PatientTransferRequestModal";
@@ -287,6 +288,13 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
+
+              {/* 119 Verified Badge - Historical Transfer Data */}
+              <Fire119VerifiedBadge 
+                hospitalName={hospital.nameKr}
+                hospitalId={hospital.id}
+                showChart={true}
+              />
 
               {/* AI Predictive Features Section - Premium Design */}
               <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-xl shadow-violet-500/10 overflow-hidden">

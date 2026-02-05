@@ -50,6 +50,7 @@ import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet"
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
 import NightCareHospitalBottomSheet from "@/components/NightCareHospitalBottomSheet";
+import DemandForecastTicker from "@/components/map/DemandForecastTicker";
 
 
 // Map default center (Seoul)
@@ -523,6 +524,13 @@ const MapPage = () => {
     <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col">
       {/* Location Coachmark */}
       <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
+
+      {/* 119 Demand Forecast Ticker - Only show when no bottom sheet is open */}
+      {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && !selectedNightCareHospital && (
+        <DemandForecastTicker 
+          regionId={activeRegion !== "all" ? activeRegion : undefined}
+        />
+      )}
 
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
