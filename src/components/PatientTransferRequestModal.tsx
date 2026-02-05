@@ -144,7 +144,7 @@ const PatientTransferRequestModal = ({
             className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between rounded-t-2xl">
+            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700 px-5 py-4 flex items-center justify-between rounded-t-2xl">
               <div>
                 <h2 className="text-lg font-bold text-foreground">디지털 이송 요청</h2>
                 <p className="text-xs text-muted-foreground">{hospitalName}</p>
