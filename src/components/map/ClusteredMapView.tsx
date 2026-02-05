@@ -664,15 +664,6 @@ const ClusteredMapView = ({
           />
         ))}
 
-        {/* Night Care Hospital Markers (for non-emergency general hospitals) */}
-        {nightCareHospitals.map((hospital) => (
-          <NightCareHospitalMarker
-            key={`nightcare-${hospital.hpid}`}
-            hospital={hospital}
-            onClick={onNightCareHospitalClick}
-          />
-        ))}
-
         {/* Active Ambulance Trip Markers - Hidden for now */}
         {/* {activeAmbulanceTrips.map((trip) => (
           <AmbulanceTripMarker key={`trip-${trip.id}`} trip={trip} />
