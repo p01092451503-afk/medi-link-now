@@ -19,6 +19,7 @@ import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 import IncomingTrafficCard from "@/components/hospital/IncomingTrafficCard";
 import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
+import Fire119VerifiedBadge from "@/components/hospital/Fire119VerifiedBadge";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import PatientTransferRequestModal from "@/components/PatientTransferRequestModal";
