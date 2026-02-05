@@ -266,8 +266,7 @@ const MapPage = () => {
     if (!isTransferMode || nursingHospitals.length === 0) return [];
     
     // Hide nursing hospitals when hospital or any hospital sub-filter is selected
-    const hospitalFilters: TransferFilterType[] = ["hospital", "icu-general", "icu-neuro", "icu-cardio", "ward", "isolation"];
-    if (hospitalFilters.includes(transferFilter)) return [];
+    if (transferFilter === "hospital") return [];
     
     let result = [...nursingHospitals];
     
