@@ -79,7 +79,7 @@
          initial={{ opacity: 0, y: -20 }}
          animate={{ opacity: 1, y: 0 }}
          exit={{ opacity: 0, y: -20 }}
-         className={`absolute top-3 left-3 right-16 z-[999] ${className}`}
+        className={`absolute top-[72px] left-3 right-3 z-[999] ${className}`}
        >
          <motion.div
            className={`rounded-2xl border shadow-lg backdrop-blur-sm overflow-hidden ${getLevelBg(forecast.demandLevel)}`}
