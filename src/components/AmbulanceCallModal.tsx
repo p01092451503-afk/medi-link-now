@@ -105,7 +105,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   </div>
 
                   {/* Cost Estimate */}
-                  <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                  <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-4 border border-primary/20">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm text-muted-foreground">예상 비용</span>
                       <span className="text-2xl font-bold text-primary">
