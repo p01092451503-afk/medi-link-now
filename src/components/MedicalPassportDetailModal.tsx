@@ -222,16 +222,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Medications */}
               {member.medications && member.medications.length > 0 && (
-                <div className="bg-purple-50 rounded-2xl p-4">
+                <div className="bg-purple-50 dark:bg-purple-950/50 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Pill className="w-5 h-5 text-purple-500" />
-                    <span className="text-base font-bold text-purple-700">복용 중인 약물</span>
+                    <Pill className="w-5 h-5 text-purple-500 dark:text-purple-400" />
+                    <span className="text-base font-bold text-purple-700 dark:text-purple-400">복용 중인 약물</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.medications.map((med) => (
                       <span
                         key={med}
-                        className="px-3 py-1.5 bg-purple-200 text-purple-800 text-base font-semibold rounded-full"
+                        className="px-3 py-1.5 bg-purple-200 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 text-base font-semibold rounded-full"
                       >
                         {med}
                       </span>
