@@ -62,7 +62,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
              // Mobile: pin to safe viewport with internal scroll (prevents cut-off)
              // sm+: center like a classic modal
-             className="fixed inset-x-4 top-4 bottom-4 bg-white rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
+             className="fixed inset-x-4 top-4 bottom-4 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
           >
             {/* Header */}
              <div className="relative bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white shrink-0">
