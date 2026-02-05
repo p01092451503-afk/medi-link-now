@@ -233,6 +233,13 @@ const GuardianLanding = () => {
           </div>
         </motion.div>
       </main>
+
+      {/* Target User Info Modal */}
+      <TargetUserInfoModal
+        isOpen={selectedUserType !== null}
+        onClose={() => setSelectedUserType(null)}
+        userType={selectedUserType}
+      />
     </div>
   );
 };
