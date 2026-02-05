@@ -31,7 +31,7 @@ const NursingHospitalBottomSheet = ({
           {/* Hospital Name & Type */}
           <div className="text-left">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 px-2 py-0.5 rounded-full">
                 {hospital.type}
               </span>
             </div>
@@ -42,15 +42,15 @@ const NursingHospitalBottomSheet = ({
         <div className="mt-6 space-y-4">
           {/* Phone */}
           {hospital.phone && (
-            <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-2xl">
-              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <Phone className="w-5 h-5 text-purple-600" />
+            <div className="flex items-start gap-4 p-4 bg-muted/30 dark:bg-slate-800/50 rounded-2xl">
+              <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/50 flex items-center justify-center flex-shrink-0">
+                <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="flex-1">
                 <p className="text-xs text-muted-foreground mb-1">전화번호</p>
                 <a 
                   href={`tel:${hospital.phone}`} 
-                  className="text-lg font-semibold text-foreground hover:text-purple-600 transition-colors"
+                  className="text-lg font-semibold text-foreground hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
                   {hospital.phone}
                 </a>
@@ -59,9 +59,9 @@ const NursingHospitalBottomSheet = ({
           )}
 
           {/* Address */}
-          <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-2xl">
-            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-5 h-5 text-purple-600" />
+          <div className="flex items-start gap-4 p-4 bg-muted/30 dark:bg-slate-800/50 rounded-2xl">
+            <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/50 flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div className="flex-1">
               <p className="text-xs text-muted-foreground mb-1">주소</p>
@@ -73,9 +73,9 @@ const NursingHospitalBottomSheet = ({
 
           {/* Beds (if available) */}
           {hospital.beds && hospital.beds > 0 && (
-            <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-2xl">
-              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <Bed className="w-5 h-5 text-purple-600" />
+            <div className="flex items-start gap-4 p-4 bg-muted/30 dark:bg-slate-800/50 rounded-2xl">
+              <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/50 flex items-center justify-center flex-shrink-0">
+                <Bed className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="flex-1">
                 <p className="text-xs text-muted-foreground mb-1">병상 수</p>
@@ -109,7 +109,7 @@ const NursingHospitalBottomSheet = ({
                 }}
                 variant="outline"
                 size="lg"
-                className="w-full h-14 justify-center border-purple-300 text-purple-600 hover:bg-purple-50 rounded-2xl"
+                className="w-full h-14 justify-center border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 rounded-2xl"
               />
             </div>
           </div>
