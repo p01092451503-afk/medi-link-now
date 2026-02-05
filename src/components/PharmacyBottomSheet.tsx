@@ -155,13 +155,13 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
               </div>
 
               {/* Warning Message */}
-              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
-                <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-xl">
+                <AlertTriangle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-red-700">
+                  <p className="text-sm font-medium text-red-700 dark:text-red-400">
                     방문 전 반드시 전화로 운영 여부를 확인하세요
                   </p>
-                  <p className="text-xs text-red-600 mt-1">
+                  <p className="text-xs text-red-600 dark:text-red-500 mt-1">
                     실제 운영시간은 공공데이터와 다를 수 있습니다
                   </p>
                 </div>
