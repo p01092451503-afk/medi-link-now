@@ -91,7 +91,7 @@ const DispatchRequestModal = ({
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-0 left-0 right-0 z-[2001] bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 z-[2001] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] overflow-y-auto"
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
