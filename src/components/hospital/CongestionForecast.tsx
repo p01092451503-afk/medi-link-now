@@ -148,7 +148,7 @@ const CongestionForecast = ({ hospitalId, officialBeds }: CongestionForecastProp
 
           {/* Status Badge */}
           <motion.div 
-            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl ring-2 ${config.ringColor} bg-white/50`}
+            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl ring-2 ${config.ringColor} bg-white/50 dark:bg-slate-700/50`}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
