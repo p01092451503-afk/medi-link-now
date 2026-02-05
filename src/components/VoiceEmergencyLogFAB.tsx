@@ -26,6 +26,8 @@ const SpeechRecognition =
   (window as any).SpeechRecognition || 
   (window as any).webkitSpeechRecognition;
 
+const isSpeechRecognitionSupported = !!SpeechRecognition;
+
 interface ParsedPatientData {
   age?: string;
   gender?: "M" | "F";
