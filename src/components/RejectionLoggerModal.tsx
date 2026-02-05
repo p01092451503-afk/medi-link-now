@@ -119,7 +119,7 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/50 backdrop-blur-sm"
       onClick={handleClose}
     >
       <motion.div
@@ -127,18 +127,18 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-lg bg-white rounded-t-3xl p-6 pb-8"
+        className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl p-6 pb-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-              <Hospital className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/50 flex items-center justify-center">
+              <Hospital className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
             <div>
-              <h2 className="font-bold text-lg text-slate-800">거부 이력 기록</h2>
-              <p className="text-xs text-slate-500">
+              <h2 className="font-bold text-lg text-slate-800 dark:text-white">거부 이력 기록</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {step === 'hospital' && '병원을 선택해주세요'}
                 {step === 'reason' && '거절 사유를 선택해주세요'}
                 {step === 'success' && '기록 완료'}
@@ -147,16 +147,16 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
           </div>
           <button
             onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
-            <X className="w-4 h-4 text-slate-500" />
+            <X className="w-4 h-4 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
 
         {/* Step: Hospital Selection */}
         {step === 'hospital' && (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
+            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 mb-4">
               <MapPin className="w-4 h-4 text-primary" />
               <span>가장 가까운 응급실</span>
             </div>
@@ -164,10 +164,10 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
             {!userLocation ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                <span className="ml-2 text-slate-500">위치 확인 중...</span>
+                <span className="ml-2 text-slate-500 dark:text-slate-400">위치 확인 중...</span>
               </div>
             ) : nearestHospitals.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                 주변 병원을 찾을 수 없습니다
               </div>
             ) : (
@@ -178,17 +178,17 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => handleHospitalSelect(hospital)}
-                  className="w-full flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors text-left group"
+                  className="w-full flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-left group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary font-bold shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-primary font-bold shadow-sm">
                     {index + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 truncate">{hospital.name}</p>
-                    <p className="text-sm text-slate-500">{hospital.distance.toFixed(1)}km</p>
+                    <p className="font-semibold text-slate-800 dark:text-white truncate">{hospital.name}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{hospital.distance.toFixed(1)}km</p>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <X className="w-4 h-4 text-red-500" />
+                  <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-950/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <X className="w-4 h-4 text-red-500 dark:text-red-400" />
                   </div>
                 </motion.button>
               ))
@@ -199,8 +199,8 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
         {/* Step: Reason Selection */}
         {step === 'reason' && selectedHospital && (
           <div className="space-y-4">
-            <div className="bg-red-50 rounded-xl p-3 mb-4">
-              <p className="text-sm text-red-700 font-medium">{selectedHospital.name}</p>
+            <div className="bg-red-50 dark:bg-red-950/50 rounded-xl p-3 mb-4">
+              <p className="text-sm text-red-700 dark:text-red-400 font-medium">{selectedHospital.name}</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -212,7 +212,7 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
                   transition={{ delay: index * 0.05 }}
                   onClick={() => handleReasonSelect(reason.id)}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-4 py-3 bg-slate-100 rounded-full hover:bg-red-100 hover:text-red-700 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-red-100 dark:hover:bg-red-950/50 hover:text-red-700 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                 >
                   <span>{reason.icon}</span>
                   <span className="font-medium text-sm">{reason.label}</span>
@@ -240,11 +240,11 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center py-8"
           >
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-              <Check className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/50 flex items-center justify-center mb-4">
+              <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
-            <p className="text-lg font-semibold text-slate-800">기록되었습니다</p>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-lg font-semibold text-slate-800 dark:text-white">기록되었습니다</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {selectedHospital?.name}
             </p>
           </motion.div>

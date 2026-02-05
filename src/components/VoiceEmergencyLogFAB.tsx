@@ -466,7 +466,7 @@ const VoiceEmergencyLogFAB = () => {
       {/* Floating Mic Button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-44 left-[calc(50%-4rem)] z-50 w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-2xl flex items-center justify-center"
+        className="fixed bottom-44 left-[calc(50%-4rem)] z-40 w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-2xl flex items-center justify-center"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         animate={{ 
