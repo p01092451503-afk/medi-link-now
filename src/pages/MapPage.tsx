@@ -95,7 +95,6 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
-  const [selectedNightCareHospital, setSelectedNightCareHospital] = useState<HospitalDetailData | null>(null);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -126,28 +125,6 @@ const MapPage = () => {
   // Fetch holiday pharmacies when filter is set to 'pharmacy' (legacy)
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
-
-  // Fetch night care hospital data when filter is set to 'nightCare' or 'nonEmergency'
-  const isNightCareFilter = activeFilter === "nightCare" || activeFilter === "nonEmergency";
-  const { data: hospitalDetailsData, isLoading: isLoadingNightCare } = useHospitalDetails({
-    enabled: isNightCareFilter,
-  });
-
-  // Filter night care hospitals (non-emergency only, with valid coordinates)
-  const nightCareHospitals = useMemo(() => {
-    if (!hospitalDetailsData) return [];
-    return hospitalDetailsData.filter((h) => 
-      h.hasNightCare && 
-      !h.emergencyRoomType && 
-      h.lat && 
-      h.lng
-    );
-  }, [hospitalDetailsData]);
-
-  // Create a Set of night care hospital names for efficient lookup (kept for backward compat)
-  const nightCareHospitalNames = useMemo(() => {
-    return new Set(nightCareHospitals.map((h) => h.hospitalName));
-  }, [nightCareHospitals]);
 
   const handleCallDriver = useCallback((driver: DriverPresence) => {
     setSelectedDriver(driver);
