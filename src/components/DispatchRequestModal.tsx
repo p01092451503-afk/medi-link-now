@@ -99,7 +99,7 @@ const DispatchRequestModal = ({
             </div>
 
             {/* Header */}
-            <div className="px-6 pb-4 border-b">
+            <div className="px-6 pb-4 border-b dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
