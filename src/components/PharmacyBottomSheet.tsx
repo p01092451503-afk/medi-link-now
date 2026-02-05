@@ -181,7 +181,7 @@ const PharmacyBottomSheet = ({ pharmacy, isOpen, onClose }: PharmacyBottomSheetP
                   onClick={handleNavigate}
                   size="lg"
                   variant="outline"
-                  className="border-2 border-green-500 text-green-700 hover:bg-green-50 rounded-xl h-14 text-base font-bold"
+                  className="border-2 border-green-500 dark:border-green-600 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/30 rounded-xl h-14 text-base font-bold"
                 >
                   <Navigation className="w-5 h-5 mr-2" />
                   길찾기
