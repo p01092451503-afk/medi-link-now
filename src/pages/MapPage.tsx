@@ -525,13 +525,6 @@ const MapPage = () => {
       {/* Location Coachmark */}
       <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
 
-      {/* 119 Demand Forecast Ticker - Only show when no bottom sheet is open */}
-      {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && !selectedNightCareHospital && (
-        <DemandForecastTicker 
-          regionId={activeRegion !== "all" ? activeRegion : undefined}
-        />
-      )}
-
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
         {/* Offline/Error Banner */}
@@ -754,6 +747,13 @@ const MapPage = () => {
 
             {/* Mode Toggle (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
+
+           {/* 119 Stats Button */}
+           {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && !selectedNightCareHospital && (
+             <DemandForecastTicker 
+               regionId={activeRegion !== "all" ? activeRegion : undefined}
+             />
+           )}
           </div>
         </header>
 
