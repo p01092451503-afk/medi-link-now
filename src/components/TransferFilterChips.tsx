@@ -33,14 +33,14 @@ const TransferFilterChips = () => {
               key={filter.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => setTransferFilter(filter.id)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border flex items-center gap-2 ${
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
                 isActive
-                  ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white border-purple-600"
-                  : "bg-card text-muted-foreground border-border hover:border-purple-400 hover:text-purple-600"
+                  ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md shadow-purple-500/30"
+                  : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
               }`}
             >
               {colorIndicator && (
-                <span className={`w-3 h-3 rounded-full ${colorIndicator} ${isActive ? "ring-2 ring-white/50" : ""}`} />
+                <span className={`w-2.5 h-2.5 rounded-full ${colorIndicator} ${isActive ? "ring-2 ring-white/50" : ""}`} />
               )}
               {filter.labelKr}
             </motion.button>
