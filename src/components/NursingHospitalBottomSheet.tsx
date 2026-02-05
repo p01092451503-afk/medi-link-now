@@ -42,15 +42,15 @@ const NursingHospitalBottomSheet = ({
         <div className="mt-6 space-y-4">
           {/* Phone */}
           {hospital.phone && (
-            <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-2xl">
-              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <Phone className="w-5 h-5 text-purple-600" />
+            <div className="flex items-start gap-4 p-4 bg-muted/30 dark:bg-slate-800/50 rounded-2xl">
+              <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/50 flex items-center justify-center flex-shrink-0">
+                <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="flex-1">
                 <p className="text-xs text-muted-foreground mb-1">전화번호</p>
                 <a 
                   href={`tel:${hospital.phone}`} 
-                  className="text-lg font-semibold text-foreground hover:text-purple-600 transition-colors"
+                  className="text-lg font-semibold text-foreground hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
                   {hospital.phone}
                 </a>
