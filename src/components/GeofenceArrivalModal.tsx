@@ -37,7 +37,7 @@ const GeofenceArrivalModal = ({
             transition={{ type: "spring", damping: 25, stiffness: 400 }}
             className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-[2001] max-w-sm mx-auto"
           >
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-br from-emerald-500 to-green-500 p-6 text-center relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
