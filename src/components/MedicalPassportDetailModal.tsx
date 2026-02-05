@@ -157,12 +157,12 @@ const MedicalPassportDetailModal = ({
               {/* Birth Date & Weight */}
               <div className="grid grid-cols-2 gap-3">
                 {member.birthDate && (
-                  <div className="bg-blue-50 rounded-xl p-3">
+                  <div className="bg-blue-50 dark:bg-blue-950/50 rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Calendar className="w-4 h-4 text-blue-500" />
+                      <Calendar className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                       <span className="text-xs text-muted-foreground">생년월일</span>
                     </div>
-                    <p className="text-lg font-bold text-blue-700">
+                    <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
                       {new Date(member.birthDate).toLocaleDateString("ko-KR")}
                     </p>
                   </div>
