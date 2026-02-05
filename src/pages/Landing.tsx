@@ -555,9 +555,9 @@ const Landing = () => {
           transition={{ duration: 0.5, delay: 0.25 }}
           className="w-full"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-blue-600" />
-            <p className="text-xs font-bold text-slate-600 dark:text-slate-300">서비스 선택</p>
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">서비스 선택</p>
           </div>
           
           <div className="space-y-3">
