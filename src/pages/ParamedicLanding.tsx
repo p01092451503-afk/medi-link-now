@@ -152,7 +152,7 @@ const ParamedicLanding = () => {
             지금 시작하기
             <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <p className="text-xs text-center text-slate-400 mt-3">
+          <p className="text-xs text-center text-slate-400 dark:text-slate-500 mt-3">
             로그인 없이 바로 사용 가능합니다
           </p>
         </motion.div>
@@ -170,13 +170,13 @@ const ParamedicLanding = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.35 + index * 0.05, duration: 0.3 }}
-              className="relative bg-white rounded-2xl p-4 border border-orange-100 overflow-hidden group hover:shadow-md hover:border-orange-200 transition-all duration-300"
+              className="relative bg-white dark:bg-slate-800 rounded-2xl p-4 border border-orange-100 dark:border-slate-700 overflow-hidden group hover:shadow-md hover:border-orange-200 dark:hover:border-slate-600 transition-all duration-300"
             >
-              <div className="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center mb-3 group-hover:bg-orange-200 transition-colors duration-300">
+              <div className="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-3 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors duration-300">
                 <feature.icon className="w-5 h-5 text-orange-600" />
               </div>
-              <h3 className="font-bold text-sm text-slate-800 mb-1">{feature.title}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{feature.description}</p>
+              <h3 className="font-bold text-sm text-slate-800 dark:text-white mb-1">{feature.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -190,7 +190,7 @@ const ParamedicLanding = () => {
         >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-5 rounded-full bg-orange-400" />
-            <h2 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
               현장 구급대원 후기
             </h2>
@@ -203,15 +203,15 @@ const ParamedicLanding = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + index * 0.08, duration: 0.3 }}
-                className="bg-white rounded-2xl p-4 border border-orange-100 shadow-sm"
+                className="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-orange-100 dark:border-slate-700 shadow-sm"
               >
                 <div className="flex items-center gap-3 mb-2.5">
                   <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center">
                     <span className="text-sm font-bold text-white">{testimonial.name[0]}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-sm text-slate-800">{testimonial.name}</p>
-                    <p className="text-xs text-slate-400">{testimonial.region}</p>
+                    <p className="font-semibold text-sm text-slate-800 dark:text-white">{testimonial.name}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{testimonial.region}</p>
                   </div>
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map((i) => (
@@ -219,7 +219,7 @@ const ParamedicLanding = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed">"{testimonial.comment}"</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">"{testimonial.comment}"</p>
               </motion.div>
             ))}
           </div>
@@ -231,15 +231,15 @@ const ParamedicLanding = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <div className="bg-orange-50 rounded-2xl p-4 flex items-center gap-3.5 border border-orange-200">
+          <div className="bg-orange-50 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3.5 border border-orange-200 dark:border-slate-700">
             <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-slate-800">공공데이터 기반 서비스</p>
-              <p className="text-xs text-slate-500 mt-0.5">국가응급진료정보망(NEDIS) 데이터 활용</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">공공데이터 기반 서비스</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">국가응급진료정보망(NEDIS) 데이터 활용</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-orange-300" />
+            <ChevronRight className="w-4 h-4 text-orange-300 dark:text-slate-600" />
           </div>
         </motion.div>
       </main>
