@@ -238,7 +238,7 @@ const Landing = () => {
                 <div className="grid grid-cols-4 gap-2">
                   {/* 응급실 */}
                   <div className="text-center py-2">
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">응급실</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">응급실</p>
                     <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
                       {stats?.totalHospitals ?? "-"}
                     </p>
@@ -246,7 +246,7 @@ const Landing = () => {
                   
                   {/* 총 병상 */}
                   <div className="text-center py-2">
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">총 병상</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">총 병상</p>
                     <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
                       {stats?.totalBeds !== undefined ? (stats.totalBeds / 1000).toFixed(1) + "k" : "-"}
                     </p>
@@ -254,7 +254,7 @@ const Landing = () => {
                   
                   {/* 여유 병원 - Highlighted */}
                   <div className="text-center py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-                    <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mb-0.5 font-medium">여유</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-1 font-semibold">여유</p>
                     <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 leading-none">
                       {stats?.availableHospitals ?? "-"}
                     </p>
@@ -262,7 +262,7 @@ const Landing = () => {
                   
                   {/* 소아 병상 */}
                   <div className="text-center py-2">
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">소아</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">소아</p>
                     <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
                       {stats?.pediatricBeds !== undefined ? (stats.pediatricBeds / 1000).toFixed(1) + "k" : "-"}
                     </p>
