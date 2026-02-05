@@ -1,7 +1,7 @@
  import { useState, useEffect, useMemo } from "react";
  import { motion, AnimatePresence } from "framer-motion";
- import { BarChart3, TrendingUp, AlertTriangle, Clock, ChevronRight, X } from "lucide-react";
- import { getDemandForecast, RegionDemandForecast } from "@/data/fire119Stats";
+ import { BarChart3, TrendingUp, AlertTriangle, Clock, X } from "lucide-react";
+ import { getDemandForecast } from "@/data/fire119Stats";
  
  interface DemandForecastTickerProps {
    regionId?: string;
@@ -72,110 +72,108 @@
          return <TrendingUp className="w-3.5 h-3.5" />;
      }
    };
+ 
+   const getLevelBadgeColor = (level: string) => {
+     switch (level) {
+       case "critical": return "bg-red-500";
+       case "high": return "bg-orange-500";
+       case "moderate": return "bg-amber-500";
+       default: return "bg-emerald-500";
+     }
+   };
    
    return (
-     <AnimatePresence>
-       <motion.div
-         initial={{ opacity: 0, y: -20 }}
-         animate={{ opacity: 1, y: 0 }}
-         exit={{ opacity: 0, y: -20 }}
-        className={`absolute top-[136px] left-3 right-3 z-[999] ${className}`}
-       >
-         <motion.div
-           className={`rounded-2xl border shadow-lg backdrop-blur-sm overflow-hidden ${getLevelBg(forecast.demandLevel)}`}
-           layout
-         >
-           {/* Main Ticker */}
-           <button
-             onClick={() => setIsExpanded(!isExpanded)}
-             className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left"
+     <div className={`absolute top-4 right-20 z-[1002] ${className}`}>
+       {/* Collapsed Button */}
+       <AnimatePresence mode="wait">
+         {!isExpanded ? (
+           <motion.button
+             key="collapsed"
+             initial={{ opacity: 0, scale: 0.8 }}
+             animate={{ opacity: 1, scale: 1 }}
+             exit={{ opacity: 0, scale: 0.8 }}
+             whileHover={{ scale: 1.05 }}
+             whileTap={{ scale: 0.95 }}
+             onClick={() => setIsExpanded(true)}
+             className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl shadow-lg border backdrop-blur-sm ${getLevelBg(forecast.demandLevel)}`}
            >
-             {/* Indicator */}
-             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getLevelColor(forecast.demandLevel)} flex items-center justify-center shadow-sm`}>
-               <BarChart3 className="w-4 h-4 text-white" />
+             <div className={`w-6 h-6 rounded-lg bg-gradient-to-br ${getLevelColor(forecast.demandLevel)} flex items-center justify-center shadow-sm`}>
+               <BarChart3 className="w-3.5 h-3.5 text-white" />
+             </div>
+             <span className="text-[10px] font-bold text-slate-700">119</span>
+             {/* Level indicator dot */}
+             <span className={`w-2 h-2 rounded-full ${getLevelBadgeColor(forecast.demandLevel)}`} />
+           </motion.button>
+         ) : (
+           <motion.div
+             key="expanded"
+             initial={{ opacity: 0, scale: 0.9, y: -10 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             exit={{ opacity: 0, scale: 0.9, y: -10 }}
+             className={`w-72 rounded-2xl border shadow-xl backdrop-blur-sm overflow-hidden ${getLevelBg(forecast.demandLevel)}`}
+           >
+             {/* Header */}
+             <div className="flex items-center justify-between px-3 py-2.5 border-b border-slate-200/50">
+               <div className="flex items-center gap-2">
+                 <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${getLevelColor(forecast.demandLevel)} flex items-center justify-center shadow-sm`}>
+                   <BarChart3 className="w-4 h-4 text-white" />
+                 </div>
+                 <div>
+                   <div className="flex items-center gap-1.5">
+                     <span className="text-xs font-bold text-slate-700">119 통계 인사이트</span>
+                     <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded text-white ${getLevelBadgeColor(forecast.demandLevel)}`}>
+                       {getLevelText(forecast.demandLevel)}
+                     </span>
+                   </div>
+                 </div>
+               </div>
+               <button
+                 onClick={() => setIsExpanded(false)}
+                 className="p-1.5 hover:bg-slate-200/50 rounded-full transition-colors"
+               >
+                 <X className="w-4 h-4 text-slate-500" />
+               </button>
              </div>
              
              {/* Content */}
-             <div className="flex-1 min-w-0">
-               <div className="flex items-center gap-1.5">
-                 <span className="text-[11px] font-bold text-slate-700 truncate">
-                   119 통계 인사이트
-                 </span>
-                 <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${
-                   forecast.demandLevel === "critical" ? "bg-red-500 text-white" :
-                   forecast.demandLevel === "high" ? "bg-orange-500 text-white" :
-                   forecast.demandLevel === "moderate" ? "bg-amber-500 text-white" :
-                   "bg-emerald-500 text-white"
-                 }`}>
-                   {getLevelText(forecast.demandLevel)}
-                 </span>
-               </div>
-               <p className="text-[10px] text-slate-600 truncate mt-0.5">
+             <div className="p-3">
+               <p className="text-[11px] text-slate-600 mb-3">
                  {forecast.message}
                </p>
-             </div>
-             
-             {/* Actions */}
-             <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-             
-             {/* Close button */}
-             <button
-               onClick={(e) => {
-                 e.stopPropagation();
-                 setIsVisible(false);
-               }}
-               className="p-1 hover:bg-slate-200/50 rounded-full transition-colors"
-             >
-               <X className="w-3.5 h-3.5 text-slate-400" />
-             </button>
-           </button>
-           
-           {/* Expanded Details */}
-           <AnimatePresence>
-             {isExpanded && (
-               <motion.div
-                 initial={{ height: 0, opacity: 0 }}
-                 animate={{ height: "auto", opacity: 1 }}
-                 exit={{ height: 0, opacity: 0 }}
-                 transition={{ duration: 0.2 }}
-                 className="overflow-hidden"
-               >
-                 <div className="px-3 pb-3 pt-1 border-t border-slate-200/50">
-                   <div className="grid grid-cols-2 gap-2">
-                     {/* Current Time Stats */}
-                     <div className="p-2 bg-white/60 rounded-lg">
-                       <div className="flex items-center gap-1.5 mb-1">
-                         <Clock className="w-3 h-3 text-slate-500" />
-                         <span className="text-[9px] font-medium text-slate-500">현재 시간대</span>
-                       </div>
-                       <p className="text-sm font-bold text-slate-800">
-                         {forecast.hour}시 ~ {(forecast.hour + 1) % 24}시
-                       </p>
-                     </div>
-                     
-                     {/* Avg Incidents */}
-                     <div className="p-2 bg-white/60 rounded-lg">
-                       <div className="flex items-center gap-1.5 mb-1">
-                         {getLevelIcon(forecast.demandLevel)}
-                         <span className="text-[9px] font-medium text-slate-500">평균 출동</span>
-                       </div>
-                       <p className="text-sm font-bold text-slate-800">
-                         {forecast.avgIncidents}건<span className="text-[10px] font-normal text-slate-500">/시간</span>
-                       </p>
-                     </div>
+               
+               <div className="grid grid-cols-2 gap-2">
+                 {/* Current Time Stats */}
+                 <div className="p-2 bg-white/60 rounded-lg">
+                   <div className="flex items-center gap-1.5 mb-1">
+                     <Clock className="w-3 h-3 text-slate-500" />
+                     <span className="text-[9px] font-medium text-slate-500">현재 시간대</span>
                    </div>
-                   
-                   {/* Disclaimer */}
-                   <p className="text-[8px] text-slate-400 text-center mt-2">
-                     ※ 과거 3년 119 출동 통계 기반 예측 · 실제와 다를 수 있음
+                   <p className="text-sm font-bold text-slate-800">
+                     {forecast.hour}시 ~ {(forecast.hour + 1) % 24}시
                    </p>
                  </div>
-               </motion.div>
-             )}
-           </AnimatePresence>
-         </motion.div>
-       </motion.div>
-     </AnimatePresence>
+                 
+                 {/* Avg Incidents */}
+                 <div className="p-2 bg-white/60 rounded-lg">
+                   <div className="flex items-center gap-1.5 mb-1">
+                     {getLevelIcon(forecast.demandLevel)}
+                     <span className="text-[9px] font-medium text-slate-500">평균 출동</span>
+                   </div>
+                   <p className="text-sm font-bold text-slate-800">
+                     {forecast.avgIncidents}건<span className="text-[10px] font-normal text-slate-500">/시간</span>
+                   </p>
+                 </div>
+               </div>
+               
+               {/* Disclaimer */}
+               <p className="text-[8px] text-slate-400 text-center mt-2">
+                 ※ 과거 3년 119 출동 통계 기반 예측 · 실제와 다를 수 있음
+               </p>
+             </div>
+           </motion.div>
+         )}
+       </AnimatePresence>
+     </div>
    );
  };
  
