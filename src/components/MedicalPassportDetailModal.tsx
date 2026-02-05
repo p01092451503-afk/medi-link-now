@@ -168,12 +168,12 @@ const MedicalPassportDetailModal = ({
                   </div>
                 )}
                 {member.weightKg && (
-                  <div className="bg-green-50 rounded-xl p-3">
+                  <div className="bg-green-50 dark:bg-green-950/50 rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Weight className="w-4 h-4 text-green-500" />
+                      <Weight className="w-4 h-4 text-green-500 dark:text-green-400" />
                       <span className="text-xs text-muted-foreground">체중</span>
                     </div>
-                    <p className="text-lg font-bold text-green-700">
+                    <p className="text-lg font-bold text-green-700 dark:text-green-400">
                       {member.weightKg} kg
                     </p>
                   </div>
