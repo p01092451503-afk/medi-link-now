@@ -274,8 +274,8 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
 
   if (!isSupported) {
     return (
-      <div className="text-center p-4 bg-gray-100 rounded-xl">
-        <MicOff className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+      <div className="text-center p-4 bg-muted rounded-xl">
+        <MicOff className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
         <p className="text-sm text-muted-foreground">
           이 브라우저에서는 음성 인식을 지원하지 않습니다
         </p>
