@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -15,8 +16,10 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SecurityInfoModal from "@/components/SecurityInfoModal";
 
 const DriverLanding = () => {
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const features = [
@@ -222,7 +225,10 @@ const DriverLanding = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3.5 border border-slate-200 dark:border-slate-700">
+          <button
+            onClick={() => setIsSecurityModalOpen(true)}
+            className="w-full bg-slate-100 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 text-left"
+          >
             <div className="w-12 h-12 rounded-xl bg-slate-700 dark:bg-violet-600 flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
@@ -230,10 +236,16 @@ const DriverLanding = () => {
               <p className="text-sm font-semibold text-slate-800 dark:text-white">안전하고 검증된 서비스</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">개인정보 보호 및 운행 데이터 암호화</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600" />
-          </div>
+            <ChevronRight className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+          </button>
         </motion.div>
       </main>
+
+      {/* Security Info Modal */}
+      <SecurityInfoModal 
+        isOpen={isSecurityModalOpen} 
+        onClose={() => setIsSecurityModalOpen(false)} 
+      />
     </div>
   );
 };
