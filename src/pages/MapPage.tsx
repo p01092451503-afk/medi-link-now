@@ -870,6 +870,13 @@ const MapPage = () => {
         onClose={() => setSelectedNursingHospital(null)}
       />
 
+      {/* Night Care Hospital Bottom Sheet */}
+      <NightCareHospitalBottomSheet
+        hospital={selectedNightCareHospital}
+        isOpen={!!selectedNightCareHospital}
+        onClose={() => setSelectedNightCareHospital(null)}
+      />
+
       {/* My Requests Panel - Floating */}
       <MyRequestsPanel />
     </div>
