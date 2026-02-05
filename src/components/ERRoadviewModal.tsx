@@ -141,8 +141,8 @@ const ERRoadviewModal = ({
 
             {/* Entrance Info Badge */}
             {entranceLat && entranceLng && (
-              <div className="px-4 py-2 bg-green-50 border-b border-green-100">
-                <div className="flex items-center gap-2 text-sm text-green-700">
+              <div className="px-4 py-2 bg-green-50 dark:bg-green-950/50 border-b border-green-100 dark:border-green-900">
+                <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
                   <MapPin className="w-4 h-4" />
                   <span className="font-medium">
                     응급실 전용 입구 위치 (정문과 다를 수 있음)
