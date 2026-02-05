@@ -141,7 +141,7 @@ const PatientTransferRequestModal = ({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
+            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
           >
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between rounded-t-2xl">
