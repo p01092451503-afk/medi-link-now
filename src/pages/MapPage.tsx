@@ -761,18 +761,25 @@ const MapPage = () => {
           <div className="absolute top-20 left-0 right-0 z-[999] px-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {filterOptions
-                .filter((f) => f.category === "bed" || f.category === "special")
+                .filter((f) => (f.category === "bed" || f.category === "special" || f.category === "nonEmergency") && !f.parent)
                 .filter((f) => f.id !== "pharmacy")
                 .map((f) => {
-                  const isActive = activeFilter === f.id;
+                  const isActive = activeFilter === f.id || 
+                    (f.id === "nonEmergency" && (activeFilter === "nightCare" || activeFilter === "nonEmergency"));
                   const isTraumaCenter = f.id === "traumaCenter";
                   const isMoonlight = f.id === "moonlight";
-                  const isNightCare = f.id === "nightCare";
+                  const isNonEmergency = f.id === "nonEmergency";
 
                   const handleFilterClick = () => {
-                    setActiveFilter(f.id);
+                    // For nonEmergency parent, toggle to nightCare directly
+                    if (f.id === "nonEmergency") {
+                      setActiveFilter("nightCare");
+                    } else {
+                      setActiveFilter(f.id);
+                    }
                     setSelectedHospital(null);
                     setSelectedPharmacy(null);
+                    setSelectedNightCareHospital(null);
                   };
 
                   return (
@@ -785,20 +792,20 @@ const MapPage = () => {
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
                             : isMoonlight
                               ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
-                              : isNightCare
+                              : isNonEmergency
                                 ? "bg-gradient-to-r from-indigo-500 to-blue-600 text-white shadow-md shadow-indigo-500/30"
                                 : "bg-primary text-white shadow-md"
                           : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
                       }`}
                     >
                       {isMoonlight && <span className="text-xs">🌙</span>}
-                      {isNightCare && <span className="text-xs">🌃</span>}
+                      {isNonEmergency && <span className="text-xs">🌃</span>}
                       {isTraumaCenter && (
                         <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
                           isActive ? "bg-white/20" : "bg-purple-100"
                         }`}>+</span>
                       )}
-                      {f.labelKr}
+                      {isNonEmergency ? "야간진료 (비응급)" : f.labelKr}
                     </button>
                   );
                 })}
