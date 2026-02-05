@@ -152,7 +152,7 @@ const ERRoadviewModal = ({
             )}
 
             {/* Content */}
-            <div className="flex-1 relative bg-gray-100 min-h-[280px] md:min-h-[350px]">
+            <div className="flex-1 relative bg-gray-100 dark:bg-slate-800 min-h-[280px] md:min-h-[350px]">
               {isLoading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
                   <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
