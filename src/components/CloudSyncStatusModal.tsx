@@ -66,7 +66,7 @@ const CloudSyncStatusModal = ({
             <h3 className="text-lg font-bold text-foreground">클라우드 동기화 상태</h3>
             <button
               onClick={onClose}
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
             >
               <X className="w-5 h-5 text-muted-foreground" />
             </button>
