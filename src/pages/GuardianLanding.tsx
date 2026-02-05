@@ -22,6 +22,7 @@ type TargetUserType = "parents" | "elderly" | "chronic" | null;
 
 const GuardianLanding = () => {
   const navigate = useNavigate();
+  const [selectedUserType, setSelectedUserType] = useState<TargetUserType>(null);
 
   const features = [
     {
