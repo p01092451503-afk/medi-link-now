@@ -58,7 +58,7 @@ const CloudSyncStatusModal = ({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
+          className="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-sm shadow-xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
