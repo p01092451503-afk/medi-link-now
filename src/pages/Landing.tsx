@@ -528,7 +528,7 @@ const Landing = () => {
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200">서비스 선택</p>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             {/* Guardian/Patient Card */}
             <motion.button
               whileHover={{ scale: 1.02, y: -2 }}
