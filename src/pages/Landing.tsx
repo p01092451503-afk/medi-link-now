@@ -563,7 +563,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-             className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50/80 via-white to-white border border-blue-100/60 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group noise-texture"
+             className="w-full relative overflow-hidden rounded-2xl bg-white border border-blue-100/60 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group mesh-gradient-blue"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-2xl" />
@@ -585,7 +585,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-             className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-50/80 via-white to-white border border-violet-100/60 shadow-sm hover:shadow-md hover:border-violet-200 transition-all duration-300 group noise-texture"
+             className="w-full relative overflow-hidden rounded-2xl bg-white border border-violet-100/60 shadow-sm hover:shadow-md hover:border-violet-200 transition-all duration-300 group mesh-gradient-violet"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-2xl" />
@@ -607,7 +607,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-             className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50/80 via-white to-white border border-orange-100/60 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-300 group noise-texture"
+             className="w-full relative overflow-hidden rounded-2xl bg-white border border-orange-100/60 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-300 group mesh-gradient-orange"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-2xl" />
