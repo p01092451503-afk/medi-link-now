@@ -182,16 +182,9 @@ const MapPage = () => {
       result = result.filter((h) => {
         const transferBeds = getTransferBeds(h.id);
         switch (transferFilter) {
-          case "icu-general":
-            return transferBeds.icuGeneral > 0;
-          case "icu-neuro":
-            return transferBeds.icuNeuro > 0;
-          case "icu-cardio":
-            return transferBeds.icuCardio > 0;
-          case "ward":
-            return transferBeds.ward > 0;
-          case "isolation":
-            return transferBeds.isolation > 0;
+          case "hospital":
+            // Show hospitals with any available transfer beds
+            return (transferBeds.icuGeneral + transferBeds.icuNeuro + transferBeds.icuCardio + transferBeds.ward + transferBeds.isolation) > 0;
           default:
             return true;
         }
@@ -273,8 +266,7 @@ const MapPage = () => {
     if (!isTransferMode || nursingHospitals.length === 0) return [];
     
     // Hide nursing hospitals when hospital or any hospital sub-filter is selected
-    const hospitalFilters: TransferFilterType[] = ["hospital", "icu-general", "icu-neuro", "icu-cardio", "ward", "isolation"];
-    if (hospitalFilters.includes(transferFilter)) return [];
+    if (transferFilter === "hospital") return [];
     
     let result = [...nursingHospitals];
     
