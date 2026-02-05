@@ -173,127 +173,102 @@ const Landing = () => {
           </p>
         </motion.div>
 
-        {/* Live Statistics Section */}
+        {/* Live Statistics Section - Compact Redesign */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="w-full mb-8"
         >
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-            {/* Tab Header - Grayscale */}
-            <div className="bg-slate-700 dark:bg-slate-900 p-1.5">
-              <div className="flex gap-1">
-                {/* National Tab */}
+          <div className="bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+            {/* Compact Tab + Status Header */}
+            <div className="flex items-center justify-between px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700/50">
+              {/* Tab Pills */}
+              <div className="flex bg-slate-200/60 dark:bg-slate-700/60 rounded-full p-0.5">
                 <button
                   onClick={() => setActiveTab("national")}
-                  className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                     activeTab === "national"
-                      ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm"
-                      : "text-white/80 hover:bg-white/10"
+                      ? "bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                   }`}
                 >
-                  <Hospital className="w-4 h-4" />
-                  <span>전국</span>
+                  전국
                 </button>
-                
-                {/* Local Tab */}
                 <button
                   onClick={handleLocalTab}
                   disabled={isLocating}
-                  className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1 ${
                     activeTab === "local"
-                      ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm"
-                      : "text-white/80 hover:bg-white/10"
+                      ? "bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                   } disabled:opacity-50`}
                 >
                   {isLocating ? (
-                    <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                    <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <Navigation className="w-4 h-4" />
+                    <Navigation className="w-3 h-3" />
                   )}
-                  <span>내 지역</span>
+                  내 주변
                 </button>
               </div>
-            </div>
 
-            {/* Info Bar */}
-            <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-700">
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                  {activeTab === "national" ? "실시간 전국 현황" : "실시간 내 주변 10km 현황"}
+              {/* Live Status Badge */}
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
+                <span>
+                  {isLoading ? "로딩..." : lastUpdated ? lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ""}
                 </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-slate-400 dark:text-slate-500">
-                  {isLoading ? "로딩 중..." : lastUpdated ? `${lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준` : ""}
-                </span>
-                <div className="relative flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <div className="absolute w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <div className="relative">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping opacity-75" />
                 </div>
               </div>
             </div>
             
-            {/* Stats Grid - Integrated Dashboard Layout */}
+            {/* Compact Stats Grid */}
             <AnimatePresence mode="wait">
               <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-2 divide-x divide-y divide-slate-100 dark:divide-slate-700"
-                >
+                key={activeTab}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="p-3"
+              >
+                <div className="grid grid-cols-4 gap-2">
                   {/* 응급실 */}
-                  <div className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Hospital className="w-4 h-4 text-blue-500" />
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">응급실</span>
-                    </div>
-                    <p className="text-[1.75rem] font-black text-slate-900 dark:text-white leading-none">
-                      {stats?.totalHospitals !== undefined ? stats.totalHospitals : "---"}
-                      <span className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">개소</span>
+                  <div className="text-center py-2">
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">응급실</p>
+                    <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
+                      {stats?.totalHospitals ?? "-"}
                     </p>
                   </div>
                   
-                  {/* 병상 */}
-                  <div className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Bed className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">총 병상</span>
-                    </div>
-                    <p className="text-[1.75rem] font-black text-slate-900 dark:text-white leading-none">
-                      {stats?.totalBeds !== undefined ? stats.totalBeds.toLocaleString() : "---"}
-                      <span className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">개</span>
+                  {/* 총 병상 */}
+                  <div className="text-center py-2">
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">총 병상</p>
+                    <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
+                      {stats?.totalBeds !== undefined ? (stats.totalBeds / 1000).toFixed(1) + "k" : "-"}
                     </p>
                   </div>
                   
-                  {/* 여유 - Highlighted with gradient background */}
-                  <div className="p-4 bg-gradient-to-br from-emerald-50/80 to-green-50/50 dark:from-emerald-900/30 dark:to-green-900/20 hover:from-emerald-50 hover:to-green-50 dark:hover:from-emerald-900/40 dark:hover:to-green-900/30 transition-colors">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <TrendingUp className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">여유 병원</span>
-                    </div>
-                    <p className="text-[1.75rem] font-black text-emerald-700 dark:text-emerald-400 leading-none">
-                      {stats?.availableHospitals !== undefined ? stats.availableHospitals : "---"}
-                      <span className="text-xs font-medium text-emerald-500 dark:text-emerald-500 ml-1">개소</span>
+                  {/* 여유 병원 - Highlighted */}
+                  <div className="text-center py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                    <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mb-0.5 font-medium">여유</p>
+                    <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 leading-none">
+                      {stats?.availableHospitals ?? "-"}
                     </p>
                   </div>
                   
-                  {/* 소아 */}
-                  <div className="p-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Users className="w-4 h-4 text-orange-500" />
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">소아 병상</span>
-                    </div>
-                    <p className="text-[1.75rem] font-black text-slate-900 dark:text-white leading-none">
-                      {stats?.pediatricBeds !== undefined ? stats.pediatricBeds.toLocaleString() : "---"}
-                      <span className="text-xs font-medium text-slate-400 dark:text-slate-500 ml-1">개</span>
+                  {/* 소아 병상 */}
+                  <div className="text-center py-2">
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">소아</p>
+                    <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
+                      {stats?.pediatricBeds !== undefined ? (stats.pediatricBeds / 1000).toFixed(1) + "k" : "-"}
                     </p>
                   </div>
-                </motion.div>
+                </div>
+              </motion.div>
             </AnimatePresence>
 
             {/* Nearest Hospitals Preview - Only in Local Tab */}
@@ -303,48 +278,41 @@ const Landing = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="border-t border-gray-100 dark:border-slate-700"
+                  transition={{ duration: 0.2 }}
+                  className="border-t border-slate-100 dark:border-slate-700/50"
                 >
-                  <div className="p-2 space-y-1.5 dark:bg-slate-800">
-                    <p className="text-[10px] font-medium text-muted-foreground dark:text-slate-400 px-1">가까운 응급실</p>
+                  <div className="p-2.5 space-y-1.5">
+                    <p className="text-[9px] font-medium text-slate-400 dark:text-slate-500 px-1 uppercase tracking-wide">가까운 응급실</p>
                     {nearestHospitals.map((hospital, index) => {
                       const status = getHospitalStatus(hospital);
-                      const statusColor = status === "available" ? "bg-green-500" : status === "limited" ? "bg-yellow-500" : "bg-red-500";
+                      const statusColor = status === "available" ? "bg-emerald-500" : status === "limited" ? "bg-amber-500" : "bg-red-500";
                       const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
                       
                       return (
                         <button
                           key={hospital.id}
                           onClick={() => navigate(`/map?hospital=${hospital.id}`)}
-                          className="w-full flex items-center gap-2 p-2 bg-white dark:bg-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors text-left"
+                          className="w-full flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-left"
                         >
-                          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold shrink-0">
+                          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-[10px] font-bold shrink-0">
                             {index + 1}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
                               <div className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
-                              <p className="text-[11px] font-medium text-foreground dark:text-white truncate">
+                              <p className="text-[11px] font-semibold text-slate-700 dark:text-white truncate">
                                 {cleanHospitalName(hospital.nameKr)}
                               </p>
                             </div>
-                            <div className="flex items-center gap-2 text-[9px] text-muted-foreground dark:text-slate-400 mt-0.5">
-                              <span className="flex items-center gap-0.5">
-                                <MapPin className="w-2.5 h-2.5" />
-                                {hospital.distance.toFixed(1)}km
-                              </span>
-                              <span className="flex items-center gap-0.5">
-                                <Bed className="w-2.5 h-2.5" />
-                                {totalBeds}병상
-                              </span>
-                              <span className="flex items-center gap-0.5">
-                                <Clock className="w-2.5 h-2.5" />
-                                ~{Math.round(hospital.distance / 35 * 60)}분
-                              </span>
+                            <div className="flex items-center gap-2 text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
+                              <span>{hospital.distance.toFixed(1)}km</span>
+                              <span>·</span>
+                              <span>{totalBeds}병상</span>
+                              <span>·</span>
+                              <span>~{Math.round(hospital.distance / 35 * 60)}분</span>
                             </div>
                           </div>
-                          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                          <ChevronRight className="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0" />
                         </button>
                       );
                     })}
