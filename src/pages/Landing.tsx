@@ -520,17 +520,20 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(59,130,246,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-blue-200 transition-all duration-300 group"
+              className="w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
             >
-              <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(59,130,246,0.1),0_2px_4px_rgba(59,130,246,0.15)] group-hover:from-blue-100 group-hover:to-blue-200 group-hover:shadow-[inset_0_-2px_4px_rgba(59,130,246,0.15),0_3px_6px_rgba(59,130,246,0.2)] transition-all">
-                  <Users className="w-7 h-7 text-blue-500" />
+              {/* Left accent bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="flex items-center w-full py-4 px-5">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 via-blue-100/80 to-indigo-100/50 flex items-center justify-center shrink-0 ring-1 ring-blue-100/50 group-hover:ring-blue-200 transition-all">
+                  <Users className="w-6 h-6 text-blue-600" />
                 </div>
-                <div className="text-left flex-1 ml-4">
-                  <p className="text-base font-bold text-slate-800 leading-tight">보호자 / 환자</p>
-                  <p className="text-sm text-slate-400 leading-tight mt-1">응급실 찾기 · 가족 건강관리</p>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-[15px] font-semibold text-slate-800 tracking-tight">보호자 / 환자</p>
+                  <p className="text-[13px] text-slate-400 mt-0.5">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
 
@@ -539,17 +542,20 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-violet-50/30 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(139,92,246,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-violet-200 transition-all duration-300 group"
+              className="w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
             >
-              <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(139,92,246,0.1),0_2px_4px_rgba(139,92,246,0.15)] group-hover:from-violet-100 group-hover:to-purple-200 group-hover:shadow-[inset_0_-2px_4px_rgba(139,92,246,0.15),0_3px_6px_rgba(139,92,246,0.2)] transition-all">
-                  <Ambulance className="w-7 h-7 text-violet-500" />
+              {/* Left accent bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="flex items-center w-full py-4 px-5">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-50 via-violet-100/80 to-purple-100/50 flex items-center justify-center shrink-0 ring-1 ring-violet-100/50 group-hover:ring-violet-200 transition-all">
+                  <Ambulance className="w-6 h-6 text-violet-600" />
                 </div>
-                <div className="text-left flex-1 ml-4">
-                  <p className="text-base font-bold text-slate-800 leading-tight">민간 구급차</p>
-                  <p className="text-sm text-slate-400 leading-tight mt-1">전원 · 퇴원 이송</p>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-[15px] font-semibold text-slate-800 tracking-tight">민간 구급차</p>
+                  <p className="text-[13px] text-slate-400 mt-0.5">전원 · 퇴원 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-violet-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
 
@@ -558,17 +564,20 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -3 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-              className="w-full py-4 px-5 rounded-2xl bg-gradient-to-b from-white to-orange-50/30 border border-slate-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(249,115,22,0.15),0_4px_8px_rgba(0,0,0,0.08)] hover:border-orange-200 transition-all duration-300 group"
+              className="w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
             >
-              <div className="flex items-center w-full">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-100 flex items-center justify-center shrink-0 shadow-[inset_0_-2px_4px_rgba(249,115,22,0.1),0_2px_4px_rgba(249,115,22,0.15)] group-hover:from-orange-100 group-hover:to-amber-200 group-hover:shadow-[inset_0_-2px_4px_rgba(249,115,22,0.15),0_3px_6px_rgba(249,115,22,0.2)] transition-all">
-                  <Ambulance className="w-7 h-7 text-orange-500" />
+              {/* Left accent bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="flex items-center w-full py-4 px-5">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-50 via-orange-100/80 to-orange-100/50 flex items-center justify-center shrink-0 ring-1 ring-orange-100/50 group-hover:ring-orange-200 transition-all">
+                  <Ambulance className="w-6 h-6 text-orange-600" />
                 </div>
-                <div className="text-left flex-1 ml-4">
-                  <p className="text-base font-bold text-slate-800 leading-tight">구급대원</p>
-                  <p className="text-sm text-slate-400 leading-tight mt-1">병상 현황 · 거절이력 공유</p>
+                <div className="text-left flex-1 ml-3.5">
+                  <p className="text-[15px] font-semibold text-slate-800 tracking-tight">구급대원</p>
+                  <p className="text-[13px] text-slate-400 mt-0.5">병상 현황 · 거절이력 공유</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
+                <ChevronRight className="w-5 h-5 text-slate-300 shrink-0 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
           </div>
