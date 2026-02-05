@@ -212,7 +212,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
           >
             {/* Handle */}
             <div className="flex justify-center py-3">
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+              <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full" />
             </div>
 
             <div className="px-5 pb-8 pt-1 max-h-[75vh] overflow-y-auto">
