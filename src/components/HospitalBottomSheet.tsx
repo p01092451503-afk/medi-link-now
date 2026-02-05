@@ -512,7 +512,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               <Button
                 onClick={() => setShowRoadview(true)}
                 variant="outline"
-                className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 font-medium"
+                className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium"
               >
                 <Ambulance className="w-5 h-5 mr-2" />
                 응급실 입구 로드뷰 (ER Entrance View)
