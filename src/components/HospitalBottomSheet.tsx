@@ -297,7 +297,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               />
 
               {/* AI Predictive Features Section - Premium Design */}
-              <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-xl shadow-violet-500/10 overflow-hidden">
+              <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 dark:from-violet-950/50 dark:via-indigo-950/50 dark:to-blue-950/50 border border-violet-200/50 dark:border-violet-800/50 shadow-xl shadow-violet-500/10 overflow-hidden">
                 {/* Decorative background elements */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-violet-400/20 to-indigo-400/20 blur-3xl" />
                 <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/20 blur-2xl" />
