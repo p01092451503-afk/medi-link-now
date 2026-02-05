@@ -80,9 +80,9 @@ const CloudSyncStatusModal = ({
               {isLoading ? (
                 <RefreshCw className="w-10 h-10 text-primary animate-spin" />
               ) : isStale ? (
-                <CloudOff className="w-10 h-10 text-yellow-600" />
+                <CloudOff className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
               ) : (
-                <Cloud className="w-10 h-10 text-green-600" />
+                <Cloud className="w-10 h-10 text-green-600 dark:text-green-400" />
               )}
             </div>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
