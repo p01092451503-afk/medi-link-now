@@ -22,8 +22,6 @@ import { useIncomingAmbulances } from "@/hooks/useIncomingAmbulances";
 import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 import NursingHospitalMarker from "../NursingHospitalMarker";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
-import NightCareHospitalMarker from "../NightCareHospitalMarker";
-import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -47,8 +45,6 @@ interface ClusteredMapViewProps {
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
   onZoomChange?: (zoom: number) => void;
-  nightCareHospitals?: HospitalDetailData[];
-  onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
 }
 
 // Component to handle map center changes and bounds
