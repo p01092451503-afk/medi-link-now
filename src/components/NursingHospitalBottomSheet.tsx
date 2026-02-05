@@ -59,9 +59,9 @@ const NursingHospitalBottomSheet = ({
           )}
 
           {/* Address */}
-          <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-2xl">
-            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-5 h-5 text-purple-600" />
+          <div className="flex items-start gap-4 p-4 bg-muted/30 dark:bg-slate-800/50 rounded-2xl">
+            <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/50 flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div className="flex-1">
               <p className="text-xs text-muted-foreground mb-1">주소</p>
@@ -73,9 +73,9 @@ const NursingHospitalBottomSheet = ({
 
           {/* Beds (if available) */}
           {hospital.beds && hospital.beds > 0 && (
-            <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-2xl">
-              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <Bed className="w-5 h-5 text-purple-600" />
+            <div className="flex items-start gap-4 p-4 bg-muted/30 dark:bg-slate-800/50 rounded-2xl">
+              <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/50 flex items-center justify-center flex-shrink-0">
+                <Bed className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="flex-1">
                 <p className="text-xs text-muted-foreground mb-1">병상 수</p>
