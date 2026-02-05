@@ -69,14 +69,14 @@ const BedStatusCard = ({
   let textColor: string;
   
   if (isAvailable) {
-    bgColor = "bg-green-50";
-    textColor = "text-green-600";
+    bgColor = "bg-green-50 dark:bg-green-950/50";
+    textColor = "text-green-600 dark:text-green-400";
   } else if (isHospitalFull) {
-    bgColor = "bg-red-50";
-    textColor = "text-red-500";
+    bgColor = "bg-red-50 dark:bg-red-950/50";
+    textColor = "text-red-500 dark:text-red-400";
   } else {
-    bgColor = "bg-gray-50";
-    textColor = "text-gray-400";
+    bgColor = "bg-gray-50 dark:bg-slate-800";
+    textColor = "text-gray-400 dark:text-slate-500";
   }
 
   return (
@@ -131,8 +131,8 @@ const AcceptanceBadge = ({
   <div
     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
       available
-        ? "bg-green-50 text-green-700 border border-green-200"
-        : "bg-gray-100 text-gray-400 border border-gray-200"
+        ? "bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+        : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-700"
     }`}
   >
     <Icon className="w-3.5 h-3.5" />
@@ -208,11 +208,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 500 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
           >
             {/* Handle */}
             <div className="flex justify-center py-3">
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+              <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full" />
             </div>
 
             <div className="px-5 pb-8 pt-1 max-h-[75vh] overflow-y-auto">
@@ -221,12 +221,12 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex items-start gap-2"
+                  className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-xl flex items-start gap-2"
                 >
                   <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-yellow-800">실시간 안내</p>
-                    <p className="text-xs text-yellow-700 mt-0.5">{hospital.alertMessage}</p>
+                    <p className="text-sm font-medium text-yellow-800 dark:text-yellow-400">실시간 안내</p>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-500 mt-0.5">{hospital.alertMessage}</p>
                   </div>
                 </motion.div>
               )}
@@ -283,7 +283,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
@@ -297,7 +297,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               />
 
               {/* AI Predictive Features Section - Premium Design */}
-              <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-xl shadow-violet-500/10 overflow-hidden">
+              <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 dark:from-violet-950/50 dark:via-indigo-950/50 dark:to-blue-950/50 border border-violet-200/50 dark:border-violet-800/50 shadow-xl shadow-violet-500/10 overflow-hidden">
                 {/* Decorative background elements */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-violet-400/20 to-indigo-400/20 blur-3xl" />
                 <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/20 blur-2xl" />
@@ -440,7 +440,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   {hospital.equipment.map((item) => (
                     <span
                       key={item}
-                      className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
+                      className="px-3 py-1 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full"
                     >
                       {item}
                     </span>
@@ -449,13 +449,13 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               </div>
 
               {/* Contact Info */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-5">
+              <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 mb-5">
                 <div className="flex items-center gap-3 mb-2">
                   <Phone className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium flex-1">{hospital.phone}</span>
                   <button
                     onClick={handleToggleHotline}
-                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full transition-colors"
                     aria-label={isFavorite ? "핫라인에서 제거" : "핫라인에 추가"}
                   >
                     <Star 
@@ -512,7 +512,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               <Button
                 onClick={() => setShowRoadview(true)}
                 variant="outline"
-                className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 font-medium"
+                className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium"
               >
                 <Ambulance className="w-5 h-5 mr-2" />
                 응급실 입구 로드뷰 (ER Entrance View)
