@@ -323,7 +323,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
 
               {/* Preview */}
               {generateSummary() && (
-                <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                <div className="bg-muted rounded-xl p-3 border border-border">
                   <div className="flex items-center gap-2 mb-1">
                     <Clock className="w-4 h-4 text-primary" />
                     <span className="text-xs font-medium text-muted-foreground">미리보기</span>
