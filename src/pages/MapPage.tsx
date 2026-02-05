@@ -689,7 +689,7 @@ const MapPage = () => {
             {!hideMode && <ModeToggle />}
 
            {/* 119 Stats Button */}
-           {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && !selectedNightCareHospital && (
+           {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (
              <DemandForecastTicker 
                regionId={activeRegion !== "all" ? activeRegion : undefined}
              />
