@@ -183,19 +183,19 @@ const DriverDashboard = () => {
 
       {/* Quick Actions Bar */}
       <div className="sticky top-[60px] z-40 bg-white dark:bg-slate-900 border-b border-border px-4 py-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsPatientInfoOpen(true)}
-            className="rounded-full flex-1"
+            className="rounded-full flex-shrink-0 whitespace-nowrap"
           >
             <Activity className="w-4 h-4 mr-1" />
             환자 정보 입력
           </Button>
           <button
             onClick={() => setIsSimulateMode(!isSimulateMode)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 whitespace-nowrap ${
               isSimulateMode 
                 ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400" 
                 : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
@@ -218,7 +218,7 @@ const DriverDashboard = () => {
                 toast({ title: "위치 공유 시작됨", description: "보호자/환자에게 표시됩니다." });
               }
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 whitespace-nowrap ${
               isTracking 
                 ? "bg-green-500 text-white" 
                 : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
