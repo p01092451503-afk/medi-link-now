@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -18,10 +19,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTransferMode } from "@/contexts/TransferModeContext";
+import PublicDataInfoModal from "@/components/PublicDataInfoModal";
 
 const ParamedicLanding = () => {
   const navigate = useNavigate();
   const { setMode } = useTransferMode();
+  const [isPublicDataModalOpen, setIsPublicDataModalOpen] = useState(false);
 
   const features = [
     {
