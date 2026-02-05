@@ -449,13 +449,13 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
               </div>
 
               {/* Contact Info */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-5">
+              <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 mb-5">
                 <div className="flex items-center gap-3 mb-2">
                   <Phone className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium flex-1">{hospital.phone}</span>
                   <button
                     onClick={handleToggleHotline}
-                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full transition-colors"
                     aria-label={isFavorite ? "핫라인에서 제거" : "핫라인에 추가"}
                   >
                     <Star 
