@@ -528,70 +528,70 @@ const Landing = () => {
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200">서비스 선택</p>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {/* Guardian/Patient Card */}
             <motion.button
-              whileHover={{ scale: 1.02, y: -3 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-             className="w-full relative overflow-hidden rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-2xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-xl" />
               
-              <div className="flex items-center w-full py-4 px-5">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 ring-1 ring-blue-200/50 dark:ring-blue-800/50 group-hover:ring-blue-300 dark:group-hover:ring-blue-700 transition-all">
-                  <Users className="w-6 h-6 text-blue-600" />
+              <div className="flex items-center w-full py-3 px-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 ring-1 ring-blue-200/50 dark:ring-blue-800/50 group-hover:ring-blue-300 dark:group-hover:ring-blue-700 transition-all">
+                  <Users className="w-5 h-5 text-blue-600" />
                 </div>
-                <div className="text-left flex-1 ml-3.5">
-                  <p className="text-[15px] font-semibold text-slate-800 dark:text-white tracking-tight">보호자 / 환자</p>
-                  <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">응급실 찾기 · 가족 건강관리</p>
+                <div className="text-left flex-1 ml-3">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-white tracking-tight">보호자 / 환자</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">응급실 찾기 · 가족 건강관리</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300" />
+                <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
 
             {/* Private Ambulance Card */}
             <motion.button
-              whileHover={{ scale: 1.02, y: -3 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-             className="w-full relative overflow-hidden rounded-2xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-900/50 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-900/50 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-2xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-xl" />
               
-              <div className="flex items-center w-full py-4 px-5">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center shrink-0 ring-1 ring-violet-200/50 dark:ring-violet-800/50 group-hover:ring-violet-300 dark:group-hover:ring-violet-700 transition-all">
-                  <Ambulance className="w-6 h-6 text-violet-600" />
+              <div className="flex items-center w-full py-3 px-4">
+                <div className="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center shrink-0 ring-1 ring-violet-200/50 dark:ring-violet-800/50 group-hover:ring-violet-300 dark:group-hover:ring-violet-700 transition-all">
+                  <Ambulance className="w-5 h-5 text-violet-600" />
                 </div>
-                <div className="text-left flex-1 ml-3.5">
-                  <p className="text-[15px] font-semibold text-slate-800 dark:text-white tracking-tight">민간 구급차</p>
-                  <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">전원 · 퇴원 이송</p>
+                <div className="text-left flex-1 ml-3">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-white tracking-tight">민간 구급차</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">전원 · 퇴원 이송</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-violet-500 group-hover:translate-x-1 transition-all duration-300" />
+                <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-violet-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
 
             {/* Paramedic Card */}
             <motion.button
-              whileHover={{ scale: 1.02, y: -3 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-             className="w-full relative overflow-hidden rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-2xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-xl" />
               
-              <div className="flex items-center w-full py-4 px-5">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0 ring-1 ring-amber-200/50 dark:ring-amber-800/50 group-hover:ring-amber-300 dark:group-hover:ring-amber-700 transition-all">
-                  <Ambulance className="w-6 h-6 text-orange-600" />
+              <div className="flex items-center w-full py-3 px-4">
+                <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0 ring-1 ring-amber-200/50 dark:ring-amber-800/50 group-hover:ring-amber-300 dark:group-hover:ring-amber-700 transition-all">
+                  <Ambulance className="w-5 h-5 text-orange-600" />
                 </div>
-                <div className="text-left flex-1 ml-3.5">
-                  <p className="text-[15px] font-semibold text-slate-800 dark:text-white tracking-tight">구급대원</p>
-                  <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">병상 현황 · 거절이력 공유</p>
+                <div className="text-left flex-1 ml-3">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-white tracking-tight">구급대원</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">병상 현황 · 거절이력 공유</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300" />
+                <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300" />
               </div>
             </motion.button>
           </div>
