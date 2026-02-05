@@ -131,8 +131,8 @@ const AcceptanceBadge = ({
   <div
     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
       available
-        ? "bg-green-50 text-green-700 border border-green-200"
-        : "bg-gray-100 text-gray-400 border border-gray-200"
+        ? "bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+        : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-700"
     }`}
   >
     <Icon className="w-3.5 h-3.5" />
