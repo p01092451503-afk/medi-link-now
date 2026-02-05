@@ -93,7 +93,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance }: AmbulanceCa
                   className="space-y-4"
                 >
                   {/* Destination */}
-                  <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4">
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-primary mt-0.5" />
                       <div>
