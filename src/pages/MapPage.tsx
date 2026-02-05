@@ -575,10 +575,10 @@ const MapPage = () => {
         )}
 
         {/* Zoom Controls - Vertical Slider */}
-        <div className="absolute right-4 top-1/3 -translate-y-1/2 z-[1000]">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-2 flex flex-col items-center gap-2">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000]">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-2 flex flex-col items-center gap-2">
             {/* Zoom Level Display */}
-            <span className="text-xs font-bold text-gray-600 tabular-nums">{mapZoom}</span>
+            <span className="text-xs font-bold text-slate-700 tabular-nums">{mapZoom}</span>
             
             {/* Vertical Slider */}
             <div className="h-32 flex items-center justify-center">
@@ -588,7 +588,7 @@ const MapPage = () => {
                 max={18}
                 value={mapZoom}
                 onChange={(e) => setMapZoom(Number(e.target.value))}
-                className="h-28 w-2 appearance-none bg-gray-200 rounded-full cursor-pointer
+                className="h-28 w-2 appearance-none bg-slate-300/60 rounded-full cursor-pointer
                   [writing-mode:vertical-lr] [direction:rtl]
                   [&::-webkit-slider-thumb]:appearance-none
                   [&::-webkit-slider-thumb]:w-5
@@ -611,14 +611,14 @@ const MapPage = () => {
             </div>
             
             {/* Min/Max Labels */}
-            <div className="flex flex-col items-center text-[10px] text-gray-400 font-medium">
+            <div className="flex flex-col items-center text-[10px] text-slate-500 font-medium">
               <span>−</span>
             </div>
           </div>
         </div>
 
         {/* Utility Buttons (Legend + Map Toggle + Location) */}
-        <div className="absolute right-4 bottom-48 z-[1000] flex flex-col gap-3">
+        <div className="absolute right-4 bottom-32 z-[1000] flex flex-col gap-3">
           {/* My Location Button - Apple Maps style */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
