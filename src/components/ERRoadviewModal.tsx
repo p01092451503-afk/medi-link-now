@@ -119,7 +119,7 @@ const ERRoadviewModal = ({
             className="fixed inset-x-4 top-[10%] bottom-[10%] md:inset-auto md:top-[50%] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2 md:w-[90vw] md:max-w-2xl md:h-auto md:max-h-[80vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[2001] flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
+            <div className="flex items-center justify-between p-4 border-b border-border dark:border-slate-700">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Ambulance className="w-5 h-5 text-primary" />
