@@ -87,18 +87,21 @@ const KOREA_BOUNDS = {
   ne: { lat: 38.8, lng: 132.0 },
 };
 
-// Kakao Maps SDK loader with retry logic
+// Kakao Maps SDK loader with singleton pattern and retry logic
+const SCRIPT_ID = "kakao-map-sdk";
+const MAX_POLL_RETRIES = 20; // 20 attempts × 50ms = 1초 max
+
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // Already fully loaded (from index.html static script)
+    // 1. Already fully loaded - resolve immediately
     if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
       console.log("[KakaoMap] SDK already fully loaded");
       resolve();
       return;
     }
 
-    // SDK object exists but needs load() call
-    if (window.kakao?.maps?.load) {
+    // 2. SDK object exists but needs load() call
+    if (typeof window.kakao?.maps?.load === "function") {
       console.log("[KakaoMap] SDK exists, calling load()");
       window.kakao.maps.load(() => {
         console.log("[KakaoMap] load() completed");
@@ -107,39 +110,99 @@ const loadKakaoSDK = (): Promise<void> => {
       return;
     }
 
-    // SDK not available at all - wait and retry
-    console.warn("[KakaoMap] SDK not found, waiting...");
-    let attempts = 0;
-    const maxAttempts = 50; // 5 seconds max (50 * 100ms)
-    
-    const waitForSDK = () => {
-      attempts++;
-      
-      if (window.kakao?.maps?.load) {
-        console.log("[KakaoMap] SDK found after waiting");
-        window.kakao.maps.load(() => {
-          console.log("[KakaoMap] load() completed");
+    // 3. Check if script tag already exists in DOM
+    const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+
+    if (existingScript) {
+      console.log("[KakaoMap] Script tag exists, waiting for SDK...");
+      let attempts = 0;
+
+      const checkInterval = setInterval(() => {
+        attempts++;
+
+        // Check if load function is available
+        if (typeof window.kakao?.maps?.load === "function") {
+          clearInterval(checkInterval);
+          console.log("[KakaoMap] SDK ready after waiting");
+          window.kakao.maps.load(() => {
+            console.log("[KakaoMap] load() completed");
+            resolve();
+          });
+          return;
+        }
+
+        // Check if already fully initialized
+        if (window.kakao?.maps?.Map) {
+          clearInterval(checkInterval);
+          console.log("[KakaoMap] SDK already initialized");
           resolve();
-        });
-        return;
-      }
-      
-      if (window.kakao?.maps?.Map) {
-        console.log("[KakaoMap] SDK already initialized");
-        resolve();
-        return;
-      }
-      
-      if (attempts >= maxAttempts) {
-        console.error("[KakaoMap] SDK load timeout after 5 seconds");
-        reject(new Error("카카오맵 SDK 로드 시간 초과"));
-        return;
-      }
-      
-      setTimeout(waitForSDK, 100);
+          return;
+        }
+
+        // Timeout after max retries
+        if (attempts >= MAX_POLL_RETRIES) {
+          clearInterval(checkInterval);
+          console.error("[KakaoMap] Timeout waiting for existing script");
+          reject(new Error("기존 스크립트 로드 대기 시간 초과 (1초)"));
+        }
+      }, 50);
+
+      return;
+    }
+
+    // 4. Script doesn't exist - create new one
+    const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
+    if (!apiKey) {
+      reject(new Error("VITE_KAKAO_MAP_API_KEY가 설정되지 않았습니다"));
+      return;
+    }
+
+    console.log("[KakaoMap] Creating new script tag...");
+    const script = document.createElement("script");
+    script.id = SCRIPT_ID;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
+    script.async = true;
+
+    script.onload = () => {
+      console.log("[KakaoMap] Script onload fired");
+      let attempts = 0;
+
+      const pollForKakao = () => {
+        attempts++;
+
+        if (typeof window.kakao?.maps?.load === "function") {
+          console.log("[KakaoMap] SDK ready, calling load()");
+          window.kakao.maps.load(() => {
+            console.log("[KakaoMap] load() completed");
+            resolve();
+          });
+          return;
+        }
+
+        if (window.kakao?.maps?.Map) {
+          console.log("[KakaoMap] SDK already initialized");
+          resolve();
+          return;
+        }
+
+        if (attempts >= MAX_POLL_RETRIES) {
+          console.error("[KakaoMap] Poll timeout after script load");
+          reject(new Error("스크립트 로드 후 SDK 초기화 시간 초과"));
+          return;
+        }
+
+        setTimeout(pollForKakao, 50);
+      };
+
+      pollForKakao();
     };
-    
-    waitForSDK();
+
+    script.onerror = () => {
+      console.error("[KakaoMap] Script failed to load");
+      reject(new Error("Kakao Map Script failed to load. Check allowed domains."));
+    };
+
+    document.head.appendChild(script);
   });
 };
 
