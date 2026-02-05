@@ -70,7 +70,7 @@ const NavigationSelector = ({
             <button
               key={app.id}
               onClick={() => handleSelectApp(app.id)}
-              className="w-full px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+              className="w-full px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors text-left"
             >
               <p className="text-sm font-medium text-foreground">{app.name}</p>
             </button>
