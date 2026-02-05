@@ -37,13 +37,13 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
       return { 
         score: 95, 
         label: "원활", 
-        labelColor: "text-emerald-700",
-        labelBg: "bg-emerald-100",
+        labelColor: "text-emerald-700 dark:text-emerald-400",
+        labelBg: "bg-emerald-100 dark:bg-emerald-900/50",
         message: "✅ 도착 시 병상 확보 가능성 높음",
-        bgColor: "bg-violet-50",
-        borderColor: "border-violet-200",
-        textColor: "text-violet-700",
-        badgeBg: "bg-violet-100",
+        bgColor: "bg-violet-50 dark:bg-violet-950/40",
+        borderColor: "border-violet-200 dark:border-violet-800",
+        textColor: "text-violet-700 dark:text-violet-400",
+        badgeBg: "bg-violet-100 dark:bg-violet-900/50",
         progressColor: "bg-emerald-500",
         statusIcon: "🟢"
       };
@@ -51,13 +51,13 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
       return { 
         score: 70, 
         label: "보통", 
-        labelColor: "text-amber-700",
-        labelBg: "bg-amber-100",
+        labelColor: "text-amber-700 dark:text-amber-400",
+        labelBg: "bg-amber-100 dark:bg-amber-900/50",
         message: "⚠️ 도착 전 전화 확인 권장",
-        bgColor: "bg-indigo-50",
-        borderColor: "border-indigo-200",
-        textColor: "text-indigo-700",
-        badgeBg: "bg-amber-100",
+        bgColor: "bg-indigo-50 dark:bg-indigo-950/40",
+        borderColor: "border-indigo-200 dark:border-indigo-800",
+        textColor: "text-indigo-700 dark:text-indigo-400",
+        badgeBg: "bg-amber-100 dark:bg-amber-900/50",
         progressColor: "bg-amber-400",
         statusIcon: "🟡"
       };
@@ -65,13 +65,13 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
     return { 
       score: 30, 
       label: "혼잡", 
-      labelColor: "text-red-700",
-      labelBg: "bg-red-100",
+      labelColor: "text-red-700 dark:text-red-400",
+      labelBg: "bg-red-100 dark:bg-red-900/50",
       message: "🚨 다른 병원도 함께 확인하세요",
-      bgColor: "bg-slate-100",
-      borderColor: "border-slate-300",
-      textColor: "text-slate-700",
-      badgeBg: "bg-red-100",
+      bgColor: "bg-slate-100 dark:bg-slate-800/50",
+      borderColor: "border-slate-300 dark:border-slate-700",
+      textColor: "text-slate-700 dark:text-slate-300",
+      badgeBg: "bg-red-100 dark:bg-red-900/50",
       progressColor: "bg-red-500",
       statusIcon: "🔴"
     };
@@ -84,25 +84,25 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
     if (trend.direction === "decreasing") {
       return {
         text: `시간당 ${trend.rate}개 감소`,
-        color: "text-red-600",
-        bgColor: "bg-red-50",
-        borderColor: "border-red-200",
+        color: "text-red-600 dark:text-red-400",
+        bgColor: "bg-red-50 dark:bg-red-950/40",
+        borderColor: "border-red-200 dark:border-red-800",
         Icon: TrendingDown
       };
     } else if (trend.direction === "increasing") {
       return {
         text: `시간당 ${trend.rate}개 증가`,
-        color: "text-emerald-600",
-        bgColor: "bg-emerald-50",
-        borderColor: "border-emerald-200",
+        color: "text-emerald-600 dark:text-emerald-400",
+        bgColor: "bg-emerald-50 dark:bg-emerald-950/40",
+        borderColor: "border-emerald-200 dark:border-emerald-800",
         Icon: TrendingUp
       };
     }
     return {
       text: "안정 유지",
-      color: "text-slate-500",
-      bgColor: "bg-slate-50",
-      borderColor: "border-slate-200",
+      color: "text-slate-500 dark:text-slate-400",
+      bgColor: "bg-slate-50 dark:bg-slate-800/50",
+      borderColor: "border-slate-200 dark:border-slate-700",
       Icon: Minus
     };
   };
@@ -118,9 +118,9 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
             <div className="flex items-center justify-between">
               {/* Left: Title & Badge */}
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/80 border border-slate-200">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
                   <Sparkles className="w-3.5 h-3.5 text-violet-500" />
-                  <span className="text-xs font-semibold text-slate-700">AI 예측</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">AI 예측</span>
                   <TooltipProvider delayDuration={100}>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -139,7 +139,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                             현재 이 병원으로 이동 중인 구급차 수와 병상 변화 추세를 분석하여, 
                             <span className="font-medium text-foreground"> 도착 시점의 예상 가용 병상</span>을 계산합니다.
                           </p>
-                          <div className="pt-1 border-t border-slate-100">
+                          <div className="pt-1 border-t border-slate-100 dark:border-slate-700">
                             <p className="text-[10px] text-slate-400">
                               ⚠️ 참고용 예측 지표이며, 실제 상황과 다를 수 있습니다. 
                               중요한 결정 전 반드시 병원에 전화 확인하세요.
@@ -164,7 +164,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
             </div>
             
             {/* Key Message */}
-            <div className={`mt-2 py-2 px-3 rounded-lg bg-white/60 border ${congestion.borderColor}`}>
+            <div className={`mt-2 py-2 px-3 rounded-lg bg-white/60 dark:bg-slate-800/60 border ${congestion.borderColor}`}>
               <p className={`text-sm font-medium ${congestion.textColor} text-center`}>
                 {congestion.message}
               </p>
@@ -176,12 +176,12 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
         <CollapsibleContent>
           <div className="px-3 pb-3 space-y-3">
             {/* Three metrics with dividers */}
-            <div className="bg-white/90 rounded-xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
+            <div className="bg-white/90 dark:bg-slate-800/90 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden divide-y divide-slate-100 dark:divide-slate-700">
               
               {/* 1. 병원 혼잡도 예측 */}
               <div className="p-3 flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-500">병원 혼잡도 예측</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">병원 혼잡도 예측</p>
                   <p className={`text-lg font-bold ${congestion.textColor}`}>{congestion.score}%</p>
                 </div>
                 <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${congestion.labelBg} ${congestion.labelColor}`}>
@@ -190,16 +190,16 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
               </div>
               
               {/* 2. 실시간 이동 현황 */}
-              <div className="p-3 flex items-center justify-between bg-slate-50/50">
+              <div className="p-3 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
                 <div>
-                  <p className="text-xs text-slate-500">실시간 이동 현황</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">실시간 이동 현황</p>
                   <div className="flex items-baseline gap-1">
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
                     ) : (
                       <>
-                        <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
-                        <span className="text-xs text-orange-500">대 이송 중</span>
+                        <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ambulancesEnRoute}</p>
+                        <span className="text-xs text-orange-500 dark:text-orange-400">대 이송 중</span>
                       </>
                     )}
                   </div>
@@ -216,7 +216,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                     <trendDisplay.Icon className={`w-4 h-4 ${trendDisplay.color}`} />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">병상 소진 트렌드</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">병상 소진 트렌드</p>
                     <p className={`text-sm font-bold ${trendDisplay.color}`}>
                       {trendDisplay.text}
                     </p>
@@ -229,30 +229,30 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
             </div>
             
             {/* Calculation breakdown */}
-            <div className="bg-white/80 rounded-lg p-3 border border-slate-100">
-              <p className="text-xs text-slate-500 mb-2 font-medium">병상 예측 계산</p>
+            <div className="bg-white/80 dark:bg-slate-800/80 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium">병상 예측 계산</p>
               
               <div className="flex items-center justify-between gap-2">
                 {/* Official beds */}
-                <div className="flex-1 text-center p-2 bg-slate-50 rounded-lg">
-                  <p className="text-lg font-bold text-slate-700">{officialBeds}</p>
-                  <p className="text-[10px] text-slate-500">공식 병상</p>
+                <div className="flex-1 text-center p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                  <p className="text-lg font-bold text-slate-700 dark:text-slate-200">{officialBeds}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">공식 병상</p>
                 </div>
                 
                 {/* Minus sign */}
                 <div className="text-slate-400 font-bold">−</div>
                 
                 {/* Ambulances en route */}
-                <div className="flex-1 text-center p-2 bg-orange-50 rounded-lg border border-orange-100">
+                <div className="flex-1 text-center p-2 bg-orange-50 dark:bg-orange-950/40 rounded-lg border border-orange-100 dark:border-orange-800">
                   <div className="flex items-center justify-center gap-1">
-                    <Ambulance className="w-3.5 h-3.5 text-orange-500" />
+                    <Ambulance className="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" />
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
                     ) : (
-                      <p className="text-lg font-bold text-orange-600">{ambulancesEnRoute}</p>
+                      <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ambulancesEnRoute}</p>
                     )}
                   </div>
-                  <p className="text-[10px] text-orange-600">이송 중</p>
+                  <p className="text-[10px] text-orange-600 dark:text-orange-400">이송 중</p>
                 </div>
                 
                 {/* Equals sign */}
@@ -260,22 +260,22 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                 
                 {/* Estimated beds */}
                 <div className={`flex-1 text-center p-2 rounded-lg border-2 ${
-                  estimatedBeds > 5 ? "bg-violet-50 border-violet-300" :
-                  estimatedBeds > 0 ? "bg-indigo-50 border-indigo-300" : "bg-slate-100 border-slate-300"
+                  estimatedBeds > 5 ? "bg-violet-50 dark:bg-violet-950/40 border-violet-300 dark:border-violet-700" :
+                  estimatedBeds > 0 ? "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-700" : "bg-slate-100 dark:bg-slate-800/50 border-slate-300 dark:border-slate-600"
                 }`}>
                   <p className={`text-xl font-bold ${
-                    estimatedBeds > 5 ? "text-violet-600" :
-                    estimatedBeds > 0 ? "text-indigo-600" : "text-slate-600"
+                    estimatedBeds > 5 ? "text-violet-600 dark:text-violet-400" :
+                    estimatedBeds > 0 ? "text-indigo-600 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400"
                   }`}>{estimatedBeds}</p>
-                  <p className="text-[10px] text-slate-600">예상 병상</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400">예상 병상</p>
                 </div>
               </div>
             </div>
             
             {/* Confidence bar */}
-            <div className="bg-white/80 rounded-lg p-3 border border-slate-100">
+            <div className="bg-white/80 dark:bg-slate-800/80 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-slate-500">도착 시 병상 확보 가능성</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">도착 시 병상 확보 가능성</span>
                 <div className="flex items-center gap-2">
                   <span className={`text-sm font-bold ${congestion.textColor}`}>{congestion.score}%</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${congestion.labelBg} ${congestion.labelColor}`}>
@@ -283,7 +283,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                   </span>
                 </div>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                 <div 
                   className={`h-full ${congestion.progressColor} rounded-full transition-all duration-500`}
                   style={{ width: `${congestion.score}%` }}
