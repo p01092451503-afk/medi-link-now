@@ -355,11 +355,11 @@ const KakaoMapView = ({
     return incomingByHospital || countMap;
   }, [activeAmbulanceTrips, incomingByHospital]);
 
-  // Initialize Kakao Maps
+  // Initialize Kakao Maps with retry
   useEffect(() => {
     let mounted = true;
 
-    loadKakaoSDK()
+    loadKakaoSDKWithRetry(3)
       .then(() => {
         if (!mounted || !mapContainerRef.current) return;
 
