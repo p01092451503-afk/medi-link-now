@@ -22,8 +22,6 @@ import { useIncomingAmbulances } from "@/hooks/useIncomingAmbulances";
 import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 import NursingHospitalMarker from "../NursingHospitalMarker";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
-import NightCareHospitalMarker from "../NightCareHospitalMarker";
-import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -47,8 +45,6 @@ interface ClusteredMapViewProps {
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
   onZoomChange?: (zoom: number) => void;
-  nightCareHospitals?: HospitalDetailData[];
-  onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
 }
 
 // Component to handle map center changes and bounds
@@ -372,8 +368,6 @@ const ClusteredMapView = ({
   nursingHospitals = [],
   onNursingHospitalClick,
   onZoomChange,
-  nightCareHospitals = [],
-  onNightCareHospitalClick,
 }: ClusteredMapViewProps) => {
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
@@ -667,15 +661,6 @@ const ClusteredMapView = ({
             key={`nursing-${hospital.id}`}
             hospital={hospital}
             onClick={onNursingHospitalClick}
-          />
-        ))}
-
-        {/* Night Care Hospital Markers (for non-emergency general hospitals) */}
-        {nightCareHospitals.map((hospital) => (
-          <NightCareHospitalMarker
-            key={`nightcare-${hospital.hpid}`}
-            hospital={hospital}
-            onClick={onNightCareHospitalClick}
           />
         ))}
 
