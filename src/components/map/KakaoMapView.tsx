@@ -188,6 +188,7 @@ const KakaoMapView = ({
   incomingByHospital,
   onZoomChange,
   onLoadError,
+  isPediatricSOS = false,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
