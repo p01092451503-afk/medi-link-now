@@ -230,20 +230,16 @@ const DriverDashboard = () => {
         </div>
       </div>
 
-      {/* Map Button - aligned with content padding */}
-      <div className="sticky top-[108px] z-40 bg-white dark:bg-slate-900 px-4 py-2 border-b border-border">
-        <button
-          onClick={() => navigate("/map?mode=driver")}
-          className="flex items-center justify-center gap-1.5 px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-lg shadow-md transition-colors hover:bg-primary/90"
-        >
-          <Map className="w-5 h-5" />
-          지도
-        </button>
-      </div>
-
       {/* Tab Navigation */}
-      <div className="sticky top-[156px] z-40 bg-white dark:bg-slate-900 border-b border-border">
+      <div className="sticky top-[108px] z-40 bg-white dark:bg-slate-900 border-b border-border">
         <div className="flex">
+          <button
+            onClick={() => navigate("/map?mode=driver")}
+            className="flex items-center justify-center gap-1.5 py-2.5 px-5 mx-4 my-1.5 text-sm font-bold text-white bg-primary rounded-lg shadow-sm transition-colors hover:bg-primary/90"
+          >
+            <Map className="w-4 h-4" />
+            지도
+          </button>
           {[
             { id: "calls", label: "호출", icon: Phone },
             { id: "revenue", label: "수익", icon: DollarSign },
