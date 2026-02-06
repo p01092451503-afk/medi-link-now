@@ -737,7 +737,6 @@ const MapPage = () => {
                 .map((f) => {
                   const isActive = activeFilter === f.id;
                   const isTraumaCenter = f.id === "traumaCenter";
-                  const isMoonlight = f.id === "moonlight";
 
                   const handleFilterClick = () => {
                     setActiveFilter(f.id);
