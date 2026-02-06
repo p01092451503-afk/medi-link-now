@@ -97,6 +97,7 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
+  const [isPediatricSOS, setIsPediatricSOS] = useState(false);
 
   // Auto-set mode based on URL params
   useEffect(() => {
