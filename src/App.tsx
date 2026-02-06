@@ -9,7 +9,7 @@ import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ScrollToTop from "./components/ScrollToTop";
 import Landing from "./pages/Landing";
-import GuardianLanding from "./pages/GuardianLanding";
+import { Navigate } from "react-router-dom";
 import DriverLanding from "./pages/DriverLanding";
 import ParamedicLanding from "./pages/ParamedicLanding";
 import MapPage from "./pages/MapPage";
@@ -44,7 +44,7 @@ const App = () => (
                   <Route path="/intro" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   {/* <Route path="/onboarding" element={<OnboardingPage />} /> */}
-                  <Route path="/guardian" element={<GuardianLanding />} />
+                  <Route path="/guardian" element={<Navigate to="/map" replace />} />
                   <Route path="/driver-intro" element={<DriverLanding />} />
                   <Route path="/paramedic" element={<ParamedicLanding />} />
                   <Route path="/map" element={<MapPage />} />

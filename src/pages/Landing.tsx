@@ -533,7 +533,7 @@ const Landing = () => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/guardian")}
+              onClick={() => navigate("/map")}
               className="flex flex-col items-center gap-2 group"
             >
               <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300">
