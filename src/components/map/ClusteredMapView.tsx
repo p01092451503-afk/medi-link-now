@@ -52,6 +52,7 @@ interface ClusteredMapViewProps {
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
   onZoomChange?: (zoom: number) => void;
+  isPediatricSOS?: boolean;
 }
 
 // Component to handle map center changes and bounds
