@@ -117,10 +117,15 @@ const createMarkerIcon = (
   emergencyGrade?: string | null,
   isMoonlightMode?: boolean,
   isHighTraffic?: boolean,
-  privateTrafficCount?: number
+  privateTrafficCount?: number,
+  isPediatricSOS?: boolean
 ) => {
-  // Use moonlight colors if in moonlight mode, otherwise use grade colors
-  const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
+  // Use pediatric SOS colors first, then moonlight, then grade colors
+  const colors = isPediatricSOS
+    ? getPediatricSOSColors()
+    : isMoonlightMode
+      ? getMoonlightColors()
+      : getGradeColors(emergencyGrade);
   
   // If high traffic and estimated full, override to gray
   const effectiveStatus = isHighTraffic && beds === 0 ? "unavailable" : status;
