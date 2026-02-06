@@ -471,8 +471,6 @@ const ClusteredMapView = ({
     position: { x: number; y: number };
   } | null>(null);
 
-  // Distance line target position (for hover - matches Kakao behavior)
-  const [hoveredTarget, setHoveredTarget] = useState<[number, number] | null>(null);
 
   // Get hospitals from cluster markers
   const getHospitalsFromCluster = useCallback((cluster: any): Hospital[] => {
