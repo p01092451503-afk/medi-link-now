@@ -505,11 +505,20 @@ const MapPage = () => {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col">
+      {/* Splash Screen */}
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+
+      {/* First-time Onboarding Modal */}
+      <OnboardingModal />
+
       {/* Location Coachmark */}
       <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
 
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
+        {/* Trust Badge */}
+        <TrustBadge />
+
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
