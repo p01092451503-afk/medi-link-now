@@ -188,6 +188,9 @@ const MapView = ({
   onCallDriver,
   holidayPharmacies = []
 }: MapViewProps) => {
+  const resolvedTheme = useResolvedTheme();
+  const isDark = resolvedTheme === "dark";
+
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
       <MapContainer
@@ -201,8 +204,8 @@ const MapView = ({
         minZoom={0}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={isDark ? ATTR_DARK : ATTR_LIGHT}
+          url={isDark ? TILE_DARK : TILE_LIGHT}
         />
         <KoreaBoundsEnforcer bounds={KOREA_BOUNDS} />
         <MapCenterHandler center={center} zoom={zoom} />

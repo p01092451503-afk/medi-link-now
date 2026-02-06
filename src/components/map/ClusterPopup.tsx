@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { X, MapPin, Phone } from "lucide-react";
 import { Hospital, getHospitalStatus, calculateDistance } from "@/data/hospitals";
 import { cleanHospitalName } from "@/lib/utils";
+import { useResolvedTheme } from "@/hooks/useResolvedTheme";
 
 interface ClusterPopupProps {
   hospitals: Hospital[];

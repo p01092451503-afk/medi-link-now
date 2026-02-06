@@ -757,11 +757,11 @@ const ClusteredMapView = ({
             transform: 'translateX(-50%)',
           }}
         >
-          <div className="bg-white border border-gray-200 shadow-lg rounded-lg px-3 py-2 text-sm text-gray-800">
+          <div className={`${isDark ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-200 text-gray-800'} border shadow-lg rounded-lg px-3 py-2 text-sm`}>
             <div className="flex flex-col items-center gap-0.5">
               <span className="font-semibold">{cleanHospitalName(hoverTooltip.hospital.nameKr)}</span>
               {(hoverTooltip.hospital as any).gradeKoreanName && (
-                <span className="text-xs text-blue-600 font-medium">
+                <span className={`text-xs font-medium ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
                   {(hoverTooltip.hospital as any).gradeKoreanName}
                 </span>
               )}
@@ -772,7 +772,7 @@ const ClusteredMapView = ({
             style={{
               borderLeft: '6px solid transparent',
               borderRight: '6px solid transparent',
-              borderTop: '6px solid white',
+              borderTop: isDark ? '6px solid #1f2937' : '6px solid white',
             }}
           />
         </div>
