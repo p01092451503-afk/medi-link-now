@@ -5,6 +5,8 @@ import { NursingHospital } from "@/hooks/useNursingHospitals";
 interface NursingHospitalMarkerProps {
   hospital: NursingHospital;
   onClick?: (hospital: NursingHospital) => void;
+  onMouseEnter?: (lat: number, lng: number) => void;
+  onMouseLeave?: () => void;
 }
 
 const createNursingMarkerIcon = () => {
