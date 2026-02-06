@@ -658,7 +658,8 @@ const ClusteredMapView = ({
                 opacity={opacity}
                 eventHandlers={{
                   click: () => {
-                    setHoverTooltip(null); // Clear tooltip on click
+                    setHoverTooltip(null);
+                    setHoveredTarget(null);
                     onHospitalClick(hospital);
                   },
                   mouseover: (e) => {
@@ -667,12 +668,13 @@ const ClusteredMapView = ({
                       hospital: { ...hospital, gradeKoreanName } as any,
                       position: { x: clientX, y: clientY },
                     });
+                    setHoveredTarget([hospital.lat, hospital.lng]);
                   },
                   mouseout: () => {
                     setHoverTooltip(null);
+                    setHoveredTarget(null);
                   },
                   mousemove: (e) => {
-                    // Update position as mouse moves over marker
                     const { clientX, clientY } = e.originalEvent as MouseEvent;
                     setHoverTooltip((prev) => prev ? {
                       ...prev,
