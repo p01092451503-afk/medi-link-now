@@ -129,66 +129,67 @@
  };
  
  // Generate demand forecast for current time
- export const getDemandForecast = (regionId: string): RegionDemandForecast | null => {
-   const now = new Date();
-   const dayOfWeek = now.getDay();
-   const hour = now.getHours();
-   
-   const pattern = regionDemandPatterns[regionId] || regionDemandPatterns["default"];
-   const isPeakDay = pattern.peakDays.includes(dayOfWeek);
-   const isPeakHour = pattern.peakHours.includes(hour);
-   
-   let demandLevel: "low" | "moderate" | "high" | "critical";
-   let avgIncidents: number;
-   
-   if (isPeakDay && isPeakHour) {
-     demandLevel = "critical";
-     avgIncidents = Math.round(pattern.baseLevel * 1.8);
-   } else if (isPeakDay || isPeakHour) {
-     demandLevel = "high";
-     avgIncidents = Math.round(pattern.baseLevel * 1.4);
-   } else if (hour >= 8 && hour <= 22) {
-     demandLevel = "moderate";
-     avgIncidents = pattern.baseLevel;
-   } else {
-     demandLevel = "low";
-     avgIncidents = Math.round(pattern.baseLevel * 0.6);
-   }
-   
-   const regionNames: Record<string, string> = {
-     "gangnam": "강남구",
-     "jongno": "종로구",
-     "mapo": "마포구",
-     "songpa": "송파구",
-     "yeongdeungpo": "영등포구",
-     "suwon": "수원시",
-     "seongnam": "성남시"
-   };
-   
-   const regionName = regionNames[regionId] || "서울";
-   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
-   
-   let message = "";
-   if (demandLevel === "critical") {
-     message = `${regionName}는 ${dayNames[dayOfWeek]}요일 밤 응급 출동이 집중되는 시간대입니다.`;
-   } else if (demandLevel === "high") {
-     message = `${regionName}는 현재 응급 수요가 평소보다 높은 시간대입니다.`;
-   } else if (demandLevel === "moderate") {
-     message = `${regionName}는 현재 평균 수준의 응급 수요가 예상됩니다.`;
-   } else {
-     message = `${regionName}는 현재 응급 수요가 낮은 시간대입니다.`;
-   }
-   
-   return {
-     regionId,
-     regionName,
-     dayOfWeek,
-     hour,
-     demandLevel,
-     avgIncidents,
-     message
-   };
- };
+export const getDemandForecast = (regionId: string, overrideDistrictName?: string): RegionDemandForecast | null => {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const hour = now.getHours();
+  
+  const pattern = regionDemandPatterns[regionId] || regionDemandPatterns["default"];
+  const isPeakDay = pattern.peakDays.includes(dayOfWeek);
+  const isPeakHour = pattern.peakHours.includes(hour);
+  
+  let demandLevel: "low" | "moderate" | "high" | "critical";
+  let avgIncidents: number;
+  
+  if (isPeakDay && isPeakHour) {
+    demandLevel = "critical";
+    avgIncidents = Math.round(pattern.baseLevel * 1.8);
+  } else if (isPeakDay || isPeakHour) {
+    demandLevel = "high";
+    avgIncidents = Math.round(pattern.baseLevel * 1.4);
+  } else if (hour >= 8 && hour <= 22) {
+    demandLevel = "moderate";
+    avgIncidents = pattern.baseLevel;
+  } else {
+    demandLevel = "low";
+    avgIncidents = Math.round(pattern.baseLevel * 0.6);
+  }
+  
+  const regionNames: Record<string, string> = {
+    "gangnam": "강남구",
+    "jongno": "종로구",
+    "mapo": "마포구",
+    "songpa": "송파구",
+    "yeongdeungpo": "영등포구",
+    "suwon": "수원시",
+    "seongnam": "성남시"
+  };
+  
+  // Use overrideDistrictName if provided, otherwise fall back to regionId mapping
+  const regionName = overrideDistrictName || regionNames[regionId] || "서울";
+  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+  
+  let message = "";
+  if (demandLevel === "critical") {
+    message = `${regionName}는 ${dayNames[dayOfWeek]}요일 밤 응급 출동이 집중되는 시간대입니다.`;
+  } else if (demandLevel === "high") {
+    message = `${regionName}는 현재 응급 수요가 평소보다 높은 시간대입니다.`;
+  } else if (demandLevel === "moderate") {
+    message = `${regionName}는 현재 평균 수준의 응급 수요가 예상됩니다.`;
+  } else {
+    message = `${regionName}는 현재 응급 수요가 낮은 시간대입니다.`;
+  }
+  
+  return {
+    regionId,
+    regionName,
+    dayOfWeek,
+    hour,
+    demandLevel,
+    avgIncidents,
+    message
+  };
+};
  
  // Generate hourly busy data for a hospital (simulated from 119 도착 통계)
  export const getHospitalBusyHours = (hospitalId: number): HourlyBusyData[] => {

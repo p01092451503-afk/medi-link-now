@@ -3,36 +3,37 @@
  import { getDemandForecast } from "@/data/fire119Stats";
  import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
  
- interface DemandForecastTickerProps {
-   regionId?: string;
-   className?: string;
- }
- 
- const DemandForecastTicker = ({ regionId = "gangnam", className = "" }: DemandForecastTickerProps) => {
-   const [currentRegion, setCurrentRegion] = useState(regionId);
-   
-   // Rotate through different regions periodically
-   const regions = ["gangnam", "mapo", "songpa", "yeongdeungpo", "suwon", "seongnam"];
-   
-   useEffect(() => {
-     if (regionId) {
-       setCurrentRegion(regionId);
-       return;
-     }
-     
-     const interval = setInterval(() => {
-       setCurrentRegion(prev => {
-         const currentIndex = regions.indexOf(prev);
-         return regions[(currentIndex + 1) % regions.length];
-       });
-     }, 8000);
-     
-     return () => clearInterval(interval);
-   }, [regionId]);
-   
-   const forecast = useMemo(() => getDemandForecast(currentRegion), [currentRegion]);
-   
-   if (!forecast) return null;
+interface DemandForecastTickerProps {
+  regionId?: string;
+  userDistrictName?: string;
+  className?: string;
+}
+
+const DemandForecastTicker = ({ regionId = "gangnam", userDistrictName, className = "" }: DemandForecastTickerProps) => {
+  const [currentRegion, setCurrentRegion] = useState(regionId);
+  
+  // Rotate through different regions periodically
+  const regions = ["gangnam", "mapo", "songpa", "yeongdeungpo", "suwon", "seongnam"];
+  
+  useEffect(() => {
+    if (regionId) {
+      setCurrentRegion(regionId);
+      return;
+    }
+    
+    const interval = setInterval(() => {
+      setCurrentRegion(prev => {
+        const currentIndex = regions.indexOf(prev);
+        return regions[(currentIndex + 1) % regions.length];
+      });
+    }, 8000);
+    
+    return () => clearInterval(interval);
+  }, [regionId]);
+  
+  const forecast = useMemo(() => getDemandForecast(currentRegion, userDistrictName), [currentRegion, userDistrictName]);
+  
+  if (!forecast) return null;
    
    const getLevelColor = (level: string) => {
      switch (level) {
