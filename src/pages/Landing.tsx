@@ -156,12 +156,12 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center px-5 py-6 max-w-lg mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center px-5 py-8 max-w-lg mx-auto w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-10"
         >
           <h2 className="text-[1.75rem] leading-tight font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight">
             응급상황,<br />
@@ -178,7 +178,7 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="w-full mb-8"
+          className="w-full mb-10"
         >
           <div className="bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             {/* Compact Tab + Status Header */}
@@ -328,9 +328,9 @@ const Landing = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="w-full mb-8"
+          className="w-full mb-12"
         >
-         <div className="flex flex-wrap justify-center gap-2 max-w-sm mx-auto">
+         <div className="flex flex-wrap justify-center gap-2.5 max-w-sm mx-auto">
             {/* 전국 응급실 */}
             <Popover>
               <PopoverTrigger asChild>
@@ -521,14 +521,14 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="w-full"
+          className="w-full mb-4"
         >
-          <div className="flex items-center gap-2.5 mb-4">
+          <div className="flex items-center gap-2.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-primary" />
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200">서비스 선택</p>
           </div>
           
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-8">
             {/* Guardian/Patient Circle */}
             <motion.button
               whileHover={{ scale: 1.1 }}
