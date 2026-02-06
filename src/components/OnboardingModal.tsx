@@ -51,16 +51,20 @@ const slides = [
   },
 ];
 
-const OnboardingModal = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const OnboardingModal = ({ forceOpen = false }: OnboardingModalProps) => {
+  const [isOpen, setIsOpen] = useState(forceOpen);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
+    if (forceOpen) {
+      setIsOpen(true);
+      return;
+    }
     const hasVisited = localStorage.getItem(STORAGE_KEY);
     if (!hasVisited) {
       setIsOpen(true);
     }
-  }, []);
+  }, [forceOpen]);
 
   const handleClose = () => {
     localStorage.setItem(STORAGE_KEY, "true");
