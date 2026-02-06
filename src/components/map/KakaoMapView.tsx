@@ -90,7 +90,7 @@ const KOREA_BOUNDS = {
 
 // Kakao Maps SDK loader with singleton pattern and retry logic
 const SCRIPT_ID = "kakao-map-sdk";
-const MAX_POLL_RETRIES = 20; // 20 attempts × 50ms = 1초 max
+const MAX_POLL_RETRIES = 40; // 40 attempts × 100ms = 4초 max
 
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -111,11 +111,16 @@ const loadKakaoSDK = (): Promise<void> => {
       return;
     }
 
-    // 3. Check if script tag already exists in DOM
-    const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+    // 3. Check if script tag already exists in DOM (by id OR by src)
+    const existingScript =
+      (document.getElementById(SCRIPT_ID) as HTMLScriptElement | null) ||
+      (document.querySelector('script[src*="dapi.kakao.com/v2/maps/sdk.js"]') as HTMLScriptElement | null);
 
     if (existingScript) {
-      console.log("[KakaoMap] Script tag exists, waiting for SDK...");
+      // Ensure it has our id for future lookups
+      if (!existingScript.id) existingScript.id = SCRIPT_ID;
+
+      console.log("[KakaoMap] Script tag found, waiting for SDK...");
       let attempts = 0;
 
       const checkInterval = setInterval(() => {
@@ -143,10 +148,10 @@ const loadKakaoSDK = (): Promise<void> => {
         // Timeout after max retries
         if (attempts >= MAX_POLL_RETRIES) {
           clearInterval(checkInterval);
-          console.error("[KakaoMap] Timeout waiting for existing script");
-          reject(new Error("기존 스크립트 로드 대기 시간 초과 (1초)"));
+          console.error("[KakaoMap] Timeout waiting for SDK - domain may not be registered");
+          reject(new Error("카카오맵 SDK 로드 시간 초과 - 도메인 등록을 확인하세요"));
         }
-      }, 50);
+      }, 100);
 
       return;
     }
@@ -187,12 +192,12 @@ const loadKakaoSDK = (): Promise<void> => {
         }
 
         if (attempts >= MAX_POLL_RETRIES) {
-          console.error("[KakaoMap] Poll timeout after script load");
-          reject(new Error("스크립트 로드 후 SDK 초기화 시간 초과"));
+          console.error("[KakaoMap] Poll timeout - domain may not be registered");
+          reject(new Error("카카오맵 SDK 초기화 시간 초과 - 도메인 등록을 확인하세요"));
           return;
         }
 
-        setTimeout(pollForKakao, 50);
+        setTimeout(pollForKakao, 100);
       };
 
       pollForKakao();
