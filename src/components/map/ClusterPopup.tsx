@@ -130,7 +130,7 @@ const ClusterPopup = ({
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm truncate">
+                  <span className="font-semibold text-sm text-gray-900 truncate">
                     {cleanHospitalName(hospital.name)}
                   </span>
                   {(hospital.beds?.pediatric ?? 0) > 0 && (
