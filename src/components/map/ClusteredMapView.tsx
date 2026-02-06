@@ -377,6 +377,7 @@ const ClusteredMapView = ({
   nursingHospitals = [],
   onNursingHospitalClick,
   onZoomChange,
+  isPediatricSOS = false,
 }: ClusteredMapViewProps) => {
   const resolvedTheme = useResolvedTheme();
   const isDark = resolvedTheme === "dark";
