@@ -69,6 +69,63 @@ export default function AdminPage() {
   const [currentCity, setCurrentCity] = useState<string | null>(null);
   const [bedResults, setBedResults] = useState<BedSyncResult[]>([]);
 
+  // All hooks must be called before any conditional returns
+  const { data: hospitalCount = 0, refetch: refetchCount } = useQuery({
+    queryKey: ["hospital-count"],
+    queryFn: getHospitalCount,
+  });
+  
+  const { data: bedStatusCount = 0, refetch: refetchBedCount } = useQuery({
+    queryKey: ["bed-status-count"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("hospital_status_cache")
+        .select("*", { count: "exact", head: true });
+      return count || 0;
+    },
+  });
+  
+  const { data: regionUpdateStatus = [], refetch: refetchRegionStatus } = useQuery({
+    queryKey: ["region-update-status"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("hospital_status_cache")
+        .select(`
+          hospital_id,
+          last_updated,
+          hospitals!inner(region)
+        `);
+      
+      if (error || !data) return [];
+      
+      const regionMap = new Map<string, { lastUpdated: string; count: number }>();
+      
+      data.forEach((item: any) => {
+        const region = item.hospitals?.region || "Unknown";
+        const current = regionMap.get(region);
+        const itemDate = new Date(item.last_updated);
+        
+        if (!current) {
+          regionMap.set(region, { lastUpdated: item.last_updated, count: 1 });
+        } else {
+          const currentDate = new Date(current.lastUpdated);
+          if (itemDate > currentDate) {
+            regionMap.set(region, { lastUpdated: item.last_updated, count: current.count + 1 });
+          } else {
+            regionMap.set(region, { ...current, count: current.count + 1 });
+          }
+        }
+      });
+      
+      return Array.from(regionMap.entries()).map(([region, status]) => ({
+        region,
+        lastUpdated: status.lastUpdated,
+        hospitalCount: status.count,
+      })).sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
+    },
+    refetchInterval: 30000,
+  });
+
   // Admin role guard
   useEffect(() => {
     if (isAuthLoading) return;
@@ -108,64 +165,6 @@ export default function AdminPage() {
       </div>
     );
   }
-  const { data: hospitalCount = 0, refetch: refetchCount } = useQuery({
-    queryKey: ["hospital-count"],
-    queryFn: getHospitalCount,
-  });
-  
-  // Fetch bed status count
-  const { data: bedStatusCount = 0, refetch: refetchBedCount } = useQuery({
-    queryKey: ["bed-status-count"],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from("hospital_status_cache")
-        .select("*", { count: "exact", head: true });
-      return count || 0;
-    },
-  });
-  
-  // Fetch region-wise last update status
-  const { data: regionUpdateStatus = [], refetch: refetchRegionStatus } = useQuery({
-    queryKey: ["region-update-status"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("hospital_status_cache")
-        .select(`
-          hospital_id,
-          last_updated,
-          hospitals!inner(region)
-        `);
-      
-      if (error || !data) return [];
-      
-      // Group by region and find latest update
-      const regionMap = new Map<string, { lastUpdated: string; count: number }>();
-      
-      data.forEach((item: any) => {
-        const region = item.hospitals?.region || "Unknown";
-        const current = regionMap.get(region);
-        const itemDate = new Date(item.last_updated);
-        
-        if (!current) {
-          regionMap.set(region, { lastUpdated: item.last_updated, count: 1 });
-        } else {
-          const currentDate = new Date(current.lastUpdated);
-          if (itemDate > currentDate) {
-            regionMap.set(region, { lastUpdated: item.last_updated, count: current.count + 1 });
-          } else {
-            regionMap.set(region, { ...current, count: current.count + 1 });
-          }
-        }
-      });
-      
-      return Array.from(regionMap.entries()).map(([region, status]) => ({
-        region,
-        lastUpdated: status.lastUpdated,
-        hospitalCount: status.count,
-      })).sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
-    },
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
 
   // Handle bed status sync for all cities
   const handleSyncAllBeds = async () => {
