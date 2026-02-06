@@ -521,14 +521,14 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="w-full"
+          className="w-full mb-4"
         >
-          <div className="flex items-center gap-2.5 mb-4">
+          <div className="flex items-center gap-2.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-primary" />
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200">서비스 선택</p>
           </div>
           
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-8">
             {/* Guardian/Patient Circle */}
             <motion.button
               whileHover={{ scale: 1.1 }}
