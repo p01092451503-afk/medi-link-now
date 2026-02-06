@@ -9,7 +9,7 @@ import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ScrollToTop from "./components/ScrollToTop";
 import Landing from "./pages/Landing";
-import GuardianLanding from "./pages/GuardianLanding";
+import { Navigate } from "react-router-dom";
 import DriverLanding from "./pages/DriverLanding";
 import ParamedicLanding from "./pages/ParamedicLanding";
 import MapPage from "./pages/MapPage";
