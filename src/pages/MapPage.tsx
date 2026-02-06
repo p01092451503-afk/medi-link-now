@@ -520,6 +520,7 @@ const MapPage = () => {
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
             isMoonlightMode={activeFilter === "moonlight"}
+            isPediatricSOS={isPediatricSOS}
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
