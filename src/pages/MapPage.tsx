@@ -551,7 +551,7 @@ const MapPage = () => {
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
-            isMoonlightMode={activeFilter === "moonlight"}
+            isMoonlightMode={false}
             isPediatricSOS={isPediatricSOS}
             rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
             isDriverMode={isDriverMode}
