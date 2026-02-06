@@ -278,7 +278,7 @@ const createMarkerIcon = (
           transition: transform 0.2s;
         ">
           ${beds}
-          ${isMoonlightMode ? moonlightBadge : traumaBadge}
+          ${isPediatricSOS ? pediatricSOSBadge : isMoonlightMode ? moonlightBadge : traumaBadge}
           ${highTrafficBadge}
         </div>
         <div style="
