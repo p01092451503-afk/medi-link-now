@@ -12,7 +12,7 @@ const TrustBadge = () => {
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border border-white/40 dark:border-slate-700/40 shadow-sm pointer-events-auto">
         <ShieldCheck className="w-3 h-3 text-primary flex-shrink-0" />
         <span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap">
-          ⚡ Powered by NEDIS & 119 Data&nbsp;|&nbsp;Non-profit Project
+          ⚡ Powered by NEDIS & 119 Data
         </span>
       </div>
     </motion.div>
