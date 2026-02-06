@@ -707,16 +707,7 @@ const MapPage = () => {
             {/* Mode Toggle (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
 
-            {/* Pediatric SOS Toggle - shown in emergency mode for guardians */}
-            {!isTransferMode && !isDriverMode && !isParamedicMode && (
-              <PediatricSOSToggle
-                isActive={isPediatricSOS}
-                onToggle={() => {
-                  setIsPediatricSOS(prev => !prev);
-                  setSelectedHospital(null);
-                }}
-              />
-            )}
+
 
            {/* 119 Stats Button */}
            {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (
@@ -768,6 +759,17 @@ const MapPage = () => {
                     </motion.button>
                   );
                 })}
+
+              {/* Pediatric SOS Toggle - placed after filter chips */}
+              {!isDriverMode && !isParamedicMode && (
+                <PediatricSOSToggle
+                  isActive={isPediatricSOS}
+                  onToggle={() => {
+                    setIsPediatricSOS(prev => !prev);
+                    setSelectedHospital(null);
+                  }}
+                />
+              )}
             </div>
           </div>
         ) : (
