@@ -1769,7 +1769,6 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "local_center", label: "Local Center", labelKr: "지역센터", category: "grade" },
   { id: "local_institution", label: "Local Institution", labelKr: "지역기관", category: "grade" },
   { id: "adult", label: "Adult ER", labelKr: "성인 응급", category: "bed" },
-  { id: "pediatric", label: "Pediatric ER", labelKr: "소아 응급", category: "bed" },
   { id: "fever", label: "Fever/Infection", labelKr: "열/감염", category: "bed" },
   
   // Procedure availability filters
