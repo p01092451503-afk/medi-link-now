@@ -534,7 +534,7 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-             className="w-full relative overflow-hidden rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-xl" />
