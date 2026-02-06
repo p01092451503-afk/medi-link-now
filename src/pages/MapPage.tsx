@@ -136,6 +136,11 @@ const MapPage = () => {
 
   const { filteredHospitals } = useMemo(() => {
     let result = isTransferMode ? [...hospitalData] : filterHospitals(hospitalData, activeFilter);
+    
+    // Pediatric SOS mode: filter to only pediatric-capable hospitals
+    if (isPediatricSOS && !isTransferMode) {
+      result = result.filter((h) => h.beds.pediatric > 0);
+    }
     result = filterHospitalsByRegion(result, activeRegion);
     
     if (searchQuery.trim()) {
