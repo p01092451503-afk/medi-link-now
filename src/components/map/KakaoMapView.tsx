@@ -598,8 +598,6 @@ const KakaoMapView = ({
           gradeLabel.style.opacity = "1";
           gradeLabel.style.visibility = "visible";
         }
-        // Show distance line from user location
-        showDistanceLine(hospital.lat, hospital.lng);
       });
 
       content.addEventListener("mouseleave", () => {
