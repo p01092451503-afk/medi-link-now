@@ -78,19 +78,20 @@ const ClusterPopup = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.15 }}
-      className="fixed z-[2000] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+      className="fixed z-[2000] bg-white text-gray-900 rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
       style={{
         left: popupStyle.left,
         top: popupStyle.top,
         width: 320,
         maxHeight: 400,
+        color: '#111827', /* Force dark text — override any inherited Leaflet styles */
       }}
     >
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary" />
-          <span className="font-semibold text-sm">
+          <span className="font-semibold text-sm text-gray-900">
             {hospitals.length}개 병원
           </span>
         </div>
