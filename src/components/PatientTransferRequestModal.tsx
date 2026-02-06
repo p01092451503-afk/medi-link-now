@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
 import { toast } from "@/hooks/use-toast";
-import { toast } from "@/hooks/use-toast";
 
 interface PatientTransferRequestModalProps {
   isOpen: boolean;
