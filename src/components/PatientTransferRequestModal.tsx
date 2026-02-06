@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
-import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 import { toast } from "@/hooks/use-toast";
 
 interface PatientTransferRequestModalProps {
@@ -20,7 +19,7 @@ interface PatientTransferRequestModalProps {
   onClose: () => void;
   hospitalId: number;
   hospitalName: string;
-  onRequestSent: () => void;
+  onRequestSent: (requestId: string) => void;
 }
 
 const SYMPTOM_OPTIONS = [
@@ -43,8 +42,7 @@ const PatientTransferRequestModal = ({
   hospitalName,
   onRequestSent,
 }: PatientTransferRequestModalProps) => {
-  const { addRequest, updateRequestStatus } = useTransferRequest();
-  const { incrementTraffic } = usePrivateTraffic();
+  const { addRequest } = useTransferRequest();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -80,10 +78,10 @@ const PatientTransferRequestModal = ({
     // Show toast notification
     toast({
       title: `${hospitalName}에 요청 전송됨!`,
-      description: "병원 승인을 기다리는 중입니다...",
+      description: "병원 응답 결과를 기록해주세요.",
     });
 
-    onRequestSent();
+    onRequestSent(requestId);
     onClose();
 
     // Reset form
@@ -97,30 +95,6 @@ const PatientTransferRequestModal = ({
     });
 
     setIsSubmitting(false);
-
-    // Simulate hospital response after 3 seconds
-    setTimeout(() => {
-      updateRequestStatus(requestId, "accepted");
-      
-      // Increment private traffic count for this hospital
-      incrementTraffic(hospitalId);
-      
-      // Browser notification
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("이송 요청 승인됨!", {
-          body: `${hospitalName}에서 이송 요청을 승인했습니다.`,
-          icon: "/favicon.png",
-        });
-      } else {
-        // Fallback to alert
-        alert(`✅ ${hospitalName}에서 이송 요청을 승인했습니다!`);
-      }
-
-      toast({
-        title: "요청 승인됨! ✅",
-        description: `${hospitalName}에서 이송 요청을 승인했습니다.`,
-      });
-    }, 3000);
   };
 
   return (

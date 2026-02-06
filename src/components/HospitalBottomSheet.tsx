@@ -23,6 +23,7 @@ import Fire119VerifiedBadge from "@/components/hospital/Fire119VerifiedBadge";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import PatientTransferRequestModal from "@/components/PatientTransferRequestModal";
+import TransferResultModal from "@/components/TransferResultModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useIncomingAmbulancesForHospital } from "@/hooks/useIncomingAmbulances";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
@@ -149,6 +150,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
   const { isTransferMode } = useTransferMode();
   const [showRoadview, setShowRoadview] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [lastRequestId, setLastRequestId] = useState<string>("");
   
   // Check if in paramedic/driver mode
   const isParamedicMode = searchParams.get("role") === "paramedic";
@@ -569,7 +572,19 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             onClose={() => setShowTransferModal(false)}
             hospitalId={hospital.id}
             hospitalName={cleanHospitalName(hospital.nameKr)}
-            onRequestSent={() => {}}
+            onRequestSent={(requestId: string) => {
+              setLastRequestId(requestId);
+              setShowResultModal(true);
+            }}
+          />
+
+          {/* Transfer Result Modal */}
+          <TransferResultModal
+            isOpen={showResultModal}
+            onClose={() => setShowResultModal(false)}
+            hospitalId={hospital.id}
+            hospitalName={cleanHospitalName(hospital.nameKr)}
+            requestId={lastRequestId}
           />
 
         </>
