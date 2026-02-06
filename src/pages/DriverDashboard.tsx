@@ -250,7 +250,7 @@ const DriverDashboard = () => {
               }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
                 isLink
-                  ? "text-primary font-bold bg-primary/5"
+                  ? "text-white font-bold bg-primary rounded-lg mx-1 my-1 shadow-md"
                   : activeTab === id
                     ? "text-primary border-b-2 border-primary"
                     : "text-muted-foreground hover:text-foreground"
