@@ -536,7 +536,7 @@ const Landing = () => {
               onClick={() => navigate("/guardian")}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/60 dark:to-blue-800/40 border-2 border-blue-300/60 dark:border-blue-700/50 shadow-lg shadow-blue-200/40 dark:shadow-blue-900/30 flex items-center justify-center group-hover:shadow-xl group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300">
                 <Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="text-center">
