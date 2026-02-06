@@ -431,6 +431,9 @@ const ClusteredMapView = ({
   onNursingHospitalClick,
   onZoomChange,
 }: ClusteredMapViewProps) => {
+  const resolvedTheme = useResolvedTheme();
+  const isDark = resolvedTheme === "dark";
+
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
   // 민간 구급차 트래픽 데이터
