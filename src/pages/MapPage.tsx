@@ -101,8 +101,34 @@ const MapPage = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
   const [isPediatricSOS, setIsPediatricSOS] = useState(false);
+  const [userDistrictName, setUserDistrictName] = useState<string | undefined>(undefined);
 
   const [showSplash, setShowSplash] = useState(false);
+
+  // Reverse geocode user location to get district name
+  useEffect(() => {
+    if (!userLocation) {
+      setUserDistrictName(undefined);
+      return;
+    }
+    
+    const [lat, lng] = userLocation;
+    
+    // Use Kakao geocoder if available
+    if ((window as any).kakao?.maps?.services) {
+      const kakaoApi = (window as any).kakao;
+      const geocoder = new kakaoApi.maps.services.Geocoder();
+      geocoder.coord2RegionCode(lng, lat, (result: any, status: any) => {
+        if (status === kakaoApi.maps.services.Status.OK && result.length > 0) {
+          // Find the H (행정동) type first, fall back to B (법정동)
+          const region = result.find((r: any) => r.region_type === "H") || result[0];
+          // region_2depth_name = 구/군 name (e.g. "강남구", "수원시 장안구")
+          const districtName = region.region_2depth_name || region.region_1depth_name;
+          setUserDistrictName(districtName);
+        }
+      });
+    }
+  }, [userLocation]);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -725,9 +751,10 @@ const MapPage = () => {
 
            {/* 119 Stats Button */}
            {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (
-             <DemandForecastTicker 
-               regionId={activeRegion !== "all" ? activeRegion : undefined}
-             />
+              <DemandForecastTicker 
+                regionId={activeRegion !== "all" ? activeRegion : undefined}
+                userDistrictName={userDistrictName}
+              />
            )}
           </div>
         </header>
