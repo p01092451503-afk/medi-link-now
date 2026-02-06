@@ -49,6 +49,7 @@ import HospitalBottomSheet from "@/components/HospitalBottomSheet";
 import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import DemandForecastTicker from "@/components/map/DemandForecastTicker";
+import PediatricSOSToggle from "@/components/PediatricSOSToggle";
 
 
 // Map default center (Seoul)
