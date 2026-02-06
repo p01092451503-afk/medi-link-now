@@ -88,82 +88,50 @@ const KOREA_BOUNDS = {
   ne: { lat: 38.8, lng: 132.0 },
 };
 
-// Kakao Maps SDK loader with singleton pattern and retry logic
+// Kakao Maps SDK loader — singleton, no retry, domain-auth detection
 const SCRIPT_ID = "kakao-map-sdk";
-const MAX_POLL_RETRIES = 40; // 40 attempts × 100ms = 4초 max
 
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // 1. Already fully loaded - resolve immediately
-    if (window.kakao?.maps?.Map && window.kakao?.maps?.LatLng) {
-      console.log("[KakaoMap] SDK already fully loaded");
-      resolve();
+    // 1. Already loaded
+    if (window.kakao?.maps?.load) {
+      console.log("[KakaoMap] SDK already loaded");
+      window.kakao.maps.load(() => resolve());
       return;
     }
 
-    // 2. SDK object exists but needs load() call
-    if (typeof window.kakao?.maps?.load === "function") {
-      console.log("[KakaoMap] SDK exists, calling load()");
-      window.kakao.maps.load(() => {
-        console.log("[KakaoMap] load() completed");
-        resolve();
-      });
-      return;
-    }
-
-    // 3. Check if script tag already exists in DOM (by id OR by src)
-    const existingScript =
-      (document.getElementById(SCRIPT_ID) as HTMLScriptElement | null) ||
-      (document.querySelector('script[src*="dapi.kakao.com/v2/maps/sdk.js"]') as HTMLScriptElement | null);
-
-    if (existingScript) {
-      // Ensure it has our id for future lookups
-      if (!existingScript.id) existingScript.id = SCRIPT_ID;
-
-      console.log("[KakaoMap] Script tag found, waiting for SDK...");
+    // 2. Script tag exists → wait for it
+    if (document.getElementById(SCRIPT_ID)) {
+      console.log("[KakaoMap] Script tag exists, polling...");
       let attempts = 0;
-
-      const checkInterval = setInterval(() => {
+      const interval = setInterval(() => {
+        if (window.kakao?.maps?.load) {
+          clearInterval(interval);
+          window.kakao.maps.load(() => resolve());
+        } else if (attempts > 20) {
+          // 2초 대기 후 타임아웃
+          clearInterval(interval);
+          if (!window.kakao) {
+            console.error("❌ 카카오맵 인증 실패! 현재 도메인:", window.location.origin);
+            console.error("이 도메인을 카카오 개발자 센터 > 플랫폼 > Web에 정확히 등록해주세요.");
+            reject(new Error(`카카오맵 도메인 인증 실패 — 현재 도메인: ${window.location.origin}`));
+          } else {
+            reject(new Error("카카오맵 SDK 로드 타임아웃 (기존 스크립트)"));
+          }
+        }
         attempts++;
-
-        // Check if load function is available
-        if (typeof window.kakao?.maps?.load === "function") {
-          clearInterval(checkInterval);
-          console.log("[KakaoMap] SDK ready after waiting");
-          window.kakao.maps.load(() => {
-            console.log("[KakaoMap] load() completed");
-            resolve();
-          });
-          return;
-        }
-
-        // Check if already fully initialized
-        if (window.kakao?.maps?.Map) {
-          clearInterval(checkInterval);
-          console.log("[KakaoMap] SDK already initialized");
-          resolve();
-          return;
-        }
-
-        // Timeout after max retries
-        if (attempts >= MAX_POLL_RETRIES) {
-          clearInterval(checkInterval);
-          console.error("[KakaoMap] Timeout waiting for SDK - domain may not be registered");
-          reject(new Error("카카오맵 SDK 로드 시간 초과 - 도메인 등록을 확인하세요"));
-        }
       }, 100);
-
       return;
     }
 
-    // 4. Script doesn't exist - create new one
+    // 3. Create script
     const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
     if (!apiKey) {
       reject(new Error("VITE_KAKAO_MAP_API_KEY가 설정되지 않았습니다"));
       return;
     }
 
-    console.log("[KakaoMap] Creating new script tag...");
+    console.log("[KakaoMap] Creating script tag...");
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
@@ -171,71 +139,29 @@ const loadKakaoSDK = (): Promise<void> => {
 
     script.onload = () => {
       console.log("[KakaoMap] Script onload fired");
-      let attempts = 0;
 
-      const pollForKakao = () => {
-        attempts++;
+      // 핵심: onload 후 window.kakao가 없으면 도메인 인증 실패
+      if (!window.kakao) {
+        console.error("❌ 카카오맵 인증 실패! 현재 도메인:", window.location.origin);
+        console.error("이 도메인을 카카오 개발자 센터 > 플랫폼 > Web에 정확히 등록해주세요.");
+        reject(new Error(`카카오맵 도메인 인증 실패 — 현재 도메인: ${window.location.origin}`));
+        return;
+      }
 
-        if (typeof window.kakao?.maps?.load === "function") {
-          console.log("[KakaoMap] SDK ready, calling load()");
-          window.kakao.maps.load(() => {
-            console.log("[KakaoMap] load() completed");
-            resolve();
-          });
-          return;
-        }
-
-        if (window.kakao?.maps?.Map) {
-          console.log("[KakaoMap] SDK already initialized");
-          resolve();
-          return;
-        }
-
-        if (attempts >= MAX_POLL_RETRIES) {
-          console.error("[KakaoMap] Poll timeout - domain may not be registered");
-          reject(new Error("카카오맵 SDK 초기화 시간 초과 - 도메인 등록을 확인하세요"));
-          return;
-        }
-
-        setTimeout(pollForKakao, 100);
-      };
-
-      pollForKakao();
+      window.kakao.maps.load(() => {
+        console.log("[KakaoMap] maps.load() completed ✅");
+        resolve();
+      });
     };
 
     script.onerror = () => {
-      console.error("[KakaoMap] Script failed to load");
-      reject(new Error("Kakao Map Script failed to load. Check allowed domains."));
+      console.error("[KakaoMap] Script network error");
+      script.remove();
+      reject(new Error("카카오맵 스크립트 로드 실패 (네트워크 오류)"));
     };
 
     document.head.appendChild(script);
   });
-};
-
-// Retry wrapper for SDK loading
-const loadKakaoSDKWithRetry = async (maxRetries = 3): Promise<void> => {
-  let lastError: Error | null = null;
-  
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`[KakaoMap] Loading attempt ${attempt}/${maxRetries}`);
-      await loadKakaoSDK();
-      console.log("[KakaoMap] Successfully loaded");
-      return;
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-      console.warn(`[KakaoMap] Attempt ${attempt} failed:`, lastError.message);
-      
-      if (attempt < maxRetries) {
-        // Wait before retrying (exponential backoff)
-        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 3000);
-        console.log(`[KakaoMap] Retrying in ${delay}ms...`);
-        await new Promise(r => setTimeout(r, delay));
-      }
-    }
-  }
-  
-  throw lastError || new Error("카카오맵 SDK 로드 실패");
 };
 
 const KakaoMapView = ({
@@ -425,11 +351,11 @@ const KakaoMapView = ({
     return incomingByHospital || countMap;
   }, [activeAmbulanceTrips, incomingByHospital]);
 
-  // Initialize Kakao Maps with retry
+  // Initialize Kakao Maps (single attempt — no retry on domain auth failure)
   useEffect(() => {
     let mounted = true;
 
-    loadKakaoSDKWithRetry(3)
+    loadKakaoSDK()
       .then(() => {
         if (!mounted || !mapContainerRef.current) return;
 
@@ -439,26 +365,23 @@ const KakaoMapView = ({
         const options = {
           center: new window.kakao.maps.LatLng(center[0], center[1]),
           level: leafletToKakaoZoom(zoom),
-          minLevel: 1,  // Most zoomed in (equivalent to Leaflet 17)
-          maxLevel: 13, // Most zoomed out - shows all of Korea including Jeju & Ulleungdo
+          minLevel: 1,
+          maxLevel: 13,
         };
 
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
         mapRef.current = map;
 
-        // Add click handler to unspiderfy when clicking on map
         window.kakao.maps.event.addListener(map, "click", () => {
           if (spiderfyManagerRef.current?.isSpiderfied()) {
             spiderfyManagerRef.current.unspiderfy();
           }
         });
 
-        // Zoom change handler - unspiderfy and notify parent
         window.kakao.maps.event.addListener(map, "zoom_changed", () => {
           if (spiderfyManagerRef.current?.isSpiderfied()) {
             spiderfyManagerRef.current.unspiderfy();
           }
-          // Notify parent of zoom change (convert Kakao zoom to Leaflet zoom)
           const currentKakaoZoom = map.getLevel();
           const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
           onZoomChange?.(leafletZoom);
@@ -467,7 +390,7 @@ const KakaoMapView = ({
         setIsLoaded(true);
       })
       .catch((error) => {
-        console.error("Kakao Maps error:", error);
+        console.error("[KakaoMap] Init failed:", error.message);
         if (mounted) {
           setLoadError(error.message);
           onLoadError?.(error.message);
