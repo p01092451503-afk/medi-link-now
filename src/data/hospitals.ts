@@ -1780,7 +1780,6 @@ export const filterOptions: { id: FilterType; label: string; labelKr: string; ca
   { id: "trauma", label: "Trauma Center", labelKr: "외상센터", category: "procedure" },
   // Special facility types
   { id: "traumaCenter", label: "Trauma Center Only", labelKr: "외상센터", category: "special" },
-  { id: "moonlight", label: "Night Pediatric", labelKr: "야간소아", category: "special" },
 ];
 
 export const getHospitalStatus = (hospital: Hospital): "available" | "limited" | "unavailable" => {

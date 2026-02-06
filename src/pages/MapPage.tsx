@@ -755,13 +755,10 @@ const MapPage = () => {
                         isActive
                           ? isTraumaCenter
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
-                            : isMoonlight
-                              ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 shadow-md shadow-amber-500/30"
-                              : "bg-primary text-white shadow-md"
+                            : "bg-primary text-white shadow-md"
                           : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
                       }`}
                     >
-                      {isMoonlight && <span className="text-xs">🌙</span>}
                       {isTraumaCenter && (
                         <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
                           isActive ? "bg-white/20" : "bg-purple-100"
