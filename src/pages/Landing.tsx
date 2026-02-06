@@ -568,7 +568,7 @@ const Landing = () => {
               onClick={() => navigate("/paramedic")}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-100 to-orange-200 dark:from-amber-900/60 dark:to-orange-800/40 border-2 border-amber-300/60 dark:border-amber-700/50 shadow-lg shadow-amber-200/40 dark:shadow-amber-900/30 flex items-center justify-center group-hover:shadow-xl group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300">
                 <Ambulance className="w-8 h-8 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="text-center">
