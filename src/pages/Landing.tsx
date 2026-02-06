@@ -569,7 +569,7 @@ const Landing = () => {
               className="flex flex-col items-center gap-2 group"
             >
               <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300">
-                <Ambulance className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                <span className="text-xl font-extrabold text-orange-600 dark:text-orange-400">119</span>
               </div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">구급대원</p>
