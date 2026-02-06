@@ -156,7 +156,7 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center px-5 py-6 max-w-lg mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center px-5 py-8 max-w-lg mx-auto w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
