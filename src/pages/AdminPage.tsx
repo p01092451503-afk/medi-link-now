@@ -309,11 +309,21 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
-        <div className="container flex items-center gap-4 h-14 px-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-semibold">관리자 페이지</h1>
+        <div className="container flex items-center justify-between h-14 px-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-lg font-semibold">관리자 페이지</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground hidden sm:inline">
+              {user?.email}
+            </span>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} title="로그아웃">
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </header>
 
