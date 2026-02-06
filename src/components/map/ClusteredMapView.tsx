@@ -24,11 +24,10 @@ import NursingHospitalMarker from "../NursingHospitalMarker";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import { useResolvedTheme } from "@/hooks/useResolvedTheme";
 
-// Dark & light tile URLs
-const TILE_LIGHT = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+// Dark & light tile URLs (CartoDB Voyager/Dark Matter — local-language labels for Korea)
+const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 const TILE_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-const ATTR_LIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-const ATTR_DARK = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
+const ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -527,7 +526,7 @@ const ClusteredMapView = ({
         minZoom={KOREA_MIN_ZOOM}
       >
         <TileLayer
-          attribution={isDark ? ATTR_DARK : ATTR_LIGHT}
+          attribution={ATTR}
           url={isDark ? TILE_DARK : TILE_LIGHT}
         />
         <KoreaBoundsEnforcer bounds={KOREA_BOUNDS} />
