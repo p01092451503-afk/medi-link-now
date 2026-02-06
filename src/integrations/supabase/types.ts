@@ -606,6 +606,48 @@ export type Database = {
         }
         Relationships: []
       }
+      system_audit_logs: {
+        Row: {
+          action_detail: string | null
+          action_type: string
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          performed_by: string | null
+          success: boolean
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action_detail?: string | null
+          action_type: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+          success?: boolean
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action_detail?: string | null
+          action_type?: string
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+          success?: boolean
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -638,14 +680,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_rejection_logs: { Args: never; Returns: undefined }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["user_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       ambulance_trip_status: "en_route" | "arrived" | "cancelled"
-      user_role: "guardian" | "driver"
+      user_role: "guardian" | "driver" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -774,7 +824,7 @@ export const Constants = {
   public: {
     Enums: {
       ambulance_trip_status: ["en_route", "arrived", "cancelled"],
-      user_role: ["guardian", "driver"],
+      user_role: ["guardian", "driver", "admin"],
     },
   },
 } as const
