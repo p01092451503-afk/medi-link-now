@@ -532,6 +532,9 @@ const Landing = () => {
           <div className="flex items-center justify-center gap-8">
             {/* Guardian/Patient Circle */}
             <motion.button
+              initial={{ opacity: 0, y: 30, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.35, type: "spring", stiffness: 200, damping: 15 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/map")}
@@ -548,6 +551,9 @@ const Landing = () => {
 
             {/* Private Ambulance Circle */}
             <motion.button
+              initial={{ opacity: 0, y: 30, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200, damping: 15 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/driver-intro")}
@@ -564,6 +570,9 @@ const Landing = () => {
 
             {/* Paramedic Circle */}
             <motion.button
+              initial={{ opacity: 0, y: 30, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.65, type: "spring", stiffness: 200, damping: 15 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/paramedic")}
