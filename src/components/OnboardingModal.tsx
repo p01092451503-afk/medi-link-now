@@ -7,6 +7,7 @@ const STORAGE_KEY = "finder-has-visited";
 
 interface OnboardingModalProps {
   forceOpen?: boolean;
+  onComplete?: () => void;
 }
 
 const slides = [
@@ -51,7 +52,7 @@ const slides = [
   },
 ];
 
-const OnboardingModal = ({ forceOpen = false }: OnboardingModalProps) => {
+const OnboardingModal = ({ forceOpen = false, onComplete }: OnboardingModalProps) => {
   const [isOpen, setIsOpen] = useState(forceOpen);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -69,6 +70,7 @@ const OnboardingModal = ({ forceOpen = false }: OnboardingModalProps) => {
   const handleClose = () => {
     localStorage.setItem(STORAGE_KEY, "true");
     setIsOpen(false);
+    onComplete?.();
   };
 
   const handleNext = () => {
