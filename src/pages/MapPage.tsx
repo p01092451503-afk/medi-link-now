@@ -127,6 +127,21 @@ const MapPage = () => {
           setUserDistrictName(districtName);
         }
       });
+    } else {
+      // Fallback: use Nominatim reverse geocoding when Kakao SDK is not available
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&accept-language=ko`)
+        .then(res => res.json())
+        .then(data => {
+          const addr = data?.address;
+          // Try city_district (구), city, county, town in order
+          const districtName = addr?.city_district || addr?.borough || addr?.city || addr?.county || addr?.town || addr?.suburb;
+          if (districtName) {
+            setUserDistrictName(districtName);
+          }
+        })
+        .catch(err => {
+          console.error('Reverse geocoding fallback failed:', err);
+        });
     }
   }, [userLocation]);
 
