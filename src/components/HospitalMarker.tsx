@@ -298,7 +298,7 @@ const createMarkerIcon = (
   });
 };
 
-const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0 }: HospitalMarkerProps) => {
+const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0, isPediatricSOS = false }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   
@@ -320,7 +320,8 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
     hospital.emergencyGrade,
     isMoonlightMode,
     isHighTraffic,
-    privateTrafficCount
+    privateTrafficCount,
+    isPediatricSOS
   );
 
   // 등급 한글명 표시
