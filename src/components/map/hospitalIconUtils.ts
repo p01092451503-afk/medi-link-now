@@ -91,6 +91,13 @@ const getMoonlightColors = () => ({
   unavailable: { bg: "#FDE68A", border: "#D97706", text: "#78350F" },
 });
 
+// Pediatric SOS mode marker colors - baby blue theme
+const getPediatricSOSColors = () => ({
+  available: { bg: "#BAE6FD", border: "#0EA5E9", text: "#0C4A6E" },
+  limited: { bg: "#BAE6FD", border: "#0EA5E9", text: "#0C4A6E" },
+  unavailable: { bg: "#E0F2FE", border: "#38BDF8", text: "#075985" },
+});
+
 export const createHospitalIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
@@ -102,10 +109,15 @@ export const createHospitalIcon = (
   rejectionAlert?: RejectionAlertInfo,
   incomingCount?: number,
   isHighTraffic?: boolean,
-  privateTrafficCount?: number
+  privateTrafficCount?: number,
+  isPediatricSOS?: boolean
 ) => {
-  // Use moonlight colors if in moonlight mode, otherwise use grade colors
-  const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
+  // Use pediatric SOS colors first, then moonlight, then grade colors
+  const colors = isPediatricSOS
+    ? getPediatricSOSColors()
+    : isMoonlightMode
+      ? getMoonlightColors()
+      : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
   const hasIncoming = incomingCount && incomingCount > 0;
@@ -301,6 +313,27 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
+  // Pediatric SOS badge
+  const pediatricSOSBadge = isPediatricSOS
+    ? `<div style="
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5);
+        z-index: 10;
+      ">
+        <span style="font-size: 14px;">👶</span>
+      </div>`
+    : "";
+
   const gradeBadge = (gradeLabel && !isMoonlightMode)
     ? `<div class="grade-label-hover" style="
         position: absolute;
@@ -379,7 +412,7 @@ export const createHospitalIcon = (
           ${rejectionBorderStyle}
         ">
           <span style="font-weight: 800; font-size: 18px; line-height: 1;">${beds}</span>
-          ${isMoonlightMode ? moonlightBadge : traumaBadge}
+          ${isPediatricSOS ? pediatricSOSBadge : isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
           ${highTrafficBadge}
           ${incomingBadge}

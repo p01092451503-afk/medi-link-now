@@ -49,6 +49,7 @@ import HospitalBottomSheet from "@/components/HospitalBottomSheet";
 import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import DemandForecastTicker from "@/components/map/DemandForecastTicker";
+import PediatricSOSToggle from "@/components/PediatricSOSToggle";
 
 
 // Map default center (Seoul)
@@ -96,6 +97,7 @@ const MapPage = () => {
   const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
+  const [isPediatricSOS, setIsPediatricSOS] = useState(false);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -134,6 +136,11 @@ const MapPage = () => {
 
   const { filteredHospitals } = useMemo(() => {
     let result = isTransferMode ? [...hospitalData] : filterHospitals(hospitalData, activeFilter);
+    
+    // Pediatric SOS mode: filter to only pediatric-capable hospitals
+    if (isPediatricSOS && !isTransferMode) {
+      result = result.filter((h) => h.beds.pediatric > 0);
+    }
     result = filterHospitalsByRegion(result, activeRegion);
     
     if (searchQuery.trim()) {
@@ -199,7 +206,7 @@ const MapPage = () => {
     }
 
     return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter, isPediatricSOS]);
 
   // Filter holiday pharmacies by selected region
   const filteredPharmacies = useMemo(() => {
@@ -513,6 +520,7 @@ const MapPage = () => {
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
             isMoonlightMode={activeFilter === "moonlight"}
+            isPediatricSOS={isPediatricSOS}
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
@@ -544,6 +552,7 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             isMoonlightMode={activeFilter === "moonlight"}
+            isPediatricSOS={isPediatricSOS}
             rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
             isDriverMode={isDriverMode}
             nursingHospitals={filteredNursingHospitals}
@@ -697,6 +706,17 @@ const MapPage = () => {
 
             {/* Mode Toggle (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
+
+            {/* Pediatric SOS Toggle - shown in emergency mode for guardians */}
+            {!isTransferMode && !isDriverMode && !isParamedicMode && (
+              <PediatricSOSToggle
+                isActive={isPediatricSOS}
+                onToggle={() => {
+                  setIsPediatricSOS(prev => !prev);
+                  setSelectedHospital(null);
+                }}
+              />
+            )}
 
            {/* 119 Stats Button */}
            {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (

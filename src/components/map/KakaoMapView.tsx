@@ -32,6 +32,7 @@ interface KakaoMapViewProps {
   nightCareHospitals?: HospitalDetailData[];
   onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
   onLoadError?: (error: string) => void;
+  isPediatricSOS?: boolean;
 }
 
 // Get marker colors based on emergency grade
@@ -53,6 +54,13 @@ const getMoonlightColors = () => ({
   bg: "#FEF3C7",
   border: "#F59E0B",
   text: "#92400E",
+});
+
+// Pediatric SOS colors - baby blue
+const getPediatricSOSColors = () => ({
+  bg: "#BAE6FD",
+  border: "#0EA5E9",
+  text: "#0C4A6E",
 });
 
 // Get grade label for badge
@@ -180,6 +188,7 @@ const KakaoMapView = ({
   incomingByHospital,
   onZoomChange,
   onLoadError,
+  isPediatricSOS = false,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -453,7 +462,12 @@ const KakaoMapView = ({
       let borderColor: string;
       let textColor = "white";
 
-      if (isMoonlightMode) {
+      if (isPediatricSOS) {
+        const pediatricColors = getPediatricSOSColors();
+        bgColor = pediatricColors.bg;
+        borderColor = pediatricColors.border;
+        textColor = pediatricColors.text;
+      } else if (isMoonlightMode) {
         const moonlightColors = getMoonlightColors();
         bgColor = moonlightColors.bg;
         borderColor = moonlightColors.border;
@@ -491,6 +505,10 @@ const KakaoMapView = ({
 
       const moonlightBadgeHtml = isMoonlightMode
         ? `<div style="position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: linear-gradient(135deg, #312E81 0%, #4338CA 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.5); z-index: 10;"><span style="font-size: 12px;">🌙</span></div>`
+        : "";
+
+      const pediatricSOSBadgeHtml = isPediatricSOS
+        ? `<div style="position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5); z-index: 10;"><span style="font-size: 12px;">👶</span></div>`
         : "";
 
       const incomingCount = incomingCountMap.get(hospital.id) || 0;
@@ -550,7 +568,7 @@ const KakaoMapView = ({
           </div>
           <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;">
             <span style="color: ${textColor}; font-size: 18px; font-weight: 800; line-height: 1;">${displayBeds}</span>
-            ${isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
+            ${isPediatricSOS ? pediatricSOSBadgeHtml : isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
             ${groupCountHtml}
           </div>
           <div style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 8px solid white; margin-top: -2px;"></div>
@@ -622,7 +640,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, isPediatricSOS, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick]);
 
   // Update nursing hospital markers
   useEffect(() => {

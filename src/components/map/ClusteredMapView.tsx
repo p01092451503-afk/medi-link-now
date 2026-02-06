@@ -52,6 +52,7 @@ interface ClusteredMapViewProps {
   nursingHospitals?: NursingHospital[];
   onNursingHospitalClick?: (hospital: NursingHospital) => void;
   onZoomChange?: (zoom: number) => void;
+  isPediatricSOS?: boolean;
 }
 
 // Component to handle map center changes and bounds
@@ -376,6 +377,7 @@ const ClusteredMapView = ({
   nursingHospitals = [],
   onNursingHospitalClick,
   onZoomChange,
+  isPediatricSOS = false,
 }: ClusteredMapViewProps) => {
   const resolvedTheme = useResolvedTheme();
   const isDark = resolvedTheme === "dark";
@@ -599,7 +601,8 @@ const ClusteredMapView = ({
               rejectionAlert,
               incomingCount,
               highTraffic,
-              privateTrafficCount
+              privateTrafficCount,
+              isPediatricSOS
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
 import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle } from "lucide-react";
+import MoonlightBadge from "@/components/hospital/MoonlightBadge";
+import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
 import { cleanHospitalName } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -272,6 +274,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                         👶 아이 진료
                       </span>
                     )}
+                    {/* Moonlight Hospital Badge */}
+                    <MoonlightBadge hasPediatric={hasPediatric} />
                     {distance && (
                       <span className="text-xs text-muted-foreground">
                         {distance.toFixed(1)} km
@@ -395,6 +399,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                   tooltipText="고열(38℃+) 및 감염 환자 전용"
                   isHospitalFull={status === "unavailable"}
                 />
+              </div>
+
+              {/* Wait Time Prediction */}
+              <div className="mb-5">
+                <WaitTimePrediction hospitalId={hospital.id} />
               </div>
 
               {/* Procedure Availability Section */}

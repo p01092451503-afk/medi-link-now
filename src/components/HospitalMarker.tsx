@@ -11,6 +11,7 @@ interface HospitalMarkerProps {
   isMoonlightMode?: boolean;
   isHighTraffic?: boolean;
   privateTrafficCount?: number;
+  isPediatricSOS?: boolean;
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
@@ -101,6 +102,13 @@ const getMoonlightColors = () => ({
   unavailable: { bg: "#FDE68A", border: "#D97706", text: "#78350F" },
 });
 
+// Pediatric SOS mode marker colors - baby blue theme
+const getPediatricSOSColors = () => ({
+  available: { bg: "#BAE6FD", border: "#0EA5E9", text: "#0C4A6E" },
+  limited: { bg: "#BAE6FD", border: "#0EA5E9", text: "#0C4A6E" },
+  unavailable: { bg: "#E0F2FE", border: "#38BDF8", text: "#075985" },
+});
+
 const createMarkerIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
@@ -110,10 +118,15 @@ const createMarkerIcon = (
   emergencyGrade?: string | null,
   isMoonlightMode?: boolean,
   isHighTraffic?: boolean,
-  privateTrafficCount?: number
+  privateTrafficCount?: number,
+  isPediatricSOS?: boolean
 ) => {
-  // Use moonlight colors if in moonlight mode, otherwise use grade colors
-  const colors = isMoonlightMode ? getMoonlightColors() : getGradeColors(emergencyGrade);
+  // Use pediatric SOS colors first, then moonlight, then grade colors
+  const colors = isPediatricSOS
+    ? getPediatricSOSColors()
+    : isMoonlightMode
+      ? getMoonlightColors()
+      : getGradeColors(emergencyGrade);
   
   // If high traffic and estimated full, override to gray
   const effectiveStatus = isHighTraffic && beds === 0 ? "unavailable" : status;
@@ -185,6 +198,27 @@ const createMarkerIcon = (
         <span style="font-size: 14px;">🌙</span>
       </div>`
     : "";
+
+  // Pediatric SOS badge (displayed when in pediatric SOS mode)
+  const pediatricSOSBadge = isPediatricSOS
+    ? `<div style="
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5);
+        z-index: 10;
+      ">
+        <span style="font-size: 14px;">👶</span>
+      </div>`
+    : "";
   
   // 등급 표시 뱃지 (왼쪽 하단) - don't show in moonlight mode
   const gradeBadge = (gradeLabel && !isMoonlightMode)
@@ -244,7 +278,7 @@ const createMarkerIcon = (
           transition: transform 0.2s;
         ">
           ${beds}
-          ${isMoonlightMode ? moonlightBadge : traumaBadge}
+          ${isPediatricSOS ? pediatricSOSBadge : isMoonlightMode ? moonlightBadge : traumaBadge}
           ${highTrafficBadge}
         </div>
         <div style="
@@ -264,7 +298,7 @@ const createMarkerIcon = (
   });
 };
 
-const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0 }: HospitalMarkerProps) => {
+const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0, isPediatricSOS = false }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   
@@ -286,7 +320,8 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
     hospital.emergencyGrade,
     isMoonlightMode,
     isHighTraffic,
-    privateTrafficCount
+    privateTrafficCount,
+    isPediatricSOS
   );
 
   // 등급 한글명 표시
