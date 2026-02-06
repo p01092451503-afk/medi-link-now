@@ -422,7 +422,7 @@ export const createHospitalIcon = (
           border-top: 8px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : 'white'};
           margin-top: -2px;
         "></div>
-        ${gradeBadge}
+        ${statusBadge}
       </div>
     `,
     iconSize: [42, 70],

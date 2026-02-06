@@ -293,7 +293,7 @@ const createMarkerIcon = (
           border-top: 10px solid ${color.border};
           margin-top: -2px;
         "></div>
-        ${gradeBadge}
+        ${statusBadge}
       </div>
     `,
     iconSize: [44, 62],
