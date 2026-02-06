@@ -23,6 +23,7 @@ import Fire119VerifiedBadge from "@/components/hospital/Fire119VerifiedBadge";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
 import PatientTransferRequestModal from "@/components/PatientTransferRequestModal";
+import TransferResultModal from "@/components/TransferResultModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useIncomingAmbulancesForHospital } from "@/hooks/useIncomingAmbulances";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
