@@ -759,6 +759,17 @@ const MapPage = () => {
                     </motion.button>
                   );
                 })}
+
+              {/* Pediatric SOS Toggle - placed after filter chips */}
+              {!isDriverMode && !isParamedicMode && (
+                <PediatricSOSToggle
+                  isActive={isPediatricSOS}
+                  onToggle={() => {
+                    setIsPediatricSOS(prev => !prev);
+                    setSelectedHospital(null);
+                  }}
+                />
+              )}
             </div>
           </div>
         ) : (
