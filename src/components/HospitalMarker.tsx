@@ -11,6 +11,7 @@ interface HospitalMarkerProps {
   isMoonlightMode?: boolean;
   isHighTraffic?: boolean;
   privateTrafficCount?: number;
+  isPediatricSOS?: boolean;
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
