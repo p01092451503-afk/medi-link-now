@@ -274,6 +274,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                         👶 아이 진료
                       </span>
                     )}
+                    {/* Moonlight Hospital Badge */}
+                    <MoonlightBadge hasPediatric={hasPediatric} />
                     {distance && (
                       <span className="text-xs text-muted-foreground">
                         {distance.toFixed(1)} km
