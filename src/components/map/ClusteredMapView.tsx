@@ -613,7 +613,6 @@ const ClusteredMapView = ({
                 eventHandlers={{
                   click: () => {
                     setHoverTooltip(null);
-                    setHoveredTarget(null);
                     onHospitalClick(hospital);
                   },
                   mouseover: (e) => {
