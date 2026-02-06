@@ -102,6 +102,8 @@ const MapPage = () => {
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
   const [isPediatricSOS, setIsPediatricSOS] = useState(false);
 
+  const [showSplash, setShowSplash] = useState(true);
+
   // Auto-set mode based on URL params
   useEffect(() => {
     if (hideMode) {
