@@ -13,6 +13,10 @@ export function cn(...inputs: ClassValue[]) {
 export function cleanHospitalName(name: string): string {
   if (!name) return "";
 
+  // Extract parenthesized hospital name as fallback (e.g., "(더자인병원)" from "의료법인자인의료재단(더자인병원)")
+  const parenMatch = name.match(/\(([^)]*(?:병원|의료원|센터|의원))\)/);
+  const fallbackName = parenMatch ? parenMatch[1] : null;
+
   let cleaned = name
     // Remove parenthesized fragments like (더자인병원), (의료재단), etc.
     .replace(/\([^)]*\)/g, "")
@@ -65,6 +69,11 @@ export function cleanHospitalName(name: string): string {
         break;
       }
     }
+  }
+  
+  // If cleaning removed everything, use the parenthesized hospital name as fallback
+  if (!cleaned && fallbackName) {
+    return fallbackName;
   }
   
   return cleaned;
