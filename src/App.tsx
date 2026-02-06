@@ -23,6 +23,7 @@ import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import FareCalculatorPage from "./pages/FareCalculatorPage";
 import RejectionLogsPage from "./pages/RejectionLogsPage";
+import OnboardingPage from "./pages/OnboardingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,8 +40,10 @@ const App = () => (
               <BrowserRouter>
                 <ScrollToTop />
                 <Routes>
-                  <Route path="/" element={<Landing />} />
+                  <Route path="/" element={<OnboardingPage />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="/intro" element={<Landing />} />
+                  <Route path="/landing" element={<Landing />} />
                   <Route path="/guardian" element={<GuardianLanding />} />
                   <Route path="/driver-intro" element={<DriverLanding />} />
                   <Route path="/paramedic" element={<ParamedicLanding />} />
