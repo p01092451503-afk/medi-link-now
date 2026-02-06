@@ -115,10 +115,11 @@ const MapPage = () => {
     const [lat, lng] = userLocation;
     
     // Use Kakao geocoder if available
-    if (window.kakao?.maps?.services) {
-      const geocoder = new kakao.maps.services.Geocoder();
+    if ((window as any).kakao?.maps?.services) {
+      const kakaoApi = (window as any).kakao;
+      const geocoder = new kakaoApi.maps.services.Geocoder();
       geocoder.coord2RegionCode(lng, lat, (result: any, status: any) => {
-        if (status === kakao.maps.services.Status.OK && result.length > 0) {
+        if (status === kakaoApi.maps.services.Status.OK && result.length > 0) {
           // Find the H (행정동) type first, fall back to B (법정동)
           const region = result.find((r: any) => r.region_type === "H") || result[0];
           // region_2depth_name = 구/군 name (e.g. "강남구", "수원시 장안구")
