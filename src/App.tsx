@@ -40,6 +40,7 @@ const App = () => (
                 <ScrollToTop />
                 <Routes>
                   <Route path="/" element={<Landing />} />
+                  <Route path="/intro" element={<Landing />} />
                   <Route path="/guardian" element={<GuardianLanding />} />
                   <Route path="/driver-intro" element={<DriverLanding />} />
                   <Route path="/paramedic" element={<ParamedicLanding />} />
