@@ -14,6 +14,8 @@ export function cleanHospitalName(name: string): string {
   if (!name) return "";
 
   let cleaned = name
+    // Remove parenthesized fragments like (더자인병원), (의료재단), etc.
+    .replace(/\([^)]*\)/g, "")
     // Remove common legal entity types (법인 types) - with optional surrounding spaces
     .replace(/재단법인\s*/g, "")
     .replace(/의료법인\s*/g, "")
