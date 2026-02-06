@@ -334,25 +334,26 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
-  const gradeBadge = (gradeLabel && !isMoonlightMode)
-    ? `<div class="grade-label-hover" style="
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.85);
-        color: white;
-        font-size: 9px;
-        font-weight: 600;
-        padding: 2px 6px;
-        border-radius: 4px;
-        white-space: nowrap;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.2s, visibility 0.2s;
-      ">${gradeLabel}</div>`
-    : "";
+  // Status indicator badge (green = available, red = full)
+  const statusColor = beds > 0 ? '#10B981' : '#EF4444';
+  const statusLabel = beds > 0 ? '입원가능' : '만석';
+  const statusBadge = `<div style="
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0,0,0,0.8);
+      padding: 2px 7px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    ">
+      <span style="width: 7px; height: 7px; background: ${statusColor}; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 4px ${statusColor};"></span>
+      <span style="font-size: 9px; font-weight: 700; color: white;">${statusLabel}</span>
+    </div>`;
 
   return L.divIcon({
     className: "custom-marker",
@@ -379,10 +380,6 @@ export const createHospitalIcon = (
         .marker-container:hover .marker-circle-inner {
           transform: scale(1.15);
           box-shadow: 0 6px 16px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.2) !important;
-        }
-        .marker-container:hover .grade-label-hover {
-          opacity: 1 !important;
-          visibility: visible !important;
         }
       </style>
       <div class="marker-container" style="
@@ -425,7 +422,7 @@ export const createHospitalIcon = (
           border-top: 8px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : 'white'};
           margin-top: -2px;
         "></div>
-        ${gradeBadge}
+        ${statusBadge}
       </div>
     `,
     iconSize: [42, 70],
