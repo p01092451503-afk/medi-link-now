@@ -180,7 +180,7 @@ const Landing = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="w-full mb-8"
         >
-          <div className="bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border-2 border-slate-300 dark:border-slate-600 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             {/* Compact Tab + Status Header */}
             <div className="flex items-center justify-between px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700/50">
               {/* Tab Pills */}
@@ -233,7 +233,7 @@ const Landing = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="p-3 bg-slate-200 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 mx-2 mb-2"
+                className="p-3 bg-slate-200 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600/50 mx-2 mb-2"
               >
                 <div className="grid grid-cols-4 gap-2">
                   {/* 응급실 */}
