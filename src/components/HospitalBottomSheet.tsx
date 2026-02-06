@@ -150,6 +150,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
   const { isTransferMode } = useTransferMode();
   const [showRoadview, setShowRoadview] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [lastRequestId, setLastRequestId] = useState<string>("");
   
   // Check if in paramedic/driver mode
   const isParamedicMode = searchParams.get("role") === "paramedic";
