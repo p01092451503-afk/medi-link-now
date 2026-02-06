@@ -681,10 +681,6 @@ const ClusteredMapView = ({
           <AmbulanceTripMarker key={`trip-${trip.id}`} trip={trip} />
         ))} */}
 
-        {/* Distance measurement line on hover */}
-        {userLocation && hoveredTarget && (
-          <DistanceLine from={userLocation} to={hoveredTarget} />
-        )}
       </MapContainer>
 
       {/* Hospital Hover Tooltip */}

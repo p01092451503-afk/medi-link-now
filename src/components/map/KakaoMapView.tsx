@@ -798,7 +798,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       pharmacyMarkersRef.current.push(overlay);
     });
-  }, [nearbyPharmacies, isLoaded, onPharmacyClick, showDistanceLine, hideDistanceLine]);
+  }, [nearbyPharmacies, isLoaded, onPharmacyClick]);
 
   // Update ambulance trip markers
   useEffect(() => {
