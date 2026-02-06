@@ -381,10 +381,6 @@ export const createHospitalIcon = (
           transform: scale(1.15);
           box-shadow: 0 6px 16px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.2) !important;
         }
-        .marker-container:hover .grade-label-hover {
-          opacity: 1 !important;
-          visibility: visible !important;
-        }
       </style>
       <div class="marker-container" style="
         position: relative;
