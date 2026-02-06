@@ -248,6 +248,7 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
+  onLoadError,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
