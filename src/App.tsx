@@ -22,6 +22,7 @@ import InstallPage from "./pages/InstallPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import FareCalculatorPage from "./pages/FareCalculatorPage";
+import RejectionLogsPage from "./pages/RejectionLogsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
