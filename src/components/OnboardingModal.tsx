@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "finder-has-visited";
 
+interface OnboardingModalProps {
+  forceOpen?: boolean;
+}
+
 const slides = [
   {
     icon: ShieldCheck,
