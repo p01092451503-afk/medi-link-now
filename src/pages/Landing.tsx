@@ -534,10 +534,10 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/guardian")}
-             className="w-full relative overflow-hidden rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-full" />
               
               <div className="flex items-center w-full py-2 px-4">
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 ring-1 ring-blue-200/50 dark:ring-blue-800/50 group-hover:ring-blue-300 dark:group-hover:ring-blue-700 transition-all">
@@ -556,10 +556,10 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/driver-intro")}
-             className="w-full relative overflow-hidden rounded-xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-900/50 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-full bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-900/50 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-full" />
               
               <div className="flex items-center w-full py-2 px-4">
                 <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center shrink-0 ring-1 ring-violet-200/50 dark:ring-violet-800/50 group-hover:ring-violet-300 dark:group-hover:ring-violet-700 transition-all">
@@ -578,10 +578,10 @@ const Landing = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98, y: 0 }}
               onClick={() => navigate("/paramedic")}
-             className="w-full relative overflow-hidden rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-800 transition-all duration-300 group"
+             className="w-full relative overflow-hidden rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500 rounded-l-full" />
               
               <div className="flex items-center w-full py-2 px-4">
                 <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0 ring-1 ring-amber-200/50 dark:ring-amber-800/50 group-hover:ring-amber-300 dark:group-hover:ring-amber-700 transition-all">
