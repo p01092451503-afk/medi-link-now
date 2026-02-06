@@ -699,8 +699,6 @@ const KakaoMapView = ({
       content.addEventListener("mouseleave", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1)";
-        // Hide distance line
-        hideDistanceLine();
       });
 
       overlay.setMap(mapRef.current);
