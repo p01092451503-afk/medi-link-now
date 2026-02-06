@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import mark119 from "@/assets/icons/119-mark.png";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle, Heart } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle, Heart, Locate } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -538,7 +538,7 @@ const Landing = () => {
               className="flex flex-col items-center gap-2 group"
             >
               <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300">
-                <Heart className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <Locate className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">보호자 / 환자</p>
