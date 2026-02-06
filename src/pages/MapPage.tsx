@@ -552,6 +552,7 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             isMoonlightMode={activeFilter === "moonlight"}
+            isPediatricSOS={isPediatricSOS}
             rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
             isDriverMode={isDriverMode}
             nursingHospitals={filteredNursingHospitals}
