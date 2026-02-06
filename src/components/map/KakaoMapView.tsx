@@ -190,8 +190,6 @@ const KakaoMapView = ({
   const ambulanceMarkersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
   const spiderfyManagerRef = useRef<SpiderfyManager | null>(null);
-  const distanceLineRef = useRef<any>(null);
-  const distanceLabelRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
