@@ -462,7 +462,12 @@ const KakaoMapView = ({
       let borderColor: string;
       let textColor = "white";
 
-      if (isMoonlightMode) {
+      if (isPediatricSOS) {
+        const pediatricColors = getPediatricSOSColors();
+        bgColor = pediatricColors.bg;
+        borderColor = pediatricColors.border;
+        textColor = pediatricColors.text;
+      } else if (isMoonlightMode) {
         const moonlightColors = getMoonlightColors();
         bgColor = moonlightColors.bg;
         borderColor = moonlightColors.border;
