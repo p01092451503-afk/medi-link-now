@@ -621,7 +621,7 @@ const ClusteredMapView = ({
                       hospital: { ...hospital, gradeKoreanName } as any,
                       position: { x: clientX, y: clientY },
                     });
-                    setHoveredTarget([hospital.lat, hospital.lng]);
+                    
                   },
                   mouseout: () => {
                     setHoverTooltip(null);
