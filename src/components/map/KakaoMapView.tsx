@@ -351,11 +351,11 @@ const KakaoMapView = ({
     return incomingByHospital || countMap;
   }, [activeAmbulanceTrips, incomingByHospital]);
 
-  // Initialize Kakao Maps with retry
+  // Initialize Kakao Maps (single attempt — no retry on domain auth failure)
   useEffect(() => {
     let mounted = true;
 
-    loadKakaoSDKWithRetry(3)
+    loadKakaoSDK()
       .then(() => {
         if (!mounted || !mapContainerRef.current) return;
 
@@ -365,26 +365,23 @@ const KakaoMapView = ({
         const options = {
           center: new window.kakao.maps.LatLng(center[0], center[1]),
           level: leafletToKakaoZoom(zoom),
-          minLevel: 1,  // Most zoomed in (equivalent to Leaflet 17)
-          maxLevel: 13, // Most zoomed out - shows all of Korea including Jeju & Ulleungdo
+          minLevel: 1,
+          maxLevel: 13,
         };
 
         const map = new window.kakao.maps.Map(mapContainerRef.current, options);
         mapRef.current = map;
 
-        // Add click handler to unspiderfy when clicking on map
         window.kakao.maps.event.addListener(map, "click", () => {
           if (spiderfyManagerRef.current?.isSpiderfied()) {
             spiderfyManagerRef.current.unspiderfy();
           }
         });
 
-        // Zoom change handler - unspiderfy and notify parent
         window.kakao.maps.event.addListener(map, "zoom_changed", () => {
           if (spiderfyManagerRef.current?.isSpiderfied()) {
             spiderfyManagerRef.current.unspiderfy();
           }
-          // Notify parent of zoom change (convert Kakao zoom to Leaflet zoom)
           const currentKakaoZoom = map.getLevel();
           const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
           onZoomChange?.(leafletZoom);
@@ -393,7 +390,7 @@ const KakaoMapView = ({
         setIsLoaded(true);
       })
       .catch((error) => {
-        console.error("Kakao Maps error:", error);
+        console.error("[KakaoMap] Init failed:", error.message);
         if (mounted) {
           setLoadError(error.message);
           onLoadError?.(error.message);
