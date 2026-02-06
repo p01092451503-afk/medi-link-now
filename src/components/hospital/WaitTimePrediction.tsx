@@ -7,24 +7,28 @@ interface WaitTimePredictionProps {
 
 // Estimate wait time based on available beds and hospital ID for variation
 const estimateWaitTime = (hospitalId: number, totalBeds: number): number => {
-  // Base wait time inversely proportional to available beds
-  if (totalBeds >= 20) {
-    // Many beds available — short wait (0.5~1h)
-    return hospitalId % 2 === 0 ? 0.5 : 1.0;
+  if (totalBeds >= 30) {
+    // Very spacious — minimal wait (10~20min)
+    return hospitalId % 2 === 0 ? 10 / 60 : 20 / 60;
   }
-  if (totalBeds >= 10) {
-    // Good availability — moderate-short wait (0.5~1.5h)
+  if (totalBeds >= 15) {
+    // Plenty of beds — short wait (15~30min)
+    const options = [15 / 60, 20 / 60, 30 / 60];
+    return options[hospitalId % options.length];
+  }
+  if (totalBeds >= 8) {
+    // Good availability — moderate-short wait (20~45min)
+    const options = [20 / 60, 30 / 60, 45 / 60];
+    return options[hospitalId % options.length];
+  }
+  if (totalBeds >= 4) {
+    // Some beds — moderate wait (30min~1.5h)
     const options = [0.5, 1.0, 1.5];
     return options[hospitalId % options.length];
   }
-  if (totalBeds >= 5) {
-    // Some beds — moderate wait (1~2h)
-    const options = [1.0, 1.5, 2.0];
-    return options[hospitalId % options.length];
-  }
   if (totalBeds >= 1) {
-    // Very few beds — longer wait (2~3h)
-    const options = [2.0, 2.5, 3.0];
+    // Very few beds — longer wait (1.5~2.5h)
+    const options = [1.5, 2.0, 2.5];
     return options[hospitalId % options.length];
   }
   // No beds — very long wait (3~4h+)
