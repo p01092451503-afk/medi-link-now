@@ -77,6 +77,7 @@ const MapPage = () => {
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
   const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao, setMapProvider } = useMapProvider();
+  const [kakaoFailed, setKakaoFailed] = useState(false);
   const locationButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -500,8 +501,8 @@ const MapPage = () => {
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
-        {/* Map View - Kakao or Leaflet */}
-        {isKakao ? (
+        {/* Map View - Kakao or Leaflet (auto-fallback on Kakao failure) */}
+        {isKakao && !kakaoFailed ? (
           <KakaoMapView
             hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
             onHospitalClick={handleHospitalClick}
@@ -516,6 +517,15 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             onZoomChange={setMapZoom}
+            onLoadError={(error) => {
+              console.warn("[MapPage] 카카오맵 로드 실패, Leaflet으로 전환:", error);
+              setKakaoFailed(true);
+              toast({
+                title: "카카오맵 로드 실패",
+                description: "기본 지도(Leaflet)로 자동 전환되었습니다.",
+                duration: 3000,
+              });
+            }}
           />
         ) : (
           <ClusteredMapView

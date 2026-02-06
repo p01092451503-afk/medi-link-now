@@ -31,6 +31,7 @@ interface KakaoMapViewProps {
   onZoomChange?: (zoom: number) => void;
   nightCareHospitals?: HospitalDetailData[];
   onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
+  onLoadError?: (error: string) => void;
 }
 
 // Get marker colors based on emergency grade
@@ -247,6 +248,7 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
+  onLoadError,
 }: KakaoMapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -463,6 +465,7 @@ const KakaoMapView = ({
         console.error("Kakao Maps error:", error);
         if (mounted) {
           setLoadError(error.message);
+          onLoadError?.(error.message);
         }
       });
 
