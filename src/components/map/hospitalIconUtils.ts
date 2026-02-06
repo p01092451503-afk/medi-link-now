@@ -412,7 +412,7 @@ export const createHospitalIcon = (
           ${rejectionBorderStyle}
         ">
           <span style="font-weight: 800; font-size: 18px; line-height: 1;">${beds}</span>
-          ${isMoonlightMode ? moonlightBadge : traumaBadge}
+          ${isPediatricSOS ? pediatricSOSBadge : isMoonlightMode ? moonlightBadge : traumaBadge}
           ${warningCountBadge}
           ${highTrafficBadge}
           ${incomingBadge}
