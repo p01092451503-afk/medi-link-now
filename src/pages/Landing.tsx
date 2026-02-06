@@ -161,7 +161,7 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-10"
         >
           <h2 className="text-[1.75rem] leading-tight font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight">
             응급상황,<br />
