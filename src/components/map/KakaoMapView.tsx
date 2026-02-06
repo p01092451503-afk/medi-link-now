@@ -617,8 +617,6 @@ const KakaoMapView = ({
           gradeLabel.style.opacity = "0";
           gradeLabel.style.visibility = "hidden";
         }
-        // Hide distance line
-        hideDistanceLine();
       });
 
       overlay.setMap(mapRef.current);
