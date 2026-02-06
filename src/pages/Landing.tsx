@@ -328,9 +328,9 @@ const Landing = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="w-full mb-8"
+          className="w-full mb-12"
         >
-         <div className="flex flex-wrap justify-center gap-2 max-w-sm mx-auto">
+         <div className="flex flex-wrap justify-center gap-2.5 max-w-sm mx-auto">
             {/* 전국 응급실 */}
             <Popover>
               <PopoverTrigger asChild>
