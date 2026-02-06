@@ -40,10 +40,10 @@ const App = () => (
               <BrowserRouter>
                 <ScrollToTop />
                 <Routes>
-                  <Route path="/" element={<OnboardingPage />} />
-                  <Route path="/onboarding" element={<OnboardingPage />} />
+                  <Route path="/" element={<Landing />} />
                   <Route path="/intro" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
+                  {/* <Route path="/onboarding" element={<OnboardingPage />} /> */}
                   <Route path="/guardian" element={<GuardianLanding />} />
                   <Route path="/driver-intro" element={<DriverLanding />} />
                   <Route path="/paramedic" element={<ParamedicLanding />} />
