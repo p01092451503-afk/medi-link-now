@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { Brain, Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Brain, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import {
   Tooltip,
   TooltipContent,
@@ -32,7 +31,6 @@ const StatusIcon = ({ status }: { status: AcceptanceStatus }) => {
 };
 
 const AIAcceptanceBadge = ({ hospitalId, className = '' }: AIAcceptanceBadgeProps) => {
-  const [showDetails, setShowDetails] = useState(false);
   const { data: prediction, isLoading } = useAcceptancePrediction(hospitalId);
 
   const status = prediction 
@@ -77,15 +75,14 @@ const AIAcceptanceBadge = ({ hospitalId, className = '' }: AIAcceptanceBadgeProp
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip open={showDetails} onOpenChange={setShowDetails}>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
         <TooltipTrigger asChild>
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setShowDetails(!showDetails)}
             className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border} cursor-pointer transition-all hover:shadow-md ${className}`}
           >
             <Brain className="w-3.5 h-3.5" />
