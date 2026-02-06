@@ -44,7 +44,6 @@ const PatientTransferRequestModal = ({
 }: PatientTransferRequestModalProps) => {
   const { addRequest } = useTransferRequest();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
     age: "",
