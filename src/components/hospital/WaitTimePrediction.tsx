@@ -2,14 +2,34 @@ import { Clock } from "lucide-react";
 
 interface WaitTimePredictionProps {
   hospitalId: number;
+  totalBeds?: number;
 }
 
-// Mock wait time data based on hospital ID for consistent display
-const getMockWaitTime = (hospitalId: number): number => {
-  // Generate consistent mock values based on hospital ID
-  const seed = hospitalId * 17 + 7;
-  const options = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
-  return options[seed % options.length];
+// Estimate wait time based on available beds and hospital ID for variation
+const estimateWaitTime = (hospitalId: number, totalBeds: number): number => {
+  // Base wait time inversely proportional to available beds
+  if (totalBeds >= 20) {
+    // Many beds available — short wait (0.5~1h)
+    return hospitalId % 2 === 0 ? 0.5 : 1.0;
+  }
+  if (totalBeds >= 10) {
+    // Good availability — moderate-short wait (0.5~1.5h)
+    const options = [0.5, 1.0, 1.5];
+    return options[hospitalId % options.length];
+  }
+  if (totalBeds >= 5) {
+    // Some beds — moderate wait (1~2h)
+    const options = [1.0, 1.5, 2.0];
+    return options[hospitalId % options.length];
+  }
+  if (totalBeds >= 1) {
+    // Very few beds — longer wait (2~3h)
+    const options = [2.0, 2.5, 3.0];
+    return options[hospitalId % options.length];
+  }
+  // No beds — very long wait (3~4h+)
+  const options = [3.0, 3.5, 4.0];
+  return options[hospitalId % options.length];
 };
 
 const getWaitTimeConfig = (hours: number) => {
@@ -22,7 +42,7 @@ const getWaitTimeConfig = (hours: number) => {
       icon: "text-green-500",
     };
   }
-  if (hours <= 3) {
+  if (hours <= 2) {
     return {
       label: "보통",
       color: "text-yellow-600 dark:text-yellow-400",
@@ -40,9 +60,14 @@ const getWaitTimeConfig = (hours: number) => {
   };
 };
 
-const WaitTimePrediction = ({ hospitalId }: WaitTimePredictionProps) => {
-  const waitHours = getMockWaitTime(hospitalId);
+const WaitTimePrediction = ({ hospitalId, totalBeds = 0 }: WaitTimePredictionProps) => {
+  const waitHours = estimateWaitTime(hospitalId, totalBeds);
   const config = getWaitTimeConfig(waitHours);
+
+  // Format display: show minutes for < 1 hour
+  const displayTime = waitHours < 1
+    ? `약 ${Math.round(waitHours * 60)}분`
+    : `약 ${waitHours}시간`;
 
   return (
     <div className={`p-3 rounded-xl ${config.bg} border ${config.border}`}>
@@ -56,7 +81,7 @@ const WaitTimePrediction = ({ hospitalId }: WaitTimePredictionProps) => {
         </span>
       </div>
       <p className={`text-lg font-bold mt-1 ${config.color}`}>
-        약 {waitHours}시간
+        {displayTime}
       </p>
       <p className="text-[10px] text-muted-foreground mt-0.5">
         ※ AI 예측 기반 추정치 (실시간 변동 가능)
