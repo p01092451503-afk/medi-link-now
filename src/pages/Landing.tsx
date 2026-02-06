@@ -540,8 +540,8 @@ const Landing = () => {
              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-xl" />
               
               <div className="flex items-center w-full py-2 px-4">
-                <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 ring-1 ring-blue-200/50 dark:ring-blue-800/50 group-hover:ring-blue-300 dark:group-hover:ring-blue-700 transition-all">
-                  <Users className="w-4.5 h-4.5 text-blue-600" />
+                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 ring-1 ring-blue-200/50 dark:ring-blue-800/50 group-hover:ring-blue-300 dark:group-hover:ring-blue-700 transition-all">
+                   <Users className="w-4.5 h-4.5 text-blue-600" />
                 </div>
                 <div className="text-left flex-1 ml-3">
                   <p className="text-sm font-semibold text-slate-800 dark:text-white tracking-tight">보호자 / 환자</p>
