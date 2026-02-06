@@ -734,7 +734,7 @@ const MapPage = () => {
 
         {/* Filter Chips - Single row horizontal scroll */}
         {!isTransferMode ? (
-          <div className="absolute top-20 left-0 right-0 z-[999] px-4">
+          <div className="absolute top-[5.5rem] left-0 right-0 z-[999] px-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {filterOptions
                 .filter((f) => (f.category === "bed" || f.category === "special") && !f.parent)
