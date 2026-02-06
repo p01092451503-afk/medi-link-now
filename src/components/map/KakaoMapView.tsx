@@ -704,7 +704,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       nursingMarkersRef.current.push(overlay);
     });
-  }, [nursingHospitals, isLoaded, onNursingHospitalClick, showDistanceLine, hideDistanceLine]);
+  }, [nursingHospitals, isLoaded, onNursingHospitalClick]);
 
   // Update pharmacy markers
   useEffect(() => {
