@@ -571,9 +571,9 @@ const Landing = () => {
               <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300">
                 <Ambulance className="w-8 h-8 text-orange-600 dark:text-orange-400" />
               </div>
-              <div className="text-center">
-                <p className="text-xs font-bold text-slate-700 dark:text-white">구급대원</p>
-                <p className="text-[10px] text-slate-400 dark:text-slate-500">병상 · 거절이력</p>
+              <div className="text-center mt-1">
+                <p className="text-sm font-bold text-slate-900 dark:text-white">구급대원</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">병상 · 거절이력</p>
               </div>
             </motion.button>
           </div>
