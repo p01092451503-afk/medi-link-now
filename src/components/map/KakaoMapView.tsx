@@ -7,6 +7,7 @@ import type { AmbulanceTrip } from "@/hooks/useAmbulanceTrips";
 import type { HospitalDetailData } from "@/hooks/useHospitalDetails";
 import { SpiderfyManager, getMarkerZIndex, findOverlappingGroups } from "./KakaoSpiderfy";
 import { cleanHospitalName } from "@/lib/utils";
+import { useResolvedTheme } from "@/hooks/useResolvedTheme";
 
 declare global {
   interface Window {
@@ -201,6 +202,8 @@ const KakaoMapView = ({
   const spiderfyManagerRef = useRef<SpiderfyManager | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const resolvedTheme = useResolvedTheme();
+  const isDark = resolvedTheme === "dark";
 
 
   // Find overlapping marker groups
@@ -370,6 +373,7 @@ const KakaoMapView = ({
       
       // Create user location marker with custom overlay
       const content = document.createElement("div");
+      content.className = "kakao-user-location-marker";
       content.innerHTML = `
         <div style="
           position: relative;
@@ -900,7 +904,7 @@ const KakaoMapView = ({
       {/* Always render container so ref is available */}
       <div 
         ref={mapContainerRef} 
-        className="absolute inset-0" 
+        className={`absolute inset-0${isDark ? " kakao-map-dark" : ""}`}
         style={{ height: "100vh", width: "100vw" }}
       />
       {/* Loading overlay */}
