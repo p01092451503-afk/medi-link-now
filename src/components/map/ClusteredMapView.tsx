@@ -22,6 +22,13 @@ import { useIncomingAmbulances } from "@/hooks/useIncomingAmbulances";
 import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 import NursingHospitalMarker from "../NursingHospitalMarker";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
+import { useResolvedTheme } from "@/hooks/useResolvedTheme";
+
+// Dark & light tile URLs
+const TILE_LIGHT = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const TILE_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const ATTR_LIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const ATTR_DARK = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
 
 interface ClusteredMapViewProps {
   hospitals: Hospital[];
@@ -424,6 +431,9 @@ const ClusteredMapView = ({
   onNursingHospitalClick,
   onZoomChange,
 }: ClusteredMapViewProps) => {
+  const resolvedTheme = useResolvedTheme();
+  const isDark = resolvedTheme === "dark";
+
   // 이송 중 구급차 데이터 가져오기 (실시간 구독 포함)
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
   // 민간 구급차 트래픽 데이터
@@ -571,8 +581,8 @@ const ClusteredMapView = ({
         minZoom={KOREA_MIN_ZOOM}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={isDark ? ATTR_DARK : ATTR_LIGHT}
+          url={isDark ? TILE_DARK : TILE_LIGHT}
         />
         <KoreaBoundsEnforcer bounds={KOREA_BOUNDS} />
         <MapController 
@@ -747,11 +757,11 @@ const ClusteredMapView = ({
             transform: 'translateX(-50%)',
           }}
         >
-          <div className="bg-white border border-gray-200 shadow-lg rounded-lg px-3 py-2 text-sm text-gray-800">
+          <div className={`${isDark ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-200 text-gray-800'} border shadow-lg rounded-lg px-3 py-2 text-sm`}>
             <div className="flex flex-col items-center gap-0.5">
               <span className="font-semibold">{cleanHospitalName(hoverTooltip.hospital.nameKr)}</span>
               {(hoverTooltip.hospital as any).gradeKoreanName && (
-                <span className="text-xs text-blue-600 font-medium">
+                <span className={`text-xs font-medium ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
                   {(hoverTooltip.hospital as any).gradeKoreanName}
                 </span>
               )}
@@ -762,7 +772,7 @@ const ClusteredMapView = ({
             style={{
               borderLeft: '6px solid transparent',
               borderRight: '6px solid transparent',
-              borderTop: '6px solid white',
+              borderTop: isDark ? '6px solid #1f2937' : '6px solid white',
             }}
           />
         </div>

@@ -151,6 +151,29 @@
   z-index: 0;
 }
 
+/* Dark mode Leaflet overrides */
+.dark .leaflet-container {
+  background: #1a1a2e;
+}
+
+.dark .leaflet-control-attribution {
+  background: rgba(30, 30, 50, 0.8) !important;
+  color: #94a3b8 !important;
+}
+
+.dark .leaflet-control-attribution a {
+  color: #60a5fa !important;
+}
+
+.dark .leaflet-popup-content-wrapper {
+  background: #1f2937;
+  color: #f3f4f6;
+}
+
+.dark .leaflet-popup-tip {
+  background: #1f2937;
+}
+
 /* Custom marker styles */
 .hospital-marker {
   @apply flex items-center justify-center rounded-full border-2 border-white shadow-lg;

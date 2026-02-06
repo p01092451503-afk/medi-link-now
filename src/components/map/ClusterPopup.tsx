@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { X, MapPin, Phone } from "lucide-react";
 import { Hospital, getHospitalStatus, calculateDistance } from "@/data/hospitals";
 import { cleanHospitalName } from "@/lib/utils";
+import { useResolvedTheme } from "@/hooks/useResolvedTheme";
 
 interface ClusterPopupProps {
   hospitals: Hospital[];
@@ -18,6 +19,9 @@ const ClusterPopup = ({
   onClose,
   position,
 }: ClusterPopupProps) => {
+  const resolvedTheme = useResolvedTheme();
+  const isDark = resolvedTheme === "dark";
+
   // Sort hospitals by distance if user location is available
   const sortedHospitals = userLocation
     ? [...hospitals].sort((a, b) => {
@@ -55,14 +59,12 @@ const ClusterPopup = ({
     let left = position.x - popupWidth / 2;
     let top = position.y + 10;
 
-    // Ensure popup stays within viewport horizontally
     if (left < padding) {
       left = padding;
     } else if (left + popupWidth > window.innerWidth - padding) {
       left = window.innerWidth - popupWidth - padding;
     }
 
-    // If popup would go below viewport, show above click point
     if (top + popupMaxHeight > window.innerHeight - padding) {
       top = position.y - popupMaxHeight - 10;
     }
@@ -78,34 +80,41 @@ const ClusterPopup = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.15 }}
-      className="fixed z-[2000] bg-white text-gray-900 rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+      className={`fixed z-[2000] rounded-xl shadow-2xl border overflow-hidden ${
+        isDark
+          ? 'bg-gray-800 text-gray-100 border-gray-700'
+          : 'bg-white text-gray-900 border-gray-200'
+      }`}
       style={{
         left: popupStyle.left,
         top: popupStyle.top,
         width: 320,
         maxHeight: 400,
-        color: '#111827', /* Force dark text — override any inherited Leaflet styles */
       }}
     >
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+      <div className={`sticky top-0 border-b px-4 py-3 flex items-center justify-between ${
+        isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+      }`}>
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary" />
-          <span className="font-semibold text-sm text-gray-900">
+          <span className={`font-semibold text-sm ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
             {hospitals.length}개 병원
           </span>
         </div>
         <button
           onClick={onClose}
-          className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+          className={`p-1.5 rounded-full transition-colors ${
+            isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+          }`}
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className={`w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
         </button>
       </div>
 
       {/* Hospital List */}
       <div className="overflow-y-auto max-h-[320px]">
-        {sortedHospitals.map((hospital, index) => {
+        {sortedHospitals.map((hospital) => {
           const distance = userLocation
             ? calculateDistance(
                 userLocation[0],
@@ -122,7 +131,11 @@ const ClusterPopup = ({
                 onHospitalClick(hospital);
                 onClose();
               }}
-              className="w-full px-4 py-3 flex items-start gap-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 last:border-b-0"
+              className={`w-full px-4 py-3 flex items-start gap-3 transition-colors text-left border-b last:border-b-0 ${
+                isDark
+                  ? 'hover:bg-gray-700 border-gray-700/50'
+                  : 'hover:bg-gray-50 border-gray-50'
+              }`}
             >
               {/* Status indicator */}
               <div
@@ -131,18 +144,20 @@ const ClusterPopup = ({
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm text-gray-900 truncate">
+                  <span className={`font-semibold text-sm truncate ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
                     {cleanHospitalName(hospital.name)}
                   </span>
                   {(hospital.beds?.pediatric ?? 0) > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full whitespace-nowrap">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full whitespace-nowrap ${
+                      isDark ? 'bg-indigo-900/50 text-indigo-300' : 'bg-indigo-100 text-indigo-700'
+                    }`}>
                       🌙 야간소아
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                  <span className="font-semibold text-gray-700">
+                <div className={`flex items-center gap-2 mt-1 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <span className={`font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                     {getTotalBeds(hospital)}석
                   </span>
                   {distance !== null && (
@@ -154,7 +169,7 @@ const ClusterPopup = ({
                   {hospital.emergencyGrade && (
                     <>
                       <span>•</span>
-                      <span className="text-gray-400">
+                      <span className={isDark ? 'text-gray-500' : 'text-gray-400'}>
                         {hospital.emergencyGrade === "regional_center"
                           ? "권역"
                           : hospital.emergencyGrade === "local_center"

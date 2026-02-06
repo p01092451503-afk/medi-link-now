@@ -9,6 +9,12 @@ import PharmacyMarker from "./PharmacyMarker";
 import type { LiveReport } from "./LiveReportFAB";
 import type { DriverPresence } from "@/hooks/useDriverPresence";
 import type { HolidayPharmacy } from "@/hooks/useHolidayPharmacies";
+import { useResolvedTheme } from "@/hooks/useResolvedTheme";
+
+const TILE_LIGHT = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const TILE_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const ATTR_LIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const ATTR_DARK = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>';
 
 interface MapViewProps {
   hospitals: Hospital[];
@@ -182,6 +188,9 @@ const MapView = ({
   onCallDriver,
   holidayPharmacies = []
 }: MapViewProps) => {
+  const resolvedTheme = useResolvedTheme();
+  const isDark = resolvedTheme === "dark";
+
   return (
     <div className="absolute inset-0" style={{ height: '100vh', width: '100vw' }}>
       <MapContainer
@@ -195,8 +204,8 @@ const MapView = ({
         minZoom={0}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={isDark ? ATTR_DARK : ATTR_LIGHT}
+          url={isDark ? TILE_DARK : TILE_LIGHT}
         />
         <KoreaBoundsEnforcer bounds={KOREA_BOUNDS} />
         <MapCenterHandler center={center} zoom={zoom} />
