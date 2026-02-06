@@ -625,7 +625,6 @@ const ClusteredMapView = ({
                   },
                   mouseout: () => {
                     setHoverTooltip(null);
-                    setHoveredTarget(null);
                   },
                   mousemove: (e) => {
                     const { clientX, clientY } = e.originalEvent as MouseEvent;
