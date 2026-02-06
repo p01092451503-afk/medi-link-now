@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import mark119 from "@/assets/icons/119-mark.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle, Heart } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
