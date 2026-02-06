@@ -220,9 +220,9 @@ const createMarkerIcon = (
       </div>`
     : "";
   
-  // Status indicator badge (green = available, red = full)
+  // Status indicator badge (green = 여유, red = 혼잡)
   const statusColor = beds > 0 ? '#10B981' : '#EF4444';
-  const statusLabel = beds > 0 ? '입원가능' : '만석';
+  const statusLabel = beds > 0 ? '여유' : '혼잡';
   const statusBadge = `<div style="
       position: absolute;
       bottom: -8px;
