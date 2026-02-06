@@ -750,9 +750,10 @@ const MapPage = () => {
 
            {/* 119 Stats Button */}
            {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (
-             <DemandForecastTicker 
-               regionId={activeRegion !== "all" ? activeRegion : undefined}
-             />
+              <DemandForecastTicker 
+                regionId={activeRegion !== "all" ? activeRegion : undefined}
+                userDistrictName={userDistrictName}
+              />
            )}
           </div>
         </header>
