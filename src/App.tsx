@@ -41,6 +41,7 @@ const App = () => (
                 <ScrollToTop />
                 <Routes>
                   <Route path="/" element={<OnboardingPage />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="/intro" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/guardian" element={<GuardianLanding />} />
