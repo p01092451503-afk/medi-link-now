@@ -47,6 +47,7 @@ const App = () => (
                   <Route path="/login" element={<Login />} />
                   <Route path="/driver" element={<DriverDashboard />} />
                   <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/install" element={<InstallPage />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/privacy" element={<PrivacyPage />} />
