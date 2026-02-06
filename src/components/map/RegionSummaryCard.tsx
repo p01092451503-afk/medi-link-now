@@ -180,55 +180,55 @@ const RegionSummaryCard = ({ hospitals, regionName }: RegionSummaryCardProps) =>
 
         {/* Status Indicator - Always visible */}
         <fieldset 
-          className="flex items-center gap-1 sm:gap-1.5 md:gap-3 flex-shrink-0 border-0 p-0 m-0 pr-1"
+          className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-shrink-0 border-0 p-0 m-0 pr-1"
           role="group"
           aria-label="병원 혼잡도 현황"
         >
           <legend className="sr-only">병원 혼잡도 현황</legend>
           
           <div 
-            className="flex items-center gap-0.5"
+            className="flex items-center gap-1"
             role="listitem"
             aria-label={`여유 있는 병원 ${summary.availableCount}개`}
           >
             <span 
-              className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 rounded-full bg-green-500 flex-shrink-0" 
+              className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 rounded-full bg-green-500 flex-shrink-0" 
               aria-hidden="true"
             />
-            <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground" aria-hidden="true">여유</span>
-            <span className="text-[10px] sm:text-xs md:text-sm font-medium text-foreground" aria-hidden="true">
+            <span className="text-xs sm:text-sm md:text-base text-muted-foreground font-medium" aria-hidden="true">여유</span>
+            <span className="text-xs sm:text-sm md:text-base font-bold text-foreground" aria-hidden="true">
               {summary.availableCount}
             </span>
             <span className="sr-only">여유 있는 병원 {summary.availableCount}개</span>
           </div>
           
           <div 
-            className="flex items-center gap-0.5"
+            className="flex items-center gap-1"
             role="listitem"
             aria-label={`보통 혼잡도 병원 ${summary.limitedCount}개`}
           >
             <span 
-              className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 rounded-full bg-yellow-500 flex-shrink-0" 
+              className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 rounded-full bg-yellow-500 flex-shrink-0" 
               aria-hidden="true"
             />
-            <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground" aria-hidden="true">보통</span>
-            <span className="text-[10px] sm:text-xs md:text-sm font-medium text-foreground" aria-hidden="true">
+            <span className="text-xs sm:text-sm md:text-base text-muted-foreground font-medium" aria-hidden="true">보통</span>
+            <span className="text-xs sm:text-sm md:text-base font-bold text-foreground" aria-hidden="true">
               {summary.limitedCount}
             </span>
             <span className="sr-only">보통 혼잡도 병원 {summary.limitedCount}개</span>
           </div>
           
           <div 
-            className="flex items-center gap-0.5"
+            className="flex items-center gap-1"
             role="listitem"
             aria-label={`혼잡한 병원 ${summary.fullCount}개`}
           >
             <span 
-              className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 rounded-full bg-red-500 flex-shrink-0" 
+              className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 rounded-full bg-red-500 flex-shrink-0" 
               aria-hidden="true"
             />
-            <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground" aria-hidden="true">혼잡</span>
-            <span className="text-[10px] sm:text-xs md:text-sm font-medium text-foreground" aria-hidden="true">
+            <span className="text-xs sm:text-sm md:text-base text-muted-foreground font-medium" aria-hidden="true">혼잡</span>
+            <span className="text-xs sm:text-sm md:text-base font-bold text-foreground" aria-hidden="true">
               {summary.fullCount}
             </span>
             <span className="sr-only">혼잡한 병원 {summary.fullCount}개</span>
