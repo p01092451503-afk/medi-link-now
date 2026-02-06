@@ -56,6 +56,13 @@ const getMoonlightColors = () => ({
   text: "#92400E",
 });
 
+// Pediatric SOS colors - baby blue
+const getPediatricSOSColors = () => ({
+  bg: "#BAE6FD",
+  border: "#0EA5E9",
+  text: "#0C4A6E",
+});
+
 // Get grade label for badge
 const getGradeLabel = (emergencyGrade?: string | null): string => {
   switch (emergencyGrade) {
