@@ -519,7 +519,7 @@ const MapPage = () => {
             activeFilter={activeFilter}
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
-            isMoonlightMode={activeFilter === "moonlight"}
+            isMoonlightMode={false}
             isPediatricSOS={isPediatricSOS}
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
