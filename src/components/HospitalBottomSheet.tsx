@@ -572,7 +572,19 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
             onClose={() => setShowTransferModal(false)}
             hospitalId={hospital.id}
             hospitalName={cleanHospitalName(hospital.nameKr)}
-            onRequestSent={() => {}}
+            onRequestSent={(requestId: string) => {
+              setLastRequestId(requestId);
+              setShowResultModal(true);
+            }}
+          />
+
+          {/* Transfer Result Modal */}
+          <TransferResultModal
+            isOpen={showResultModal}
+            onClose={() => setShowResultModal(false)}
+            hospitalId={hospital.id}
+            hospitalName={cleanHospitalName(hospital.nameKr)}
+            requestId={lastRequestId}
           />
 
         </>
