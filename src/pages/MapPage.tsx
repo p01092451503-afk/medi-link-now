@@ -1,6 +1,9 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
+import OnboardingModal from "@/components/OnboardingModal";
+import TrustBadge from "@/components/TrustBadge";
+import SplashScreen from "@/components/SplashScreen";
 import { useMapProvider } from "@/hooks/useMapProvider";
 import KakaoMapView from "@/components/map/KakaoMapView";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -98,6 +101,8 @@ const MapPage = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
   const [isPediatricSOS, setIsPediatricSOS] = useState(false);
+
+  const [showSplash, setShowSplash] = useState(true);
 
   // Auto-set mode based on URL params
   useEffect(() => {
@@ -500,11 +505,20 @@ const MapPage = () => {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col">
+      {/* Splash Screen */}
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+
+      {/* First-time Onboarding Modal */}
+      <OnboardingModal />
+
       {/* Location Coachmark */}
       <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
 
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
+        {/* Trust Badge */}
+        <TrustBadge />
+
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
@@ -694,7 +708,7 @@ const MapPage = () => {
         {/* Data Source removed - update time moved to RadiusChips */}
 
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
+        <header className="absolute top-5 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
           <div className="flex items-center gap-3 min-w-max">
             <button
               onClick={() => navigate("/")}
@@ -720,7 +734,7 @@ const MapPage = () => {
 
         {/* Filter Chips - Single row horizontal scroll */}
         {!isTransferMode ? (
-          <div className="absolute top-20 left-0 right-0 z-[999] px-4">
+          <div className="absolute top-[5.5rem] left-0 right-0 z-[999] px-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {filterOptions
                 .filter((f) => (f.category === "bed" || f.category === "special") && !f.parent)
