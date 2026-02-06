@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
 import FamilyPage from "./pages/FamilyPage";
 import AdminPage from "./pages/AdminPage";
+import AdminLogin from "./pages/AdminLogin";
 import InstallPage from "./pages/InstallPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
