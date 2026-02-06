@@ -538,7 +538,7 @@ const Landing = () => {
               className="flex flex-col items-center gap-2 group"
             >
               <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300">
-                <Heart className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <Locate className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">보호자 / 환자</p>
