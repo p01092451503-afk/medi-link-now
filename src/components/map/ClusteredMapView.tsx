@@ -601,7 +601,8 @@ const ClusteredMapView = ({
               rejectionAlert,
               incomingCount,
               highTraffic,
-              privateTrafficCount
+              privateTrafficCount,
+              isPediatricSOS
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
