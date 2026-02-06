@@ -7,6 +7,7 @@ const STORAGE_KEY = "finder-has-visited";
 
 interface OnboardingModalProps {
   forceOpen?: boolean;
+  onComplete?: () => void;
 }
 
 const slides = [
