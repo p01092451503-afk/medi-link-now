@@ -465,6 +465,7 @@ const KakaoMapView = ({
         console.error("Kakao Maps error:", error);
         if (mounted) {
           setLoadError(error.message);
+          onLoadError?.(error.message);
         }
       });
 
