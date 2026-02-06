@@ -211,7 +211,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
       className="space-y-6"
     >
       {/* Today's Summary */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-4 text-white">
+      <div className="bg-gradient-to-br from-primary/60 to-primary/40 rounded-2xl p-4 text-white">
         <p className="text-xs opacity-80 mb-1">오늘의 수입</p>
         <p className="text-2xl font-bold mb-2">₩{todayRevenue.toLocaleString()}</p>
         <div className="flex items-center gap-3 text-xs">
