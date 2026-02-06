@@ -32,6 +32,7 @@ interface KakaoMapViewProps {
   nightCareHospitals?: HospitalDetailData[];
   onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
   onLoadError?: (error: string) => void;
+  isPediatricSOS?: boolean;
 }
 
 // Get marker colors based on emergency grade
