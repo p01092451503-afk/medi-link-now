@@ -640,7 +640,7 @@ const KakaoMapView = ({
       overlay.setMap(mapRef.current);
       markersRef.current.push(overlay);
     });
-  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick]);
+  }, [hospitals, isLoaded, onHospitalClick, isMoonlightMode, isPediatricSOS, activeFilter, incomingCountMap, isInOverlappingGroup, overlappingGroups, handleSpiderfyClick]);
 
   // Update nursing hospital markers
   useEffect(() => {
