@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback, useState, useRef } from "react";
-import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup, useMapEvents, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Circle, CircleMarker, Popup, useMapEvents, Marker, Polyline } from "react-leaflet";
 import L from "leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { AnimatePresence } from "framer-motion";
@@ -271,6 +271,61 @@ const RadiusCircle = ({ center, radius }: { center: [number, number]; radius: nu
   );
 };
 
+// Distance measurement line - shown on marker hover (matches Kakao behavior)
+const DistanceLine = ({ 
+  from, 
+  to,
+}: { 
+  from: [number, number]; 
+  to: [number, number]; 
+}) => {
+  const dist = calculateDistance(from[0], from[1], to[0], to[1]);
+  const distanceText = dist < 1 
+    ? `${Math.round(dist * 1000)}m` 
+    : `${dist.toFixed(1)}km`;
+  
+  const midLat = (from[0] + to[0]) / 2;
+  const midLng = (from[1] + to[1]) / 2;
+  
+  const labelIcon = L.divIcon({
+    className: "distance-label-icon",
+    html: `
+      <div style="
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
+        white-space: nowrap;
+        pointer-events: none;
+      ">📏 ${distanceText}</div>
+    `,
+    iconSize: [120, 36],
+    iconAnchor: [60, 18],
+  });
+  
+  return (
+    <>
+      <Polyline 
+        positions={[from, to]}
+        pathOptions={{
+          color: "#3B82F6",
+          weight: 3,
+          opacity: 0.8,
+          dashArray: "8, 8",
+        }}
+      />
+      <Marker 
+        position={[midLat, midLng]} 
+        icon={labelIcon}
+        interactive={false}
+      />
+    </>
+  );
+};
+
 type KoreaBoundsLiteral = [L.LatLngTuple, L.LatLngTuple];
 
 // South Korea bounds (includes Dokdo at ~131.87° E)
@@ -460,6 +515,9 @@ const ClusteredMapView = ({
     position: { x: number; y: number };
   } | null>(null);
 
+  // Distance line target position (for hover - matches Kakao behavior)
+  const [hoveredTarget, setHoveredTarget] = useState<[number, number] | null>(null);
+
   // Get hospitals from cluster markers
   const getHospitalsFromCluster = useCallback((cluster: any): Hospital[] => {
     const markers = cluster.getAllChildMarkers();
@@ -522,7 +580,7 @@ const ClusteredMapView = ({
           zoom={zoom} 
           hospitals={hospitals}
           onBoundsChange={onBoundsChange}
-          onClearTooltip={() => setHoverTooltip(null)}
+          onClearTooltip={() => { setHoverTooltip(null); setHoveredTarget(null); }}
           onZoomChange={onZoomChange}
         />
 
@@ -600,7 +658,8 @@ const ClusteredMapView = ({
                 opacity={opacity}
                 eventHandlers={{
                   click: () => {
-                    setHoverTooltip(null); // Clear tooltip on click
+                    setHoverTooltip(null);
+                    setHoveredTarget(null);
                     onHospitalClick(hospital);
                   },
                   mouseover: (e) => {
@@ -609,12 +668,13 @@ const ClusteredMapView = ({
                       hospital: { ...hospital, gradeKoreanName } as any,
                       position: { x: clientX, y: clientY },
                     });
+                    setHoveredTarget([hospital.lat, hospital.lng]);
                   },
                   mouseout: () => {
                     setHoverTooltip(null);
+                    setHoveredTarget(null);
                   },
                   mousemove: (e) => {
-                    // Update position as mouse moves over marker
                     const { clientX, clientY } = e.originalEvent as MouseEvent;
                     setHoverTooltip((prev) => prev ? {
                       ...prev,
@@ -661,6 +721,8 @@ const ClusteredMapView = ({
             key={`nursing-${hospital.id}`}
             hospital={hospital}
             onClick={onNursingHospitalClick}
+            onMouseEnter={(lat, lng) => setHoveredTarget([lat, lng])}
+            onMouseLeave={() => setHoveredTarget(null)}
           />
         ))}
 
@@ -668,6 +730,11 @@ const ClusteredMapView = ({
         {/* {activeAmbulanceTrips.map((trip) => (
           <AmbulanceTripMarker key={`trip-${trip.id}`} trip={trip} />
         ))} */}
+
+        {/* Distance measurement line on hover */}
+        {userLocation && hoveredTarget && (
+          <DistanceLine from={userLocation} to={hoveredTarget} />
+        )}
       </MapContainer>
 
       {/* Hospital Hover Tooltip */}

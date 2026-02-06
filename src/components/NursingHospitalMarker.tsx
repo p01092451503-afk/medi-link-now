@@ -5,6 +5,8 @@ import { NursingHospital } from "@/hooks/useNursingHospitals";
 interface NursingHospitalMarkerProps {
   hospital: NursingHospital;
   onClick?: (hospital: NursingHospital) => void;
+  onMouseEnter?: (lat: number, lng: number) => void;
+  onMouseLeave?: () => void;
 }
 
 const createNursingMarkerIcon = () => {
@@ -62,7 +64,7 @@ const createNursingMarkerIcon = () => {
   });
 };
 
-const NursingHospitalMarker = ({ hospital, onClick }: NursingHospitalMarkerProps) => {
+const NursingHospitalMarker = ({ hospital, onClick, onMouseEnter, onMouseLeave }: NursingHospitalMarkerProps) => {
   const icon = createNursingMarkerIcon();
 
   return (
@@ -71,6 +73,8 @@ const NursingHospitalMarker = ({ hospital, onClick }: NursingHospitalMarkerProps
       icon={icon}
       eventHandlers={{
         click: () => onClick?.(hospital),
+        mouseover: () => onMouseEnter?.(hospital.lat, hospital.lng),
+        mouseout: () => onMouseLeave?.(),
       }}
     >
       <Tooltip 

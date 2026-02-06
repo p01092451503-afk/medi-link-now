@@ -302,7 +302,7 @@ export const createHospitalIcon = (
     : "";
 
   const gradeBadge = (gradeLabel && !isMoonlightMode)
-    ? `<div style="
+    ? `<div class="grade-label-hover" style="
         position: absolute;
         bottom: -8px;
         left: 50%;
@@ -315,6 +315,9 @@ export const createHospitalIcon = (
         border-radius: 4px;
         white-space: nowrap;
         box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s, visibility 0.2s;
       ">${gradeLabel}</div>`
     : "";
 
@@ -340,6 +343,14 @@ export const createHospitalIcon = (
             transform: translateX(-50%) translateY(-6px);
           }
         }
+        .marker-container:hover .marker-circle-inner {
+          transform: scale(1.15);
+          box-shadow: 0 6px 16px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.2) !important;
+        }
+        .marker-container:hover .grade-label-hover {
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
       </style>
       <div class="marker-container" style="
         position: relative;
@@ -350,20 +361,21 @@ export const createHospitalIcon = (
       ">
         ${floatingTrafficBadge}
         ${rejectionBadge}
-        <div style="
+        <div class="marker-circle-inner" style="
           position: relative;
           width: 42px;
           height: 42px;
           background: ${color.bg};
-          border: 2px solid ${color.border};
+          border: 3px solid white;
           border-radius: 50%;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           color: ${color.text};
-          box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15);
           cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
           ${rejectionBorderStyle}
         ">
           <span style="font-weight: 800; font-size: 18px; line-height: 1;">${beds}</span>
@@ -377,7 +389,7 @@ export const createHospitalIcon = (
           height: 0;
           border-left: 7px solid transparent;
           border-right: 7px solid transparent;
-          border-top: 8px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : color.border};
+          border-top: 8px solid ${hasRejectionAlert ? (isCritical ? '#DC2626' : '#F97316') : 'white'};
           margin-top: -2px;
         "></div>
         ${gradeBadge}
