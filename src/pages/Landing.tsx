@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import mark119 from "@/assets/icons/119-mark.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle, Heart } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
@@ -569,7 +570,7 @@ const Landing = () => {
               className="flex flex-col items-center gap-2 group"
             >
               <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300">
-                <span className="text-xl font-extrabold text-orange-600 dark:text-orange-400">119</span>
+                <img src={mark119} alt="119" className="w-10 h-10 object-contain" />
               </div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">구급대원</p>
