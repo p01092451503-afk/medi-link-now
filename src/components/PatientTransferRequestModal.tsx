@@ -20,7 +20,7 @@ interface PatientTransferRequestModalProps {
   onClose: () => void;
   hospitalId: number;
   hospitalName: string;
-  onRequestSent: () => void;
+  onRequestSent: (requestId: string) => void;
 }
 
 const SYMPTOM_OPTIONS = [
