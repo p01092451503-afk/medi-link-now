@@ -673,8 +673,6 @@ const ClusteredMapView = ({
             key={`nursing-${hospital.id}`}
             hospital={hospital}
             onClick={onNursingHospitalClick}
-            onMouseEnter={(lat, lng) => setHoveredTarget([lat, lng])}
-            onMouseLeave={() => setHoveredTarget(null)}
           />
         ))}
 
