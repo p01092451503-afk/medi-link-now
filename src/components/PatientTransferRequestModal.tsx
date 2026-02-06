@@ -162,7 +162,7 @@ const PatientTransferRequestModal = ({
                       <SelectTrigger className="h-10">
                         <SelectValue placeholder="선택" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[1200]">
                         <SelectItem value="male">남성</SelectItem>
                         <SelectItem value="female">여성</SelectItem>
                       </SelectContent>
@@ -179,7 +179,7 @@ const PatientTransferRequestModal = ({
                     <SelectTrigger className="h-10">
                       <SelectValue placeholder="주증상 선택" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[1200]">
                       {SYMPTOM_OPTIONS.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
