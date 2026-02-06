@@ -313,6 +313,27 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
+  // Pediatric SOS badge
+  const pediatricSOSBadge = isPediatricSOS
+    ? `<div style="
+        position: absolute;
+        top: -12px;
+        left: -12px;
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%);
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5);
+        z-index: 10;
+      ">
+        <span style="font-size: 14px;">👶</span>
+      </div>`
+    : "";
+
   const gradeBadge = (gradeLabel && !isMoonlightMode)
     ? `<div class="grade-label-hover" style="
         position: absolute;
