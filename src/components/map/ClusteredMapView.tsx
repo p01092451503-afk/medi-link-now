@@ -534,7 +534,7 @@ const ClusteredMapView = ({
           zoom={zoom} 
           hospitals={hospitals}
           onBoundsChange={onBoundsChange}
-          onClearTooltip={() => { setHoverTooltip(null); setHoveredTarget(null); }}
+          onClearTooltip={() => { setHoverTooltip(null); }}
           onZoomChange={onZoomChange}
         />
 
