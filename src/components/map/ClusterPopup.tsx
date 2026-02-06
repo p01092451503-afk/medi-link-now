@@ -101,13 +101,13 @@ const ClusterPopup = ({
           <span className={`font-semibold text-sm ${isDark ? "text-gray-100" : "text-gray-900"}`}>
             {hospitals.length}개 병원
           </span>
-          <div className="flex items-center gap-1.5 ml-1">
-            <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+          <div className="flex items-center gap-2.5 ml-2">
+            <span className="flex items-center gap-1.5 text-xl font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="w-4 h-4 rounded-full bg-emerald-500 inline-block" />
               {availableCount}
             </span>
-            <span className="flex items-center gap-1 text-[10px] font-semibold text-red-600 dark:text-red-400">
-              <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+            <span className="flex items-center gap-1.5 text-xl font-bold text-red-600 dark:text-red-400">
+              <span className="w-4 h-4 rounded-full bg-red-500 inline-block" />
               {unavailableCount}
             </span>
           </div>
