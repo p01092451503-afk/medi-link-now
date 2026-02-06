@@ -31,6 +31,7 @@ interface KakaoMapViewProps {
   onZoomChange?: (zoom: number) => void;
   nightCareHospitals?: HospitalDetailData[];
   onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
+  onLoadError?: (error: string) => void;
 }
 
 // Get marker colors based on emergency grade
