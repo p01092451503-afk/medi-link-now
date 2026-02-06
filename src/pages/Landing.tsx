@@ -559,7 +559,7 @@ const Landing = () => {
              className="w-full relative overflow-hidden rounded-full bg-violet-50 dark:bg-violet-950/40 border border-violet-200/60 dark:border-violet-900/50 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 group"
             >
              {/* Left accent bar - always visible */}
-             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-xl" />
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-400 to-purple-600 rounded-l-full" />
               
               <div className="flex items-center w-full py-2 px-4">
                 <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center shrink-0 ring-1 ring-violet-200/50 dark:ring-violet-800/50 group-hover:ring-violet-300 dark:group-hover:ring-violet-700 transition-all">
