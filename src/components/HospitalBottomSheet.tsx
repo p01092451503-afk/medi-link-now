@@ -403,7 +403,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
 
               {/* Wait Time Prediction */}
               <div className="mb-5">
-                <WaitTimePrediction hospitalId={hospital.id} />
+                <WaitTimePrediction
+                  hospitalId={hospital.id}
+                  totalBeds={
+                    Math.max(0, hospital.beds?.general || 0) +
+                    Math.max(0, hospital.beds?.pediatric || 0) +
+                    Math.max(0, hospital.beds?.fever || 0)
+                  }
+                />
               </div>
 
               {/* Procedure Availability Section */}
