@@ -581,8 +581,8 @@ const ClusteredMapView = ({
         minZoom={KOREA_MIN_ZOOM}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution={isDark ? ATTR_DARK : ATTR_LIGHT}
+          url={isDark ? TILE_DARK : TILE_LIGHT}
         />
         <KoreaBoundsEnforcer bounds={KOREA_BOUNDS} />
         <MapController 
