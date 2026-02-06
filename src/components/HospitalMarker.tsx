@@ -220,22 +220,26 @@ const createMarkerIcon = (
       </div>`
     : "";
   
-  // 등급 표시 뱃지 (왼쪽 하단) - don't show in moonlight mode
-  const gradeBadge = (gradeLabel && !isMoonlightMode)
-    ? `<div style="
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.75);
-        color: white;
-        font-size: 9px;
-        font-weight: 600;
-        padding: 2px 6px;
-        border-radius: 4px;
-        white-space: nowrap;
-      ">${gradeLabel}</div>`
-    : "";
+  // Status indicator badge (green = available, red = full)
+  const statusColor = beds > 0 ? '#10B981' : '#EF4444';
+  const statusLabel = beds > 0 ? '입원가능' : '만석';
+  const statusBadge = `<div style="
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0,0,0,0.8);
+      padding: 2px 7px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    ">
+      <span style="width: 7px; height: 7px; background: ${statusColor}; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 4px ${statusColor};"></span>
+      <span style="font-size: 9px; font-weight: 700; color: white;">${statusLabel}</span>
+    </div>`;
 
   return L.divIcon({
     className: "custom-marker",
