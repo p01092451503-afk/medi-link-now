@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import DriverDashboard from "./pages/DriverDashboard";
 import FamilyPage from "./pages/FamilyPage";
 import AdminPage from "./pages/AdminPage";
+import AdminLogin from "./pages/AdminLogin";
 import InstallPage from "./pages/InstallPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
@@ -46,6 +47,7 @@ const App = () => (
                   <Route path="/login" element={<Login />} />
                   <Route path="/driver" element={<DriverDashboard />} />
                   <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/install" element={<InstallPage />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/privacy" element={<PrivacyPage />} />
