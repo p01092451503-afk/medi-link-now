@@ -71,5 +71,10 @@ export function cleanHospitalName(name: string): string {
     }
   }
   
+  // If cleaning removed everything, use the parenthesized hospital name as fallback
+  if (!cleaned && fallbackName) {
+    return fallbackName;
+  }
+  
   return cleaned;
 }
