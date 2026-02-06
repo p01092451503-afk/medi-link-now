@@ -140,7 +140,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       className="space-y-4"
     >
       {/* Monthly Total Revenue Card */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-4 text-white">
+      <div className="bg-gradient-to-br from-primary/60 to-primary/40 rounded-2xl p-4 text-white">
         <div className="flex items-center gap-2 mb-1">
           <TrendingUp className="w-4 h-4" />
           <p className="text-xs opacity-80">이번 달 누적 매출</p>
