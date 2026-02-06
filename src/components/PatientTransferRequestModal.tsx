@@ -43,7 +43,7 @@ const PatientTransferRequestModal = ({
   onRequestSent,
 }: PatientTransferRequestModalProps) => {
   const { addRequest } = useTransferRequest();
-  const { incrementTraffic } = usePrivateTraffic();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
