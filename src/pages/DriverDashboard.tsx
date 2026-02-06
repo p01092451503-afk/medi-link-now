@@ -234,11 +234,11 @@ const DriverDashboard = () => {
       <div className="sticky top-[108px] z-40 bg-white dark:bg-slate-900 border-b border-border">
         <div className="flex">
           {[
+            { id: "map", label: "지도", icon: Map, highlight: true },
             { id: "calls", label: "호출", icon: Phone },
             { id: "revenue", label: "수익", icon: DollarSign },
             { id: "log", label: "운행일지", icon: FileText },
-            { id: "map", label: "지도", icon: Map },
-          ].map(({ id, label, icon: Icon }) => (
+          ].map(({ id, label, icon: Icon, highlight }) => (
             <button
               key={id}
               onClick={() => {
@@ -249,12 +249,14 @@ const DriverDashboard = () => {
                 }
               }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
-                activeTab === id
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                highlight
+                  ? "text-primary font-bold border-b-2 border-primary bg-primary/5"
+                  : activeTab === id
+                    ? "text-primary border-b-2 border-primary"
+                    : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className={`w-4 h-4 ${highlight ? "w-5 h-5" : ""}`} />
               {label}
             </button>
           ))}
