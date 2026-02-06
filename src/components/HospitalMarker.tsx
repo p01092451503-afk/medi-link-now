@@ -101,6 +101,13 @@ const getMoonlightColors = () => ({
   unavailable: { bg: "#FDE68A", border: "#D97706", text: "#78350F" },
 });
 
+// Pediatric SOS mode marker colors - baby blue theme
+const getPediatricSOSColors = () => ({
+  available: { bg: "#BAE6FD", border: "#0EA5E9", text: "#0C4A6E" },
+  limited: { bg: "#BAE6FD", border: "#0EA5E9", text: "#0C4A6E" },
+  unavailable: { bg: "#E0F2FE", border: "#38BDF8", text: "#075985" },
+});
+
 const createMarkerIcon = (
   status: "available" | "limited" | "unavailable",
   beds: number,
