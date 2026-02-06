@@ -695,8 +695,6 @@ const KakaoMapView = ({
       content.addEventListener("mouseenter", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
         if (markerDiv) markerDiv.style.transform = "scale(1.15)";
-        // Show distance line from user location
-        showDistanceLine(hospital.lat, hospital.lng);
       });
       content.addEventListener("mouseleave", () => {
         const markerDiv = content.querySelector(".marker-circle") as HTMLElement;
