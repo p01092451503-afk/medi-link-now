@@ -540,9 +540,13 @@ const Landing = () => {
               onClick={() => navigate("/map")}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300">
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2, delay: 1.0, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+                className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-blue-400 dark:group-hover:border-blue-600 transition-all duration-300"
+              >
                 <Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-              </div>
+              </motion.div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">보호자 / 환자</p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">응급실 찾기</p>
@@ -559,9 +563,13 @@ const Landing = () => {
               onClick={() => navigate("/driver-intro")}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-violet-300 dark:border-violet-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-violet-400 dark:group-hover:border-violet-600 transition-all duration-300">
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2, delay: 1.3, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+                className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-violet-300 dark:border-violet-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-violet-400 dark:group-hover:border-violet-600 transition-all duration-300"
+              >
                 <Ambulance className="w-8 h-8 text-violet-600 dark:text-violet-400" />
-              </div>
+              </motion.div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">민간 구급차</p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">전원 · 퇴원 이송</p>
@@ -578,9 +586,13 @@ const Landing = () => {
               onClick={() => navigate("/paramedic")}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300">
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2, delay: 1.6, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+                className="w-20 h-20 rounded-full bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700/50 shadow-sm flex items-center justify-center group-hover:shadow-md group-hover:border-amber-400 dark:group-hover:border-amber-600 transition-all duration-300"
+              >
                 <img src={mark119} alt="119" className="w-[60px] h-[60px] object-contain" />
-              </div>
+              </motion.div>
               <div className="text-center mt-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">구급대원</p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">병상 · 거절이력</p>
