@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
-import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
+import { toast } from "@/hooks/use-toast";
 import { toast } from "@/hooks/use-toast";
 
 interface PatientTransferRequestModalProps {
