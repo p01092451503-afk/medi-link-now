@@ -44,7 +44,7 @@ const App = () => (
                   <Route path="/intro" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   {/* <Route path="/onboarding" element={<OnboardingPage />} /> */}
-                  <Route path="/guardian" element={<GuardianLanding />} />
+                  <Route path="/guardian" element={<Navigate to="/map" replace />} />
                   <Route path="/driver-intro" element={<DriverLanding />} />
                   <Route path="/paramedic" element={<ParamedicLanding />} />
                   <Route path="/map" element={<MapPage />} />
