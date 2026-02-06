@@ -725,7 +725,7 @@ const MapPage = () => {
             <HoverCardContent
               side="left"
               sideOffset={16}
-              className="w-auto max-w-[200px] p-3.5 bg-white shadow-2xl border-0 rounded-xl"
+              className="w-auto max-w-[200px] p-3.5 bg-card shadow-2xl border border-border rounded-xl"
             >
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md">
