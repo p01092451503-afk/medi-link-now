@@ -55,6 +55,8 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user, isAuthenticated, isLoading: isAuthLoading, signOut } = useAuth();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   
   const [isSyncing, setIsSyncing] = useState(false);
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
@@ -67,6 +69,45 @@ export default function AdminPage() {
   const [currentCity, setCurrentCity] = useState<string | null>(null);
   const [bedResults, setBedResults] = useState<BedSyncResult[]>([]);
 
+  // Admin role guard
+  useEffect(() => {
+    if (isAuthLoading) return;
+    
+    if (!isAuthenticated || !user) {
+      navigate("/admin/login", { replace: true });
+      return;
+    }
+
+    supabase
+      .rpc("has_role", { _user_id: user.id, _role: "admin" })
+      .then(({ data, error }) => {
+        if (error || !data) {
+          setIsAdmin(false);
+          toast({
+            title: "관리자 권한이 없습니다",
+            description: "관리자 계정으로 다시 로그인해주세요.",
+            variant: "destructive",
+          });
+          navigate("/admin/login", { replace: true });
+        } else {
+          setIsAdmin(true);
+        }
+      });
+  }, [isAuthenticated, isAuthLoading, user, navigate]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/admin/login", { replace: true });
+  };
+
+  // Show loading while checking auth/role
+  if (isAuthLoading || isAdmin === null) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
   const { data: hospitalCount = 0, refetch: refetchCount } = useQuery({
     queryKey: ["hospital-count"],
     queryFn: getHospitalCount,
