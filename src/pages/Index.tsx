@@ -20,13 +20,14 @@ import { toast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
 import MapView from "@/components/MapView";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
 import RegionSelector from "@/components/RegionSelector";
 
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0]; // Seoul Capital Area center
 
 const Index = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, lastUpdated, refetch } = useRealtimeHospitals();
-  
+  const { isMoonlightHospital, isLoading: isLoadingMoonlight } = useMoonlightHospitals();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("all");
   const [activeRegion, setActiveRegion] = useState<RegionType>("all");
@@ -40,6 +41,10 @@ const Index = () => {
 
   const filteredHospitals = useMemo(() => {
     let result = filterHospitals(hospitalData, activeFilter);
+    // Override moonlight filter to use official API data
+    if (activeFilter === "moonlight") {
+      result = hospitalData.filter((h) => isMoonlightHospital(h.nameKr));
+    }
     result = filterHospitalsByRegion(result, activeRegion);
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -57,7 +62,7 @@ const Index = () => {
       result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
     }
     return result;
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData]);
+  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, isMoonlightHospital]);
 
   const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
     setActiveMajorRegion(region);
@@ -196,6 +201,17 @@ const Index = () => {
                 {f.labelKr}
               </button>
             ))}
+          {/* Moonlight Children's Hospital Filter */}
+          <button
+            onClick={() => setActiveFilter(activeFilter === "moonlight" ? "all" : "moonlight")}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shadow-md transition-all flex items-center gap-1 ${
+              activeFilter === "moonlight"
+                ? "bg-indigo-600 text-white shadow-indigo-600/30"
+                : "bg-white text-muted-foreground hover:bg-indigo-50 border border-indigo-200"
+            }`}
+          >
+            🌙 달빛어린이병원
+          </button>
         </div>
       </div>
 
