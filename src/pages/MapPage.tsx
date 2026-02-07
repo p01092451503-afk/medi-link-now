@@ -67,6 +67,15 @@ const getZoomForRadius = (radiusKm: number): number => {
   return 10;
 };
 
+// Tooltip definitions for special filter chips
+const getFilterTooltip = (filterId: string): string | null => {
+  switch (filterId) {
+    case "moonlight":
+      return "보건복지부 지정, 야간·휴일에 소아 진료를 제공하는 병원입니다";
+    default:
+      return null;
+  }
+};
 const MapPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -793,7 +802,8 @@ const MapPage = () => {
                     setSelectedPharmacy(null);
                   };
 
-                  return (
+                    const tooltipText = getFilterTooltip(f.id);
+                    const chipButton = (
                     <motion.button
                       key={f.id}
                       onClick={handleFilterClick}
@@ -815,7 +825,22 @@ const MapPage = () => {
                       )}
                       {f.labelKr}
                     </motion.button>
-                  );
+                    );
+
+                    if (tooltipText) {
+                      return (
+                        <Tooltip key={f.id}>
+                          <TooltipTrigger asChild>
+                            {chipButton}
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="max-w-[200px] text-center text-xs">
+                            {tooltipText}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    }
+
+                    return chipButton;
                 })}
 
               {/* Pediatric SOS Toggle - placed after filter chips */}
