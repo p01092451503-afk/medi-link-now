@@ -6,8 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// 국립중앙의료원 전국 약국 정보 조회 서비스 API
-const API_URL = "http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire";
+// 건강보험심사평가원 약국정보서비스 API (B551182)
+const API_URL = "http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
 
 interface PharmacyRow {
   id: number;
@@ -77,38 +77,32 @@ const dbRowToPharmacy = (row: PharmacyRow) => ({
   is24h: row.is_24h,
 });
 
-// Parse pharmacy from XML item
+// Parse pharmacy from HIRA API XML item
 const parsePharmacyFromXml = (item: string) => {
-  const lat = getFloatValue(item, 'wgs84Lat');
-  const lng = getFloatValue(item, 'wgs84Lon');
+  // HIRA API: XPos = 경도(lng), YPos = 위도(lat)
+  const lng = getFloatValue(item, 'XPos');
+  const lat = getFloatValue(item, 'YPos');
   if (!lat || !lng) return null;
 
-  const name = getValue(item, 'dutyName');
+  const name = getValue(item, 'yadmNm');
   if (!name) return null;
 
   return {
-    id: getValue(item, 'hpid') || `pharmacy-${lat}-${lng}`,
+    id: getValue(item, 'ykiho') || `pharmacy-${lat}-${lng}`,
     name,
-    address: getValue(item, 'dutyAddr'),
-    phone: getValue(item, 'dutyTel1'),
+    address: getValue(item, 'addr'),
+    phone: getValue(item, 'telno'),
     lat,
     lng,
-    dutyTime1s: getValue(item, 'dutyTime1s'),
-    dutyTime1c: getValue(item, 'dutyTime1c'),
-    dutyTime2s: getValue(item, 'dutyTime2s'),
-    dutyTime2c: getValue(item, 'dutyTime2c'),
-    dutyTime3s: getValue(item, 'dutyTime3s'),
-    dutyTime3c: getValue(item, 'dutyTime3c'),
-    dutyTime4s: getValue(item, 'dutyTime4s'),
-    dutyTime4c: getValue(item, 'dutyTime4c'),
-    dutyTime5s: getValue(item, 'dutyTime5s'),
-    dutyTime5c: getValue(item, 'dutyTime5c'),
-    dutyTime6s: getValue(item, 'dutyTime6s'),
-    dutyTime6c: getValue(item, 'dutyTime6c'),
-    dutyTime7s: getValue(item, 'dutyTime7s'),
-    dutyTime7c: getValue(item, 'dutyTime7c'),
-    dutyTime8s: getValue(item, 'dutyTime8s'),
-    dutyTime8c: getValue(item, 'dutyTime8c'),
+    // HIRA 기본 목록 API에는 영업시간 정보 없음
+    dutyTime1s: '', dutyTime1c: '',
+    dutyTime2s: '', dutyTime2c: '',
+    dutyTime3s: '', dutyTime3c: '',
+    dutyTime4s: '', dutyTime4c: '',
+    dutyTime5s: '', dutyTime5c: '',
+    dutyTime6s: '', dutyTime6c: '',
+    dutyTime7s: '', dutyTime7c: '',
+    dutyTime8s: '', dutyTime8c: '',
   };
 };
 
@@ -183,9 +177,10 @@ serve(async (req) => {
       );
     }
 
-    // ★ 핵심 수정: serviceKey를 URL에 직접 삽입하여 이중 인코딩 방지
-    const apiUrl = `${API_URL}?serviceKey=${serviceKey}&WGS84_LAT=${lat}&WGS84_LON=${lng}&pageNo=1&numOfRows=200`;
-    console.log(`[fetch-nearby-pharmacies] Fetching API: ${API_URL}?serviceKey=***&WGS84_LAT=${lat}&WGS84_LON=${lng}`);
+    // HIRA API: xPos=경도, yPos=위도, radius=검색반경(m)
+    const radiusM = Math.round(radiusKm * 1000);
+    const apiUrl = `${API_URL}?serviceKey=${serviceKey}&xPos=${lng}&yPos=${lat}&radius=${radiusM}&pageNo=1&numOfRows=200`;
+    console.log(`[fetch-nearby-pharmacies] Fetching HIRA API: xPos=${lng}&yPos=${lat}&radius=${radiusM}`);
 
     const response = await fetch(apiUrl);
     if (!response.ok) {
