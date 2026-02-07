@@ -23,7 +23,7 @@ const TransferFilterChips = () => {
   const { transferFilter, setTransferFilter } = useTransferMode();
 
   return (
-    <div className="absolute top-20 left-0 right-0 z-10 px-4">
+    <div className="absolute top-[5.5rem] left-0 right-0 z-[999] px-4">
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {filters.map((filter) => {
           const colorIndicator = getFilterColorIndicator(filter.id);
