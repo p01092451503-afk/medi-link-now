@@ -25,6 +25,7 @@ import FareCalculatorPage from "./pages/FareCalculatorPage";
 import RejectionLogsPage from "./pages/RejectionLogsPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import MedicineGuidePage from "./pages/MedicineGuidePage";
+import EmergencyGuidePage from "./pages/EmergencyGuidePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => (
                   <Route path="/fare-calculator" element={<FareCalculatorPage />} />
                   <Route path="/logs" element={<RejectionLogsPage />} />
                   <Route path="/medicine-guide" element={<MedicineGuidePage />} />
+                  <Route path="/emergency-guide" element={<EmergencyGuidePage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
