@@ -67,6 +67,14 @@ const getZoomForRadius = (radiusKm: number): number => {
   return 10;
 };
 
+// Reverse: get closest radius from zoom level
+const getRadiusForZoom = (zoom: number): number => {
+  if (zoom >= 13) return 5;
+  if (zoom >= 12) return 10;
+  if (zoom >= 11) return 20;
+  return 30;
+};
+
 // Tooltip definitions for special filter chips
 const getFilterTooltip = (filterId: string): string | null => {
   switch (filterId) {
@@ -552,6 +560,15 @@ const MapPage = () => {
     }
   }, [userLocation]);
 
+  // Sync radius chip when map zoom changes (via pinch/scroll/slider)
+  const handleZoomChange = useCallback((zoom: number) => {
+    setMapZoom(zoom);
+    if (userLocation) {
+      const newRadius = getRadiusForZoom(zoom);
+      setActiveRadius(newRadius);
+    }
+  }, [userLocation]);
+
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
@@ -597,7 +614,7 @@ const MapPage = () => {
             nearbyPharmacies={[]}
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
-            onZoomChange={setMapZoom}
+            onZoomChange={handleZoomChange}
             onLoadError={(error) => {
               console.warn("[MapPage] 카카오맵 로드 실패, Leaflet으로 전환:", error);
               setKakaoFailed(true);
@@ -630,7 +647,7 @@ const MapPage = () => {
             isDriverMode={isDriverMode}
             nursingHospitals={filteredNursingHospitals}
             onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
-            onZoomChange={setMapZoom}
+            onZoomChange={handleZoomChange}
           />
         )}
 
