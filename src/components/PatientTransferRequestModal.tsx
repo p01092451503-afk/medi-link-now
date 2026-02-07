@@ -50,6 +50,9 @@ const PatientTransferRequestModal = ({
     gender: "",
     mainSymptom: "",
     avpu: "",
+    gcsEye: "",
+    gcsVerbal: "",
+    gcsMotor: "",
     bp: "",
     hr: "",
     spo2: "",
@@ -91,6 +94,9 @@ const PatientTransferRequestModal = ({
       gender: "",
       mainSymptom: "",
       avpu: "",
+      gcsEye: "",
+      gcsVerbal: "",
+      gcsMotor: "",
       bp: "",
       hr: "",
       spo2: "",
@@ -210,6 +216,75 @@ const PatientTransferRequestModal = ({
                       <SelectItem value="unresponsive">U - 무반응 (Unresponsive)</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* GCS Score */}
+                <div className="space-y-2">
+                  <Label className="text-xs flex items-center gap-1">
+                    <Brain className="w-3 h-3 text-indigo-500" />
+                    GCS 점수 (Glasgow Coma Scale)
+                  </Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">눈 (Eye)</Label>
+                      <Select
+                        value={formData.gcsEye}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, gcsEye: value }))}
+                      >
+                        <SelectTrigger className="h-9 text-xs">
+                          <SelectValue placeholder="E" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1200]">
+                          <SelectItem value="4">4 - 자발적</SelectItem>
+                          <SelectItem value="3">3 - 음성</SelectItem>
+                          <SelectItem value="2">2 - 통증</SelectItem>
+                          <SelectItem value="1">1 - 없음</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">언어 (Verbal)</Label>
+                      <Select
+                        value={formData.gcsVerbal}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, gcsVerbal: value }))}
+                      >
+                        <SelectTrigger className="h-9 text-xs">
+                          <SelectValue placeholder="V" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1200]">
+                          <SelectItem value="5">5 - 지남력</SelectItem>
+                          <SelectItem value="4">4 - 혼란</SelectItem>
+                          <SelectItem value="3">3 - 부적절</SelectItem>
+                          <SelectItem value="2">2 - 불명확</SelectItem>
+                          <SelectItem value="1">1 - 없음</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">운동 (Motor)</Label>
+                      <Select
+                        value={formData.gcsMotor}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, gcsMotor: value }))}
+                      >
+                        <SelectTrigger className="h-9 text-xs">
+                          <SelectValue placeholder="M" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[1200]">
+                          <SelectItem value="6">6 - 지시수행</SelectItem>
+                          <SelectItem value="5">5 - 통증회피</SelectItem>
+                          <SelectItem value="4">4 - 도피반응</SelectItem>
+                          <SelectItem value="3">3 - 이상굴곡</SelectItem>
+                          <SelectItem value="2">2 - 이상신전</SelectItem>
+                          <SelectItem value="1">1 - 없음</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  {formData.gcsEye && formData.gcsVerbal && formData.gcsMotor && (
+                    <div className="text-xs text-center py-1.5 px-3 bg-muted rounded-lg font-medium">
+                      GCS 총점: {Number(formData.gcsEye) + Number(formData.gcsVerbal) + Number(formData.gcsMotor)}/15
+                    </div>
+                  )}
                 </div>
               </div>
 
