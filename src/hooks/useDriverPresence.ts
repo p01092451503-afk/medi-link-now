@@ -23,6 +23,7 @@ export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
   const { user } = useAuth();
   const [nearbyDrivers, setNearbyDrivers] = useState<DriverPresence[]>([]);
   const [isTracking, setIsTracking] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
   const watchIdRef = useRef<number | null>(null);
 
@@ -87,13 +88,17 @@ export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
     setIsTracking(true);
 
     const updateLocation = (position: GeolocationPosition) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      setCurrentLocation([lat, lng]);
+
       const locationData = {
         user_id: user.id,
         role: "driver",
         name: driverInfo.name,
         vehicleType: driverInfo.vehicleType || "ambulance",
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
+        lat,
+        lng,
         status: "available" as const,
         lastUpdated: new Date().toISOString(),
       };
@@ -157,6 +162,7 @@ export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
   return {
     nearbyDrivers,
     isTracking,
+    currentLocation,
     startTracking,
     stopTracking,
     updateStatus,
