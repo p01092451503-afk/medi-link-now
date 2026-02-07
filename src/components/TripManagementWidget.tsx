@@ -492,18 +492,29 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
               <Button 
                 className="w-full rounded-xl py-5 text-base bg-green-600 hover:bg-green-700"
                 onClick={() => {
-                  // Find matching hospital or use custom destination
-                  const matchingHospital = hospitals.find(
-                    (h) => h.name === acceptedDispatch.destination || 
-                           h.address.includes(acceptedDispatch.destination || "")
-                  );
+                  // Find matching hospital by coordinates first (most reliable), then by name
+                  let matchingHospital: HospitalOption | undefined;
+                  
+                  if (acceptedDispatch.destination_lat && acceptedDispatch.destination_lng) {
+                    matchingHospital = hospitals.find(
+                      (h) => h.lat !== undefined && h.lng !== undefined &&
+                             Math.abs(h.lat - acceptedDispatch.destination_lat!) < 0.001 &&
+                             Math.abs(h.lng - acceptedDispatch.destination_lng!) < 0.001
+                    );
+                  }
+                  
+                  if (!matchingHospital) {
+                    matchingHospital = hospitals.find(
+                      (h) => h.name === acceptedDispatch.destination || 
+                             cleanHospitalName(h.name) === acceptedDispatch.destination ||
+                             h.address.includes(acceptedDispatch.destination || "___NOMATCH___")
+                    );
+                  }
                   
                   if (matchingHospital) {
                     handleAutoStartTrip(matchingHospital, acceptedDispatch);
-                  } else if (acceptedDispatch.destination_lat && acceptedDispatch.destination_lng) {
-                    handleAutoStartCustomDestination(acceptedDispatch);
                   } else {
-                    // No destination info, open hospital selection
+                    // No matching hospital found, open hospital selection as fallback
                     setIsSelectingHospital(true);
                   }
                 }}
