@@ -651,46 +651,56 @@ const MapPage = () => {
           />
         )}
 
-        {/* Zoom Controls - Vertical Slider */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-[1000]">
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-2 flex flex-col items-center gap-2">
-            {/* Zoom Level Display */}
-            <span className="text-xs font-bold text-slate-700 tabular-nums">{mapZoom}</span>
+        {/* Zoom Controls - Slim Vertical Slider */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 z-[1000]">
+          <div className="bg-card/40 dark:bg-card/30 backdrop-blur-md rounded-full shadow-sm border border-border/30 px-1.5 py-3 flex flex-col items-center gap-1.5">
+            {/* Zoom In */}
+            <button
+              onClick={() => setMapZoom(Math.min(18, mapZoom + 1))}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card/60 transition-colors text-sm font-medium"
+              aria-label="확대"
+            >
+              +
+            </button>
             
             {/* Vertical Slider */}
-            <div className="h-32 flex items-center justify-center">
+            <div className="h-24 flex items-center justify-center">
               <input
                 type="range"
                 min={5}
                 max={18}
                 value={mapZoom}
                 onChange={(e) => setMapZoom(Number(e.target.value))}
-                className="h-28 w-2 appearance-none bg-slate-300/60 rounded-full cursor-pointer
+                className="h-20 w-1 appearance-none bg-muted-foreground/20 rounded-full cursor-pointer
                   [writing-mode:vertical-lr] [direction:rtl]
                   [&::-webkit-slider-thumb]:appearance-none
-                  [&::-webkit-slider-thumb]:w-5
-                  [&::-webkit-slider-thumb]:h-5
+                  [&::-webkit-slider-thumb]:w-3.5
+                  [&::-webkit-slider-thumb]:h-3.5
                   [&::-webkit-slider-thumb]:rounded-full
                   [&::-webkit-slider-thumb]:bg-primary
-                  [&::-webkit-slider-thumb]:shadow-md
+                  [&::-webkit-slider-thumb]:shadow-sm
                   [&::-webkit-slider-thumb]:cursor-pointer
                   [&::-webkit-slider-thumb]:transition-transform
                   [&::-webkit-slider-thumb]:hover:scale-110
-                  [&::-moz-range-thumb]:w-5
-                  [&::-moz-range-thumb]:h-5
+                  [&::-moz-range-thumb]:w-3.5
+                  [&::-moz-range-thumb]:h-3.5
                   [&::-moz-range-thumb]:rounded-full
                   [&::-moz-range-thumb]:bg-primary
                   [&::-moz-range-thumb]:border-0
-                  [&::-moz-range-thumb]:shadow-md
+                  [&::-moz-range-thumb]:shadow-sm
                   [&::-moz-range-thumb]:cursor-pointer"
                 aria-label="줌 레벨 조절"
               />
             </div>
             
-            {/* Min/Max Labels */}
-            <div className="flex flex-col items-center text-[10px] text-slate-500 font-medium">
-              <span>−</span>
-            </div>
+            {/* Zoom Out */}
+            <button
+              onClick={() => setMapZoom(Math.max(5, mapZoom - 1))}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card/60 transition-colors text-sm font-medium"
+              aria-label="축소"
+            >
+              −
+            </button>
           </div>
         </div>
 
