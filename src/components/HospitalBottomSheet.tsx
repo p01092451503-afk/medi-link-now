@@ -34,6 +34,8 @@ interface HospitalBottomSheetProps {
   hospital: Hospital | null;
   onClose: () => void;
   distance?: number;
+  userLocation?: [number, number] | null;
+  onCallAmbulance?: () => void;
 }
 
 const BedStatusCard = ({
@@ -144,7 +146,7 @@ const AcceptanceBadge = ({
   </div>
 );
 
-const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomSheetProps) => {
+const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance }: HospitalBottomSheetProps) => {
   const [searchParams] = useSearchParams();
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const { user } = useAuth();
@@ -525,6 +527,17 @@ const HospitalBottomSheet = ({ hospital, onClose, distance }: HospitalBottomShee
                     디지털 이송 요청 (Request Transfer)
                   </Button>
                 )
+              )}
+
+              {/* Private Ambulance Call Button - Guardian/Patient Mode */}
+              {!showTransferButton && onCallAmbulance && (
+                <Button
+                  onClick={onCallAmbulance}
+                  className="w-full mb-3 py-5 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold"
+                >
+                  <Ambulance className="w-5 h-5 mr-2" />
+                  이 병원으로 사설 구급차 부르기
+                </Button>
               )}
 
               {/* ER Entrance Roadview Button */}

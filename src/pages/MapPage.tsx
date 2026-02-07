@@ -851,6 +851,8 @@ const MapPage = () => {
         hospital={selectedHospital}
         onClose={() => setSelectedHospital(null)}
         distance={selectedDistance}
+        userLocation={userLocation}
+        onCallAmbulance={() => setShowAmbulanceModal(true)}
       />
 
       {/* Ambulance Call Modal */}
@@ -859,6 +861,7 @@ const MapPage = () => {
         onClose={() => setShowAmbulanceModal(false)}
         hospital={selectedHospital}
         distance={selectedDistance}
+        userLocation={userLocation}
       />
 
       {/* Dispatch Request Modal */}
