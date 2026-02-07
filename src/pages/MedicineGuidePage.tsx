@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import DoseTimerCard from "@/components/DoseTimerCard";
 
 type TabType = "fever" | "stomach";
 
@@ -243,6 +244,9 @@ const MedicineGuidePage = () => {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* Dose Timer */}
+              <DoseTimerCard />
 
               {/* Tip Box */}
               <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border-2 border-amber-200 dark:border-amber-800/50">
