@@ -540,18 +540,20 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </Button>
               )}
 
-              {/* ER Entrance Roadview Button */}
-              <Button
-                onClick={() => setShowRoadview(true)}
-                variant="outline"
-                className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium"
-              >
-                <Ambulance className="w-5 h-5 mr-2" />
-                응급실 입구 로드뷰 (ER Entrance View)
-              </Button>
+              {/* ER Entrance Roadview Button - Driver/Paramedic only */}
+              {showTransferButton && (
+                <Button
+                  onClick={() => setShowRoadview(true)}
+                  variant="outline"
+                  className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium"
+                >
+                  <Ambulance className="w-5 h-5 mr-2" />
+                  응급실 입구 로드뷰 (ER Entrance View)
+                </Button>
+              )}
 
-              {/* Quick Rejection Report Button - Only for logged in users */}
-              {user && hospital.id && (
+              {/* Quick Rejection Report Button - Driver/Paramedic only */}
+              {showTransferButton && user && hospital.id && (
                 <div className="mb-4">
                   <QuickRejectionButton
                     hospitalId={hospital.id}
