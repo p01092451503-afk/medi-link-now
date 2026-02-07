@@ -622,7 +622,7 @@ const Landing = () => {
               <Pill className="w-4 h-4 text-green-600" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-slate-800 dark:text-white">💊 소아 응급 약 가이드</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">소아 응급 약 가이드</p>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">해열제 교차복용 타이머 · 복용량 계산</p>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all" />
@@ -636,7 +636,7 @@ const Landing = () => {
               <Heart className="w-4 h-4 text-red-600" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-slate-800 dark:text-white">🆘 응급 행동 가이드</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">응급 행동 가이드</p>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">심폐소생술 · 하임리히 · 뇌졸중 대처법</p>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
