@@ -72,6 +72,8 @@ const getFilterTooltip = (filterId: string): string | null => {
   switch (filterId) {
     case "moonlight":
       return "보건복지부 지정, 야간·휴일에 소아 진료를 제공하는 병원입니다";
+    case "traumaCenter":
+      return "중증 외상 환자를 위한 전문 치료 시설로, 권역별로 지정된 외상센터입니다";
     default:
       return null;
   }
