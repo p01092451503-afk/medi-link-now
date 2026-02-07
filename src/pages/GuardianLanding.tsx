@@ -13,6 +13,7 @@ import {
   Ambulance,
   Calculator,
   Activity,
+  Pill,
   ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -203,6 +204,17 @@ const GuardianLanding = () => {
               <Calculator className="w-4 h-4 text-blue-600" />
             </div>
             구급차 요금 계산기
+          </Button>
+
+          <Button
+            onClick={() => navigate("/medicine-guide")}
+            variant="outline"
+            className="w-full py-5 rounded-2xl text-base font-semibold border-2 border-green-200 dark:border-green-800 bg-white dark:bg-slate-800 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-green-300 dark:hover:border-green-700 transition-all group dark:text-white"
+          >
+            <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center mr-3 group-hover:bg-green-100 dark:group-hover:bg-green-900/50 transition-colors">
+              <Pill className="w-4 h-4 text-green-600" />
+            </div>
+            💊 소아 약 가이드
           </Button>
         </motion.div>
 
