@@ -172,7 +172,7 @@ const FirstAidModal = ({ isOpen, onClose }: FirstAidModalProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex flex-col bg-background"
+          className="fixed inset-0 z-[9999] flex flex-col bg-background"
         >
           {/* Red Header */}
           <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-4 flex items-center justify-between shrink-0 shadow-lg">
