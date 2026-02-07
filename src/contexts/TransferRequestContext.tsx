@@ -10,6 +10,7 @@ export interface TransferRequest {
     age: string;
     gender: string;
     mainSymptom: string;
+    avpu: string;
     bp: string;
     hr: string;
     spo2: string;

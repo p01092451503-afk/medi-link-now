@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, User, Activity, Heart, Droplet, Wind, Send } from "lucide-react";
+import { X, User, Activity, Heart, Droplet, Wind, Send, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,6 +49,7 @@ const PatientTransferRequestModal = ({
     age: "",
     gender: "",
     mainSymptom: "",
+    avpu: "",
     bp: "",
     hr: "",
     spo2: "",
@@ -89,6 +90,7 @@ const PatientTransferRequestModal = ({
       age: "",
       gender: "",
       mainSymptom: "",
+      avpu: "",
       bp: "",
       hr: "",
       spo2: "",
@@ -185,6 +187,27 @@ const PatientTransferRequestModal = ({
                           {option.label}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="avpu" className="text-xs flex items-center gap-1">
+                    <Brain className="w-3 h-3 text-purple-500" />
+                    의식 수준 (AVPU)
+                  </Label>
+                  <Select
+                    value={formData.avpu}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, avpu: value }))}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="의식 수준 선택" />
+                    </SelectTrigger>
+                    <SelectContent className="z-[1200]">
+                      <SelectItem value="alert">A - 명료 (Alert)</SelectItem>
+                      <SelectItem value="voice">V - 음성 반응 (Voice)</SelectItem>
+                      <SelectItem value="pain">P - 통증 반응 (Pain)</SelectItem>
+                      <SelectItem value="unresponsive">U - 무반응 (Unresponsive)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
