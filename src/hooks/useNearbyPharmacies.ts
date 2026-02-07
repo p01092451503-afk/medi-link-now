@@ -8,28 +8,28 @@ export interface NearbyPharmacy {
   phone: string;
   lat: number;
   lng: number;
-  // Operating hours by day (HHMM format)
-  dutyTime1s?: string; // 월요일 시작
-  dutyTime1c?: string; // 월요일 종료
-  dutyTime2s?: string; // 화요일 시작
-  dutyTime2c?: string; // 화요일 종료
-  dutyTime3s?: string; // 수요일 시작
-  dutyTime3c?: string; // 수요일 종료
-  dutyTime4s?: string; // 목요일 시작
-  dutyTime4c?: string; // 목요일 종료
-  dutyTime5s?: string; // 금요일 시작
-  dutyTime5c?: string; // 금요일 종료
-  dutyTime6s?: string; // 토요일 시작
-  dutyTime6c?: string; // 토요일 종료
-  dutyTime7s?: string; // 일요일 시작
-  dutyTime7c?: string; // 일요일 종료
-  dutyTime8s?: string; // 공휴일 시작
-  dutyTime8c?: string; // 공휴일 종료
-  // Computed fields
+  dutyTime1s?: string;
+  dutyTime1c?: string;
+  dutyTime2s?: string;
+  dutyTime2c?: string;
+  dutyTime3s?: string;
+  dutyTime3c?: string;
+  dutyTime4s?: string;
+  dutyTime4c?: string;
+  dutyTime5s?: string;
+  dutyTime5c?: string;
+  dutyTime6s?: string;
+  dutyTime6c?: string;
+  dutyTime7s?: string;
+  dutyTime7c?: string;
+  dutyTime8s?: string;
+  dutyTime8c?: string;
   isOpen?: boolean;
   todayOpenTime?: string;
   todayCloseTime?: string;
   distance?: number;
+  isNightPharmacy?: boolean;
+  is24h?: boolean;
 }
 
 export type PharmacyFilterType = "all" | "nightPharmacy";
@@ -39,30 +39,26 @@ const isPharmacyOpen = (pharmacy: NearbyPharmacy): { isOpen: boolean; openTime?:
   const now = new Date();
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
-  const currentTime = currentHour * 100 + currentMinute; // HHMM format
-  const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const currentTime = currentHour * 100 + currentMinute;
+  const dayOfWeek = now.getDay();
 
-  // Map day of week to duty time fields (API uses 1-7 for Mon-Sun, 8 for holidays)
   const dayMap: Record<number, { start: keyof NearbyPharmacy; end: keyof NearbyPharmacy }> = {
-    1: { start: 'dutyTime1s', end: 'dutyTime1c' }, // Monday
-    2: { start: 'dutyTime2s', end: 'dutyTime2c' }, // Tuesday
-    3: { start: 'dutyTime3s', end: 'dutyTime3c' }, // Wednesday
-    4: { start: 'dutyTime4s', end: 'dutyTime4c' }, // Thursday
-    5: { start: 'dutyTime5s', end: 'dutyTime5c' }, // Friday
-    6: { start: 'dutyTime6s', end: 'dutyTime6c' }, // Saturday
-    0: { start: 'dutyTime7s', end: 'dutyTime7c' }, // Sunday
+    1: { start: 'dutyTime1s', end: 'dutyTime1c' },
+    2: { start: 'dutyTime2s', end: 'dutyTime2c' },
+    3: { start: 'dutyTime3s', end: 'dutyTime3c' },
+    4: { start: 'dutyTime4s', end: 'dutyTime4c' },
+    5: { start: 'dutyTime5s', end: 'dutyTime5c' },
+    6: { start: 'dutyTime6s', end: 'dutyTime6c' },
+    0: { start: 'dutyTime7s', end: 'dutyTime7c' },
   };
 
   const todayFields = dayMap[dayOfWeek];
-  if (!todayFields) {
-    return { isOpen: false };
-  }
+  if (!todayFields) return { isOpen: false };
 
   const openTimeStr = pharmacy[todayFields.start] as string | undefined;
   const closeTimeStr = pharmacy[todayFields.end] as string | undefined;
 
   if (!openTimeStr || !closeTimeStr) {
-    // If no operating hours for today, check holiday hours for Sunday
     if (dayOfWeek === 0) {
       const holidayOpen = pharmacy.dutyTime8s;
       const holidayClose = pharmacy.dutyTime8c;
@@ -82,10 +78,9 @@ const isPharmacyOpen = (pharmacy: NearbyPharmacy): { isOpen: boolean; openTime?:
   const openTime = parseInt(openTimeStr, 10);
   let closeTime = parseInt(closeTimeStr, 10);
 
-  // Handle overnight hours (e.g., closes at 0200 means 26:00)
   if (closeTime < openTime) {
     closeTime += 2400;
-    if (currentTime < 400) { // Before 4 AM
+    if (currentTime < 400) {
       return {
         isOpen: currentTime + 2400 < closeTime,
         openTime: openTimeStr,
@@ -103,39 +98,28 @@ const isPharmacyOpen = (pharmacy: NearbyPharmacy): { isOpen: boolean; openTime?:
 
 // Check if pharmacy is a night pharmacy (open after 22:00)
 const isNightPharmacy = (pharmacy: NearbyPharmacy): boolean => {
+  // DB에서 이미 계산된 플래그가 있으면 사용
+  if (pharmacy.isNightPharmacy !== undefined) return pharmacy.isNightPharmacy;
+
   const now = new Date();
   const dayOfWeek = now.getDay();
-
   const dayMap: Record<number, keyof NearbyPharmacy> = {
     1: 'dutyTime1c', 2: 'dutyTime2c', 3: 'dutyTime3c',
     4: 'dutyTime4c', 5: 'dutyTime5c', 6: 'dutyTime6c', 0: 'dutyTime7c',
   };
-
   const closeField = dayMap[dayOfWeek];
   const closeTimeStr = pharmacy[closeField] as string | undefined;
-
   if (!closeTimeStr) return false;
-
   const closeTime = parseInt(closeTimeStr, 10);
-  // Night pharmacy: closes at or after 22:00 (2200)
-  return closeTime >= 2200 || closeTime < 400; // After 10 PM or overnight
-};
-
-// Check if pharmacy operates on holidays/Sundays
-const isHolidayPharmacy = (pharmacy: NearbyPharmacy): boolean => {
-  // Has Sunday hours or holiday hours
-  return !!(
-    (pharmacy.dutyTime7s && pharmacy.dutyTime7c) ||
-    (pharmacy.dutyTime8s && pharmacy.dutyTime8c)
-  );
+  return closeTime >= 2200 || closeTime < 400;
 };
 
 // Calculate distance between two points (Haversine formula)
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-  const R = 6371; // Earth's radius in km
+  const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = 
+  const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLng / 2) * Math.sin(dLng / 2);
@@ -158,22 +142,72 @@ export const useNearbyPharmacies = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetchLocation, setLastFetchLocation] = useState<[number, number] | null>(null);
+  const [source, setSource] = useState<string>('none');
 
   const fetchPharmacies = useCallback(async (lat: number, lng: number) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke('fetch-nearby-pharmacies', {
-        body: null,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // DB 우선 조회: Supabase에서 직접 좌표 범위 검색
+      const radiusKm = 5;
+      const latDelta = radiusKm / 111;
+      const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180));
 
-      // Use query params approach
+      const { data: dbData, error: dbError } = await supabase
+        .from('pharmacies')
+        .select('*')
+        .gte('lat', lat - latDelta)
+        .lte('lat', lat + latDelta)
+        .gte('lng', lng - lngDelta)
+        .lte('lng', lng + lngDelta)
+        .limit(200);
+
+      if (!dbError && dbData && dbData.length > 0) {
+        // DB에서 데이터 찾음
+        const processedPharmacies: NearbyPharmacy[] = (dbData as any[]).map((row) => {
+          const pharmacy: NearbyPharmacy = {
+            id: row.hpid || `pharmacy-${row.id}`,
+            name: row.name,
+            address: row.address || '',
+            phone: row.phone || '',
+            lat: row.lat,
+            lng: row.lng,
+            dutyTime1s: row.duty_time_1s || '',
+            dutyTime1c: row.duty_time_1c || '',
+            dutyTime2s: row.duty_time_2s || '',
+            dutyTime2c: row.duty_time_2c || '',
+            dutyTime3s: row.duty_time_3s || '',
+            dutyTime3c: row.duty_time_3c || '',
+            dutyTime4s: row.duty_time_4s || '',
+            dutyTime4c: row.duty_time_4c || '',
+            dutyTime5s: row.duty_time_5s || '',
+            dutyTime5c: row.duty_time_5c || '',
+            dutyTime6s: row.duty_time_6s || '',
+            dutyTime6c: row.duty_time_6c || '',
+            dutyTime7s: row.duty_time_7s || '',
+            dutyTime7c: row.duty_time_7c || '',
+            dutyTime8s: row.duty_time_8s || '',
+            dutyTime8c: row.duty_time_8c || '',
+            isNightPharmacy: row.is_night_pharmacy,
+            is24h: row.is_24h,
+          };
+          const openStatus = isPharmacyOpen(pharmacy);
+          const distance = calculateDistance(lat, lng, pharmacy.lat, pharmacy.lng);
+          return { ...pharmacy, isOpen: openStatus.isOpen, todayOpenTime: openStatus.openTime, todayCloseTime: openStatus.closeTime, distance };
+        });
+
+        setAllPharmacies(processedPharmacies);
+        setLastFetchLocation([lat, lng]);
+        setSource('db');
+        console.log(`[useNearbyPharmacies] DB: ${processedPharmacies.length} pharmacies, ${processedPharmacies.filter(p => p.isOpen).length} open`);
+        return;
+      }
+
+      // DB에 데이터 없으면 Edge Function 호출 (API fallback)
+      console.log('[useNearbyPharmacies] DB empty, calling Edge Function...');
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-nearby-pharmacies?lat=${lat}&lng=${lng}&numOfRows=200`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-nearby-pharmacies?lat=${lat}&lng=${lng}&radius=5`,
         {
           headers: {
             'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
@@ -188,28 +222,24 @@ export const useNearbyPharmacies = ({
 
       const result = await response.json();
 
-      if (result.success && result.data) {
-        // Process pharmacies and add computed fields
+      if (result.success && result.data && result.data.length > 0) {
         const processedPharmacies: NearbyPharmacy[] = result.data.map((p: NearbyPharmacy) => {
           const openStatus = isPharmacyOpen(p);
           const distance = calculateDistance(lat, lng, p.lat, p.lng);
-          return {
-            ...p,
-            isOpen: openStatus.isOpen,
-            todayOpenTime: openStatus.openTime,
-            todayCloseTime: openStatus.closeTime,
-            distance,
-          };
+          return { ...p, isOpen: openStatus.isOpen, todayOpenTime: openStatus.openTime, todayCloseTime: openStatus.closeTime, distance };
         });
 
         setAllPharmacies(processedPharmacies);
         setLastFetchLocation([lat, lng]);
-        console.log(`Loaded ${processedPharmacies.length} pharmacies, ${processedPharmacies.filter(p => p.isOpen).length} currently open`);
+        setSource(result.source || 'api');
+        console.log(`[useNearbyPharmacies] API: ${processedPharmacies.length} pharmacies (source: ${result.source})`);
       } else {
-        throw new Error(result.error || 'Failed to fetch pharmacies');
+        setAllPharmacies([]);
+        setSource('empty');
+        console.log('[useNearbyPharmacies] No pharmacies found from any source');
       }
     } catch (err) {
-      console.error('Error fetching pharmacies:', err);
+      console.error('[useNearbyPharmacies] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch pharmacies');
     } finally {
       setIsLoading(false);
@@ -225,43 +255,31 @@ export const useNearbyPharmacies = ({
 
     const [lat, lng] = userLocation;
 
-    // Check if we need to refetch (location moved more than 1km)
     if (lastFetchLocation) {
-      const distance = calculateDistance(
-        lastFetchLocation[0], lastFetchLocation[1],
-        lat, lng
-      );
-      if (distance < 1) {
-        // Location hasn't changed much, skip fetch
-        return;
-      }
+      const distance = calculateDistance(lastFetchLocation[0], lastFetchLocation[1], lat, lng);
+      if (distance < 1) return;
     }
 
     fetchPharmacies(lat, lng);
   }, [enabled, userLocation, fetchPharmacies, lastFetchLocation]);
 
-  // Filter pharmacies based on current filter and open status
+  // Filter pharmacies
   const filteredPharmacies = useMemo(() => {
-    // Only show currently open pharmacies
     let result = allPharmacies.filter(p => p.isOpen);
 
-    // Apply additional filters
     switch (filter) {
       case "nightPharmacy":
         result = result.filter(isNightPharmacy);
         break;
     }
 
-    // Sort by distance
     result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
-
     return result;
   }, [allPharmacies, filter]);
 
-  // Refetch function for manual refresh
   const refetch = useCallback(() => {
     if (userLocation) {
-      setLastFetchLocation(null); // Force refetch
+      setLastFetchLocation(null);
       fetchPharmacies(userLocation[0], userLocation[1]);
     }
   }, [userLocation, fetchPharmacies]);
@@ -272,5 +290,6 @@ export const useNearbyPharmacies = ({
     isLoading,
     error,
     refetch,
+    source,
   };
 };

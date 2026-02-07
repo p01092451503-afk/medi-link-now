@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.fetch-moonlight-hospitals]
 verify_jwt = false
+
+[functions.sync-pharmacies]
+verify_jwt = false
