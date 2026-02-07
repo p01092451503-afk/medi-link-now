@@ -11,6 +11,9 @@ export interface TransferRequest {
     gender: string;
     mainSymptom: string;
     avpu: string;
+    gcsEye: string;
+    gcsVerbal: string;
+    gcsMotor: string;
     bp: string;
     hr: string;
     spo2: string;
