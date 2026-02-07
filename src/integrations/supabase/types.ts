@@ -528,6 +528,99 @@ export type Database = {
           },
         ]
       }
+      pharmacies: {
+        Row: {
+          address: string | null
+          created_at: string
+          duty_time_1c: string | null
+          duty_time_1s: string | null
+          duty_time_2c: string | null
+          duty_time_2s: string | null
+          duty_time_3c: string | null
+          duty_time_3s: string | null
+          duty_time_4c: string | null
+          duty_time_4s: string | null
+          duty_time_5c: string | null
+          duty_time_5s: string | null
+          duty_time_6c: string | null
+          duty_time_6s: string | null
+          duty_time_7c: string | null
+          duty_time_7s: string | null
+          duty_time_8c: string | null
+          duty_time_8s: string | null
+          hpid: string | null
+          id: number
+          is_24h: boolean | null
+          is_night_pharmacy: boolean | null
+          lat: number
+          lng: number
+          name: string
+          phone: string | null
+          region: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          duty_time_1c?: string | null
+          duty_time_1s?: string | null
+          duty_time_2c?: string | null
+          duty_time_2s?: string | null
+          duty_time_3c?: string | null
+          duty_time_3s?: string | null
+          duty_time_4c?: string | null
+          duty_time_4s?: string | null
+          duty_time_5c?: string | null
+          duty_time_5s?: string | null
+          duty_time_6c?: string | null
+          duty_time_6s?: string | null
+          duty_time_7c?: string | null
+          duty_time_7s?: string | null
+          duty_time_8c?: string | null
+          duty_time_8s?: string | null
+          hpid?: string | null
+          id?: number
+          is_24h?: boolean | null
+          is_night_pharmacy?: boolean | null
+          lat: number
+          lng: number
+          name: string
+          phone?: string | null
+          region?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          duty_time_1c?: string | null
+          duty_time_1s?: string | null
+          duty_time_2c?: string | null
+          duty_time_2s?: string | null
+          duty_time_3c?: string | null
+          duty_time_3s?: string | null
+          duty_time_4c?: string | null
+          duty_time_4s?: string | null
+          duty_time_5c?: string | null
+          duty_time_5s?: string | null
+          duty_time_6c?: string | null
+          duty_time_6s?: string | null
+          duty_time_7c?: string | null
+          duty_time_7s?: string | null
+          duty_time_8c?: string | null
+          duty_time_8s?: string | null
+          hpid?: string | null
+          id?: number
+          is_24h?: boolean | null
+          is_night_pharmacy?: boolean | null
+          lat?: number
+          lng?: number
+          name?: string
+          phone?: string | null
+          region?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth: string
