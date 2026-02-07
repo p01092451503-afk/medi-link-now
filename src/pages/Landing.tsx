@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import mark119 from "@/assets/icons/119-mark.png";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle, Heart, Locate } from "lucide-react";
+import { Ambulance, Users, MapPin, Clock, Shield, Phone, Activity, Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap, Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles, X, BarChart3, AlertTriangle, Heart, Locate, Pill } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -599,6 +599,28 @@ const Landing = () => {
               </div>
             </motion.button>
           </div>
+        </motion.div>
+
+        {/* Quick Links */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.75 }}
+          className="w-full mb-6"
+        >
+          <button
+            onClick={() => navigate("/medicine-guide")}
+            className="w-full flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-slate-800 rounded-2xl border border-green-200 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-green-300 dark:hover:border-green-700 transition-all group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center group-hover:bg-green-100 dark:group-hover:bg-green-900/50 transition-colors">
+              <Pill className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">💊 소아 응급 약 가이드</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">해열제 교차복용 타이머 · 복용량 계산</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all" />
+          </button>
         </motion.div>
       </main>
 
