@@ -522,7 +522,7 @@ const Landing = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="w-full mb-4"
+          className="w-full mb-10"
         >
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-primary" />
@@ -606,8 +606,14 @@ const Landing = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.75 }}
-          className="w-full mb-4 space-y-3"
+          className="w-full mb-6"
         >
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-2 h-2 rounded-full bg-red-500" />
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">응급 가이드</p>
+          </div>
+
+          <div className="space-y-3">
           <button
             onClick={() => navigate("/medicine-guide")}
             className="w-full flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-slate-800 rounded-2xl border border-green-200 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-green-300 dark:hover:border-green-700 transition-all group"
@@ -635,6 +641,7 @@ const Landing = () => {
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
           </button>
+          </div>
         </motion.div>
       </main>
 
