@@ -298,6 +298,19 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </button>
               </div>
 
+              {/* Private Ambulance Call Button - Guardian/Patient Mode (Top Priority) */}
+              {!showTransferButton && onCallAmbulance && (
+                <div className="mb-4">
+                  <Button
+                    onClick={onCallAmbulance}
+                    className="w-full py-5 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold shadow-lg shadow-red-500/20"
+                  >
+                    <Ambulance className="w-5 h-5 mr-2" />
+                    이 병원으로 사설 구급차 부르기
+                  </Button>
+                </div>
+              )}
+
               {/* 119 Verified Badge - Historical Transfer Data */}
               <Fire119VerifiedBadge 
                 hospitalName={hospital.nameKr}
@@ -513,16 +526,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 )
               )}
 
-              {/* Private Ambulance Call Button - Guardian/Patient Mode */}
-              {!showTransferButton && onCallAmbulance && (
-                <Button
-                  onClick={onCallAmbulance}
-                  className="w-full mb-3 py-5 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold"
-                >
-                  <Ambulance className="w-5 h-5 mr-2" />
-                  이 병원으로 사설 구급차 부르기
-                </Button>
-              )}
 
               {/* ER Entrance Roadview Button - Driver/Paramedic only */}
               {showTransferButton && (
