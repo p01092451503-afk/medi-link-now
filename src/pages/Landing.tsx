@@ -18,34 +18,56 @@ const Landing = () => {
   const navigate = useNavigate();
   const { setMode } = useTransferMode();
   const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
-  const [activeTab, setActiveTab] = useState<"national" | "local">("national");
+  const [activeTab, setActiveTab] = useState<"national" | "local">("local");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
+  const [locationDenied, setLocationDenied] = useState(false);
+
+  // Auto-request location on mount for "내 주변" default tab
+  useEffect(() => {
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        setIsLocating(false);
+      },
+      () => {
+        setIsLocating(false);
+        setLocationDenied(true);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, []);
 
 
   // Get user location when switching to local tab
+  const requestLocation = () => {
+    setIsLocating(true);
+    setLocationDenied(false);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        setIsLocating(false);
+        setActiveTab("local");
+      },
+      () => {
+        toast({
+          title: "위치 권한 필요",
+          description: "내 지역 현황을 보려면 위치 권한을 허용해주세요.",
+          variant: "destructive",
+        });
+        setIsLocating(false);
+        setLocationDenied(true);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
   const handleLocalTab = () => {
     if (activeTab === "local") return;
     
     if (!userLocation) {
-      setIsLocating(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
-          setUserLocation(coords);
-          setIsLocating(false);
-          setActiveTab("local");
-        },
-        (error) => {
-          toast({
-            title: "위치 권한 필요",
-            description: "내 지역 현황을 보려면 위치 권한을 허용해주세요.",
-            variant: "destructive",
-          });
-          setIsLocating(false);
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
+      requestLocation();
     } else {
       setActiveTab("local");
     }
@@ -236,6 +258,26 @@ const Landing = () => {
                 transition={{ duration: 0.15 }}
                 className="p-3 bg-slate-200 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600/50 mx-2 mb-2"
               >
+                {activeTab === "local" && !userLocation ? (
+                  <div className="flex flex-col items-center py-4 gap-3">
+                    <Locate className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                      {isLocating ? "위치를 확인하고 있습니다..." : "내 주변 응급실 현황을 보려면\n위치 확인이 필요합니다"}
+                    </p>
+                    {!isLocating && (
+                      <button
+                        onClick={requestLocation}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold shadow-md hover:opacity-90 transition-opacity"
+                      >
+                        <Navigation className="w-3.5 h-3.5" />
+                        위치 확인하기
+                      </button>
+                    )}
+                    {isLocating && (
+                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    )}
+                  </div>
+                ) : (
                 <div className="grid grid-cols-4 gap-2">
                   {/* 응급실 */}
                   <div className="text-center py-2">
@@ -269,6 +311,7 @@ const Landing = () => {
                     </p>
                   </div>
                 </div>
+                )}
               </motion.div>
             </AnimatePresence>
 
