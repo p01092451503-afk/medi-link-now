@@ -653,7 +653,7 @@ const MapPage = () => {
 
         {/* Zoom Controls - Slim Vertical Slider */}
         <div className="absolute right-3 top-1/2 -translate-y-1/2 z-[1000]">
-          <div className="bg-card/20 dark:bg-card/15 backdrop-blur-md rounded-full shadow-sm border border-border/15 px-1.5 py-3 flex flex-col items-center gap-1.5">
+          <div className="bg-card/10 dark:bg-card/8 backdrop-blur-sm rounded-full shadow-none border border-border/10 px-1.5 py-3 flex flex-col items-center gap-1.5">
             {/* Zoom In */}
             <button
               onClick={() => setMapZoom(Math.min(18, mapZoom + 1))}
