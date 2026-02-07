@@ -6,18 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// 약국 기본 목록 조회 API (전국)
-const API_BASE_URL = "http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyBasisList";
+// 국립중앙의료원 약국 목록 정보 조회 API (위경도 기반)
+const API_BASE_URL = "http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire";
 
-// 시도 목록
-const REGIONS = [
-  '서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시',
-  '대전광역시', '울산광역시', '세종특별자치시', '경기도', '강원특별자치도',
-  '충청북도', '충청남도', '전북특별자치도', '전라남도', '경상북도',
-  '경상남도', '제주특별자치도',
-];
-
-// Parse XML value helper
 const getValue = (xml: string, tag: string): string => {
   const regex = new RegExp(`<${tag}>([^<]*)</${tag}>`);
   const result = regex.exec(xml);
@@ -29,7 +20,6 @@ const getFloatValue = (xml: string, tag: string): number => {
   return val ? parseFloat(val) || 0 : 0;
 };
 
-// 야간 약국 여부 판별 (평일 기준 22시 이후 마감)
 const checkIsNightPharmacy = (dutyTimes: Record<string, string>): boolean => {
   const closeFields = ['dutyTime1c', 'dutyTime2c', 'dutyTime3c', 'dutyTime4c', 'dutyTime5c'];
   return closeFields.some(field => {
@@ -38,42 +28,64 @@ const checkIsNightPharmacy = (dutyTimes: Record<string, string>): boolean => {
   });
 };
 
-// 24시 약국 여부 판별
 const checkIs24h = (dutyTimes: Record<string, string>): boolean => {
   const openFields = ['dutyTime1s', 'dutyTime2s', 'dutyTime3s', 'dutyTime4s', 'dutyTime5s'];
   const closeFields = ['dutyTime1c', 'dutyTime2c', 'dutyTime3c', 'dutyTime4c', 'dutyTime5c'];
-
-  // 평일 5일 중 3일 이상이 0000~2400 이면 24시로 간주
   let count24h = 0;
   for (let i = 0; i < openFields.length; i++) {
     const openTime = parseInt(dutyTimes[openFields[i]] || '9999', 10);
     const closeTime = parseInt(dutyTimes[closeFields[i]] || '0', 10);
-    if (openTime === 0 && closeTime === 2400) {
-      count24h++;
-    }
+    if (openTime === 0 && closeTime === 2400) count24h++;
   }
   return count24h >= 3;
 };
 
-// 한 페이지 데이터 가져오기
-const fetchPage = async (serviceKey: string, region: string, pageNo: number, numOfRows: number): Promise<string> => {
-  // serviceKey를 직접 삽입하여 이중 인코딩 방지
-  const apiUrl = `${API_BASE_URL}?serviceKey=${serviceKey}&Q0=${encodeURIComponent(region)}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
-  
-  const response = await fetch(apiUrl);
-  if (!response.ok) {
-    throw new Error(`API returned ${response.status}`);
-  }
-  return await response.text();
-};
+// 주요 도시/지역의 대표 좌표 (전국 커버리지)
+const REGION_GRID = [
+  // 서울·수도권
+  { name: '서울 중심', lat: 37.5665, lng: 126.9780 },
+  { name: '서울 강남', lat: 37.4979, lng: 127.0276 },
+  { name: '서울 강북', lat: 37.6396, lng: 127.0257 },
+  { name: '서울 서부', lat: 37.5510, lng: 126.8687 },
+  { name: '인천', lat: 37.4563, lng: 126.7052 },
+  { name: '수원', lat: 37.2636, lng: 127.0286 },
+  { name: '성남', lat: 37.4200, lng: 127.1267 },
+  { name: '고양', lat: 37.6584, lng: 126.8320 },
+  { name: '용인', lat: 37.2411, lng: 127.1776 },
+  { name: '안양·안산', lat: 37.3219, lng: 126.8313 },
+  { name: '파주·의정부', lat: 37.7381, lng: 127.0337 },
+  { name: '평택', lat: 36.9921, lng: 127.1129 },
+  // 충청
+  { name: '대전', lat: 36.3504, lng: 127.3845 },
+  { name: '세종', lat: 36.4800, lng: 127.2551 },
+  { name: '청주', lat: 36.6424, lng: 127.4890 },
+  { name: '천안', lat: 36.8151, lng: 127.1139 },
+  { name: '충주', lat: 36.9910, lng: 127.9259 },
+  // 전라
+  { name: '광주', lat: 35.1595, lng: 126.8526 },
+  { name: '전주', lat: 35.8242, lng: 127.1480 },
+  { name: '목포', lat: 34.8118, lng: 126.3922 },
+  { name: '여수', lat: 34.7604, lng: 127.6622 },
+  // 경상
+  { name: '부산 중심', lat: 35.1796, lng: 129.0756 },
+  { name: '부산 서부', lat: 35.0982, lng: 128.9666 },
+  { name: '대구', lat: 35.8714, lng: 128.6014 },
+  { name: '울산', lat: 35.5384, lng: 129.3114 },
+  { name: '창원', lat: 35.2284, lng: 128.6811 },
+  { name: '김해', lat: 35.2341, lng: 128.8810 },
+  { name: '포항', lat: 36.0190, lng: 129.3435 },
+  { name: '구미', lat: 36.1198, lng: 128.3446 },
+  { name: '안동', lat: 36.5684, lng: 128.7294 },
+  // 강원
+  { name: '춘천', lat: 37.8813, lng: 127.7300 },
+  { name: '원주', lat: 37.3422, lng: 127.9202 },
+  { name: '강릉', lat: 37.7519, lng: 128.8761 },
+  // 제주
+  { name: '제주', lat: 33.4996, lng: 126.5312 },
+  { name: '서귀포', lat: 33.2541, lng: 126.5600 },
+];
 
-// XML 파싱: 총 결과 수
-const getTotalCount = (xmlText: string): number => {
-  return parseInt(getValue(xmlText, 'totalCount'), 10) || 0;
-};
-
-// XML 파싱: 약국 아이템 추출
-const parseItems = (xmlText: string, region: string) => {
+const parseItems = (xmlText: string) => {
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   const items: Record<string, unknown>[] = [];
   let match;
@@ -88,6 +100,7 @@ const parseItems = (xmlText: string, region: string) => {
     if (!name) continue;
 
     const hpid = getValue(xml, 'hpid');
+    const address = getValue(xml, 'dutyAddr');
 
     const dutyTimes: Record<string, string> = {};
     for (let i = 1; i <= 8; i++) {
@@ -95,13 +108,14 @@ const parseItems = (xmlText: string, region: string) => {
       dutyTimes[`dutyTime${i}c`] = getValue(xml, `dutyTime${i}c`);
     }
 
-    const isNight = checkIsNightPharmacy(dutyTimes);
-    const is24h = checkIs24h(dutyTimes);
+    // 주소에서 시도 추출
+    const regionMatch = address.match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)/);
+    const region = regionMatch ? regionMatch[1] : '';
 
     items.push({
       hpid: hpid || null,
       name,
-      address: getValue(xml, 'dutyAddr'),
+      address,
       phone: getValue(xml, 'dutyTel1'),
       lat,
       lng,
@@ -121,8 +135,8 @@ const parseItems = (xmlText: string, region: string) => {
       duty_time_7c: dutyTimes.dutyTime7c || null,
       duty_time_8s: dutyTimes.dutyTime8s || null,
       duty_time_8c: dutyTimes.dutyTime8c || null,
-      is_night_pharmacy: isNight,
-      is_24h: is24h,
+      is_night_pharmacy: checkIsNightPharmacy(dutyTimes),
+      is_24h: checkIs24h(dutyTimes),
       region,
     });
   }
@@ -150,62 +164,104 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // URL 파라미터로 특정 지역만 동기화 가능
+    // 특정 그리드 포인트만 처리할 수 있도록 파라미터 지원
     const url = new URL(req.url);
-    const targetRegion = url.searchParams.get('region');
-    const regionsToSync = targetRegion ? [targetRegion] : REGIONS;
-    const numOfRows = 1000; // 페이지당 최대 행 수
+    const gridIndexStr = url.searchParams.get('gridIndex');
+    let targetName: string | null = null;
+
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        targetName = body.name || null;
+      } catch { /* ignore */ }
+    }
+
+    let gridPoints = REGION_GRID;
+    if (gridIndexStr) {
+      const idx = parseInt(gridIndexStr, 10);
+      if (idx >= 0 && idx < REGION_GRID.length) {
+        gridPoints = [REGION_GRID[idx]];
+      }
+    }
+    if (targetName) {
+      const found = REGION_GRID.filter(g => g.name.includes(targetName!));
+      if (found.length > 0) gridPoints = found;
+    }
 
     let totalInserted = 0;
-    let totalUpdated = 0;
+    let totalSkipped = 0;
     let totalErrors = 0;
-    const regionResults: Record<string, { count: number; error?: string }> = {};
+    const seenHpids = new Set<string>();
+    const gridResults: Record<string, { count: number; error?: string }> = {};
 
-    for (const region of regionsToSync) {
+    for (const point of gridPoints) {
       try {
-        console.log(`[sync-pharmacies] Syncing region: ${region}`);
+        console.log(`[sync-pharmacies] Fetching grid: ${point.name} (${point.lat}, ${point.lng})`);
 
-        // 1차 페이지 호출로 총 개수 확인
-        const firstPageXml = await fetchPage(serviceKey, region, 1, numOfRows);
+        // serviceKey 직접 삽입으로 이중 인코딩 방지
+        const apiUrl = `${API_BASE_URL}?serviceKey=${serviceKey}&WGS84_LAT=${point.lat}&WGS84_LON=${point.lng}&pageNo=1&numOfRows=1000`;
+        const response = await fetch(apiUrl);
 
-        // API 에러 체크
-        if (firstPageXml.includes('<errMsg>') || firstPageXml.includes('<cmmMsgHeader>')) {
-          const errMsg = getValue(firstPageXml, 'errMsg') || getValue(firstPageXml, 'returnAuthMsg');
-          console.error(`[sync-pharmacies] API error for ${region}: ${errMsg}`);
-          regionResults[region] = { count: 0, error: errMsg };
+        if (!response.ok) {
+          console.error(`[sync-pharmacies] API HTTP ${response.status} for ${point.name}`);
+          gridResults[point.name] = { count: 0, error: `HTTP ${response.status}` };
           totalErrors++;
           continue;
         }
 
-        const totalCount = getTotalCount(firstPageXml);
-        const totalPages = Math.ceil(totalCount / numOfRows);
+        const xmlText = await response.text();
 
-        console.log(`[sync-pharmacies] ${region}: ${totalCount} pharmacies, ${totalPages} pages`);
+        if (xmlText.includes('<errMsg>') || xmlText.includes('<cmmMsgHeader>')) {
+          const errMsg = getValue(xmlText, 'errMsg') || getValue(xmlText, 'returnAuthMsg');
+          console.error(`[sync-pharmacies] API error for ${point.name}: ${errMsg}`);
+          gridResults[point.name] = { count: 0, error: errMsg };
+          totalErrors++;
+          continue;
+        }
 
-        // 첫 페이지 데이터 파싱
-        let allItems = parseItems(firstPageXml, region);
+        const totalCount = parseInt(getValue(xmlText, 'totalCount'), 10) || 0;
+        let allItems = parseItems(xmlText);
 
-        // 2페이지 이상이면 추가 호출
-        for (let page = 2; page <= totalPages; page++) {
-          try {
-            // API 부하 방지를 위한 딜레이
-            await new Promise(resolve => setTimeout(resolve, 300));
-            const pageXml = await fetchPage(serviceKey, region, page, numOfRows);
-            const pageItems = parseItems(pageXml, region);
-            allItems = allItems.concat(pageItems);
-            console.log(`[sync-pharmacies] ${region} page ${page}/${totalPages}: ${pageItems.length} items`);
-          } catch (pageErr) {
-            console.error(`[sync-pharmacies] Error fetching page ${page} for ${region}:`, pageErr);
+        // 결과가 1000개 이상이면 추가 페이지 호출
+        if (totalCount > 1000) {
+          const totalPages = Math.ceil(totalCount / 1000);
+          for (let page = 2; page <= Math.min(totalPages, 5); page++) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            const pageUrl = `${API_BASE_URL}?serviceKey=${serviceKey}&WGS84_LAT=${point.lat}&WGS84_LON=${point.lng}&pageNo=${page}&numOfRows=1000`;
+            try {
+              const pageResp = await fetch(pageUrl);
+              if (pageResp.ok) {
+                const pageXml = await pageResp.text();
+                const pageItems = parseItems(pageXml);
+                allItems = allItems.concat(pageItems);
+                console.log(`[sync-pharmacies] ${point.name} page ${page}: ${pageItems.length} items`);
+              }
+            } catch (pageErr) {
+              console.error(`[sync-pharmacies] Page ${page} error for ${point.name}:`, pageErr);
+            }
           }
         }
 
-        // DB에 upsert (hpid 기준, 없으면 이름+좌표 기준)
-        if (allItems.length > 0) {
-          // hpid가 있는 것과 없는 것 분리
-          const withHpid = allItems.filter(item => item.hpid);
-          const withoutHpid = allItems.filter(item => !item.hpid);
+        // 중복 제거 (hpid 기준)
+        const uniqueItems = allItems.filter(item => {
+          const hpid = item.hpid as string | null;
+          if (!hpid) return true; // hpid 없는 건 일단 포함
+          if (seenHpids.has(hpid)) return false;
+          seenHpids.add(hpid);
+          return true;
+        });
 
-          // hpid 기준 upsert (배치)
+        const newItems = uniqueItems.length;
+        const skipped = allItems.length - uniqueItems.length;
+        totalSkipped += skipped;
+
+        console.log(`[sync-pharmacies] ${point.name}: ${totalCount} total, ${allItems.length} parsed, ${uniqueItems.length} unique, ${skipped} duplicates`);
+
+        // DB upsert (배치)
+        if (uniqueItems.length > 0) {
+          const withHpid = uniqueItems.filter(item => item.hpid);
+          const withoutHpid = uniqueItems.filter(item => !item.hpid);
+
           if (withHpid.length > 0) {
             const batchSize = 500;
             for (let i = 0; i < withHpid.length; i += batchSize) {
@@ -215,7 +271,7 @@ serve(async (req) => {
                 .upsert(batch, { onConflict: 'hpid', ignoreDuplicates: false });
 
               if (upsertError) {
-                console.error(`[sync-pharmacies] Upsert error for ${region} batch ${i}:`, upsertError);
+                console.error(`[sync-pharmacies] Upsert error for ${point.name}:`, upsertError);
                 totalErrors++;
               } else {
                 totalInserted += batch.length;
@@ -223,42 +279,34 @@ serve(async (req) => {
             }
           }
 
-          // hpid 없는 것은 개별 insert (중복 체크)
+          // hpid 없는 것은 개별 insert
           for (const item of withoutHpid) {
             const { data: existing } = await supabase
               .from('pharmacies')
               .select('id')
-              .eq('name', item.name)
-              .eq('lat', item.lat)
-              .eq('lng', item.lng)
+              .eq('name', item.name as string)
+              .eq('lat', item.lat as number)
+              .eq('lng', item.lng as number)
               .limit(1);
 
             if (existing && existing.length > 0) {
-              const { error: updateErr } = await supabase
-                .from('pharmacies')
-                .update(item)
-                .eq('id', existing[0].id);
-              if (!updateErr) totalUpdated++;
+              await supabase.from('pharmacies').update(item).eq('id', existing[0].id);
             } else {
-              const { error: insertErr } = await supabase
-                .from('pharmacies')
-                .insert(item);
+              const { error: insertErr } = await supabase.from('pharmacies').insert(item);
               if (!insertErr) totalInserted++;
-              else totalErrors++;
             }
           }
-
-          regionResults[region] = { count: allItems.length };
-        } else {
-          regionResults[region] = { count: 0 };
         }
 
-        // 지역 간 딜레이 (API rate limit 방지)
-        await new Promise(resolve => setTimeout(resolve, 500));
+        gridResults[point.name] = { count: newItems };
 
-      } catch (regionErr) {
-        console.error(`[sync-pharmacies] Error syncing ${region}:`, regionErr);
-        regionResults[region] = { count: 0, error: regionErr.message };
+        // API rate limit 방지
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+      } catch (gridErr: unknown) {
+        const errMsg = gridErr instanceof Error ? gridErr.message : String(gridErr);
+        console.error(`[sync-pharmacies] Error for ${point.name}:`, gridErr);
+        gridResults[point.name] = { count: 0, error: errMsg };
         totalErrors++;
       }
     }
@@ -267,23 +315,25 @@ serve(async (req) => {
     const summary = {
       success: true,
       totalInserted,
-      totalUpdated,
+      totalSkipped,
       totalErrors,
+      gridPointsProcessed: gridPoints.length,
       duration_ms: duration,
-      regions: regionResults,
+      grid: gridResults,
       timestamp: new Date().toISOString(),
     };
 
-    console.log(`[sync-pharmacies] Complete: ${totalInserted} inserted, ${totalUpdated} updated, ${totalErrors} errors in ${duration}ms`);
+    console.log(`[sync-pharmacies] Complete: ${totalInserted} inserted, ${totalSkipped} skipped, ${totalErrors} errors in ${duration}ms`);
 
     return new Response(
       JSON.stringify(summary),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  } catch (err) {
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
     console.error('[sync-pharmacies] Fatal error:', err);
     return new Response(
-      JSON.stringify({ success: false, error: err.message }),
+      JSON.stringify({ success: false, error: errMsg }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
