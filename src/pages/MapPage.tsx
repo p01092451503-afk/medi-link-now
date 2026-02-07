@@ -787,6 +787,7 @@ const MapPage = () => {
 
                   const handleFilterClick = () => {
                     setActiveFilter(f.id);
+                    setIsPediatricSOS(false); // Auto-disable pediatric SOS when switching filters
                     setSelectedHospital(null);
                     setSelectedPharmacy(null);
                   };
@@ -821,7 +822,14 @@ const MapPage = () => {
                 <PediatricSOSToggle
                   isActive={isPediatricSOS}
                   onToggle={() => {
-                    setIsPediatricSOS(prev => !prev);
+                    setIsPediatricSOS(prev => {
+                      const next = !prev;
+                      if (next) {
+                        // Entering pediatric SOS: reset filter to "all" for full coverage
+                        setActiveFilter("all");
+                      }
+                      return next;
+                    });
                     setSelectedHospital(null);
                   }}
                 />
