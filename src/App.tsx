@@ -33,7 +33,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="find-er-theme">
-      <TooltipProvider>
+      <TooltipProvider delayDuration={0}>
         <TransferModeProvider>
           <TransferRequestProvider>
             <PrivateTrafficProvider>
