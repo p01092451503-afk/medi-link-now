@@ -53,6 +53,7 @@ import NursingHospitalBottomSheet from "@/components/NursingHospitalBottomSheet"
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import DemandForecastTicker from "@/components/map/DemandForecastTicker";
 import PediatricSOSToggle from "@/components/PediatricSOSToggle";
+import FirstAidFAB from "@/components/FirstAidFAB";
 
 
 // Map default center (Seoul)
@@ -899,6 +900,9 @@ const MapPage = () => {
 
       {/* My Requests Panel - Floating */}
       <MyRequestsPanel />
+
+      {/* First Aid Guide FAB - for guardians/patients */}
+      {!isParamedicMode && !isDriverMode && <FirstAidFAB />}
     </div>
   );
 };
