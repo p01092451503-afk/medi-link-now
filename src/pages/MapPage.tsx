@@ -70,6 +70,12 @@ const getZoomForRadius = (radiusKm: number): number => {
 // Tooltip definitions for special filter chips
 const getFilterTooltip = (filterId: string): string | null => {
   switch (filterId) {
+    case "all":
+      return "성인 및 소아 포함 모든 응급의료기관을 표시합니다";
+    case "adult":
+      return "성인 환자를 위한 일반 응급실 병상 보유 병원입니다";
+    case "fever":
+      return "발열·감염 환자 대응이 가능한 음압격리 병상 보유 병원입니다";
     case "moonlight":
       return "보건복지부 지정, 야간·휴일에 소아 진료를 제공하는 병원입니다";
     case "traumaCenter":
