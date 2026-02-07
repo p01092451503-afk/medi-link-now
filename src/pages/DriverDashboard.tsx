@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -76,7 +76,7 @@ const DriverDashboard = () => {
   } = useDrivingLogs();
   
   const { hotlines, toggleFavorite, removeHotline } = useHotlines();
-  const { isTracking, startTracking, stopTracking, nearbyDrivers } = useDriverPresence();
+  const { isTracking, startTracking, stopTracking, nearbyDrivers, currentLocation: driverLocation } = useDriverPresence();
   const { pendingRequests, myRequests, acceptRequest, isLoading: isDispatchLoading } = useDispatchRequests();
   const { logs: rejectionLogs } = useRejectionLogs();
 
@@ -132,6 +132,51 @@ const DriverDashboard = () => {
 
   // Get completed requests from myRequests
   const completedRequests = myRequests.filter((r) => r.status === "completed");
+
+  // Haversine distance calculation (km)
+  const calcDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
+  // Proximity-based dispatch filtering: 10km → 20km → 50km → all
+  const { filteredRequests, activeRadiusLabel } = useMemo(() => {
+    if (!driverLocation || pendingRequests.length === 0) {
+      return { filteredRequests: pendingRequests.map(r => ({ ...r, distanceFromDriver: null as number | null })), activeRadiusLabel: "전국" };
+    }
+
+    const [dLat, dLng] = driverLocation;
+    const withDistance = pendingRequests.map(r => ({
+      ...r,
+      distanceFromDriver: calcDistance(dLat, dLng, r.pickup_lat, r.pickup_lng),
+    }));
+
+    // Sort by distance
+    withDistance.sort((a, b) => a.distanceFromDriver - b.distanceFromDriver);
+
+    // Try expanding radius: 10km → 20km → 50km → all
+    const radiusSteps = [
+      { km: 10, label: "10km 이내" },
+      { km: 20, label: "20km 이내" },
+      { km: 50, label: "50km 이내" },
+    ];
+
+    for (const step of radiusSteps) {
+      const inRange = withDistance.filter(r => r.distanceFromDriver <= step.km);
+      if (inRange.length > 0) {
+        return { filteredRequests: inRange, activeRadiusLabel: step.label };
+      }
+    }
+
+    // No requests within 50km, show all
+    return { filteredRequests: withDistance, activeRadiusLabel: "전국" };
+  }, [driverLocation, pendingRequests]);
 
   // Convert DB logs to stats widget format
   const statsLogs = drivingLogs.map(log => ({
@@ -278,16 +323,38 @@ const DriverDashboard = () => {
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-orange-500" />
-                대기 중인 호출 ({pendingRequests.length})
+                대기 중인 호출 ({filteredRequests.length})
+                {driverLocation && (
+                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                    📍 {activeRadiusLabel}
+                  </span>
+                )}
+                {!driverLocation && isTracking && (
+                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                    위치 확인 중...
+                  </span>
+                )}
+                {!isTracking && (
+                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400">
+                    위치 공유 OFF
+                  </span>
+                )}
               </h3>
-              {pendingRequests.length === 0 ? (
+              {filteredRequests.length === 0 ? (
                 <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-border text-center">
                   <Phone className="w-10 h-10 text-muted-foreground mx-auto mb-2 opacity-50" />
-                  <p className="text-muted-foreground text-sm">대기 중인 호출이 없습니다</p>
+                  <p className="text-muted-foreground text-sm">
+                    {driverLocation ? "근처에 대기 중인 호출이 없습니다" : "대기 중인 호출이 없습니다"}
+                  </p>
+                  {!isTracking && (
+                    <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+                      💡 위치 공유를 켜면 가까운 호출을 우선 받을 수 있습니다
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {pendingRequests.map((request) => (
+                  {filteredRequests.map((request) => (
                     <div
                       key={request.id}
                       className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-border"
@@ -301,9 +368,19 @@ const DriverDashboard = () => {
                             {formatTimeAgo(request.created_at)}
                           </p>
                         </div>
-                        <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 text-xs font-medium rounded-full">
-                          대기 중
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {request.distanceFromDriver !== null && (
+                            <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                              {request.distanceFromDriver < 1 
+                                ? `${Math.round(request.distanceFromDriver * 1000)}m`
+                                : `${request.distanceFromDriver.toFixed(1)}km`
+                              }
+                            </span>
+                          )}
+                          <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 text-xs font-medium rounded-full">
+                            대기 중
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-2 mb-4">
@@ -325,7 +402,7 @@ const DriverDashboard = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">
                             {request.estimated_distance_km 
-                              ? `예상 거리: ${request.estimated_distance_km.toFixed(1)}km` 
+                              ? `이송 거리: ${request.estimated_distance_km.toFixed(1)}km` 
                               : "거리 미정"}
                           </span>
                           {request.estimated_fee && (
