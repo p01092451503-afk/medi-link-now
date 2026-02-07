@@ -452,22 +452,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </div>
               )}
 
-              {/* Equipment Tags */}
-              <div className="mb-5">
-                <h3 className="text-sm font-medium text-foreground mb-2">
-                  보유 장비
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {hospital.equipment.map((item) => (
-                    <span
-                      key={item}
-                      className="px-3 py-1 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 text-xs font-medium rounded-full"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
 
               {/* Contact Info */}
               <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 mb-5">
