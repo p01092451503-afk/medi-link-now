@@ -291,7 +291,7 @@ const Landing = () => {
                   <div className="text-center py-2">
                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">총 병상</p>
                     <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
-                      {stats?.totalBeds !== undefined ? (stats.totalBeds / 1000).toFixed(1) + "k" : "-"}
+                      {stats?.totalBeds !== undefined ? stats.totalBeds.toLocaleString() : "-"}
                     </p>
                   </div>
                   
@@ -307,7 +307,7 @@ const Landing = () => {
                   <div className="text-center py-2">
                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">소아</p>
                     <p className="text-lg font-bold text-slate-800 dark:text-white leading-none">
-                      {stats?.pediatricBeds !== undefined ? (stats.pediatricBeds / 1000).toFixed(1) + "k" : "-"}
+                      {stats?.pediatricBeds !== undefined ? stats.pediatricBeds.toLocaleString() : "-"}
                     </p>
                   </div>
                 </div>
