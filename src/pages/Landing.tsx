@@ -606,7 +606,7 @@ const Landing = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.75 }}
-          className="w-full mb-6"
+          className="w-full mb-4 space-y-3"
         >
           <button
             onClick={() => navigate("/medicine-guide")}
@@ -620,6 +620,20 @@ const Landing = () => {
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">해열제 교차복용 타이머 · 복용량 계산</p>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all" />
+          </button>
+
+          <button
+            onClick={() => navigate("/emergency-guide")}
+            className="w-full flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-slate-800 rounded-2xl border border-red-200 dark:border-red-800/50 hover:bg-red-50 dark:hover:bg-slate-700 hover:border-red-300 dark:hover:border-red-700 transition-all group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center group-hover:bg-red-100 dark:group-hover:bg-red-900/50 transition-colors">
+              <Heart className="w-4 h-4 text-red-600" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">🆘 응급 행동 가이드</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">심폐소생술 · 하임리히 · 뇌졸중 대처법</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
           </button>
         </motion.div>
       </main>
