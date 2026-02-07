@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
 import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle } from "lucide-react";
 import MoonlightBadge from "@/components/hospital/MoonlightBadge";
+import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
 import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
 import { cleanHospitalName } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -164,6 +165,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
   
   // 이송 중인 구급차 수 가져오기
   const { incomingCount } = useIncomingAmbulancesForHospital(hospital?.id);
+  const { isMoonlightHospital } = useMoonlightHospitals();
   
   // Get existing transfer request for this hospital
   const existingRequest = hospital ? getRequestByHospitalId(hospital.id) : undefined;
@@ -276,8 +278,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                         👶 아이 진료
                       </span>
                     )}
-                    {/* Moonlight Hospital Badge */}
-                    <MoonlightBadge hasPediatric={hasPediatric} />
+                    {/* Moonlight Hospital Badge - only for officially designated hospitals */}
+                    <MoonlightBadge isMoonlight={isMoonlightHospital(hospital.nameKr)} />
                     {distance && (
                       <span className="text-xs text-muted-foreground">
                         {distance.toFixed(1)} km

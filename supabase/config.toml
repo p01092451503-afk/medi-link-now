@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.fetch-hospital-details]
 verify_jwt = false
+
+[functions.fetch-fire119-stats]
+verify_jwt = false
+
+[functions.fetch-moonlight-hospitals]
+verify_jwt = false

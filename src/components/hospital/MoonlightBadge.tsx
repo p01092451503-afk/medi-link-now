@@ -1,15 +1,16 @@
 import { Moon } from "lucide-react";
 
 interface MoonlightBadgeProps {
-  hasPediatric: boolean;
+  isMoonlight: boolean;
 }
 
 /**
- * Identifies hospitals operating late at night with pediatric capabilities
- * (달빛어린이병원 - Moonlight Children's Hospitals)
+ * Identifies officially designated 달빛어린이병원 (Moonlight Children's Hospitals)
+ * designated by the Ministry of Health and Welfare.
+ * Only displays for hospitals verified via the 공공데이터 API.
  */
-const MoonlightBadge = ({ hasPediatric }: MoonlightBadgeProps) => {
-  if (!hasPediatric) return null;
+const MoonlightBadge = ({ isMoonlight }: MoonlightBadgeProps) => {
+  if (!isMoonlight) return null;
 
   return (
     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400">
