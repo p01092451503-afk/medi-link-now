@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,10 +11,15 @@ import {
   Pill,
   Droplets,
   Scale,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import DoseTimerCard from "@/components/DoseTimerCard";
+import { useNearbyPharmacies } from "@/hooks/useNearbyPharmacies";
+import NearbyPharmacyListSheet from "@/components/NearbyPharmacyListSheet";
+import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 
 type TabType = "fever" | "stomach";
 
@@ -34,9 +39,42 @@ const MedicineGuidePage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("fever");
   const [weightInput, setWeightInput] = useState("");
+  const [pharmacySheetOpen, setPharmacySheetOpen] = useState(false);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<import("@/hooks/useNearbyPharmacies").NearbyPharmacy | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   const weight = parseFloat(weightInput) || 0;
   const validWeight = weight >= 3 && weight <= 50;
+
+  const { pharmacies, isLoading: pharmaciesLoading, error: pharmaciesError } = useNearbyPharmacies({
+    enabled: pharmacySheetOpen && !!userLocation,
+    userLocation,
+  });
+
+  const handleFindPharmacy = useCallback(() => {
+    if (userLocation) {
+      setPharmacySheetOpen(true);
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        setPharmacySheetOpen(true);
+        setIsLocating(false);
+      },
+      (err) => {
+        console.error("[MedicineGuidePage] Geolocation error:", err);
+        toast.error("위치 정보를 가져올 수 없습니다", {
+          description: "브라우저 설정에서 위치 권한을 허용해주세요.",
+        });
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, [userLocation]);
 
   const acetaminophen = useMemo(() => calcAcetaminophen(weight), [weight]);
   const ibuprofen = useMemo(() => calcIbuprofen(weight), [weight]);
@@ -406,14 +444,44 @@ const MedicineGuidePage = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-blue-100 dark:border-slate-800 p-4 safe-bottom">
         <div className="max-w-lg mx-auto">
           <Button
-            onClick={() => navigate("/map")}
+            onClick={handleFindPharmacy}
+            disabled={isLocating}
             className="w-full py-6 rounded-2xl text-base font-bold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 border-0"
           >
-            <MapPin className="w-5 h-5 mr-2" />
-            주변 약국 찾기
+            {isLocating ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                위치 확인 중...
+              </>
+            ) : (
+              <>
+                <MapPin className="w-5 h-5 mr-2" />
+                주변 약국 찾기
+              </>
+            )}
           </Button>
         </div>
       </div>
+
+      {/* Pharmacy List Sheet */}
+      <NearbyPharmacyListSheet
+        isOpen={pharmacySheetOpen}
+        onClose={() => setPharmacySheetOpen(false)}
+        pharmacies={pharmacies}
+        isLoading={pharmaciesLoading}
+        error={pharmaciesError}
+        onSelectPharmacy={(p) => {
+          setSelectedPharmacy(p);
+          setPharmacySheetOpen(false);
+        }}
+      />
+
+      {/* Pharmacy Detail Sheet */}
+      <PharmacyBottomSheet
+        pharmacy={selectedPharmacy}
+        isOpen={!!selectedPharmacy}
+        onClose={() => setSelectedPharmacy(null)}
+      />
     </div>
   );
 };
