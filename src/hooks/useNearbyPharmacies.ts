@@ -204,7 +204,7 @@ export const useNearbyPharmacies = ({
     setError(null);
 
     try {
-      // 반경을 점진적으로 확장하며 영업 중인 약국 검색
+      // 반경을 점진적으로 확장하며 약국 검색
       for (const radiusKm of SEARCH_RADII) {
         console.log(`[useNearbyPharmacies] Searching radius: ${radiusKm}km`);
 
@@ -212,20 +212,17 @@ export const useNearbyPharmacies = ({
 
         if (dbData.length > 0) {
           const processed = processDbRows(dbData, lat, lng);
-          const openPharmacies = processed.filter(p => p.isOpen);
 
-          if (openPharmacies.length > 0 || radiusKm === SEARCH_RADII[SEARCH_RADII.length - 1]) {
-            // 영업 중인 약국이 있거나 최대 반경에 도달한 경우
-            setAllPharmacies(processed);
-            setLastFetchLocation([lat, lng]);
-            setSearchRadiusKm(radiusKm);
-            setSource('db');
-            console.log(`[useNearbyPharmacies] DB ${radiusKm}km: ${processed.length} total, ${openPharmacies.length} open`);
-            return;
-          }
+          // 약국이 있으면 반환 (영업 여부 무관)
+          setAllPharmacies(processed);
+          setLastFetchLocation([lat, lng]);
+          setSearchRadiusKm(radiusKm);
+          setSource('db');
+          console.log(`[useNearbyPharmacies] DB ${radiusKm}km: ${processed.length} total, ${processed.filter(p => p.isOpen).length} open`);
+          return;
+        }
 
-          console.log(`[useNearbyPharmacies] ${radiusKm}km: ${processed.length} found but 0 open, expanding...`);
-        } else if (radiusKm === SEARCH_RADII[SEARCH_RADII.length - 1]) {
+        if (radiusKm === SEARCH_RADII[SEARCH_RADII.length - 1]) {
           // 최대 반경에서도 데이터 없음 → Edge Function fallback
           break;
         }
@@ -293,9 +290,9 @@ export const useNearbyPharmacies = ({
     fetchPharmacies(lat, lng);
   }, [enabled, userLocation, fetchPharmacies, lastFetchLocation]);
 
-  // Filter pharmacies
+  // Filter pharmacies - show all, not just open ones
   const filteredPharmacies = useMemo(() => {
-    let result = allPharmacies.filter(p => p.isOpen);
+    let result = [...allPharmacies];
 
     switch (filter) {
       case "nightPharmacy":
@@ -303,7 +300,12 @@ export const useNearbyPharmacies = ({
         break;
     }
 
-    result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+    // 영업 중인 약국을 먼저, 그다음 거리순
+    result.sort((a, b) => {
+      if (a.isOpen && !b.isOpen) return -1;
+      if (!a.isOpen && b.isOpen) return 1;
+      return (a.distance || 0) - (b.distance || 0);
+    });
     return result;
   }, [allPharmacies, filter]);
 

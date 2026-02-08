@@ -77,7 +77,7 @@ const NearbyPharmacyListSheet = ({
                   <div>
                     <h3 className="font-bold text-lg text-foreground">주변 약국</h3>
                     <p className="text-xs text-muted-foreground">
-                      내 위치 기준 {searchRadiusKm}km 이내 · 영업중
+                      내 위치 기준 {searchRadiusKm}km 이내
                     </p>
                   </div>
                 </div>
@@ -136,10 +136,10 @@ const NearbyPharmacyListSheet = ({
                     <Pill className="w-8 h-8 text-gray-400 dark:text-slate-500" />
                   </div>
                   <p className="text-muted-foreground font-medium">
-                    현재 영업 중인 약국이 없습니다
+                    주변에 약국이 없습니다
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    심야 시간에는 심야약국 필터를 확인해보세요
+                    검색 범위 내 등록된 약국이 없습니다
                   </p>
                 </div>
               )}
@@ -147,23 +147,35 @@ const NearbyPharmacyListSheet = ({
               {/* Pharmacy List */}
               {!isLoading && !error && pharmacies.length > 0 && (
                 <div className="space-y-3">
-                  {pharmacies.slice(0, 10).map((pharmacy, index) => (
+                  {pharmacies.slice(0, 20).map((pharmacy, index) => (
                     <motion.div
                       key={pharmacy.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/20 rounded-xl border border-green-100 dark:border-green-900/40"
+                      className={`p-4 rounded-xl border ${
+                        pharmacy.isOpen
+                          ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/20 border-green-100 dark:border-green-900/40'
+                          : 'bg-muted/30 border-border'
+                      }`}
                       onClick={() => onSelectPharmacy?.(pharmacy)}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <span className="text-lg">💊</span>
-                            <h4 className="font-bold text-foreground truncate">{pharmacy.name}</h4>
-                            <Badge className="bg-green-500 text-white text-[10px] px-1.5 py-0">
-                              영업중
-                            </Badge>
+                            <h4 className={`font-bold truncate ${pharmacy.isOpen ? 'text-foreground' : 'text-muted-foreground'}`}>
+                              {pharmacy.name}
+                            </h4>
+                            {pharmacy.isOpen ? (
+                              <Badge className="bg-green-500 text-white text-[10px] px-1.5 py-0">
+                                영업중
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-muted-foreground text-[10px] px-1.5 py-0">
+                                영업종료
+                              </Badge>
+                            )}
                             {pharmacy.isNightPharmacy && (
                               <Badge variant="outline" className="border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 text-[10px] px-1.5 py-0">
                                 <Moon className="w-3 h-3 mr-0.5" />
@@ -176,6 +188,15 @@ const NearbyPharmacyListSheet = ({
                               </Badge>
                             )}
                           </div>
+                          {/* 영업시간 표시 */}
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
+                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <span>
+                              {pharmacy.todayOpenTime && pharmacy.todayCloseTime
+                                ? `${formatTime(pharmacy.todayOpenTime)} ~ ${formatTime(pharmacy.todayCloseTime)}`
+                                : '영업시간 미확인'}
+                            </span>
+                          </div>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
                             <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                             <span className="line-clamp-1">{pharmacy.address || "주소 정보 없음"}</span>
@@ -187,10 +208,6 @@ const NearbyPharmacyListSheet = ({
                                 {formatDistance(pharmacy.distance)}
                               </span>
                             )}
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="w-3.5 h-3.5" />
-                              {formatTime(pharmacy.todayOpenTime)} - {formatTime(pharmacy.todayCloseTime)}
-                            </span>
                           </div>
                         </div>
                       </div>
