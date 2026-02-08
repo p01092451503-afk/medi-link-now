@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // 건강보험심사평가원 약국정보서비스 API (B551182)
-const API_URL = "http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
+const API_URL = "https://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
 
 interface PharmacyRow {
   id: number;
