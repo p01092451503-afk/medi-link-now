@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // 건강보험심사평가원 약국정보서비스 API (B551182)
-const API_BASE_URL = "https://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
+const API_BASE_URL = "http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
 
 // 전국 17개 시도 코드
 const SIDO_CODES: { code: string; name: string; region: string }[] = [
@@ -136,8 +136,8 @@ serve(async (req) => {
         console.log(`[sync-pharmacies] Fetching: ${sido.name} (sidoCd=${sido.code})`);
 
         // 1페이지 조회 (총 건수 확인)
-        const firstUrl = `${API_BASE_URL}?serviceKey=${serviceKey}&sidoCd=${sido.code}&pageNo=1&numOfRows=1000`;
-        console.log(`[sync-pharmacies] URL pattern: ${API_BASE_URL}?serviceKey=[KEY_LEN=${serviceKey.length}]&sidoCd=${sido.code}&pageNo=1&numOfRows=1000`);
+        const firstUrl = `${API_BASE_URL}?ServiceKey=${serviceKey}&sidoCd=${sido.code}&pageNo=1&numOfRows=1000`;
+        console.log(`[sync-pharmacies] URL pattern: ${API_BASE_URL}?ServiceKey=[KEY_LEN=${serviceKey.length}]&sidoCd=${sido.code}&pageNo=1&numOfRows=1000`);
         const firstResp = await fetch(firstUrl);
 
         if (!firstResp.ok) {
@@ -169,7 +169,7 @@ serve(async (req) => {
         for (let page = 2; page <= Math.min(totalPages, 20); page++) {
           await new Promise(resolve => setTimeout(resolve, 200)); // rate limit
 
-          const pageUrl = `${API_BASE_URL}?serviceKey=${serviceKey}&sidoCd=${sido.code}&pageNo=${page}&numOfRows=1000`;
+          const pageUrl = `${API_BASE_URL}?ServiceKey=${serviceKey}&sidoCd=${sido.code}&pageNo=${page}&numOfRows=1000`;
           try {
             const pageResp = await fetch(pageUrl);
             if (pageResp.ok) {

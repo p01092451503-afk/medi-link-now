@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // 건강보험심사평가원 약국정보서비스 API (B551182)
-const API_URL = "https://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
+const API_URL = "http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
 
 interface PharmacyRow {
   id: number;
@@ -179,7 +179,7 @@ serve(async (req) => {
 
     // HIRA API: xPos=경도, yPos=위도, radius=검색반경(m)
     const radiusM = Math.round(radiusKm * 1000);
-    const apiUrl = `${API_URL}?serviceKey=${serviceKey}&xPos=${lng}&yPos=${lat}&radius=${radiusM}&pageNo=1&numOfRows=200`;
+    const apiUrl = `${API_URL}?ServiceKey=${serviceKey}&xPos=${lng}&yPos=${lat}&radius=${radiusM}&pageNo=1&numOfRows=200`;
     console.log(`[fetch-nearby-pharmacies] Fetching HIRA API: xPos=${lng}&yPos=${lat}&radius=${radiusM}`);
 
     const response = await fetch(apiUrl);
