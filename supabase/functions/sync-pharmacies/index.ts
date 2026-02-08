@@ -137,11 +137,12 @@ serve(async (req) => {
 
         // 1페이지 조회 (총 건수 확인)
         const firstUrl = `${API_BASE_URL}?serviceKey=${serviceKey}&sidoCd=${sido.code}&pageNo=1&numOfRows=1000`;
+        console.log(`[sync-pharmacies] URL pattern: ${API_BASE_URL}?serviceKey=[KEY_LEN=${serviceKey.length}]&sidoCd=${sido.code}&pageNo=1&numOfRows=1000`);
         const firstResp = await fetch(firstUrl);
 
         if (!firstResp.ok) {
           const statusText = await firstResp.text();
-          console.error(`[sync-pharmacies] HTTP ${firstResp.status} for ${sido.name}: ${statusText.substring(0, 200)}`);
+          console.error(`[sync-pharmacies] HTTP ${firstResp.status} for ${sido.name}: ${statusText.substring(0, 500)}`);
           sidoResults[sido.name] = { count: 0, pages: 0, error: `HTTP ${firstResp.status}` };
           totalErrors++;
           continue;
