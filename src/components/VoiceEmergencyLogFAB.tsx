@@ -463,18 +463,14 @@ const VoiceEmergencyLogFAB = () => {
 
   return (
     <>
-      {/* Floating Mic Button */}
+      {/* Horizontal Voice Button - positioned above trip management widget */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-2xl flex items-center justify-center"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        animate={{ 
-          boxShadow: ["0 10px 30px rgba(239, 68, 68, 0.4)", "0 10px 40px rgba(239, 68, 68, 0.6)", "0 10px 30px rgba(239, 68, 68, 0.4)"]
-        }}
-        transition={{ duration: 2, repeat: Infinity }}
+        className="fixed bottom-[8.5rem] left-4 right-4 z-40 h-12 rounded-2xl bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg flex items-center justify-center gap-2 font-semibold text-sm"
+        whileTap={{ scale: 0.98 }}
       >
-        <Mic className="w-7 h-7" />
+        <Mic className="w-5 h-5" />
+        AI 음성 구급일지
       </motion.button>
 
       {/* Bottom Sheet */}
