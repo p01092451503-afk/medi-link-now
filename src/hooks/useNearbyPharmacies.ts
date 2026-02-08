@@ -276,7 +276,10 @@ export const useNearbyPharmacies = ({
   // Fetch when enabled and location changes significantly
   useEffect(() => {
     if (!enabled || !userLocation) {
-      setAllPharmacies([]);
+      // 시트가 닫히면 lastFetchLocation도 초기화하여 재오픈 시 다시 조회
+      if (!enabled) {
+        setLastFetchLocation(null);
+      }
       return;
     }
 
