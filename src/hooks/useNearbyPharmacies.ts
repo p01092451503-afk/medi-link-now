@@ -127,6 +127,9 @@ const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: numbe
   return R * c;
 };
 
+// Progressive search radii in km
+const SEARCH_RADII = [5, 10, 20, 30];
+
 interface UseNearbyPharmaciesOptions {
   enabled?: boolean;
   userLocation?: [number, number] | null;
@@ -143,71 +146,96 @@ export const useNearbyPharmacies = ({
   const [error, setError] = useState<string | null>(null);
   const [lastFetchLocation, setLastFetchLocation] = useState<[number, number] | null>(null);
   const [source, setSource] = useState<string>('none');
+  const [searchRadiusKm, setSearchRadiusKm] = useState<number>(5);
+
+  const processDbRows = useCallback((rows: any[], lat: number, lng: number): NearbyPharmacy[] => {
+    return rows.map((row) => {
+      const pharmacy: NearbyPharmacy = {
+        id: row.hpid || `pharmacy-${row.id}`,
+        name: row.name,
+        address: row.address || '',
+        phone: row.phone || '',
+        lat: row.lat,
+        lng: row.lng,
+        dutyTime1s: row.duty_time_1s || '',
+        dutyTime1c: row.duty_time_1c || '',
+        dutyTime2s: row.duty_time_2s || '',
+        dutyTime2c: row.duty_time_2c || '',
+        dutyTime3s: row.duty_time_3s || '',
+        dutyTime3c: row.duty_time_3c || '',
+        dutyTime4s: row.duty_time_4s || '',
+        dutyTime4c: row.duty_time_4c || '',
+        dutyTime5s: row.duty_time_5s || '',
+        dutyTime5c: row.duty_time_5c || '',
+        dutyTime6s: row.duty_time_6s || '',
+        dutyTime6c: row.duty_time_6c || '',
+        dutyTime7s: row.duty_time_7s || '',
+        dutyTime7c: row.duty_time_7c || '',
+        dutyTime8s: row.duty_time_8s || '',
+        dutyTime8c: row.duty_time_8c || '',
+        isNightPharmacy: row.is_night_pharmacy,
+        is24h: row.is_24h,
+      };
+      const openStatus = isPharmacyOpen(pharmacy);
+      const distance = calculateDistance(lat, lng, pharmacy.lat, pharmacy.lng);
+      return { ...pharmacy, isOpen: openStatus.isOpen, todayOpenTime: openStatus.openTime, todayCloseTime: openStatus.closeTime, distance };
+    });
+  }, []);
+
+  const fetchFromDbWithRadius = useCallback(async (lat: number, lng: number, radiusKm: number) => {
+    const latDelta = radiusKm / 111;
+    const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180));
+
+    const { data, error } = await supabase
+      .from('pharmacies')
+      .select('*')
+      .gte('lat', lat - latDelta)
+      .lte('lat', lat + latDelta)
+      .gte('lng', lng - lngDelta)
+      .lte('lng', lng + lngDelta)
+      .limit(500);
+
+    if (error) throw error;
+    return data || [];
+  }, []);
 
   const fetchPharmacies = useCallback(async (lat: number, lng: number) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // DB 우선 조회: Supabase에서 직접 좌표 범위 검색
-      const radiusKm = 5;
-      const latDelta = radiusKm / 111;
-      const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180));
+      // 반경을 점진적으로 확장하며 영업 중인 약국 검색
+      for (const radiusKm of SEARCH_RADII) {
+        console.log(`[useNearbyPharmacies] Searching radius: ${radiusKm}km`);
 
-      const { data: dbData, error: dbError } = await supabase
-        .from('pharmacies')
-        .select('*')
-        .gte('lat', lat - latDelta)
-        .lte('lat', lat + latDelta)
-        .gte('lng', lng - lngDelta)
-        .lte('lng', lng + lngDelta)
-        .limit(200);
+        const dbData = await fetchFromDbWithRadius(lat, lng, radiusKm);
 
-      if (!dbError && dbData && dbData.length > 0) {
-        // DB에서 데이터 찾음
-        const processedPharmacies: NearbyPharmacy[] = (dbData as any[]).map((row) => {
-          const pharmacy: NearbyPharmacy = {
-            id: row.hpid || `pharmacy-${row.id}`,
-            name: row.name,
-            address: row.address || '',
-            phone: row.phone || '',
-            lat: row.lat,
-            lng: row.lng,
-            dutyTime1s: row.duty_time_1s || '',
-            dutyTime1c: row.duty_time_1c || '',
-            dutyTime2s: row.duty_time_2s || '',
-            dutyTime2c: row.duty_time_2c || '',
-            dutyTime3s: row.duty_time_3s || '',
-            dutyTime3c: row.duty_time_3c || '',
-            dutyTime4s: row.duty_time_4s || '',
-            dutyTime4c: row.duty_time_4c || '',
-            dutyTime5s: row.duty_time_5s || '',
-            dutyTime5c: row.duty_time_5c || '',
-            dutyTime6s: row.duty_time_6s || '',
-            dutyTime6c: row.duty_time_6c || '',
-            dutyTime7s: row.duty_time_7s || '',
-            dutyTime7c: row.duty_time_7c || '',
-            dutyTime8s: row.duty_time_8s || '',
-            dutyTime8c: row.duty_time_8c || '',
-            isNightPharmacy: row.is_night_pharmacy,
-            is24h: row.is_24h,
-          };
-          const openStatus = isPharmacyOpen(pharmacy);
-          const distance = calculateDistance(lat, lng, pharmacy.lat, pharmacy.lng);
-          return { ...pharmacy, isOpen: openStatus.isOpen, todayOpenTime: openStatus.openTime, todayCloseTime: openStatus.closeTime, distance };
-        });
+        if (dbData.length > 0) {
+          const processed = processDbRows(dbData, lat, lng);
+          const openPharmacies = processed.filter(p => p.isOpen);
 
-        setAllPharmacies(processedPharmacies);
-        setLastFetchLocation([lat, lng]);
-        setSource('db');
-        console.log(`[useNearbyPharmacies] DB: ${processedPharmacies.length} pharmacies, ${processedPharmacies.filter(p => p.isOpen).length} open`);
-        return;
+          if (openPharmacies.length > 0 || radiusKm === SEARCH_RADII[SEARCH_RADII.length - 1]) {
+            // 영업 중인 약국이 있거나 최대 반경에 도달한 경우
+            setAllPharmacies(processed);
+            setLastFetchLocation([lat, lng]);
+            setSearchRadiusKm(radiusKm);
+            setSource('db');
+            console.log(`[useNearbyPharmacies] DB ${radiusKm}km: ${processed.length} total, ${openPharmacies.length} open`);
+            return;
+          }
+
+          console.log(`[useNearbyPharmacies] ${radiusKm}km: ${processed.length} found but 0 open, expanding...`);
+        } else if (radiusKm === SEARCH_RADII[SEARCH_RADII.length - 1]) {
+          // 최대 반경에서도 데이터 없음 → Edge Function fallback
+          break;
+        }
       }
 
-      // DB에 데이터 없으면 Edge Function 호출 (API fallback)
-      console.log('[useNearbyPharmacies] DB empty, calling Edge Function...');
+      // 모든 반경에서 DB 데이터 없음 → Edge Function fallback
+      console.log('[useNearbyPharmacies] DB empty at all radii, calling Edge Function...');
+      const maxRadius = SEARCH_RADII[SEARCH_RADII.length - 1];
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-nearby-pharmacies?lat=${lat}&lng=${lng}&radius=5`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-nearby-pharmacies?lat=${lat}&lng=${lng}&radius=${maxRadius}`,
         {
           headers: {
             'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
@@ -231,10 +259,12 @@ export const useNearbyPharmacies = ({
 
         setAllPharmacies(processedPharmacies);
         setLastFetchLocation([lat, lng]);
+        setSearchRadiusKm(maxRadius);
         setSource(result.source || 'api');
         console.log(`[useNearbyPharmacies] API: ${processedPharmacies.length} pharmacies (source: ${result.source})`);
       } else {
         setAllPharmacies([]);
+        setSearchRadiusKm(maxRadius);
         setSource('empty');
         console.log('[useNearbyPharmacies] No pharmacies found from any source');
       }
@@ -244,7 +274,7 @@ export const useNearbyPharmacies = ({
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [fetchFromDbWithRadius, processDbRows]);
 
   // Fetch when enabled and location changes significantly
   useEffect(() => {
@@ -291,5 +321,6 @@ export const useNearbyPharmacies = ({
     error,
     refetch,
     source,
+    searchRadiusKm,
   };
 };

@@ -12,6 +12,7 @@ interface NearbyPharmacyListSheetProps {
   isLoading: boolean;
   error?: string | null;
   onSelectPharmacy?: (pharmacy: NearbyPharmacy) => void;
+  searchRadiusKm?: number;
 }
 
 const formatTime = (time?: string): string => {
@@ -32,6 +33,7 @@ const NearbyPharmacyListSheet = ({
   isLoading,
   error,
   onSelectPharmacy,
+  searchRadiusKm = 5,
 }: NearbyPharmacyListSheetProps) => {
   const handleCall = (phone: string) => {
     window.location.href = `tel:${phone}`;
@@ -75,7 +77,7 @@ const NearbyPharmacyListSheet = ({
                   <div>
                     <h3 className="font-bold text-lg text-foreground">주변 약국</h3>
                     <p className="text-xs text-muted-foreground">
-                      내 위치 기준 5km 이내 · 영업중
+                      내 위치 기준 {searchRadiusKm}km 이내 · 영업중
                     </p>
                   </div>
                 </div>
