@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Pill, Loader2, Info } from "lucide-react";
+import { X, Pill, Loader2, Info, Moon, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
+import type { NearbyPharmacy, PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
 import PharmacyCard from "@/components/pharmacy/PharmacyCard";
 
 interface NearbyPharmacyListSheetProps {
@@ -12,7 +12,15 @@ interface NearbyPharmacyListSheetProps {
   error?: string | null;
   onSelectPharmacy?: (pharmacy: NearbyPharmacy) => void;
   searchRadiusKm?: number;
+  activeFilter?: PharmacyFilterType;
+  onFilterChange?: (filter: PharmacyFilterType) => void;
 }
+
+const FILTER_CHIPS: { id: PharmacyFilterType; label: string; icon: React.ReactNode }[] = [
+  { id: "all", label: "전체", icon: <Pill className="w-3.5 h-3.5" /> },
+  { id: "24h", label: "24시간", icon: <Clock className="w-3.5 h-3.5" /> },
+  { id: "nightPharmacy", label: "심야 약국", icon: <Moon className="w-3.5 h-3.5" /> },
+];
 
 const NearbyPharmacyListSheet = ({
   isOpen,
@@ -22,6 +30,8 @@ const NearbyPharmacyListSheet = ({
   error,
   onSelectPharmacy,
   searchRadiusKm = 5,
+  activeFilter = "all",
+  onFilterChange,
 }: NearbyPharmacyListSheetProps) => {
   const handleCall = (phone: string) => {
     window.location.href = `tel:${phone}`;
@@ -77,7 +87,23 @@ const NearbyPharmacyListSheet = ({
                 </button>
               </div>
 
-              {/* Radius Expanded Notice */}
+              {/* Filter Chips */}
+              <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-1">
+                {FILTER_CHIPS.map((chip) => (
+                  <button
+                    key={chip.id}
+                    onClick={() => onFilterChange?.(chip.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+                      activeFilter === chip.id
+                        ? "bg-green-600 text-white border-green-600 dark:bg-green-500 dark:border-green-500 shadow-sm"
+                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    {chip.icon}
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
               {!isLoading && searchRadiusKm > 5 && pharmacies.length > 0 && (
                 <div className="flex items-start gap-2 p-3 mb-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
                   <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
