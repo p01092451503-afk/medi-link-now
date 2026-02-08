@@ -32,7 +32,7 @@ export interface NearbyPharmacy {
   is24h?: boolean;
 }
 
-export type PharmacyFilterType = "all" | "nightPharmacy" | "24h";
+export type PharmacyFilterType = "all" | "open" | "nightPharmacy" | "24h";
 
 // Check if pharmacy is currently open based on operating hours
 const isPharmacyOpen = (pharmacy: NearbyPharmacy): { isOpen: boolean; openTime?: string; closeTime?: string } => {
@@ -298,6 +298,9 @@ export const useNearbyPharmacies = ({
     let result = [...allPharmacies];
 
     switch (filter) {
+      case "open":
+        result = result.filter((p) => p.isOpen === true);
+        break;
       case "nightPharmacy":
         result = result.filter(isNightPharmacy);
         break;
