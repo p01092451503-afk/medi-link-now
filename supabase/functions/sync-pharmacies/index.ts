@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // 건강보험심사평가원 약국정보서비스 API (B551182)
-const API_BASE_URL = "http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
+const API_BASE_URL = "https://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList";
 
 // 전국 17개 시도 코드
 const SIDO_CODES: { code: string; name: string; region: string }[] = [
