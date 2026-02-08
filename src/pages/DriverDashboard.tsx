@@ -521,8 +521,7 @@ const DriverDashboard = () => {
         )}
       </main>
 
-      {/* Rejection Logger FAB */}
-      <RejectionLoggerFAB />
+      {/* Rejection Logger FAB removed per user request */}
 
       {/* Trip Management Widget - 통합된 이송/운행 관리 */}
       <TripManagementWidget 
