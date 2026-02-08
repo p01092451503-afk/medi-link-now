@@ -92,7 +92,13 @@ const MedicineGuidePage = () => {
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-blue-100 dark:border-slate-800">
         <div className="px-4 py-3 flex items-center justify-between max-w-lg mx-auto">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate("/");
+              }
+            }}
             className="flex items-center gap-1.5 text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm font-medium"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
