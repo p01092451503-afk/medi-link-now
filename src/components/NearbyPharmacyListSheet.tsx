@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MapPin, Phone, Clock, Navigation, Pill, Moon, Loader2 } from "lucide-react";
+import { X, MapPin, Phone, Clock, Navigation, Pill, Moon, Loader2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -88,6 +88,16 @@ const NearbyPharmacyListSheet = ({
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
+
+              {/* Radius Expanded Notice */}
+              {!isLoading && searchRadiusKm > 5 && pharmacies.length > 0 && (
+                <div className="flex items-start gap-2 p-3 mb-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+                  <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-amber-700 dark:text-amber-300">
+                    5km 이내에 영업 중인 약국이 없어 <strong>{searchRadiusKm}km</strong>로 검색 범위를 확장했습니다
+                  </p>
+                </div>
+              )}
 
               {/* Loading */}
               {isLoading && (
