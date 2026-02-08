@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import DoseTimerCard from "@/components/DoseTimerCard";
-import { useNearbyPharmacies } from "@/hooks/useNearbyPharmacies";
+import { useNearbyPharmacies, type PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
 import NearbyPharmacyListSheet from "@/components/NearbyPharmacyListSheet";
 import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 
@@ -43,6 +43,7 @@ const MedicineGuidePage = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState<import("@/hooks/useNearbyPharmacies").NearbyPharmacy | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
+  const [pharmacyFilter, setPharmacyFilter] = useState<PharmacyFilterType>("all");
 
   const weight = parseFloat(weightInput) || 0;
   const validWeight = weight >= 3 && weight <= 50;
@@ -50,6 +51,7 @@ const MedicineGuidePage = () => {
   const { pharmacies, isLoading: pharmaciesLoading, error: pharmaciesError, searchRadiusKm } = useNearbyPharmacies({
     enabled: pharmacySheetOpen && !!userLocation,
     userLocation,
+    filter: pharmacyFilter,
   });
 
   const handleFindPharmacy = useCallback(() => {
@@ -471,6 +473,8 @@ const MedicineGuidePage = () => {
         isLoading={pharmaciesLoading}
         error={pharmaciesError}
         searchRadiusKm={searchRadiusKm}
+        activeFilter={pharmacyFilter}
+        onFilterChange={setPharmacyFilter}
         onSelectPharmacy={(p) => {
           setSelectedPharmacy(p);
           setPharmacySheetOpen(false);
