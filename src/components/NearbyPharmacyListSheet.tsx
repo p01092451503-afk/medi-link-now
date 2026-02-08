@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Pill, Loader2, Info, Moon, Clock } from "lucide-react";
+import { X, Pill, Loader2, Info, Moon, Clock, CheckCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { NearbyPharmacy, PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
 import PharmacyCard from "@/components/pharmacy/PharmacyCard";
@@ -18,6 +18,7 @@ interface NearbyPharmacyListSheetProps {
 
 const FILTER_CHIPS: { id: PharmacyFilterType; label: string; icon: React.ReactNode }[] = [
   { id: "all", label: "전체", icon: <Pill className="w-3.5 h-3.5" /> },
+  { id: "open", label: "영업중", icon: <CheckCircle className="w-3.5 h-3.5" /> },
   { id: "24h", label: "24시간", icon: <Clock className="w-3.5 h-3.5" /> },
   { id: "nightPharmacy", label: "심야 약국", icon: <Moon className="w-3.5 h-3.5" /> },
 ];
