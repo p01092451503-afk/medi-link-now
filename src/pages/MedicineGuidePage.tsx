@@ -47,7 +47,7 @@ const MedicineGuidePage = () => {
   const weight = parseFloat(weightInput) || 0;
   const validWeight = weight >= 3 && weight <= 50;
 
-  const { pharmacies, isLoading: pharmaciesLoading, error: pharmaciesError } = useNearbyPharmacies({
+  const { pharmacies, isLoading: pharmaciesLoading, error: pharmaciesError, searchRadiusKm } = useNearbyPharmacies({
     enabled: pharmacySheetOpen && !!userLocation,
     userLocation,
   });
@@ -470,6 +470,7 @@ const MedicineGuidePage = () => {
         pharmacies={pharmacies}
         isLoading={pharmaciesLoading}
         error={pharmaciesError}
+        searchRadiusKm={searchRadiusKm}
         onSelectPharmacy={(p) => {
           setSelectedPharmacy(p);
           setPharmacySheetOpen(false);
