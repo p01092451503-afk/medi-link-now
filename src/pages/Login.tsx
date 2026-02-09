@@ -1,29 +1,27 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Ambulance, Mail, Lock, Loader2, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Ambulance, Mail, Lock, Loader2, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import SubPageHeader from "@/components/SubPageHeader";
 
 const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const mode = searchParams.get("mode") || "driver"; // 'driver' or 'guardian'
+  const mode = searchParams.get("mode") || "driver";
   const returnTo = searchParams.get("returnTo") || (mode === "guardian" ? "/family" : "/driver");
   
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Pre-fill test credentials for driver mode
   const [email, setEmail] = useState(mode === "driver" ? "p01092451503@gmail.com" : "");
   const [password, setPassword] = useState(mode === "driver" ? "111111" : "");
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated && !isAuthLoading) {
       navigate(returnTo);
@@ -42,49 +40,24 @@ const Login = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast({ title: "이메일 또는 비밀번호가 올바르지 않습니다", variant: "destructive" });
-          } else {
-            toast({ title: error.message, variant: "destructive" });
-          }
+          toast({ title: error.message.includes("Invalid login credentials") ? "이메일 또는 비밀번호가 올바르지 않습니다" : error.message, variant: "destructive" });
           return;
         }
-
         toast({ title: "로그인 성공!" });
         navigate(returnTo);
       } else {
         const redirectUrl = `${window.location.origin}${returnTo}`;
-        
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: redirectUrl,
-          },
-        });
-        
+        const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: redirectUrl } });
         if (error) {
-          if (error.message.includes("already registered")) {
-            toast({ title: "이미 가입된 이메일입니다", variant: "destructive" });
-          } else {
-            toast({ title: error.message, variant: "destructive" });
-          }
+          toast({ title: error.message.includes("already registered") ? "이미 가입된 이메일입니다" : error.message, variant: "destructive" });
           return;
         }
-
-        toast({ 
-          title: "회원가입 성공!",
-          description: "이메일 인증 후 로그인해주세요",
-        });
+        toast({ title: "회원가입 성공!", description: "이메일 인증 후 로그인해주세요" });
         setIsLogin(true);
       }
-    } catch (err) {
+    } catch {
       toast({ title: "오류가 발생했습니다", variant: "destructive" });
     } finally {
       setIsLoading(false);
@@ -92,55 +65,41 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col">
-      {/* Header */}
-      <header className="p-4 flex items-center gap-4">
-        <button
-          onClick={() => navigate("/")}
-          className="p-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
-        <h1 className="text-lg font-semibold text-foreground">
-          {mode === "guardian" ? "로그인 / 회원가입" : "구급대원 로그인"}
-        </h1>
-      </header>
+    <div className="min-h-screen bg-background flex flex-col">
+      <SubPageHeader title={mode === "guardian" ? "로그인" : "구급대원 로그인"} backTo="/" />
 
-      {/* Main */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
+      <main className="flex-1 flex flex-col items-center justify-center px-5 pb-8 max-w-lg mx-auto w-full">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full"
         >
           {/* Icon */}
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center">
               {mode === "guardian" ? (
-                <Users className="w-10 h-10 text-primary" />
+                <Users className="w-8 h-8 text-primary" />
               ) : (
-                <Ambulance className="w-10 h-10 text-primary" />
+                <Ambulance className="w-8 h-8 text-primary" />
               )}
             </div>
           </div>
 
           {/* Title */}
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-1">
+            <h2 className="text-xl font-extrabold text-foreground mb-1">
               {isLogin ? "다시 오신 것을 환영합니다" : "새 계정 만들기"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {isLogin 
-                ? "로그인하여 호출 목록을 확인하세요" 
-                : "가입하여 Find-ER 드라이버가 되세요"}
+              {isLogin ? "로그인하여 서비스를 이용하세요" : "가입하여 파인더 서비스를 시작하세요"}
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">이메일</Label>
+              <Label htmlFor="email" className="text-sm font-medium text-foreground">이메일</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -149,13 +108,13 @@ const Login = () => {
                   placeholder="driver@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 py-6 rounded-xl bg-white dark:bg-slate-800 text-foreground"
+                  className="pl-10 py-6 rounded-2xl bg-card border-border text-foreground"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">비밀번호</Label>
+              <Label htmlFor="password" className="text-sm font-medium text-foreground">비밀번호</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -164,27 +123,22 @@ const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 py-6 rounded-xl bg-white dark:bg-slate-800 text-foreground"
+                  className="pl-10 py-6 rounded-2xl bg-card border-border text-foreground"
                 />
               </div>
             </div>
 
-            <Button
+            <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-6 rounded-xl text-base font-semibold"
+              className="w-full py-4 rounded-2xl bg-foreground text-background text-[15px] font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
-              ) : isLogin ? (
-                "로그인"
-              ) : (
-                "회원가입"
-              )}
-            </Button>
+              ) : isLogin ? "로그인" : "회원가입"}
+            </button>
           </form>
 
-          {/* Toggle */}
           <div className="mt-6 text-center">
             <button
               type="button"

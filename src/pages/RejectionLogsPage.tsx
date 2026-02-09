@@ -217,32 +217,26 @@ const RejectionLogsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-border px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-muted rounded-full transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </button>
-            <div>
-              <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <Shield className="w-5 h-5 text-red-500" />
-                Rejection Blackbox
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                거절 이력 증거 관리
-              </p>
-            </div>
-          </div>
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="px-5 py-4 flex items-center justify-between max-w-lg mx-auto">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            돌아가기
+          </button>
+          <h1 className="text-[15px] font-bold text-foreground flex items-center gap-2">
+            <Shield className="w-4 h-4 text-danger" />
+            거절 이력
+          </h1>
           <Button
             onClick={exportDailyReport}
             size="sm"
-            className="bg-red-500 hover:bg-red-600 text-white rounded-xl"
+            className="rounded-xl text-xs"
           >
-            <Download className="w-4 h-4 mr-1" />
-            📄 일일 리포트
+            <Download className="w-3.5 h-3.5 mr-1" />
+            리포트
           </Button>
         </div>
       </header>

@@ -193,23 +193,22 @@ const FamilyPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background pb-8">
+    <div className="min-h-screen bg-background pb-8">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border px-4 py-4">
-        <div className="flex items-center gap-4">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="px-5 py-4 flex items-center gap-4 max-w-lg mx-auto">
           <button
             onClick={() => navigate("/")}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-secondary rounded-full transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">가족 응급 카드</h1>
-            <p className="text-xs text-muted-foreground">Medical Passport</p>
+            <h1 className="text-[15px] font-bold text-foreground">가족 응급 카드</h1>
           </div>
           <button
             onClick={() => setShowPinSettings(true)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-secondary rounded-full transition-colors"
           >
             <Settings className="w-5 h-5 text-muted-foreground" />
           </button>

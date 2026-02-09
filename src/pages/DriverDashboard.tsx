@@ -193,7 +193,7 @@ const DriverDashboard = () => {
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-border px-4 py-3">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -227,7 +227,7 @@ const DriverDashboard = () => {
       </header>
 
       {/* Quick Actions Bar */}
-      <div className="sticky top-[60px] z-40 bg-white dark:bg-slate-900 border-b border-border px-4 py-2">
+      <div className="sticky top-[60px] z-40 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-2">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
           <Button
             variant="outline"
@@ -276,7 +276,7 @@ const DriverDashboard = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="sticky top-[108px] z-40 bg-white dark:bg-slate-900 border-b border-border">
+      <div className="sticky top-[108px] z-40 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="flex">
           <button
             onClick={() => navigate("/map?mode=driver")}

@@ -212,26 +212,23 @@ const FareCalculatorPage = () => {
   const currentFare = activeTab === "general" ? generalFare : specialFare;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container flex h-14 items-center px-4">
-          <Button
-            variant="ghost"
-            size="icon"
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="px-5 py-4 flex items-center justify-between max-w-lg mx-auto">
+          <button
             onClick={() => navigate(-1)}
-            className="mr-2"
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
           >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-primary" />
-            <h1 className="text-lg font-semibold">구급차 요금 계산기</h1>
-          </div>
+            <ArrowLeft className="w-4 h-4" />
+            돌아가기
+          </button>
+          <h1 className="text-[15px] font-bold text-foreground">요금 계산기</h1>
+          <div className="w-16" />
         </div>
       </header>
 
-      <main className="container px-4 py-6 space-y-6 max-w-lg mx-auto">
+      <main className="px-5 py-6 space-y-6 max-w-lg mx-auto">
         {/* 입력 섹션 */}
         <Card>
           <CardHeader className="pb-3">
