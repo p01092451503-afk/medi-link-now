@@ -194,7 +194,7 @@ const Landing = () => {
             </button>
             <button
               onClick={() => navigate("/emergency-guide")}
-              className="flex-1 flex items-center justify-center gap-2 py-4 bg-foreground/60 text-background rounded-2xl font-semibold text-[15px] hover:opacity-80 active:scale-[0.98] transition-all"
+              className="flex-1 flex items-center justify-center gap-2 py-4 bg-foreground/35 text-background rounded-2xl font-semibold text-[15px] hover:opacity-80 active:scale-[0.98] transition-all"
             >
               응급 가이드
             </button>
