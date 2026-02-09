@@ -30,9 +30,6 @@ const firstAidGuides = [
       '119가 올 때까지 30:2 비율로 반복하세요',
     ],
     hasAnimation: true,
-    accentClass: 'text-danger',
-    bgClass: 'bg-danger-light',
-    borderClass: 'border-danger/20',
   },
   {
     id: 'choking',
@@ -47,9 +44,6 @@ const firstAidGuides = [
       '이물질이 나올 때까지 반복하세요',
     ],
     hasAnimation: false,
-    accentClass: 'text-warning',
-    bgClass: 'bg-warning/10',
-    borderClass: 'border-warning/20',
   },
   {
     id: 'stroke',
@@ -63,9 +57,6 @@ const firstAidGuides = [
       'T (Time) — 위 증상이 하나라도 있으면 즉시 119 신고!',
     ],
     hasAnimation: false,
-    accentClass: 'text-accent-foreground',
-    bgClass: 'bg-accent',
-    borderClass: 'border-accent-foreground/20',
   },
   {
     id: 'bleeding',
@@ -80,9 +71,6 @@ const firstAidGuides = [
       '환자를 안정시키고 119를 기다리세요',
     ],
     hasAnimation: false,
-    accentClass: 'text-danger',
-    bgClass: 'bg-danger-light',
-    borderClass: 'border-danger/20',
   },
   {
     id: 'burns',
@@ -97,9 +85,6 @@ const firstAidGuides = [
       '연고, 버터, 치약 등을 바르지 마세요',
     ],
     hasAnimation: false,
-    accentClass: 'text-warning',
-    bgClass: 'bg-warning/10',
-    borderClass: 'border-warning/20',
   },
 ];
 
@@ -110,16 +95,16 @@ const CPRPulsingHeart = () => (
       transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
       className="relative"
     >
-      <Heart className="w-16 h-16 text-danger fill-current" />
+      <Heart className="w-16 h-16 text-destructive fill-current" />
       <motion.div
-        animate={{ opacity: [0, 0.4, 0, 0.4, 0] }}
+        animate={{ opacity: [0, 0.3, 0, 0.3, 0] }}
         transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute inset-0 flex items-center justify-center"
       >
-        <div className="w-24 h-24 rounded-full bg-danger/20" />
+        <div className="w-24 h-24 rounded-full bg-destructive/10" />
       </motion.div>
     </motion.div>
-    <p className="mt-3 text-sm font-bold text-danger tracking-wide">
+    <p className="mt-3 text-sm font-bold text-foreground tracking-wide">
       분당 100~120회 압박
     </p>
     <div className="flex gap-1 mt-2">
@@ -128,7 +113,7 @@ const CPRPulsingHeart = () => (
           key={i}
           animate={{ scaleY: [1, 1.8, 1] }}
           transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15, ease: 'easeInOut' }}
-          className="w-2 h-4 bg-danger/60 rounded-full"
+          className="w-2 h-4 bg-foreground/20 rounded-full"
         />
       ))}
     </div>
@@ -171,9 +156,9 @@ const EmergencyGuidePage = () => {
           animate="visible"
           variants={fadeUp}
           custom={1}
-          className="mb-6 p-3.5 rounded-2xl bg-warning/10 border border-warning/20 text-center"
+          className="mb-8 p-3.5 rounded-2xl bg-secondary text-center"
         >
-          <p className="text-xs font-semibold text-warning">
+          <p className="text-xs font-semibold text-muted-foreground">
             ⚠️ 전문 의료 조치를 대체하지 않습니다
           </p>
         </motion.div>
@@ -192,16 +177,16 @@ const EmergencyGuidePage = () => {
                 <AccordionItem
                   key={guide.id}
                   value={guide.id}
-                  className={`border rounded-2xl overflow-hidden ${guide.borderClass} bg-card`}
+                  className="border-0 bg-secondary rounded-2xl overflow-hidden"
                 >
-                  <AccordionTrigger className="px-4 py-3.5 hover:no-underline">
+                  <AccordionTrigger className="px-4 py-4 hover:no-underline">
                     <div className="flex items-center gap-3 text-left">
-                      <div className={`w-10 h-10 rounded-xl ${guide.bgClass} flex items-center justify-center shrink-0`}>
-                        <Icon className={`w-5 h-5 ${guide.accentClass}`} />
+                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-foreground" />
                       </div>
                       <div>
-                        <span className="font-bold text-sm text-foreground">{guide.title}</span>
-                        <p className={`text-[11px] font-medium mt-0.5 ${guide.accentClass}`}>
+                        <span className="font-bold text-[14px] text-foreground">{guide.title}</span>
+                        <p className="text-[11px] font-medium mt-0.5 text-muted-foreground">
                           {guide.instruction}
                         </p>
                       </div>
@@ -213,12 +198,12 @@ const EmergencyGuidePage = () => {
                       {guide.steps.map((step, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-3 p-3 rounded-xl bg-secondary border border-border"
+                          className="flex items-start gap-3 p-3 rounded-xl bg-background"
                         >
                           <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0 text-xs font-bold text-foreground">
                             {idx + 1}
                           </span>
-                          <p className="text-xs font-medium text-foreground leading-relaxed">
+                          <p className="text-[12px] font-medium text-foreground leading-relaxed">
                             {step}
                           </p>
                         </div>
@@ -232,8 +217,8 @@ const EmergencyGuidePage = () => {
         </motion.div>
 
         {/* Disclaimer */}
-        <div className="mt-8 p-3 bg-secondary rounded-2xl">
-          <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+        <div className="mt-10 py-4">
+          <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
             ※ 이 정보는 일반적인 가이드이며 의료 전문가의 진단을 대체하지 않습니다.
             <br />
             증상이 심하거나 판단이 어려우면 반드시 의사와 상담하세요.
@@ -246,7 +231,7 @@ const EmergencyGuidePage = () => {
         <div className="max-w-lg mx-auto">
           <button
             onClick={() => (window.location.href = 'tel:119')}
-            className="w-full py-4 rounded-2xl text-[15px] font-bold bg-danger text-danger-foreground hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl text-[15px] font-bold bg-destructive text-destructive-foreground hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             <Phone className="w-5 h-5" />
             119 전화하기
