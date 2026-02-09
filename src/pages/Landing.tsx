@@ -187,14 +187,14 @@ const Landing = () => {
           >
             <button
               onClick={() => navigate("/map")}
-              className="flex-[1.6] flex items-center justify-center gap-2 py-4 bg-foreground text-background rounded-2xl font-semibold text-[15px] hover:opacity-90 active:scale-[0.98] transition-all"
+              className="flex-[2.3] flex items-center justify-center gap-2 py-4 bg-foreground text-background rounded-2xl font-semibold text-[15px] hover:opacity-90 active:scale-[0.98] transition-all"
             >
               응급실 찾기
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate("/emergency-guide")}
-              className="flex-1 flex items-center justify-center gap-2 py-4 bg-foreground/35 text-background rounded-2xl font-semibold text-[15px] hover:opacity-80 active:scale-[0.98] transition-all"
+              className="flex-1 flex items-center justify-center gap-2 py-4 bg-secondary text-foreground rounded-2xl font-semibold text-[15px] hover:opacity-80 active:scale-[0.98] transition-all"
             >
               응급 가이드
             </button>
