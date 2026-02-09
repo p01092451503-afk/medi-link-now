@@ -246,9 +246,10 @@ const Landing = () => {
                     {lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 )}
+                <span className="text-[10px]">실시간</span>
                 <div className="relative">
-                  <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                  <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-success animate-ping opacity-75" />
+                  <div className="w-3 h-3 rounded-full bg-success" />
+                  <div className="absolute inset-0 w-3 h-3 rounded-full bg-success animate-ping opacity-75" />
                 </div>
               </div>
             </div>
