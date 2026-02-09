@@ -51,14 +51,14 @@ const CloudSyncStatusModal = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
+          initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white dark:bg-slate-900 rounded-2xl p-6 w-full max-w-sm shadow-xl"
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="bg-background rounded-3xl p-6 w-full max-w-sm shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -66,7 +66,7 @@ const CloudSyncStatusModal = ({
             <h3 className="text-lg font-bold text-foreground">클라우드 동기화 상태</h3>
             <button
               onClick={onClose}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+              className="p-1 hover:bg-secondary rounded-full transition-colors"
             >
               <X className="w-5 h-5 text-muted-foreground" />
             </button>
@@ -74,19 +74,17 @@ const CloudSyncStatusModal = ({
 
           {/* Status Icon */}
           <div className="flex flex-col items-center mb-6">
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${
-              isStale ? "bg-yellow-100 dark:bg-yellow-950/50" : "bg-green-100 dark:bg-green-950/50"
-            }`}>
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-secondary`}>
               {isLoading ? (
-                <RefreshCw className="w-10 h-10 text-primary animate-spin" />
+                <RefreshCw className="w-10 h-10 text-foreground animate-spin" />
               ) : isStale ? (
-                <CloudOff className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
+                <CloudOff className="w-10 h-10 text-muted-foreground" />
               ) : (
-                <Cloud className="w-10 h-10 text-green-600 dark:text-green-400" />
+                <Cloud className="w-10 h-10 text-foreground" />
               )}
             </div>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-              isStale ? "bg-yellow-100 dark:bg-yellow-950/50 text-yellow-700 dark:text-yellow-400" : "bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400"
+              isStale ? "bg-secondary text-muted-foreground" : "bg-foreground text-background"
             }`}>
               {!isStale && <Check className="w-4 h-4" />}
               {isStale ? "동기화 필요" : "동기화됨"}
@@ -95,19 +93,19 @@ const CloudSyncStatusModal = ({
 
           {/* Info Grid */}
           <div className="space-y-3 mb-6">
-            <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-slate-700">
+            <div className="flex justify-between items-center py-2 border-b border-border">
               <span className="text-sm text-muted-foreground">저장된 가족 수</span>
               <span className="font-medium text-foreground">{itemCount}명</span>
             </div>
-            <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-slate-700">
+            <div className="flex justify-between items-center py-2 border-b border-border">
               <span className="text-sm text-muted-foreground">마지막 동기화</span>
-              <span className={`font-medium ${isStale ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
+              <span className="font-medium text-foreground">
                 {lastSyncTime ? formatElapsed(elapsed) : "없음"}
               </span>
             </div>
             <div className="flex justify-between items-center py-2">
               <span className="text-sm text-muted-foreground">저장 위치</span>
-              <span className="font-medium text-primary">☁️ Lovable Cloud</span>
+              <span className="font-medium text-foreground">Cloud</span>
             </div>
           </div>
 
@@ -115,7 +113,11 @@ const CloudSyncStatusModal = ({
           <Button
             onClick={onRefresh}
             disabled={isLoading}
-            className="w-full rounded-xl"
+            className={`w-full rounded-2xl py-5 font-bold ${
+              isStale 
+                ? "bg-foreground text-background hover:opacity-90" 
+                : ""
+            }`}
             variant={isStale ? "default" : "outline"}
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />

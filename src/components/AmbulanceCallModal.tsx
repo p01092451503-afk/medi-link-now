@@ -32,7 +32,6 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
   const estimatedCost = distance ? Math.round(50000 + distance * 5000) : 75000;
   const estimatedTime = distance ? Math.round(5 + distance * 2) : 10;
 
-  // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       setCallState("form");
@@ -46,7 +45,6 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
     }
   }, [isOpen]);
 
-  // Watch for request status changes (driver accepted)
   useEffect(() => {
     if (!createdRequestId) return;
     const myReq = myRequests.find((r) => r.id === createdRequestId);
@@ -91,7 +89,6 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -100,30 +97,29 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
             className="fixed inset-0 bg-black/60 z-[2000]"
           />
 
-          {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-x-4 top-4 bottom-4 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
+            className="fixed inset-x-4 top-4 bottom-4 bg-background rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:max-h-[calc(100dvh-2rem)]"
           >
             {/* Header */}
-            <div className="relative bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white shrink-0">
+            <div className="relative bg-foreground p-6 text-background shrink-0">
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full bg-background/10 hover:bg-background/20 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
               
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-background/10 flex items-center justify-center">
                   <Ambulance className="w-8 h-8" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold">사설 구급차 호출</h3>
-                  <p className="text-sm opacity-80">Private Ambulance Service</p>
+                  <p className="text-sm opacity-60">Private Ambulance Service</p>
                 </div>
               </div>
             </div>
@@ -137,9 +133,9 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   className="space-y-4"
                 >
                   {/* Destination */}
-                  <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4">
+                  <div className="bg-secondary rounded-2xl p-4">
                     <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                      <MapPin className="w-5 h-5 text-foreground mt-0.5" />
                       <div>
                         <p className="text-xs text-muted-foreground">목적지</p>
                         <p className="font-semibold text-foreground">{cleanHospitalName(hospital.nameKr)}</p>
@@ -149,10 +145,10 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   </div>
 
                   {/* Cost Estimate */}
-                  <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <div className="bg-secondary rounded-2xl p-4">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm text-muted-foreground">예상 비용</span>
-                      <span className="text-2xl font-bold text-primary">
+                      <span className="text-2xl font-bold text-foreground">
                         ₩{estimatedCost.toLocaleString()}
                       </span>
                     </div>
@@ -172,7 +168,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                         placeholder="환자 이름"
                         value={formData.patientName}
                         onChange={(e) => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
-                        className="h-10"
+                        className="h-10 rounded-xl"
                       />
                     </div>
                     <div>
@@ -183,7 +179,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                         placeholder="예: 가슴 통증, 호흡 곤란"
                         value={formData.patientCondition}
                         onChange={(e) => setFormData(prev => ({ ...prev, patientCondition: e.target.value }))}
-                        className="h-10"
+                        className="h-10 rounded-xl"
                       />
                     </div>
                     <div>
@@ -194,11 +190,11 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                         placeholder="상세 주소 또는 랜드마크"
                         value={formData.pickupLocation}
                         onChange={(e) => setFormData(prev => ({ ...prev, pickupLocation: e.target.value }))}
-                        className="h-10"
+                        className="h-10 rounded-xl"
                       />
                       {userLocation && (
                         <p className="text-[10px] text-muted-foreground mt-1">
-                          📍 현재 위치 감지됨
+                          현재 위치 감지됨
                         </p>
                       )}
                     </div>
@@ -211,24 +207,25 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                         value={formData.notes}
                         onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                         rows={2}
+                        className="rounded-xl"
                       />
                     </div>
                   </div>
 
                   {/* Warning */}
-                  <div className="flex items-start gap-2 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-xl">
-                    <AlertCircle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-yellow-700 dark:text-yellow-400">
+                  <div className="flex items-start gap-2 p-3 bg-secondary rounded-2xl">
+                    <AlertCircle className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-muted-foreground">
                       실제 비용은 거리 및 상황에 따라 달라질 수 있습니다.
                       <br />
-                      <strong>생명이 위급한 상황에서는 119에 먼저 신고하세요.</strong>
+                      <strong className="text-foreground">생명이 위급한 상황에서는 119에 먼저 신고하세요.</strong>
                     </p>
                   </div>
 
                   {/* CTA Button */}
                   <Button
                     onClick={handleSubmit}
-                    className="w-full py-6 rounded-xl text-base font-semibold bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                    className="w-full py-6 rounded-2xl text-base font-bold bg-foreground text-background hover:opacity-90"
                   >
                     <Phone className="w-5 h-5 mr-2" />
                     호출 요청 보내기
@@ -243,9 +240,9 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   className="text-center py-8"
                 >
                   <div className="relative w-20 h-20 mx-auto mb-4">
-                    <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-                    <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-                    <Ambulance className="absolute inset-0 m-auto w-8 h-8 text-primary" />
+                    <div className="absolute inset-0 rounded-full border-4 border-secondary" />
+                    <div className="absolute inset-0 rounded-full border-4 border-foreground border-t-transparent animate-spin" />
+                    <Ambulance className="absolute inset-0 m-auto w-8 h-8 text-foreground" />
                   </div>
                   <h4 className="text-lg font-semibold text-foreground mb-2">
                     호출 요청을 보내는 중...
@@ -262,8 +259,8 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-6 space-y-5"
                 >
-                  <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/50 flex items-center justify-center mx-auto">
-                    <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
+                  <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto">
+                    <Check className="w-10 h-10 text-foreground" />
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-foreground mb-2">
@@ -276,10 +273,9 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                     </p>
                   </div>
 
-                  {/* Destination Summary */}
-                  <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 text-left">
+                  <div className="bg-secondary rounded-2xl p-4 text-left">
                     <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                      <MapPin className="w-5 h-5 text-foreground mt-0.5" />
                       <div>
                         <p className="text-xs text-muted-foreground">목적지</p>
                         <p className="font-semibold text-foreground text-sm">{cleanHospitalName(hospital.nameKr)}</p>
@@ -287,22 +283,21 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                     </div>
                     <div className="flex items-center justify-between mt-3 text-sm">
                       <span className="text-muted-foreground">예상 비용</span>
-                      <span className="font-bold text-primary">₩{estimatedCost.toLocaleString()}</span>
+                      <span className="font-bold text-foreground">₩{estimatedCost.toLocaleString()}</span>
                     </div>
                   </div>
 
-                  {/* Waiting animation */}
                   <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "300ms" }} />
+                    <div className="w-2 h-2 rounded-full bg-foreground animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <div className="w-2 h-2 rounded-full bg-foreground animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <div className="w-2 h-2 rounded-full bg-foreground animate-bounce" style={{ animationDelay: "300ms" }} />
                     <span className="text-xs ml-2">구급대원 응답 대기 중</span>
                   </div>
 
                   <Button
                     onClick={onClose}
                     variant="outline"
-                    className="w-full py-4 rounded-xl"
+                    className="w-full py-4 rounded-2xl"
                   >
                     닫기 (상태는 알림으로 확인)
                   </Button>
@@ -316,8 +311,8 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   className="space-y-4"
                 >
                   <div className="text-center py-4">
-                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                      <Ambulance className="w-10 h-10 text-primary animate-pulse" />
+                    <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
+                      <Ambulance className="w-10 h-10 text-foreground animate-pulse" />
                     </div>
                     <h4 className="text-lg font-semibold text-foreground mb-1">
                       구급차가 출발했습니다!
@@ -327,8 +322,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                     </p>
                   </div>
 
-                  {/* ETA */}
-                  <div className="flex items-center justify-center gap-2 text-primary font-semibold">
+                  <div className="flex items-center justify-center gap-2 text-foreground font-semibold">
                     <Clock className="w-5 h-5" />
                     <span>예상 도착: {estimatedTime}분</span>
                   </div>
@@ -336,7 +330,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   <Button
                     onClick={onClose}
                     variant="outline"
-                    className="w-full py-4 rounded-xl"
+                    className="w-full py-4 rounded-2xl"
                   >
                     닫기
                   </Button>

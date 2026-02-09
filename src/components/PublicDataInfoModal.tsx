@@ -25,25 +25,21 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
       icon: Building2,
       title: "국가응급진료정보망 (NEDIS)",
       description: "보건복지부 산하 국립중앙의료원에서 운영하는 공식 응급의료 정보시스템입니다.",
-      color: "bg-blue-500",
     },
     {
       icon: Database,
       title: "공공데이터포털 API",
       description: "정부에서 개방한 공식 API를 통해 실시간 응급실 병상 현황을 제공받습니다.",
-      color: "bg-emerald-500",
     },
     {
       icon: RefreshCw,
       title: "실시간 데이터 갱신",
       description: "5분 주기로 전국 500개 이상의 응급의료기관 데이터를 자동 업데이트합니다.",
-      color: "bg-orange-500",
     },
     {
       icon: Globe,
       title: "전국 응급실 커버리지",
       description: "권역응급의료센터, 지역응급의료센터, 지역응급의료기관 정보를 모두 포함합니다.",
-      color: "bg-violet-500",
     },
   ];
 
@@ -67,7 +63,6 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -76,55 +71,52 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
             className="fixed inset-0 bg-black/60 z-[2000]"
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, y: "100%" }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-[2001] max-h-[90vh] bg-white dark:bg-slate-900 rounded-t-3xl overflow-hidden"
+            className="fixed inset-x-0 bottom-0 z-[2001] max-h-[90vh] bg-background rounded-t-3xl overflow-hidden"
           >
-            {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full bg-slate-200 dark:bg-slate-700" />
+              <div className="w-10 h-1 rounded-full bg-muted" />
             </div>
 
-            {/* Content */}
             <div className="overflow-y-auto max-h-[calc(90vh-80px)] px-5 pb-8">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
-                    <Database className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center">
+                    <Database className="w-6 h-6 text-foreground" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                    <h2 className="text-lg font-bold text-foreground">
                       공공데이터 기반 서비스
                     </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-muted-foreground">
                       정부 공식 데이터를 활용한 신뢰할 수 있는 정보
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                  className="p-2 hover:bg-secondary rounded-full transition-colors"
                 >
-                  <X className="w-5 h-5 text-slate-400" />
+                  <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
               {/* Trust Banner */}
-              <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50 rounded-2xl p-4 mb-6 border border-orange-100 dark:border-orange-900/50">
+              <div className="bg-secondary rounded-2xl p-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
-                    <Shield className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-800 dark:text-white text-sm">
+                    <p className="font-semibold text-foreground text-sm">
                       정부 공식 데이터로 신뢰할 수 있습니다
                     </p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       국가응급진료정보망(NEDIS)의 실시간 데이터를 활용합니다
                     </p>
                   </div>
@@ -133,7 +125,7 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
 
               {/* Data Sources */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Server className="w-4 h-4" />
                   데이터 출처
                 </h3>
@@ -144,16 +136,16 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="flex gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl"
+                      className="flex gap-3 p-3 bg-secondary rounded-xl"
                     >
-                      <div className={`w-10 h-10 rounded-xl ${source.color} flex items-center justify-center flex-shrink-0`}>
-                        <source.icon className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center flex-shrink-0">
+                        <source.icon className="w-5 h-5 text-foreground" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-slate-800 dark:text-white">
+                        <p className="font-semibold text-sm text-foreground">
                           {source.title}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                           {source.description}
                         </p>
                       </div>
@@ -164,7 +156,7 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
 
               {/* Certifications */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <FileCheck className="w-4 h-4" />
                   데이터 신뢰성
                 </h3>
@@ -172,10 +164,10 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
                   {certifications.map((cert) => (
                     <div
                       key={cert.name}
-                      className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-100 dark:border-emerald-900/50"
+                      className="flex items-center gap-2 p-3 bg-secondary rounded-xl"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-foreground flex-shrink-0" />
+                      <span className="text-xs font-medium text-foreground">
                         {cert.name}
                       </span>
                     </div>
@@ -185,22 +177,22 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
 
               {/* Data Types */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Clock className="w-4 h-4" />
                   제공 정보 및 갱신 주기
                 </h3>
-                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl overflow-hidden">
+                <div className="bg-secondary rounded-xl overflow-hidden">
                   {dataTypes.map((item, index) => (
                     <div
                       key={item.label}
                       className={`flex items-center justify-between px-4 py-3 ${
-                        index !== dataTypes.length - 1 ? "border-b border-slate-100 dark:border-slate-700" : ""
+                        index !== dataTypes.length - 1 ? "border-b border-border" : ""
                       }`}
                     >
-                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                      <span className="text-sm text-muted-foreground">
                         {item.label}
                       </span>
-                      <span className="text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-medium text-foreground bg-background px-2 py-0.5 rounded-full">
                         {item.source}
                       </span>
                     </div>
@@ -209,8 +201,8 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
               </div>
 
               {/* Disclaimer */}
-              <div className="bg-slate-100 dark:bg-slate-800 rounded-xl p-4 mb-4">
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <div className="bg-secondary rounded-xl p-4 mb-4">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   본 서비스의 병상 정보는 국가응급진료정보망(NEDIS)에서 제공하는 공식 데이터를 기반으로 합니다. 
                   실시간 상황에 따라 실제 병상 현황과 차이가 있을 수 있으므로, 
                   이송 전 해당 의료기관에 전화 확인을 권장합니다.
@@ -221,14 +213,14 @@ const PublicDataInfoModal = ({ isOpen, onClose }: PublicDataInfoModalProps) => {
               <div className="space-y-2">
                 <Button
                   onClick={onClose}
-                  className="w-full py-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold"
+                  className="w-full py-6 rounded-2xl bg-foreground hover:opacity-90 text-background font-bold"
                 >
                   확인했습니다
                 </Button>
                 <Button
                   variant="ghost"
                   onClick={() => window.open("https://www.data.go.kr", "_blank")}
-                  className="w-full text-slate-500 dark:text-slate-400 text-sm gap-1"
+                  className="w-full text-muted-foreground text-sm gap-1"
                 >
                   공공데이터포털 바로가기
                   <ExternalLink className="w-3.5 h-3.5" />

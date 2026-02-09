@@ -77,33 +77,30 @@ const DispatchRequestModal = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-[2000]"
+            className="fixed inset-0 bg-black/60 z-[2000]"
             onClick={onClose}
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-0 left-0 right-0 z-[2001] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 z-[2001] bg-background rounded-t-3xl max-h-[85vh] overflow-y-auto"
           >
-            {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full" />
+              <div className="w-12 h-1.5 bg-muted rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="px-6 pb-4 border-b dark:border-slate-700">
+            <div className="px-6 pb-4 border-b border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Ambulance className="w-6 h-6 text-primary" />
+                  <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+                    <Ambulance className="w-6 h-6 text-foreground" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-foreground">구급대원 호출</h2>
@@ -116,24 +113,22 @@ const DispatchRequestModal = ({
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                  className="p-2 hover:bg-secondary rounded-full transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
             </div>
 
             {/* Form */}
             <div className="p-6 space-y-4">
-              {/* Location Warning */}
               {!userLocation && (
-                <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-700 dark:text-yellow-400">
+                <div className="flex items-center gap-2 p-3 bg-secondary rounded-2xl text-sm text-muted-foreground">
                   <Navigation className="w-4 h-4" />
                   <span>위치 서비스를 켜주세요</span>
                 </div>
               )}
 
-              {/* Patient Name */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
                   <User className="w-4 h-4" />
@@ -143,10 +138,10 @@ const DispatchRequestModal = ({
                   placeholder="환자 이름을 입력하세요"
                   value={formData.patientName}
                   onChange={(e) => setFormData((prev) => ({ ...prev, patientName: e.target.value }))}
+                  className="rounded-xl"
                 />
               </div>
 
-              {/* Patient Condition */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
                   <FileText className="w-4 h-4" />
@@ -156,10 +151,10 @@ const DispatchRequestModal = ({
                   placeholder="예: 가슴 통증, 호흡 곤란"
                   value={formData.patientCondition}
                   onChange={(e) => setFormData((prev) => ({ ...prev, patientCondition: e.target.value }))}
+                  className="rounded-xl"
                 />
               </div>
 
-              {/* Pickup Location */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
                   <MapPin className="w-4 h-4" />
@@ -169,28 +164,28 @@ const DispatchRequestModal = ({
                   placeholder="상세 주소 또는 랜드마크"
                   value={formData.pickupLocation}
                   onChange={(e) => setFormData((prev) => ({ ...prev, pickupLocation: e.target.value }))}
+                  className="rounded-xl"
                 />
                 {userLocation && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    📍 현재 위치: {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
+                    현재 위치: {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
                   </p>
                 )}
               </div>
 
-              {/* Destination */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                  <MapPin className="w-4 h-4 text-red-500" />
+                  <MapPin className="w-4 h-4" />
                   목적지 (선택)
                 </label>
                 <Input
                   placeholder="병원 이름 또는 주소"
                   value={formData.destination}
                   onChange={(e) => setFormData((prev) => ({ ...prev, destination: e.target.value }))}
+                  className="rounded-xl"
                 />
               </div>
 
-              {/* Notes */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   추가 메모
@@ -200,6 +195,7 @@ const DispatchRequestModal = ({
                   value={formData.notes}
                   onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                   rows={3}
+                  className="rounded-xl"
                 />
               </div>
             </div>
@@ -209,7 +205,7 @@ const DispatchRequestModal = ({
               <Button
                 onClick={handleSubmit}
                 disabled={isLoading || !userLocation}
-                className="w-full py-6 text-base font-semibold"
+                className="w-full py-6 text-base font-bold rounded-2xl bg-foreground text-background hover:opacity-90"
               >
                 {isLoading ? (
                   <>

@@ -35,7 +35,6 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
       case "parents":
         return {
           icon: Baby,
-          iconBg: "bg-pink-500",
           title: "아이를 키우는 부모님을 위한",
           subtitle: "소아응급 전문 병원 찾기",
           description: "아이가 갑자기 아플 때, 당황하지 마세요. Find-ER이 가장 가까운 소아응급 병원을 빠르게 찾아드립니다.",
@@ -57,7 +56,6 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
       case "elderly":
         return {
           icon: Users,
-          iconBg: "bg-amber-500",
           title: "어르신을 모시는 분을 위한",
           subtitle: "24시간 응급실 현황 확인",
           description: "어르신이 갑자기 쓰러지셨을 때, 가장 빠르게 대응할 수 있도록 실시간 응급실 정보를 제공합니다.",
@@ -79,7 +77,6 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
       case "chronic":
         return {
           icon: Heart,
-          iconBg: "bg-rose-500",
           title: "만성질환 환자 가족을 위한",
           subtitle: "전문 진료 가능 병원 검색",
           description: "당뇨, 고혈압, 심장질환 등 만성질환자의 응급상황에 대비하여 전문 치료가 가능한 병원을 미리 확인하세요.",
@@ -114,7 +111,7 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
           onClick={onClose}
         >
           <motion.div
@@ -122,54 +119,53 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col"
+            className="relative w-full max-w-md bg-background rounded-3xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 px-6 py-6">
+            <div className="relative bg-foreground text-background px-6 py-6">
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full bg-background/10 hover:bg-background/20 transition-colors"
               >
-                <X className="w-5 h-5 text-white" />
+                <X className="w-5 h-5" />
               </button>
               
               <div className="flex items-center gap-4">
-                <div className={`w-14 h-14 rounded-2xl ${content.iconBg} flex items-center justify-center shadow-lg`}>
-                  <content.icon className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 rounded-2xl bg-background/10 flex items-center justify-center">
+                  <content.icon className="w-7 h-7" />
                 </div>
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">{content.title}</p>
-                  <h2 className="text-white text-xl font-bold">{content.subtitle}</h2>
+                  <p className="opacity-60 text-sm font-medium">{content.title}</p>
+                  <h2 className="text-xl font-bold">{content.subtitle}</h2>
                 </div>
               </div>
             </div>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {/* Description */}
-              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 {content.description}
               </p>
 
               {/* Features */}
               <div className="space-y-3">
-                <h3 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
                   주요 기능
                 </h3>
                 <div className="grid grid-cols-1 gap-2.5">
                   {content.features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-slate-800 rounded-xl"
+                      className="flex items-start gap-3 p-3 bg-secondary rounded-xl"
                     >
-                      <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center flex-shrink-0">
-                        <feature.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <div className="w-9 h-9 rounded-lg bg-background flex items-center justify-center flex-shrink-0">
+                        <feature.icon className="w-4 h-4 text-foreground" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-slate-800 dark:text-white">{feature.title}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{feature.desc}</p>
+                        <p className="font-semibold text-sm text-foreground">{feature.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{feature.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -178,15 +174,15 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
 
               {/* Emergency Tips */}
               <div className="space-y-3">
-                <h3 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
                   이럴 때 응급실을 방문하세요
                 </h3>
-                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                <div className="bg-secondary rounded-2xl p-4">
                   <ul className="space-y-2">
                     {content.emergencyTips.map((tip, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-200">
-                        <ChevronRight className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-foreground flex-shrink-0 mt-0.5" />
                         {tip}
                       </li>
                     ))}
@@ -195,17 +191,17 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
               </div>
 
               {/* 119 Emergency */}
-              <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl">
-                <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-white" />
+              <div className="flex items-center gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                <div className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-destructive-foreground" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-sm text-red-700 dark:text-red-300">생명이 위급한 상황에서는</p>
-                  <p className="text-xs text-red-600 dark:text-red-400">즉시 119에 신고하세요</p>
+                  <p className="font-bold text-sm text-foreground">생명이 위급한 상황에서는</p>
+                  <p className="text-xs text-muted-foreground">즉시 119에 신고하세요</p>
                 </div>
                 <a
                   href="tel:119"
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold text-sm rounded-lg transition-colors"
+                  className="px-4 py-2 bg-destructive text-destructive-foreground font-bold text-sm rounded-xl transition-colors"
                 >
                   119
                 </a>
@@ -219,7 +215,7 @@ const TargetUserInfoModal = ({ isOpen, onClose, userType }: TargetUserInfoModalP
                   onClose();
                   content.ctaAction();
                 }}
-                className="w-full py-5 rounded-2xl text-base font-bold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg"
+                className="w-full py-5 rounded-2xl text-base font-bold bg-foreground text-background hover:opacity-90"
               >
                 {content.ctaText}
                 <ChevronRight className="w-5 h-5 ml-2" />

@@ -12,7 +12,6 @@ interface DemandForecastTickerProps {
 const DemandForecastTicker = ({ regionId = "gangnam", userDistrictName, className = "" }: DemandForecastTickerProps) => {
   const [currentRegion, setCurrentRegion] = useState(regionId);
   
-  // Rotate through different regions periodically
   const regions = ["gangnam", "mapo", "songpa", "yeongdeungpo", "suwon", "seongnam"];
   
   useEffect(() => {
@@ -35,24 +34,6 @@ const DemandForecastTicker = ({ regionId = "gangnam", userDistrictName, classNam
   
   if (!forecast) return null;
    
-   const getLevelColor = (level: string) => {
-     switch (level) {
-       case "critical": return "from-red-500 to-orange-500";
-       case "high": return "from-orange-500 to-amber-500";
-       case "moderate": return "from-amber-500 to-yellow-500";
-       default: return "from-emerald-500 to-teal-500";
-     }
-   };
-   
-   const getLevelBg = (level: string) => {
-     switch (level) {
-       case "critical": return "bg-red-50 border-red-200";
-       case "high": return "bg-orange-50 border-orange-200";
-       case "moderate": return "bg-amber-50 border-amber-200";
-       default: return "bg-emerald-50 border-emerald-200";
-     }
-   };
-   
    const getLevelText = (level: string) => {
      switch (level) {
        case "critical": return "매우 높음";
@@ -66,18 +47,19 @@ const DemandForecastTicker = ({ regionId = "gangnam", userDistrictName, classNam
      switch (level) {
        case "critical":
        case "high":
-         return <AlertTriangle className="w-3.5 h-3.5 text-slate-500" />;
+         return <AlertTriangle className="w-3.5 h-3.5 text-muted-foreground" />;
        default:
-         return <TrendingUp className="w-3.5 h-3.5 text-slate-500" />;
+         return <TrendingUp className="w-3.5 h-3.5 text-muted-foreground" />;
      }
    };
- 
-   const getLevelBadgeColor = (level: string) => {
+
+   const getLevelBadgeStyle = (level: string) => {
      switch (level) {
-       case "critical": return "bg-red-500";
-       case "high": return "bg-orange-500";
-       case "moderate": return "bg-amber-500";
-       default: return "bg-emerald-500";
+       case "critical": 
+       case "high":
+         return "bg-foreground text-background";
+       default: 
+         return "bg-secondary text-foreground";
      }
    };
    
@@ -89,61 +71,59 @@ const DemandForecastTicker = ({ regionId = "gangnam", userDistrictName, classNam
           >
             <BarChart3 className="w-3.5 h-3.5 flex-shrink-0" />
             <span>119 통계</span>
-            <span className={`w-1.5 h-1.5 rounded-full ${getLevelBadgeColor(forecast.demandLevel)}`} />
+            <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
           </button>
        </PopoverTrigger>
        <PopoverContent 
-         className={`w-72 p-0 rounded-2xl border shadow-xl overflow-hidden z-[2000] ${getLevelBg(forecast.demandLevel)}`}
+         className="w-72 p-0 rounded-2xl border border-border shadow-xl overflow-hidden z-[2000] bg-background"
          side="bottom"
          align="end"
        >
          {/* Header */}
-         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-200/50">
-           <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${getLevelColor(forecast.demandLevel)} flex items-center justify-center shadow-sm`}>
-             <BarChart3 className="w-4 h-4 text-white" />
+         <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border">
+           <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center">
+             <BarChart3 className="w-4 h-4 text-foreground" />
            </div>
-           <div>
-             <div className="flex items-center gap-1.5">
-               <span className="text-xs font-bold text-slate-700">119 통계 인사이트</span>
-               <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded text-white ${getLevelBadgeColor(forecast.demandLevel)}`}>
-                 {getLevelText(forecast.demandLevel)}
-               </span>
-             </div>
+           <div className="flex items-center gap-2">
+             <span className="text-sm font-bold text-foreground">119 통계 인사이트</span>
+             <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded-md ${getLevelBadgeStyle(forecast.demandLevel)}`}>
+               {getLevelText(forecast.demandLevel)}
+             </span>
            </div>
          </div>
          
          {/* Content */}
-         <div className="p-3">
-           <p className="text-[11px] text-slate-600 mb-3">
+         <div className="p-4">
+           <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
              {forecast.message}
            </p>
            
-           <div className="grid grid-cols-2 gap-2">
+           <div className="grid grid-cols-2 gap-3">
              {/* Current Time Stats */}
-             <div className="p-2 bg-white/60 rounded-lg">
-               <div className="flex items-center gap-1.5 mb-1">
-                 <Clock className="w-3 h-3 text-slate-500" />
-                 <span className="text-[9px] font-medium text-slate-500">현재 시간대</span>
+             <div className="p-3 bg-secondary rounded-xl">
+               <div className="flex items-center gap-1.5 mb-1.5">
+                 <Clock className="w-3 h-3 text-muted-foreground" />
+                 <span className="text-[10px] font-medium text-muted-foreground">현재 시간대</span>
                </div>
-               <p className="text-sm font-bold text-slate-800">
+               <p className="text-base font-bold text-foreground">
                  {forecast.hour}시 ~ {(forecast.hour + 1) % 24}시
                </p>
              </div>
              
              {/* Avg Incidents */}
-             <div className="p-2 bg-white/60 rounded-lg">
-               <div className="flex items-center gap-1.5 mb-1">
+             <div className="p-3 bg-secondary rounded-xl">
+               <div className="flex items-center gap-1.5 mb-1.5">
                  {getLevelIcon(forecast.demandLevel)}
-                 <span className="text-[9px] font-medium text-slate-500">평균 출동</span>
+                 <span className="text-[10px] font-medium text-muted-foreground">평균 출동</span>
                </div>
-               <p className="text-sm font-bold text-slate-800">
-                 {forecast.avgIncidents}건<span className="text-[10px] font-normal text-slate-500">/시간</span>
+               <p className="text-base font-bold text-foreground">
+                 {forecast.avgIncidents}건<span className="text-xs font-normal text-muted-foreground">/시간</span>
                </p>
              </div>
            </div>
            
            {/* Disclaimer */}
-           <p className="text-[8px] text-slate-400 text-center mt-2">
+           <p className="text-[9px] text-muted-foreground/60 text-center mt-3">
              ※ 과거 3년 119 출동 통계 기반 예측 · 실제와 다를 수 있음
            </p>
          </div>

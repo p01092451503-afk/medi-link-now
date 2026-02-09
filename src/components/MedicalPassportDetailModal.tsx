@@ -38,12 +38,10 @@ const MedicalPassportDetailModal = ({
 
   if (!member) return null;
 
-  // Calculate age from birth date if available
   const displayAge = member.birthDate 
     ? Math.floor((new Date().getTime() - new Date(member.birthDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
     : member.age;
 
-  // Generate 119 emergency text
   const generate119Text = () => {
     const parts = [`환자: ${member.name}(${displayAge}세)`];
     
@@ -80,7 +78,7 @@ const MedicalPassportDetailModal = ({
       await navigator.clipboard.writeText(text);
       setCopied(true);
       toast({
-        title: "📋 클립보드에 복사됨",
+        title: "클립보드에 복사됨",
         description: "119 상담원에게 텍스트를 전달하세요",
       });
       setTimeout(() => setCopied(false), 2000);
@@ -102,21 +100,21 @@ const MedicalPassportDetailModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/70 z-[2000]"
+            className="fixed inset-0 bg-black/60 z-[2000]"
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed top-6 left-4 right-4 bottom-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl z-[2001] overflow-hidden flex flex-col max-h-[calc(100vh-2.5rem)]"
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed top-6 left-4 right-4 bottom-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg bg-background rounded-3xl shadow-2xl z-[2001] overflow-hidden flex flex-col max-h-[calc(100vh-2.5rem)]"
           >
-            {/* Header - More compact */}
-            <div className="bg-gradient-to-r from-primary to-primary/80 px-5 py-4 text-white shrink-0">
+            {/* Header */}
+            <div className="bg-foreground text-background px-5 py-4 shrink-0">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold">{member.name}</h2>
-                  <p className="text-white/80 text-sm">
+                  <p className="opacity-60 text-sm">
                     {RELATION_LABELS[member.relation]} · {displayAge}세
                     {member.weightKg && ` · ${member.weightKg}kg`}
                   </p>
@@ -128,14 +126,14 @@ const MedicalPassportDetailModal = ({
                         onClose();
                         onEdit(member);
                       }}
-                      className="p-2 hover:bg-white/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                      className="p-2 hover:bg-background/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
                   )}
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-white/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    className="p-2 hover:bg-background/20 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -143,13 +141,13 @@ const MedicalPassportDetailModal = ({
               </div>
             </div>
 
-            {/* Content - Scrollable */}
+            {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* Blood Type - Large but not too big */}
-              <div className="bg-red-50 dark:bg-red-950/50 rounded-2xl p-4 text-center">
-                <Droplets className="w-8 h-8 text-red-500 dark:text-red-400 mx-auto mb-1" />
+              {/* Blood Type */}
+              <div className="bg-secondary rounded-2xl p-4 text-center">
+                <Droplets className="w-8 h-8 text-foreground mx-auto mb-1" />
                 <p className="text-xs text-muted-foreground mb-0.5">혈액형</p>
-                <p className="text-3xl font-black text-red-600 dark:text-red-400">
+                <p className="text-3xl font-black text-foreground">
                   {BLOOD_TYPE_LABELS[member.bloodType]}
                 </p>
               </div>
@@ -157,41 +155,41 @@ const MedicalPassportDetailModal = ({
               {/* Birth Date & Weight */}
               <div className="grid grid-cols-2 gap-3">
                 {member.birthDate && (
-                  <div className="bg-blue-50 dark:bg-blue-950/50 rounded-xl p-3">
+                  <div className="bg-secondary rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Calendar className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                      <Calendar className="w-4 h-4 text-foreground" />
                       <span className="text-xs text-muted-foreground">생년월일</span>
                     </div>
-                    <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
+                    <p className="text-lg font-bold text-foreground">
                       {new Date(member.birthDate).toLocaleDateString("ko-KR")}
                     </p>
                   </div>
                 )}
                 {member.weightKg && (
-                  <div className="bg-green-50 dark:bg-green-950/50 rounded-xl p-3">
+                  <div className="bg-secondary rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Weight className="w-4 h-4 text-green-500 dark:text-green-400" />
+                      <Weight className="w-4 h-4 text-foreground" />
                       <span className="text-xs text-muted-foreground">체중</span>
                     </div>
-                    <p className="text-lg font-bold text-green-700 dark:text-green-400">
+                    <p className="text-lg font-bold text-foreground">
                       {member.weightKg} kg
                     </p>
                   </div>
                 )}
               </div>
 
-              {/* Allergies - Warning Style */}
+              {/* Allergies */}
               {member.allergies.length > 0 && (
-                <div className="bg-orange-50 dark:bg-orange-950/50 border-2 border-orange-300 dark:border-orange-700 rounded-2xl p-4">
+                <div className="bg-destructive/10 border-2 border-destructive/20 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className="w-5 h-5 text-orange-500 dark:text-orange-400" />
-                    <span className="text-base font-bold text-orange-700 dark:text-orange-400">⚠️ 알레르기</span>
+                    <AlertTriangle className="w-5 h-5 text-destructive" />
+                    <span className="text-base font-bold text-foreground">알레르기</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.allergies.map((allergy) => (
                       <span
                         key={allergy}
-                        className="px-3 py-1.5 bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 text-base font-bold rounded-full"
+                        className="px-3 py-1.5 bg-destructive/20 text-foreground text-base font-bold rounded-full"
                       >
                         {allergy}
                       </span>
@@ -202,16 +200,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Chronic Diseases */}
               {member.chronicDiseases.length > 0 && (
-                <div className="bg-primary/5 dark:bg-primary/10 rounded-2xl p-4">
+                <div className="bg-secondary rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Heart className="w-5 h-5 text-primary" />
+                    <Heart className="w-5 h-5 text-foreground" />
                     <span className="text-base font-bold text-foreground">기저질환</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.chronicDiseases.map((disease) => (
                       <span
                         key={disease}
-                        className="px-3 py-1.5 bg-primary/20 dark:bg-primary/30 text-primary text-base font-semibold rounded-full"
+                        className="px-3 py-1.5 bg-background text-foreground text-base font-semibold rounded-full"
                       >
                         {disease}
                       </span>
@@ -222,16 +220,16 @@ const MedicalPassportDetailModal = ({
 
               {/* Medications */}
               {member.medications && member.medications.length > 0 && (
-                <div className="bg-purple-50 dark:bg-purple-950/50 rounded-2xl p-4">
+                <div className="bg-secondary rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Pill className="w-5 h-5 text-purple-500 dark:text-purple-400" />
-                    <span className="text-base font-bold text-purple-700 dark:text-purple-400">복용 중인 약물</span>
+                    <Pill className="w-5 h-5 text-foreground" />
+                    <span className="text-base font-bold text-foreground">복용 중인 약물</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {member.medications.map((med) => (
                       <span
                         key={med}
-                        className="px-3 py-1.5 bg-purple-200 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 text-base font-semibold rounded-full"
+                        className="px-3 py-1.5 bg-background text-foreground text-base font-semibold rounded-full"
                       >
                         {med}
                       </span>
@@ -242,14 +240,14 @@ const MedicalPassportDetailModal = ({
 
               {/* Guardian Contact */}
               {member.guardianContact && (
-                <div className="bg-gray-50 dark:bg-slate-800 rounded-2xl p-4">
+                <div className="bg-secondary rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-1">
-                    <Phone className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <Phone className="w-5 h-5 text-foreground" />
                     <span className="text-base font-bold text-foreground">보호자 연락처</span>
                   </div>
                   <a 
                     href={`tel:${member.guardianContact}`}
-                    className="text-xl font-bold text-primary hover:underline"
+                    className="text-xl font-bold text-foreground hover:underline"
                   >
                     {member.guardianContact}
                   </a>
@@ -258,9 +256,9 @@ const MedicalPassportDetailModal = ({
 
               {/* Notes */}
               {member.notes && (
-                <div className="bg-gray-50 dark:bg-slate-800 rounded-2xl p-4">
+                <div className="bg-secondary rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-1">
-                    <FileText className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <FileText className="w-5 h-5 text-foreground" />
                     <span className="text-base font-bold text-foreground">특이사항</span>
                   </div>
                   <p className="text-base text-foreground whitespace-pre-wrap">
@@ -270,34 +268,32 @@ const MedicalPassportDetailModal = ({
               )}
             </div>
 
-            {/* Bottom Actions - Compact */}
-            <div className="border-t border-border dark:border-slate-700 p-3 space-y-2 bg-gray-50 dark:bg-slate-800 shrink-0">
-              {/* Copy for 119 Button */}
+            {/* Bottom Actions */}
+            <div className="border-t border-border p-3 space-y-2 bg-secondary shrink-0">
               <Button
                 onClick={handleCopy}
                 variant="outline"
-                className="w-full py-4 rounded-xl text-sm font-semibold border-2"
+                className="w-full py-4 rounded-2xl text-sm font-semibold"
               >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4 mr-2 text-green-500" />
+                    <Check className="w-4 h-4 mr-2" />
                     복사됨!
                   </>
                 ) : (
                   <>
                     <Copy className="w-4 h-4 mr-2" />
-                    📞 119 전달용 텍스트 복사
+                    119 전달용 텍스트 복사
                   </>
                 )}
               </Button>
 
-              {/* Call Ambulance Button */}
               <Button
                 onClick={() => onCallAmbulance(member)}
-                className="w-full py-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                className="w-full py-4 rounded-2xl text-sm font-bold bg-foreground text-background hover:opacity-90"
               >
                 <Ambulance className="w-4 h-4 mr-2" />
-                🚑 이 환자로 호출
+                이 환자로 호출
               </Button>
             </div>
           </motion.div>
