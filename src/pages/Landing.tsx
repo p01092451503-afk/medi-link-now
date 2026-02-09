@@ -353,16 +353,16 @@ const Landing = () => {
           className="px-5 pb-10"
         >
           <p className="text-[13px] font-semibold text-muted-foreground mb-4">서비스</p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             <ServiceCard
-              icon={<Users className="w-6 h-6 text-primary" />}
+              icon={<Users className="w-6 h-6 text-foreground/70" />}
               title="보호자 / 환자"
               subtitle="응급실 찾기"
               onClick={() => navigate("/map")}
               delay={0.35}
             />
             <ServiceCard
-              icon={<Ambulance className="w-6 h-6" style={{ color: "hsl(262, 83%, 58%)" }} />}
+              icon={<Ambulance className="w-6 h-6 text-foreground/70" />}
               title="민간 구급차"
               subtitle="전원 · 이송"
               onClick={() => navigate("/driver-intro")}
@@ -389,13 +389,13 @@ const Landing = () => {
           <p className="text-[13px] font-semibold text-muted-foreground mb-4">응급 가이드</p>
           <div className="space-y-2">
             <GuideRow
-              icon={<Pill className="w-5 h-5 text-success" />}
+              icon={<Pill className="w-5 h-5 text-foreground/70" />}
               title="소아 응급 약 가이드"
               subtitle="해열제 교차복용 타이머 · 복용량 계산"
               onClick={() => navigate("/medicine-guide")}
             />
             <GuideRow
-              icon={<Heart className="w-5 h-5 text-danger" />}
+              icon={<Heart className="w-5 h-5 text-foreground/70" />}
               title="응급 행동 가이드"
               subtitle="심폐소생술 · 하임리히 · 뇌졸중 대처법"
               onClick={() => navigate("/emergency-guide")}
@@ -476,14 +476,14 @@ const ServiceCard = ({
     transition={{ duration: 0.5, delay, type: "spring", stiffness: 200, damping: 20 }}
     whileTap={{ scale: 0.96 }}
     onClick={onClick}
-    className="flex flex-col items-center gap-3 p-5 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-soft transition-all group"
+    className="flex flex-col items-center gap-2.5 p-4 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-soft transition-all group"
   >
     <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-105 transition-transform">
       {icon}
     </div>
-    <div className="text-center">
-      <p className="text-[13px] font-bold text-foreground">{title}</p>
-      <p className="text-[11px] text-muted-foreground mt-0.5">{subtitle}</p>
+    <div className="text-center min-w-0">
+      <p className="text-[12px] font-bold text-foreground leading-tight">{title}</p>
+      <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{subtitle}</p>
     </div>
   </motion.button>
 );
