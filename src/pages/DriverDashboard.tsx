@@ -40,6 +40,7 @@ import RejectionTimeline from "@/components/RejectionTimeline";
 import RejectionTickerFeed from "@/components/RejectionTickerFeed";
 import VoiceEmergencyLogFAB from "@/components/VoiceEmergencyLogFAB";
 import { useRejectionLogs } from "@/hooks/useRejectionLogs";
+import driverDefaultAvatar from "@/assets/avatars/driver-default.jpg";
 
 // Helper function to format time ago
 const formatTimeAgo = (dateString: string) => {
@@ -196,9 +197,11 @@ const DriverDashboard = () => {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <User className="w-5 h-5 text-foreground" />
-            </div>
+            <img
+              src={driverDefaultAvatar}
+              alt="드라이버"
+              className="w-10 h-10 rounded-full object-cover"
+            />
             <div>
               <p className="text-sm font-semibold text-foreground tracking-tight">드라이버님</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
