@@ -41,10 +41,10 @@ interface DrivingLogHistoryProps {
 }
 
 const PAYMENT_METHOD_LABELS: Record<string, { label: string; color: string }> = {
-  cash: { label: "현금", color: "text-green-600 bg-green-50" },
-  card: { label: "카드", color: "text-blue-600 bg-blue-50" },
-  transfer: { label: "이체", color: "text-purple-600 bg-purple-50" },
-  unpaid: { label: "미수금", color: "text-red-600 bg-red-50" },
+  cash: { label: "현금", color: "text-foreground bg-secondary" },
+  card: { label: "카드", color: "text-foreground bg-secondary" },
+  transfer: { label: "이체", color: "text-foreground bg-secondary" },
+  unpaid: { label: "미수금", color: "text-destructive bg-destructive/10" },
 };
 
 const DrivingLogHistory = ({ 
@@ -324,14 +324,16 @@ const DrivingLogHistory = ({
     <div className="space-y-4">
       {/* Header with Month Navigation */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" />
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-3 tracking-tight">
+          <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+            <FileText className="w-4 h-4 text-foreground" />
+          </div>
           운행일지
         </h3>
         <Button
           onClick={exportToPDF}
           size="sm"
-          className="bg-primary"
+          className="rounded-xl bg-foreground text-background hover:opacity-90"
         >
           <Download className="w-4 h-4 mr-1" />
           PDF 내보내기
@@ -360,15 +362,15 @@ const DrivingLogHistory = ({
       </div>
 
       {/* Summary Card */}
-      <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-4 border border-primary/20">
+      <div className="bg-secondary rounded-2xl p-5">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <p className="text-xs text-muted-foreground mb-1">총 운행</p>
             <p className="text-2xl font-bold text-foreground">{stats.totalTrips}건</p>
           </div>
-          <div className="text-center border-x border-primary/20">
+          <div className="text-center border-x border-border">
             <p className="text-xs text-muted-foreground mb-1">총 거리</p>
-            <p className="text-2xl font-bold text-primary">{stats.totalDistance.toFixed(1)}km</p>
+            <p className="text-2xl font-bold text-foreground">{stats.totalDistance.toFixed(1)}km</p>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground mb-1">총 시간</p>
@@ -397,7 +399,7 @@ const DrivingLogHistory = ({
       {/* Log List */}
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-2 border-foreground border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm">운행 기록 로딩 중...</p>
         </div>
       ) : logs.length === 0 ? (
@@ -415,10 +417,10 @@ const DrivingLogHistory = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               onClick={() => toggleLogSelection(log.id)}
-              className={`bg-white dark:bg-slate-800 rounded-xl p-4 border cursor-pointer transition-all ${
+              className={`bg-card rounded-2xl p-4 border cursor-pointer transition-all ${
                 selectedLogs.includes(log.id)
-                  ? "border-primary bg-primary/5 dark:bg-primary/10 ring-1 ring-primary"
-                  : "border-border hover:border-primary/50"
+                  ? "border-foreground/30 bg-secondary ring-1 ring-foreground/20"
+                  : "border-border hover:border-foreground/20"
               }`}
             >
               {/* Date & Time Header */}
@@ -440,9 +442,9 @@ const DrivingLogHistory = ({
               {/* Route Info */}
               <div className="flex items-start gap-3 mb-3">
                 <div className="flex flex-col items-center">
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
-                  <div className="w-0.5 h-8 bg-gradient-to-b from-green-500 to-primary" />
-                  <div className="w-2 h-2 rounded-full bg-primary" />
+                  <div className="w-2 h-2 rounded-full bg-foreground" />
+                  <div className="w-0.5 h-8 bg-foreground/30" />
+                  <div className="w-2 h-2 rounded-full bg-foreground/60" />
                 </div>
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -450,7 +452,7 @@ const DrivingLogHistory = ({
                     <span className="truncate">{log.start_location}</span>
                   </div>
                   <div className="flex items-center gap-1 text-sm font-medium text-foreground">
-                    <Building2 className="w-3.5 h-3.5 text-primary" />
+                    <Building2 className="w-3.5 h-3.5 text-foreground" />
                     <span className="truncate">{cleanHospitalName(log.hospital_name || log.end_location)}</span>
                   </div>
                 </div>
@@ -459,7 +461,7 @@ const DrivingLogHistory = ({
               {/* Stats Row */}
               <div className="flex items-center justify-between pt-2 border-t border-border">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <div className="flex items-center gap-1 text-primary font-semibold">
+                  <div className="flex items-center gap-1 text-foreground font-semibold">
                     <Navigation className="w-4 h-4" />
                     {log.distance_km.toFixed(1)}km
                   </div>
@@ -496,9 +498,9 @@ const DrivingLogHistory = ({
                       e.stopPropagation();
                       onDeleteLog(log.id);
                     }}
-                    className="p-2 hover:bg-red-50 rounded-full transition-colors"
+                    className="p-2 hover:bg-secondary rounded-full transition-colors"
                   >
-                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <Trash2 className="w-4 h-4 text-muted-foreground" />
                   </button>
                 )}
               </div>
