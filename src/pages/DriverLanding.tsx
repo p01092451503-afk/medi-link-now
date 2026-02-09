@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import SecurityInfoModal from "@/components/SecurityInfoModal";
 import SubPageHeader from "@/components/SubPageHeader";
+import driverKimAvatar from "@/assets/avatars/driver-kim.jpg";
+import driverParkAvatar from "@/assets/avatars/driver-park.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -108,15 +110,17 @@ const DriverLanding = () => {
             <Star className="w-3.5 h-3.5 text-warning fill-current" /> 현직 기사님들의 후기
           </p>
           <div className="space-y-2.5">
-            {[
-              { name: "김OO 기사님", region: "서울", comment: "회송길 매칭으로 월 수익이 30% 늘었어요" },
-              { name: "박OO 기사님", region: "부산", comment: "운행일지 자동생성이 정말 편해요" },
+          {[
+              { name: "김OO 기사님", region: "서울", comment: "회송길 매칭으로 월 수익이 30% 늘었어요", avatar: driverKimAvatar },
+              { name: "박OO 기사님", region: "부산", comment: "운행일지 자동생성이 정말 편해요", avatar: driverParkAvatar },
             ].map((t, i) => (
               <div key={i} className="bg-card rounded-2xl border border-border p-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-foreground">
-                    {t.name[0]}
-                  </div>
+                  <img
+                    src={t.avatar}
+                    alt={t.name}
+                    className="w-9 h-9 rounded-full object-cover"
+                  />
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-foreground">{t.name}</p>
                     <p className="text-xs text-muted-foreground">{t.region} 지역</p>
