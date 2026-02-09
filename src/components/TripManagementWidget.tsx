@@ -368,8 +368,8 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   if (isLoading) {
     return (
       <div className="fixed bottom-20 left-4 right-4 z-40">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-border p-4 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-primary mr-2" />
+        <div className="bg-card rounded-2xl border border-border p-4 flex items-center justify-center">
+          <Loader2 className="w-5 h-5 animate-spin text-foreground mr-2" />
           <span className="text-sm text-muted-foreground">로딩 중...</span>
         </div>
       </div>
@@ -393,29 +393,29 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
             exit={{ opacity: 0, y: 50 }}
             className="fixed bottom-20 left-4 right-4 z-40"
           >
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-primary p-4">
+            <div className="bg-card rounded-2xl border border-border p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Ambulance className="w-5 h-5 text-primary animate-pulse" />
+                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                    <Ambulance className="w-5 h-5 text-foreground animate-pulse" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">이송 중</p>
+                    <p className="text-sm font-semibold text-foreground tracking-tight">이송 중</p>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="w-3 h-3" />
                       <span>{tripDuration}</span>
                     </div>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-400 text-xs font-medium rounded-full flex items-center gap-1">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
-                  운행 중 (Busy)
+                <span className="px-3 py-1 bg-foreground text-background text-xs font-medium rounded-full flex items-center gap-1">
+                  <span className="w-2 h-2 bg-background rounded-full animate-pulse" />
+                  운행 중
                 </span>
               </div>
 
-              <div className="bg-muted/50 rounded-xl p-3 mb-4">
+              <div className="bg-secondary rounded-xl p-3 mb-4">
                 <div className="flex items-start gap-2">
-                  <Navigation className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <Navigation className="w-4 h-4 text-foreground mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">
                       {cleanHospitalName(myActiveTrip.destination_hospital_name)}
@@ -451,7 +451,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
                 <Button
                   size="sm"
                   onClick={handleCompleteTrip}
-                  className="flex-[2] rounded-xl bg-green-600 hover:bg-green-700"
+                  className="flex-[2] rounded-xl bg-foreground text-background hover:opacity-90"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-1" />
                   도착 완료
@@ -467,13 +467,13 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
             exit={{ opacity: 0, y: 50 }}
             className="fixed bottom-20 left-4 right-4 z-40"
           >
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-green-500 p-4">
+            <div className="bg-card rounded-2xl border border-border p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-foreground" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground">호출 수락됨</p>
+                  <p className="text-sm font-semibold text-foreground tracking-tight">호출 수락됨</p>
                   <p className="text-xs text-muted-foreground">
                     {acceptedDispatch.patient_name || "환자"} · {acceptedDispatch.pickup_location}
                   </p>
@@ -481,16 +481,16 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
               </div>
               
               {acceptedDispatch.destination && (
-                <div className="bg-muted/50 rounded-xl p-3 mb-3">
+                <div className="bg-secondary rounded-xl p-3 mb-3">
                   <div className="flex items-center gap-2">
-                    <Navigation className="w-4 h-4 text-primary" />
+                    <Navigation className="w-4 h-4 text-foreground" />
                     <span className="text-sm font-medium">{acceptedDispatch.destination}</span>
                   </div>
                 </div>
               )}
               
               <Button 
-                className="w-full rounded-xl py-5 text-base bg-green-600 hover:bg-green-700"
+                className="w-full rounded-xl py-5 text-base bg-foreground text-background hover:opacity-90"
                 onClick={() => {
                   // Find matching hospital by coordinates first (most reliable), then by name
                   let matchingHospital: HospitalOption | undefined;
@@ -534,7 +534,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
           >
             <Sheet open={isSelectingHospital} onOpenChange={setIsSelectingHospital}>
               <SheetTrigger asChild>
-                <Button className="w-full rounded-2xl py-6 text-base shadow-lg bg-slate-800 hover:bg-slate-700">
+                <Button className="w-full rounded-2xl py-6 text-base bg-foreground text-background hover:opacity-90 font-semibold">
                   <Play className="w-5 h-5 mr-2" />
                   이송 시작하기
                 </Button>

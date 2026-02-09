@@ -52,18 +52,18 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-4 border border-primary/20"
+      className="bg-card rounded-2xl p-4 border border-border"
     >
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-          <BarChart3 className="w-4 h-4 text-primary" />
+        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+          <BarChart3 className="w-4 h-4 text-foreground" />
         </div>
-        <h3 className="font-bold text-foreground">운행 통계 요약</h3>
+        <h3 className="font-bold text-foreground tracking-tight">운행 통계 요약</h3>
       </div>
 
-      {/* Today Stats */}
+      {/* Today & Week Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm">
+        <div className="bg-secondary rounded-2xl p-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
             <Calendar className="w-3 h-3" />
             오늘
@@ -72,13 +72,13 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
             <span className="text-2xl font-bold text-foreground">{stats.todayTrips}</span>
             <span className="text-sm text-muted-foreground">건</span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-primary mt-1">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             <Navigation className="w-3 h-3" />
             <span>{stats.todayDistance} km</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm">
+        <div className="bg-secondary rounded-2xl p-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
             <Clock className="w-3 h-3" />
             이번 주
@@ -87,7 +87,7 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
             <span className="text-2xl font-bold text-foreground">{stats.weekTrips}</span>
             <span className="text-sm text-muted-foreground">건</span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-primary mt-1">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             <Navigation className="w-3 h-3" />
             <span>{stats.weekDistance} km</span>
           </div>
@@ -95,9 +95,9 @@ const DrivingStatsWidget = ({ logs }: DrivingStatsWidgetProps) => {
       </div>
 
       {/* Average Stats */}
-      <div className="bg-white/60 dark:bg-slate-800/60 rounded-xl p-3 flex items-center justify-between">
+      <div className="bg-secondary rounded-2xl p-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-success" />
+          <TrendingUp className="w-4 h-4 text-foreground" />
           <span className="text-sm text-muted-foreground">일 평균</span>
         </div>
         <div className="flex items-center gap-4">
