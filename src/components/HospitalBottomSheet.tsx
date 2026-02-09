@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight } from "lucide-react";
 import MoonlightBadge from "@/components/hospital/MoonlightBadge";
 import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
 import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
@@ -31,6 +31,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIncomingAmbulancesForHospital } from "@/hooks/useIncomingAmbulances";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
 import { useTransferMode } from "@/contexts/TransferModeContext";
+
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
   onClose: () => void;
@@ -60,51 +61,26 @@ const BedStatusCard = ({
   tooltipText?: string;
   isHospitalFull?: boolean;
 }) => {
-  // 음수 병상은 0으로 표시 (API 데이터 이상값 처리)
   const displayCount = adjustedCount !== undefined ? adjustedCount : Math.max(0, count);
   const hasIncoming = incomingCount !== undefined && incomingCount > 0;
-  
-  // 0보다 크면 여유, 0이면 병원 전체 만실 여부에 따라 색상 결정
   const isAvailable = displayCount > 0;
 
-  // 색상 결정: 
-  // - 여유 = 초록
-  // - 없음 + 병원 만실 = 빨강
-  // - 없음 + 병원 여유/혼잡 = 회색 (해당 병상만 없는 것)
-  let bgColor: string;
-  let textColor: string;
-  
-  if (isAvailable) {
-    bgColor = "bg-green-50 dark:bg-green-950/50";
-    textColor = "text-green-600 dark:text-green-400";
-  } else if (isHospitalFull) {
-    bgColor = "bg-red-50 dark:bg-red-950/50";
-    textColor = "text-red-500 dark:text-red-400";
-  } else {
-    bgColor = "bg-gray-50 dark:bg-slate-800";
-    textColor = "text-gray-400 dark:text-slate-500";
-  }
-
   return (
-    <div
-      className={`flex flex-col items-center justify-center p-3 rounded-xl ${bgColor}`}
-    >
-      <Icon
-        className={`w-5 h-5 mb-1 ${textColor}`}
-      />
-      <span
-        className={`text-xl font-bold ${textColor}`}
-      >
+    <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-secondary">
+      <Icon className={`w-5 h-5 mb-1.5 ${isAvailable ? "text-foreground" : "text-muted-foreground/50"}`} />
+      <span className={`text-2xl font-bold tracking-tight ${
+        isAvailable ? "text-foreground" : isHospitalFull ? "text-destructive" : "text-muted-foreground/40"
+      }`}>
         {displayCount}
       </span>
-      <div className="flex flex-col items-center gap-0.5">
+      <div className="flex flex-col items-center gap-0.5 mt-1">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-muted-foreground text-center">{label}</span>
+          <span className="text-[11px] text-muted-foreground">{label}</span>
           {showTooltip && tooltipText && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Info className="w-3 h-3 text-muted-foreground" />
+                  <Info className="w-3 h-3 text-muted-foreground/50" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="text-xs max-w-[200px]">{tooltipText}</p>
@@ -114,7 +90,7 @@ const BedStatusCard = ({
           )}
         </div>
         {hasIncoming && (
-          <span className="text-[10px] text-orange-500 font-medium flex items-center gap-0.5">
+          <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-0.5">
             <Truck className="w-3 h-3" />
             이송 중 {incomingCount}대
           </span>
@@ -124,7 +100,6 @@ const BedStatusCard = ({
   );
 };
 
-// Acceptance badge component
 const AcceptanceBadge = ({
   label,
   available,
@@ -134,16 +109,14 @@ const AcceptanceBadge = ({
   available: boolean;
   icon: React.ElementType;
 }) => (
-  <div
-    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
-      available
-        ? "bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
-        : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-700"
-    }`}
-  >
-    <Icon className="w-3.5 h-3.5" />
+  <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-medium ${
+    available
+      ? "bg-secondary text-foreground"
+      : "bg-secondary text-muted-foreground/40"
+  }`}>
+    <Icon className="w-4 h-4" />
     <span>{label}</span>
-    <span className="ml-auto">{available ? "✅" : "❌"}</span>
+    <span className="ml-auto text-[11px]">{available ? "가능" : "불가"}</span>
   </div>
 );
 
@@ -158,16 +131,13 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
   const [showResultModal, setShowResultModal] = useState(false);
   const [lastRequestId, setLastRequestId] = useState<string>("");
   
-  // Check if in paramedic/driver mode
   const isParamedicMode = searchParams.get("role") === "paramedic";
   const isDriverMode = searchParams.get("mode") === "driver";
   const showTransferButton = isTransferMode || isParamedicMode || isDriverMode;
   
-  // 이송 중인 구급차 수 가져오기
   const { incomingCount } = useIncomingAmbulancesForHospital(hospital?.id);
   const { isMoonlightHospital } = useMoonlightHospitals();
   
-  // Get existing transfer request for this hospital
   const existingRequest = hospital ? getRequestByHospitalId(hospital.id) : undefined;
   
   if (!hospital) return null;
@@ -177,7 +147,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
   const hasPediatric = hospital.beds.pediatric > 0;
   const isFavorite = isHotline(hospital.phone);
   
-  // 실질 가용 병상 계산 (이송 중 차량 수 차감)
   const adjustedGeneralBeds = Math.max(0, hospital.beds.general - incomingCount);
   const adjustedTotalBeds = Math.max(0, totalBeds - incomingCount);
 
@@ -198,6 +167,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
     }
   };
 
+  const statusConfig = {
+    unavailable: { label: "만실", dotClass: "bg-destructive" },
+    limited: { label: "혼잡", dotClass: "bg-foreground/50" },
+    available: { label: "여유", dotClass: "bg-foreground" },
+  };
+
+  const currentStatus = statusConfig[status] || statusConfig.available;
+
   return (
     <AnimatePresence>
       {hospital && (
@@ -217,11 +194,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 500 }}
-            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-background rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
           >
             {/* Handle */}
             <div className="flex justify-center py-3">
-              <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-600 rounded-full" />
+              <div className="w-12 h-1.5 bg-muted-foreground/20 rounded-full" />
             </div>
 
             <div className="px-5 pb-8 pt-1 max-h-[75vh] overflow-y-auto">
@@ -230,55 +207,34 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-800 rounded-xl flex items-start gap-2"
+                  className="mb-4 p-3 bg-destructive/5 border border-destructive/10 rounded-2xl flex items-start gap-2"
                 >
-                  <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-yellow-800 dark:text-yellow-400">실시간 안내</p>
-                    <p className="text-xs text-yellow-700 dark:text-yellow-500 mt-0.5">{hospital.alertMessage}</p>
+                    <p className="text-sm font-semibold text-foreground">실시간 안내</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{hospital.alertMessage}</p>
                   </div>
                 </motion.div>
               )}
 
               {/* Header */}
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-5">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        status === "unavailable"
-                          ? "bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400"
-                          : status === "limited"
-                          ? "bg-yellow-100 dark:bg-yellow-950/50 text-yellow-600 dark:text-yellow-400"
-                          : "bg-green-100 dark:bg-green-950/50 text-green-600 dark:text-green-400"
-                      }`}
-                    >
-                      <span
-                        className={`w-2 h-2 rounded-full animate-pulse ${
-                          status === "unavailable"
-                            ? "bg-red-500"
-                            : status === "limited"
-                            ? "bg-yellow-500"
-                            : "bg-green-500"
-                        }`}
-                      />
-                      {status === "unavailable"
-                        ? "만실"
-                        : status === "limited"
-                        ? "혼잡"
-                        : "여유"}
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-secondary text-foreground">
+                      <span className={`w-1.5 h-1.5 rounded-full ${currentStatus.dotClass}`} />
+                      {currentStatus.label}
                     </span>
                     {hospital.isTraumaCenter && (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                        🏥 권역외상센터
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-secondary text-foreground">
+                        권역외상센터
                       </span>
                     )}
                     {hasPediatric && (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
-                        👶 아이 진료
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-secondary text-foreground">
+                        아이 진료
                       </span>
                     )}
-                    {/* Moonlight Hospital Badge - only for officially designated hospitals */}
                     <MoonlightBadge isMoonlight={isMoonlightHospital(hospital.nameKr)} />
                     {distance && (
                       <span className="text-xs text-muted-foreground">
@@ -286,69 +242,62 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                       </span>
                     )}
                   </div>
-                  <h2 className="text-xl font-bold text-foreground mb-0.5">
+                  <h2 className="text-xl font-bold text-foreground tracking-tight">
                     {cleanHospitalName(hospital.nameKr)}
                   </h2>
-                  <p className="text-sm text-muted-foreground">{hospital.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{hospital.category}</p>
+                  <p className="text-[13px] text-muted-foreground mt-0.5">{hospital.name}</p>
+                  <p className="text-xs text-muted-foreground/70 mt-0.5">{hospital.category}</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                  className="p-2 hover:bg-secondary rounded-full transition-colors"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
-              {/* Private Ambulance Call Button - Guardian/Patient Mode (Top Priority) */}
+              {/* Private Ambulance Call Button - Guardian/Patient Mode */}
               {!showTransferButton && onCallAmbulance && (
-                <div className="mb-4">
-                  <Button
+                <div className="mb-5">
+                  <button
                     onClick={onCallAmbulance}
-                    className="w-full py-5 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold shadow-lg shadow-red-500/20"
+                    className="w-full py-4 rounded-2xl bg-foreground text-background font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
                   >
-                    <Ambulance className="w-5 h-5 mr-2" />
+                    <Ambulance className="w-5 h-5" />
                     이 병원으로 사설 구급차 부르기
-                  </Button>
+                  </button>
                 </div>
               )}
 
-              {/* 119 Verified Badge - Historical Transfer Data */}
+              {/* 119 Verified Badge */}
               <Fire119VerifiedBadge 
                 hospitalName={hospital.nameKr}
                 hospitalId={hospital.id}
                 showChart={true}
               />
 
-              {/* AI Predictive Features Section - Premium Design */}
-              <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 dark:from-violet-950/50 dark:via-indigo-950/50 dark:to-blue-950/50 border border-violet-200/50 dark:border-violet-800/50 shadow-xl shadow-violet-500/10 overflow-hidden">
-                {/* Decorative background elements */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-violet-400/20 to-indigo-400/20 blur-3xl" />
-                <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/20 blur-2xl" />
-                
+              {/* AI Predictive Section */}
+              <div className="relative mb-6 p-4 rounded-2xl bg-secondary border border-border">
                 {/* Header */}
-                <div className="relative flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4">
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-bold text-foreground">AI 예측 분석</h3>
-                      <span className="text-[9px] font-bold text-white bg-gradient-to-r from-violet-500 to-indigo-500 px-2 py-0.5 rounded-full shadow-sm">
+                      <span className="text-[9px] font-bold text-background bg-foreground px-2 py-0.5 rounded-full">
                         BETA
                       </span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">Predictive Analytics</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Predictive Analytics</p>
                   </div>
                   <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
                 </div>
                 
-                {/* Cards Container */}
-                <div className="relative space-y-3">
-                  {/* Congestion Forecast */}
+                {/* Cards */}
+                <div className="space-y-3">
                   <CongestionForecast 
                     hospitalId={hospital.id?.toString() || hospital.name}
                     officialBeds={totalBeds}
                   />
-                  
-                  {/* Shadow Demand Visualization */}
                   <ShadowDemandCard 
                     hospitalId={hospital.id?.toString() || hospital.name}
                     officialBeds={totalBeds}
@@ -359,12 +308,12 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
               {/* Bed Status Grid */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-medium text-foreground">실질 가용 병상</h3>
+                  <h3 className="text-sm font-bold text-foreground">실질 가용 병상</h3>
                   {incomingCount > 0 && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-secondary text-muted-foreground">
                             <Truck className="w-3 h-3" />
                             이송 중 {incomingCount}대
                           </span>
@@ -379,10 +328,9 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     </TooltipProvider>
                   )}
                 </div>
-                {/* AI Acceptance Prediction Badge */}
                 <AIAcceptanceBadge hospitalId={hospital.id} />
               </div>
-              <div className="grid grid-cols-3 gap-3 mb-5">
+              <div className="grid grid-cols-3 gap-2 mb-6">
                 <BedStatusCard
                   label="성인"
                   count={hospital.beds.general}
@@ -411,7 +359,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
               </div>
 
               {/* Wait Time Prediction */}
-              <div className="mb-5">
+              <div className="mb-6">
                 <WaitTimePrediction
                   hospitalId={hospital.id}
                   totalBeds={
@@ -422,59 +370,37 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 />
               </div>
 
-              {/* Procedure Availability Section */}
+              {/* Procedure Availability */}
               {hospital.acceptance && (
-                <div className="mb-5">
-                  <h3 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                    <Activity className="w-4 h-4 text-primary" />
+                <div className="mb-6">
+                  <h3 className="text-sm font-bold text-foreground mb-3">
                     수용/시술 가능 여부
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
-                    <AcceptanceBadge
-                      label="심근경색"
-                      available={hospital.acceptance.heart}
-                      icon={Heart}
-                    />
-                    <AcceptanceBadge
-                      label="뇌출혈"
-                      available={hospital.acceptance.brainBleed}
-                      icon={Brain}
-                    />
-                    <AcceptanceBadge
-                      label="뇌경색"
-                      available={hospital.acceptance.brainStroke}
-                      icon={Brain}
-                    />
-                    <AcceptanceBadge
-                      label="응급내시경"
-                      available={hospital.acceptance.endoscopy}
-                      icon={Activity}
-                    />
-                    <AcceptanceBadge
-                      label="응급투석"
-                      available={hospital.acceptance.dialysis}
-                      icon={Droplet}
-                    />
+                    <AcceptanceBadge label="심근경색" available={hospital.acceptance.heart} icon={Heart} />
+                    <AcceptanceBadge label="뇌출혈" available={hospital.acceptance.brainBleed} icon={Brain} />
+                    <AcceptanceBadge label="뇌경색" available={hospital.acceptance.brainStroke} icon={Brain} />
+                    <AcceptanceBadge label="응급내시경" available={hospital.acceptance.endoscopy} icon={Activity} />
+                    <AcceptanceBadge label="응급투석" available={hospital.acceptance.dialysis} icon={Droplet} />
                   </div>
                 </div>
               )}
 
-
               {/* Contact Info */}
-              <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4 mb-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <Phone className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium flex-1">{hospital.phone}</span>
+              <div className="bg-secondary rounded-2xl p-4 mb-6">
+                <div className="flex items-center gap-3 mb-1.5">
+                  <Phone className="w-4 h-4 text-foreground/70" />
+                  <span className="text-sm font-semibold text-foreground flex-1">{hospital.phone}</span>
                   <button
                     onClick={handleToggleHotline}
-                    className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full transition-colors"
+                    className="p-2 hover:bg-muted rounded-full transition-colors"
                     aria-label={isFavorite ? "핫라인에서 제거" : "핫라인에 추가"}
                   >
                     <Star 
                       className={`w-5 h-5 transition-colors ${
                         isFavorite 
-                          ? "text-yellow-500 fill-yellow-500" 
-                          : "text-gray-400"
+                          ? "text-foreground fill-foreground" 
+                          : "text-muted-foreground/30"
                       }`} 
                     />
                   </button>
@@ -482,78 +408,76 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 <p className="text-xs text-muted-foreground pl-7">{hospital.address}</p>
               </div>
 
-              {/* Digital Transfer Request Button - Transfer Mode, Paramedic, or Driver */}
+              {/* Digital Transfer Request - Transfer Mode */}
               {showTransferButton && (
                 existingRequest ? (
-                  <div className={`w-full mb-3 py-4 px-4 rounded-xl border-2 flex items-center justify-center gap-2 ${
+                  <div className={`w-full mb-3 py-4 px-4 rounded-2xl border flex items-center justify-center gap-2 ${
                     existingRequest.status === "pending" 
-                      ? "bg-yellow-50 dark:bg-yellow-950/50 border-yellow-300 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400"
+                      ? "bg-secondary border-border text-muted-foreground"
                       : existingRequest.status === "accepted"
-                      ? "bg-green-50 dark:bg-green-950/50 border-green-300 dark:border-green-700 text-green-700 dark:text-green-400"
-                      : "bg-red-50 dark:bg-red-950/50 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400"
+                      ? "bg-secondary border-border text-foreground"
+                      : "bg-destructive/5 border-destructive/10 text-destructive"
                   }`}>
                     {existingRequest.status === "pending" ? (
                       <>
                         <Clock className="w-5 h-5 animate-pulse" />
-                        <span className="font-semibold">승인 대기 중 ⏳</span>
+                        <span className="font-semibold">승인 대기 중</span>
                       </>
                     ) : existingRequest.status === "accepted" ? (
                       <>
                         <CheckCircle className="w-5 h-5" />
-                        <span className="font-semibold">요청 승인됨 ✅</span>
+                        <span className="font-semibold">요청 승인됨</span>
                       </>
                     ) : (
                       <>
                         <X className="w-5 h-5" />
-                        <span className="font-semibold">요청 거절됨 ❌</span>
+                        <span className="font-semibold">요청 거절됨</span>
                       </>
                     )}
                   </div>
                 ) : (
-                  <Button
+                  <button
                     onClick={() => setShowTransferModal(true)}
-                    className="w-full mb-3 py-5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold"
+                    className="w-full mb-3 py-4 rounded-2xl bg-foreground text-background font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
                   >
-                    <Send className="w-5 h-5 mr-2" />
-                    디지털 이송 요청 (Request Transfer)
-                  </Button>
+                    <Send className="w-4 h-4" />
+                    디지털 이송 요청
+                  </button>
                 )
               )}
 
-
-              {/* ER Entrance Roadview Button - Driver/Paramedic only */}
+              {/* ER Roadview - Driver/Paramedic only */}
               {showTransferButton && (
-                <Button
+                <button
                   onClick={() => setShowRoadview(true)}
-                  variant="outline"
-                  className="w-full mb-3 py-5 rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 font-medium"
+                  className="w-full mb-3 py-4 rounded-2xl bg-secondary text-foreground font-medium text-[14px] flex items-center justify-center gap-2 hover:bg-muted transition-colors"
                 >
-                  <Ambulance className="w-5 h-5 mr-2" />
-                  응급실 입구 로드뷰 (ER Entrance View)
-                </Button>
+                  응급실 입구 로드뷰
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
               )}
 
-              {/* Quick Rejection Report Button - Driver/Paramedic only */}
+              {/* Quick Rejection - Driver/Paramedic only */}
               {showTransferButton && user && hospital.id && (
                 <div className="mb-4">
                   <QuickRejectionButton
                     hospitalId={hospital.id}
                     hospitalName={cleanHospitalName(hospital.nameKr)}
                     variant="button"
-                    className="w-full py-5 rounded-xl font-medium"
+                    className="w-full py-4 rounded-2xl font-medium"
                   />
                 </div>
               )}
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3">
-                <Button
+              <div className="grid grid-cols-2 gap-2">
+                <button
                   onClick={handleCall}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-14 rounded-xl"
+                  className="bg-foreground text-background font-semibold h-14 rounded-2xl flex items-center justify-center gap-2 text-[14px] hover:opacity-90 active:scale-[0.98] transition-all"
                 >
-                  <Phone className="w-4 h-4 mr-2" />
+                  <Phone className="w-4 h-4" />
                   응급실 전화
-                </Button>
+                </button>
                 <NavigationSelector
                   destination={{
                     lat: hospital.lat,
@@ -561,7 +485,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     name: cleanHospitalName(hospital.nameKr),
                   }}
                   variant="outline"
-                  className="border-primary text-primary hover:bg-primary/5 font-semibold h-14 rounded-xl"
+                  className="border-border text-foreground hover:bg-secondary font-semibold h-14 rounded-2xl"
                 />
               </div>
             </div>
@@ -598,7 +522,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
             hospitalName={cleanHospitalName(hospital.nameKr)}
             requestId={lastRequestId}
           />
-
         </>
       )}
     </AnimatePresence>
