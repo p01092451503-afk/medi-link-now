@@ -297,6 +297,13 @@ export const useNearbyPharmacies = ({
   const filteredPharmacies = useMemo(() => {
     let result = [...allPharmacies];
 
+    // 영업시간 데이터 존재 여부 체크 함수
+    const hasScheduleData = (p: NearbyPharmacy) => !!(
+      p.dutyTime1s || p.dutyTime2s || p.dutyTime3s ||
+      p.dutyTime4s || p.dutyTime5s || p.dutyTime6s ||
+      p.dutyTime7s || p.dutyTime8s
+    );
+
     switch (filter) {
       case "open":
         result = result.filter((p) => p.isOpen === true);
@@ -309,10 +316,21 @@ export const useNearbyPharmacies = ({
         break;
     }
 
-    // 영업 중인 약국을 먼저, 그다음 거리순
+    // 정렬: 영업중 → 영업종료(시간 있음) → 시간 미제공, 각 그룹 내 거리순
     result.sort((a, b) => {
-      if (a.isOpen && !b.isOpen) return -1;
-      if (!a.isOpen && b.isOpen) return 1;
+      const aHasHours = hasScheduleData(a);
+      const bHasHours = hasScheduleData(b);
+
+      // 영업시간 있는 약국 우선
+      if (aHasHours && !bHasHours) return -1;
+      if (!aHasHours && bHasHours) return 1;
+
+      // 같은 그룹 내에서 영업중 우선
+      if (aHasHours && bHasHours) {
+        if (a.isOpen && !b.isOpen) return -1;
+        if (!a.isOpen && b.isOpen) return 1;
+      }
+
       return (a.distance || 0) - (b.distance || 0);
     });
     return result;

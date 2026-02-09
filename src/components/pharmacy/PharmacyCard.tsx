@@ -5,6 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 
+// 영업시간 데이터 존재 여부 확인
+const hasScheduleData = (pharmacy: NearbyPharmacy): boolean => {
+  return !!(
+    pharmacy.dutyTime1s || pharmacy.dutyTime2s || pharmacy.dutyTime3s ||
+    pharmacy.dutyTime4s || pharmacy.dutyTime5s || pharmacy.dutyTime6s ||
+    pharmacy.dutyTime7s || pharmacy.dutyTime8s
+  );
+};
+
 const formatTime = (time?: string): string => {
   if (!time || time.length < 4) return "-";
   return `${time.slice(0, 2)}:${time.slice(2)}`;
@@ -52,6 +61,7 @@ const PharmacyCard = ({ pharmacy, index, onSelect, onCall, onNavigate }: Pharmac
   const [showWeekly, setShowWeekly] = useState(false);
   const todayIdx = getTodayIndex();
   const schedule = getDaySchedule(pharmacy);
+  const hasHours = hasScheduleData(pharmacy);
 
   return (
     <motion.div
@@ -60,9 +70,11 @@ const PharmacyCard = ({ pharmacy, index, onSelect, onCall, onNavigate }: Pharmac
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       className={`p-4 rounded-xl border ${
-        pharmacy.isOpen
-          ? "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/20 border-green-100 dark:border-green-900/40"
-          : "bg-muted/30 border-border"
+        !hasHours
+          ? "bg-muted/20 border-border"
+          : pharmacy.isOpen
+            ? "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/20 border-green-100 dark:border-green-900/40"
+            : "bg-muted/30 border-border"
       }`}
       onClick={() => onSelect?.(pharmacy)}
     >
@@ -73,12 +85,16 @@ const PharmacyCard = ({ pharmacy, index, onSelect, onCall, onNavigate }: Pharmac
             <span className="text-lg">💊</span>
             <h4
               className={`font-bold truncate ${
-                pharmacy.isOpen ? "text-foreground" : "text-muted-foreground"
+                hasHours && pharmacy.isOpen ? "text-foreground" : hasHours ? "text-muted-foreground" : "text-foreground"
               }`}
             >
               {pharmacy.name}
             </h4>
-            {pharmacy.isOpen ? (
+            {!hasHours ? (
+              <Badge variant="outline" className="text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700 text-[10px] px-1.5 py-0">
+                시간 미제공
+              </Badge>
+            ) : pharmacy.isOpen ? (
               <Badge className="bg-green-500 text-white text-[10px] px-1.5 py-0">영업중</Badge>
             ) : (
               <Badge variant="outline" className="text-muted-foreground text-[10px] px-1.5 py-0">
@@ -105,66 +121,75 @@ const PharmacyCard = ({ pharmacy, index, onSelect, onCall, onNavigate }: Pharmac
           </div>
 
           {/* Today hours + toggle */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowWeekly((v) => !v);
-            }}
-            className="flex items-center gap-1 text-xs text-muted-foreground mb-1 hover:text-foreground transition-colors group"
-          >
-            <Clock className="w-3 h-3 flex-shrink-0" />
-            <span>
-              오늘{" "}
-              {pharmacy.todayOpenTime && pharmacy.todayCloseTime
-                ? `${formatTime(pharmacy.todayOpenTime)} ~ ${formatTime(pharmacy.todayCloseTime)}`
-                : "영업시간 미확인"}
-            </span>
-            <ChevronDown
-              className={`w-3 h-3 transition-transform duration-200 ${
-                showWeekly ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {/* Weekly schedule (collapsible) */}
-          <AnimatePresence>
-            {showWeekly && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="overflow-hidden"
+          {hasHours ? (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowWeekly((v) => !v);
+                }}
+                className="flex items-center gap-1 text-xs text-muted-foreground mb-1 hover:text-foreground transition-colors group"
               >
-                <div className="mt-1 mb-2 p-2.5 rounded-lg bg-white/60 dark:bg-slate-800/60 border border-border/50">
-                  <div className="grid grid-cols-1 gap-0.5">
-                    {schedule.map((day, idx) => {
-                      const isToday = idx === todayIdx;
-                      const hasHours = day.open && day.close;
-                      return (
-                        <div
-                          key={day.label}
-                          className={`flex items-center justify-between text-xs px-2 py-1 rounded ${
-                            isToday
-                              ? "bg-green-100 dark:bg-green-900/40 font-semibold text-green-700 dark:text-green-300"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          <span className="w-10">{day.label}</span>
-                          <span>
-                            {hasHours
-                              ? `${formatTime(day.open)} ~ ${formatTime(day.close)}`
-                              : "휴무"}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <Clock className="w-3 h-3 flex-shrink-0" />
+                <span>
+                  오늘{" "}
+                  {pharmacy.todayOpenTime && pharmacy.todayCloseTime
+                    ? `${formatTime(pharmacy.todayOpenTime)} ~ ${formatTime(pharmacy.todayCloseTime)}`
+                    : "휴무"}
+                </span>
+                <ChevronDown
+                  className={`w-3 h-3 transition-transform duration-200 ${
+                    showWeekly ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Weekly schedule (collapsible) */}
+              <AnimatePresence>
+                {showWeekly && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-1 mb-2 p-2.5 rounded-lg bg-white/60 dark:bg-slate-800/60 border border-border/50">
+                      <div className="grid grid-cols-1 gap-0.5">
+                        {schedule.map((day, idx) => {
+                          const isToday = idx === todayIdx;
+                          const dayHasHours = day.open && day.close;
+                          return (
+                            <div
+                              key={day.label}
+                              className={`flex items-center justify-between text-xs px-2 py-1 rounded ${
+                                isToday
+                                  ? "bg-green-100 dark:bg-green-900/40 font-semibold text-green-700 dark:text-green-300"
+                                  : "text-muted-foreground"
+                              }`}
+                            >
+                              <span className="w-10">{day.label}</span>
+                              <span>
+                                {dayHasHours
+                                  ? `${formatTime(day.open)} ~ ${formatTime(day.close)}`
+                                  : "휴무"}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
+          ) : (
+            <div className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 mb-1">
+              <Clock className="w-3 h-3 flex-shrink-0" />
+              <span>영업시간 데이터 미제공 (공공데이터 API 한계)</span>
+            </div>
+          )}
 
           {/* Address */}
           <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
