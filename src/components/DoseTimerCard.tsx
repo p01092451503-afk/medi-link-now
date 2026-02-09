@@ -1,23 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Thermometer, Droplets, RotateCcw, Bell, BellOff, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
 type MedicineType = "acetaminophen" | "ibuprofen";
 
 interface DoseRecord {
   type: MedicineType;
-  timestamp: number; // ms
+  timestamp: number;
 }
 
 const INTERVALS: Record<MedicineType, number> = {
-  acetaminophen: 4 * 60 * 60 * 1000, // 4 hours
-  ibuprofen: 6 * 60 * 60 * 1000, // 6 hours
+  acetaminophen: 4 * 60 * 60 * 1000,
+  ibuprofen: 6 * 60 * 60 * 1000,
 };
 
-const CROSS_DOSE_INTERVAL = 2 * 60 * 60 * 1000; // 2 hours for cross-dosing
-
+const CROSS_DOSE_INTERVAL = 2 * 60 * 60 * 1000;
 const STORAGE_KEY = "dose-timer-records";
 
 const loadRecords = (): DoseRecord[] => {
@@ -25,7 +23,6 @@ const loadRecords = (): DoseRecord[] => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const records: DoseRecord[] = JSON.parse(raw);
-    // Only keep records from the last 24 hours
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     return records.filter((r) => r.timestamp > cutoff);
   } catch {
@@ -56,21 +53,31 @@ const formatTime = (ts: number): string => {
   return `${period} ${h12}:${m}`;
 };
 
-const MEDICINE_INFO: Record<MedicineType, { label: string; color: string; bgClass: string; borderClass: string; textClass: string; icon: typeof Thermometer }> = {
+const MEDICINE_INFO: Record<
+  MedicineType,
+  {
+    label: string;
+    emoji: string;
+    bgClass: string;
+    borderClass: string;
+    textClass: string;
+    icon: typeof Thermometer;
+  }
+> = {
   acetaminophen: {
     label: "아세트아미노펜",
-    color: "red",
-    bgClass: "bg-red-50 dark:bg-red-950/30",
-    borderClass: "border-red-200 dark:border-red-900/40",
-    textClass: "text-red-600 dark:text-red-400",
+    emoji: "🔴",
+    bgClass: "bg-danger-light",
+    borderClass: "border-danger/20",
+    textClass: "text-danger",
     icon: Thermometer,
   },
   ibuprofen: {
     label: "이부프로펜",
-    color: "blue",
-    bgClass: "bg-blue-50 dark:bg-blue-950/30",
-    borderClass: "border-blue-200 dark:border-blue-900/40",
-    textClass: "text-blue-600 dark:text-blue-400",
+    emoji: "🔵",
+    bgClass: "bg-primary/10",
+    borderClass: "border-primary/20",
+    textClass: "text-primary",
     icon: Droplets,
   },
 };
@@ -80,20 +87,17 @@ const DoseTimerCard = () => {
   const [now, setNow] = useState(Date.now());
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
-  // Tick every second
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Check notification permission
   useEffect(() => {
     if ("Notification" in window) {
       setNotificationsEnabled(Notification.permission === "granted");
     }
   }, []);
 
-  // Schedule notification when a dose is recorded
   useEffect(() => {
     if (!notificationsEnabled || records.length === 0) return;
     const last = records[records.length - 1];
@@ -124,17 +128,20 @@ const DoseTimerCard = () => {
     }
   }, []);
 
-  const recordDose = useCallback((type: MedicineType) => {
-    const newRecord: DoseRecord = { type, timestamp: Date.now() };
-    const updated = [...records, newRecord];
-    setRecords(updated);
-    saveRecords(updated);
-    const info = MEDICINE_INFO[type];
-    toast({
-      title: `${info.label} 복용 기록됨`,
-      description: `${formatTime(newRecord.timestamp)}에 복용. 다음 복용: ${formatTime(newRecord.timestamp + INTERVALS[type])}`,
-    });
-  }, [records]);
+  const recordDose = useCallback(
+    (type: MedicineType) => {
+      const newRecord: DoseRecord = { type, timestamp: Date.now() };
+      const updated = [...records, newRecord];
+      setRecords(updated);
+      saveRecords(updated);
+      const info = MEDICINE_INFO[type];
+      toast({
+        title: `${info.label} 복용 기록됨`,
+        description: `${formatTime(newRecord.timestamp)}에 복용. 다음 복용: ${formatTime(newRecord.timestamp + INTERVALS[type])}`,
+      });
+    },
+    [records]
+  );
 
   const clearRecords = useCallback(() => {
     setRecords([]);
@@ -142,7 +149,6 @@ const DoseTimerCard = () => {
     toast({ title: "복용 기록이 초기화되었습니다" });
   }, []);
 
-  // Calculate status for each medicine type
   const getStatus = (type: MedicineType) => {
     const lastOfType = [...records].reverse().find((r) => r.type === type);
     if (!lastOfType) return { canTake: true, timeLeft: 0, lastTime: null };
@@ -152,7 +158,6 @@ const DoseTimerCard = () => {
     return { canTake: timeLeft === 0, timeLeft, lastTime: lastOfType.timestamp };
   };
 
-  // Cross-dosing recommendation
   const getCrossDoseRecommendation = () => {
     if (records.length === 0) return null;
     const last = records[records.length - 1];
@@ -180,9 +185,7 @@ const DoseTimerCard = () => {
   const acetaStatus = getStatus("acetaminophen");
   const ibuStatus = getStatus("ibuprofen");
   const crossDose = getCrossDoseRecommendation();
-  const lastRecord = records.length > 0 ? records[records.length - 1] : null;
 
-  // Progress for circular timer
   const getProgress = (type: MedicineType) => {
     const status = type === "acetaminophen" ? acetaStatus : ibuStatus;
     if (!status.lastTime) return 0;
@@ -192,12 +195,12 @@ const DoseTimerCard = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-emerald-200 dark:border-emerald-900/50 p-5 space-y-4">
+    <div className="bg-card rounded-2xl border border-border p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
-            <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="w-8 h-8 rounded-xl bg-accent flex items-center justify-center">
+            <Clock className="w-4 h-4 text-accent-foreground" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">복용 타이머</h3>
@@ -205,17 +208,20 @@ const DoseTimerCard = () => {
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          {/* Notification toggle */}
           <button
             onClick={notificationsEnabled ? undefined : handleRequestNotification}
             className={`p-1.5 rounded-lg transition-colors ${
               notificationsEnabled
-                ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30"
+                ? "text-success bg-success/10"
                 : "text-muted-foreground hover:bg-muted"
             }`}
             title={notificationsEnabled ? "알림 활성화됨" : "알림 활성화"}
           >
-            {notificationsEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+            {notificationsEnabled ? (
+              <Bell className="w-4 h-4" />
+            ) : (
+              <BellOff className="w-4 h-4" />
+            )}
           </button>
           {records.length > 0 && (
             <button
@@ -241,13 +247,12 @@ const DoseTimerCard = () => {
             <button
               key={type}
               onClick={() => recordDose(type)}
-              className={`relative overflow-hidden rounded-xl border-2 p-3.5 text-left transition-all ${info.borderClass} ${
+              className={`relative overflow-hidden rounded-xl border p-3.5 text-left transition-all ${info.borderClass} ${
                 status.canTake
                   ? `${info.bgClass} hover:shadow-md active:scale-[0.98]`
                   : "bg-muted/30 opacity-75"
               }`}
             >
-              {/* Progress bar background */}
               {!status.canTake && status.lastTime && (
                 <motion.div
                   className={`absolute inset-0 ${info.bgClass} opacity-40`}
@@ -266,7 +271,9 @@ const DoseTimerCard = () => {
                     <p className="text-[10px] text-muted-foreground">
                       마지막: {formatTime(status.lastTime)}
                     </p>
-                    <p className={`text-xs font-bold mt-0.5 ${status.canTake ? "text-emerald-600 dark:text-emerald-400" : info.textClass}`}>
+                    <p
+                      className={`text-xs font-bold mt-0.5 ${status.canTake ? "text-success" : info.textClass}`}
+                    >
                       {status.canTake ? (
                         <span className="flex items-center gap-1">
                           <Check className="w-3 h-3" /> 복용 가능
@@ -277,9 +284,7 @@ const DoseTimerCard = () => {
                     </p>
                   </div>
                 ) : (
-                  <p className={`text-xs font-semibold ${info.textClass}`}>
-                    지금 복용 기록
-                  </p>
+                  <p className={`text-xs font-semibold ${info.textClass}`}>지금 복용 기록</p>
                 )}
               </div>
             </button>
@@ -296,16 +301,18 @@ const DoseTimerCard = () => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className={`p-3 rounded-xl border text-center ${
-              crossDose.recommend
-                ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/50"
-                : "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50"
-            }`}>
-              <p className={`text-xs font-semibold ${
+            <div
+              className={`p-3 rounded-xl border text-center ${
                 crossDose.recommend
-                  ? "text-emerald-700 dark:text-emerald-400"
-                  : "text-amber-700 dark:text-amber-400"
-              }`}>
+                  ? "bg-success/10 border-success/20"
+                  : "bg-warning/10 border-warning/20"
+              }`}
+            >
+              <p
+                className={`text-xs font-semibold ${
+                  crossDose.recommend ? "text-success" : "text-warning"
+                }`}
+              >
                 {crossDose.recommend ? "✅ " : "⏳ "}
                 {crossDose.message}
               </p>
@@ -319,17 +326,20 @@ const DoseTimerCard = () => {
         <div className="space-y-1.5">
           <p className="text-[10px] font-semibold text-muted-foreground">최근 기록</p>
           <div className="flex flex-wrap gap-1.5">
-            {[...records].reverse().slice(0, 6).map((record, i) => {
-              const info = MEDICINE_INFO[record.type];
-              return (
-                <span
-                  key={i}
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${info.bgClass} ${info.textClass}`}
-                >
-                  {record.type === "acetaminophen" ? "🔴" : "🔵"} {formatTime(record.timestamp)}
-                </span>
-              );
-            })}
+            {[...records]
+              .reverse()
+              .slice(0, 6)
+              .map((record, i) => {
+                const info = MEDICINE_INFO[record.type];
+                return (
+                  <span
+                    key={i}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${info.bgClass} ${info.textClass}`}
+                  >
+                    {info.emoji} {formatTime(record.timestamp)}
+                  </span>
+                );
+              })}
           </div>
         </div>
       )}
