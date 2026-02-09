@@ -144,7 +144,10 @@ const Landing = () => {
       {/* Header - Toss style minimal */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
         <div className="px-5 py-4 flex items-center justify-between max-w-lg mx-auto">
-          <h1 className="text-lg font-bold text-foreground tracking-tight">파인더</h1>
+          <h1 className="flex items-baseline gap-1.5">
+            <span className="text-lg font-bold text-foreground tracking-tight">파인더</span>
+            <span className="text-[11px] font-semibold text-muted-foreground tracking-wide">Find-ER</span>
+          </h1>
           <ThemeToggle />
         </div>
       </header>
