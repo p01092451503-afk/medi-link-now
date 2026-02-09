@@ -466,7 +466,7 @@ const VoiceEmergencyLogFAB = () => {
       {/* Horizontal Voice Button - positioned above trip management widget */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-[8.5rem] left-4 right-4 z-40 h-12 rounded-2xl bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg flex items-center justify-center gap-2 font-semibold text-sm"
+        className="fixed bottom-[8.5rem] left-4 right-4 z-40 h-12 rounded-2xl bg-foreground text-background font-semibold text-sm flex items-center justify-center gap-2"
         whileTap={{ scale: 0.98 }}
       >
         <Mic className="w-5 h-5" />
@@ -475,12 +475,12 @@ const VoiceEmergencyLogFAB = () => {
 
       {/* Bottom Sheet */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl p-0 overflow-hidden dark:bg-slate-900" hideCloseButton>
-          <div className="h-full flex flex-col dark:bg-slate-900">
+        <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl p-0 overflow-hidden" hideCloseButton>
+          <div className="h-full flex flex-col">
             {/* Header */}
-            <SheetHeader className="px-5 pt-6 pb-4 border-b border-border bg-gradient-to-r from-red-500 to-orange-500 text-white">
+            <SheetHeader className="px-5 pt-6 pb-4 border-b border-border bg-background">
               <div className="flex items-center justify-between">
-                <SheetTitle className="text-white text-xl font-bold flex items-center gap-2">
+                <SheetTitle className="text-foreground text-xl font-bold flex items-center gap-2 tracking-tight">
                   <Mic className="w-6 h-6" />
                   AI 음성 구급일지
                 </SheetTitle>
@@ -488,16 +488,16 @@ const VoiceEmergencyLogFAB = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
-                  className="text-white hover:bg-white/20"
+                  className="text-muted-foreground hover:bg-secondary"
                 >
                   <X className="w-5 h-5" />
                 </Button>
               </div>
-              <p className="text-white/80 text-sm">음성으로 환자 정보를 기록하세요</p>
+              <p className="text-muted-foreground text-sm">음성으로 환자 정보를 기록하세요</p>
             </SheetHeader>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white dark:bg-slate-900">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-background">
               {/* KTAS Alert */}
               <AnimatePresence>
                 {ktasAlert && (
@@ -530,7 +530,7 @@ const VoiceEmergencyLogFAB = () => {
               </AnimatePresence>
 
               {/* Voice Input Section */}
-              <div className="bg-gray-50 dark:bg-slate-800 rounded-2xl p-4">
+              <div className="bg-secondary rounded-2xl p-4">
                 <AnimatePresence mode="wait">
                   {isEditMode && !isProcessingAI ? (
                     <motion.div
@@ -548,7 +548,7 @@ const VoiceEmergencyLogFAB = () => {
                       <Textarea
                         value={editedTranscript}
                         onChange={(e) => setEditedTranscript(e.target.value)}
-                        className="min-h-[80px] resize-none rounded-xl border-primary/20 focus:border-primary text-sm dark:bg-slate-700 dark:border-slate-600"
+                        className="min-h-[80px] resize-none rounded-xl border-border focus:border-foreground text-sm"
                         placeholder="음성 인식 결과..."
                       />
                       
@@ -556,7 +556,7 @@ const VoiceEmergencyLogFAB = () => {
                         <Button
                           onClick={handleConfirmEdit}
                           size="sm"
-                          className="flex-1 rounded-xl bg-primary hover:bg-primary/90"
+                          className="flex-1 rounded-xl bg-foreground text-background hover:opacity-90"
                           disabled={!editedTranscript.trim()}
                         >
                           <Sparkles className="w-4 h-4 mr-1" />
@@ -589,10 +589,10 @@ const VoiceEmergencyLogFAB = () => {
                         disabled={isProcessingAI}
                         className={`w-full py-6 rounded-2xl font-semibold flex flex-col items-center justify-center gap-3 transition-all disabled:opacity-70 ${
                           isListening
-                            ? "bg-red-500 text-white"
+                            ? "bg-destructive text-destructive-foreground"
                             : isProcessingAI
-                            ? "bg-purple-500 text-white"
-                            : "bg-gradient-to-r from-primary to-primary/80 text-white"
+                            ? "bg-secondary text-foreground"
+                            : "bg-foreground text-background"
                         }`}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -606,7 +606,7 @@ const VoiceEmergencyLogFAB = () => {
                                 {[0, 1, 2, 3, 4, 5, 6].map((i) => (
                                   <motion.div
                                     key={i}
-                                    className="w-1.5 bg-white rounded-full"
+                                    className="w-1.5 bg-current rounded-full"
                                     animate={{ 
                                       height: [8, 32, 16, 40, 12, 28, 8] 
                                     }}
@@ -620,8 +620,8 @@ const VoiceEmergencyLogFAB = () => {
                                 ))}
                               </div>
                               <motion.div
-                                className="absolute inset-0 rounded-full bg-white/30 pointer-events-none"
-                                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
+                                className="absolute inset-0 rounded-full bg-current/20 pointer-events-none"
+                                animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0, 0.2] }}
                                 transition={{ duration: 1.5, repeat: Infinity }}
                               />
                             </>
@@ -631,10 +631,10 @@ const VoiceEmergencyLogFAB = () => {
                         </div>
                         <span className="text-lg">
                           {isProcessingAI 
-                            ? "🤖 AI가 분석 중..." 
+                            ? "AI가 분석 중..." 
                             : isListening 
                             ? "듣고 있습니다..." 
-                            : "🎙️ 탭하여 음성 입력"
+                            : "탭하여 음성 입력"
                           }
                         </span>
                       </motion.button>
@@ -648,15 +648,15 @@ const VoiceEmergencyLogFAB = () => {
                             exit={{ opacity: 0, height: 0 }}
                             className={`border rounded-xl p-3 ${
                               isProcessingAI 
-                                ? "bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-800" 
-                                : "bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30"
+                                ? "bg-secondary border-border" 
+                                : "bg-secondary border-border"
                             }`}
                           >
                             <div className="flex items-center gap-2 mb-1">
                               {isProcessingAI ? (
                                 <>
-                                  <Loader2 className="w-4 h-4 text-purple-500 animate-spin" />
-                                  <span className="text-xs font-medium text-purple-600">AI 분석 중...</span>
+                                  <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+                                  <span className="text-xs font-medium text-muted-foreground">AI 분석 중...</span>
                                 </>
                               ) : (
                                 <>
@@ -664,7 +664,7 @@ const VoiceEmergencyLogFAB = () => {
                                     {[0, 1, 2].map((i) => (
                                       <motion.div
                                         key={i}
-                                        className="w-1.5 h-4 bg-primary rounded-full"
+                                        className="w-1.5 h-4 bg-foreground rounded-full"
                                         animate={{ scaleY: [0.5, 1, 0.5] }}
                                         transition={{
                                           duration: 0.6,
@@ -674,7 +674,7 @@ const VoiceEmergencyLogFAB = () => {
                                       />
                                     ))}
                                   </div>
-                                  <span className="text-xs font-medium text-primary">인식 중...</span>
+                                  <span className="text-xs font-medium text-foreground">인식 중...</span>
                                 </>
                               )}
                             </div>
@@ -702,7 +702,7 @@ const VoiceEmergencyLogFAB = () => {
                       value={formData.ageGender}
                       onChange={(e) => setFormData(prev => ({ ...prev, ageGender: e.target.value }))}
                       placeholder="예: 남/55"
-                      className="mt-1 rounded-xl dark:bg-slate-800 dark:border-slate-700"
+                      className="mt-1 rounded-xl"
                     />
                   </div>
                   <div>
@@ -711,7 +711,7 @@ const VoiceEmergencyLogFAB = () => {
                       value={formData.ktasLevel}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, ktasLevel: value }))}
                     >
-                      <SelectTrigger className={`mt-1 rounded-xl dark:bg-slate-800 dark:border-slate-700 ${formData.ktasLevel ? getKtasColor(formData.ktasLevel) + " " + getKtasTextColor(formData.ktasLevel) : ""}`}>
+                      <SelectTrigger className={`mt-1 rounded-xl ${formData.ktasLevel ? getKtasColor(formData.ktasLevel) + " " + getKtasTextColor(formData.ktasLevel) : ""}`}>
                         <SelectValue placeholder="선택" />
                       </SelectTrigger>
                       <SelectContent>
@@ -734,7 +734,7 @@ const VoiceEmergencyLogFAB = () => {
                     value={formData.chiefComplaint}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, chiefComplaint: value }))}
                   >
-                    <SelectTrigger className="mt-1 rounded-xl dark:bg-slate-800 dark:border-slate-700">
+                    <SelectTrigger className="mt-1 rounded-xl">
                       <SelectValue placeholder="증상 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -754,7 +754,7 @@ const VoiceEmergencyLogFAB = () => {
                       value={formData.bloodPressure}
                       onChange={(e) => setFormData(prev => ({ ...prev, bloodPressure: e.target.value }))}
                       placeholder="130/80"
-                      className="mt-1 rounded-xl dark:bg-slate-800 dark:border-slate-700"
+                      className="mt-1 rounded-xl"
                     />
                   </div>
                   <div>
@@ -763,7 +763,7 @@ const VoiceEmergencyLogFAB = () => {
                       value={formData.pulse}
                       onChange={(e) => setFormData(prev => ({ ...prev, pulse: e.target.value }))}
                       placeholder="100"
-                      className="mt-1 rounded-xl dark:bg-slate-800 dark:border-slate-700"
+                      className="mt-1 rounded-xl"
                     />
                   </div>
                   <div>
@@ -772,7 +772,7 @@ const VoiceEmergencyLogFAB = () => {
                       value={formData.spo2}
                       onChange={(e) => setFormData(prev => ({ ...prev, spo2: e.target.value }))}
                       placeholder="98%"
-                      className="mt-1 rounded-xl dark:bg-slate-800 dark:border-slate-700"
+                      className="mt-1 rounded-xl"
                     />
                   </div>
                 </div>
@@ -785,7 +785,7 @@ const VoiceEmergencyLogFAB = () => {
                       {formData.symptoms.map((symptom, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-full text-sm font-medium"
+                          className="px-3 py-1 bg-secondary text-foreground rounded-full text-sm font-medium"
                         >
                           {symptom}
                         </span>
@@ -797,10 +797,10 @@ const VoiceEmergencyLogFAB = () => {
             </div>
 
             {/* Footer Actions */}
-            <div className="p-5 border-t border-border bg-white dark:bg-slate-900 space-y-3">
+            <div className="p-5 border-t border-border bg-background space-y-3">
               {/* Summary Preview */}
               {(formData.ageGender || formData.chiefComplaint || formData.bloodPressure) && (
-                <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-3 text-sm text-muted-foreground">
+                <div className="bg-secondary rounded-xl p-3 text-sm text-muted-foreground">
                   <p className="font-medium text-foreground mb-1">요약</p>
                   <p>{generateSummary() || "입력된 정보가 없습니다"}</p>
                 </div>
@@ -810,13 +810,13 @@ const VoiceEmergencyLogFAB = () => {
                 <Button
                   variant="outline"
                   onClick={resetForm}
-                  className="flex-1 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700"
+                  className="flex-1 rounded-xl"
                 >
                   초기화
                 </Button>
                 <Button
                   onClick={copyToClipboard}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-primary to-primary/80"
+                  className="flex-1 rounded-xl bg-foreground text-background hover:opacity-90"
                   disabled={!formData.ageGender && !formData.chiefComplaint}
                 >
                   <Check className="w-4 h-4 mr-2" />

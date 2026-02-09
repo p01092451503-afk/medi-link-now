@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle, Radio, Ban } from "lucide-react";
+import { AlertTriangle, Radio, Ban, CheckCircle2 } from "lucide-react";
 import { useSharedRejectionLogs, SHARED_REJECTION_REASONS } from "@/hooks/useSharedRejectionLogs";
 import { cleanHospitalName } from "@/lib/utils";
 
@@ -37,10 +37,10 @@ const RejectionTickerFeed = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/40 rounded-xl p-3 border border-red-100 dark:border-red-900/50">
+      <div className="bg-secondary rounded-2xl p-3">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/50 animate-pulse" />
-          <div className="h-4 w-32 bg-red-100 dark:bg-red-900/50 rounded animate-pulse" />
+          <div className="w-5 h-5 rounded-full bg-muted animate-pulse" />
+          <div className="h-4 w-32 bg-muted rounded animate-pulse" />
         </div>
       </div>
     );
@@ -48,14 +48,14 @@ const RejectionTickerFeed = () => {
 
   if (recentLogs.length === 0) {
     return (
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/40 dark:to-emerald-950/40 rounded-xl p-3 border border-green-100 dark:border-green-900/50">
+      <div className="bg-secondary rounded-2xl p-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
-            <Radio className="w-3.5 h-3.5 text-green-600" />
+          <div className="w-6 h-6 rounded-full bg-background flex items-center justify-center">
+            <CheckCircle2 className="w-3.5 h-3.5 text-foreground" />
           </div>
-          <p className="text-sm text-green-700 dark:text-green-400">
+          <p className="text-sm text-foreground">
             <span className="font-medium">실시간 제보:</span>{" "}
-            <span className="text-green-600 dark:text-green-500">최근 30분 내 거부 이력 없음 ✅</span>
+            <span className="text-muted-foreground">최근 30분 내 거부 이력 없음</span>
           </p>
         </div>
       </div>
@@ -63,18 +63,18 @@ const RejectionTickerFeed = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/40 rounded-xl p-3 border border-red-100 dark:border-red-900/50 overflow-hidden">
+    <div className="bg-card rounded-2xl p-3 border border-border overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 mb-2.5">
-        <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
-          <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+        <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center">
+          <AlertTriangle className="w-3.5 h-3.5 text-foreground" />
         </div>
-        <p className="text-sm font-semibold text-red-700 dark:text-red-400">
-          🚨 동료 대원 제보 ({recentLogs.length}건)
+        <p className="text-sm font-semibold text-foreground">
+          동료 대원 제보 ({recentLogs.length}건)
         </p>
         <div className="ml-auto flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-[10px] text-red-500 font-medium">LIVE</span>
+          <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+          <span className="text-[10px] text-destructive font-medium">LIVE</span>
         </div>
       </div>
 
@@ -88,16 +88,16 @@ const RejectionTickerFeed = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               transition={{ delay: index * 0.05 }}
-              className="flex items-start gap-2 p-2 bg-white/70 dark:bg-slate-800/70 rounded-lg border border-red-100/50 dark:border-red-900/30"
+              className="flex items-start gap-2 p-2 bg-secondary rounded-xl"
             >
-              <Ban className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+              <Ban className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-700 dark:text-slate-300 leading-relaxed">
-                  <span className="text-red-600 font-semibold">{formatTimeAgo(log.recorded_at)}</span>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  <span className="text-foreground font-semibold">{formatTimeAgo(log.recorded_at)}</span>
                   {" · "}
-                  <span className="font-medium text-gray-900 dark:text-white truncate">{cleanHospitalName(log.hospital_name)}</span>
+                  <span className="font-medium text-foreground truncate">{cleanHospitalName(log.hospital_name)}</span>
                   {" "}
-                  <span className="text-orange-600">[{getReasonLabel(log.rejection_reason)}]</span>
+                  <span className="text-muted-foreground">[{getReasonLabel(log.rejection_reason)}]</span>
                 </p>
               </div>
             </motion.div>
@@ -106,7 +106,7 @@ const RejectionTickerFeed = () => {
       </div>
 
       {/* Info text */}
-      <p className="text-[10px] text-red-400 dark:text-red-500 mt-2 text-center">
+      <p className="text-[10px] text-muted-foreground mt-2 text-center">
         제보는 60분 후 자동으로 사라집니다
       </p>
     </div>

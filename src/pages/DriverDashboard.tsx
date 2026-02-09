@@ -196,22 +196,22 @@ const DriverDashboard = () => {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="w-5 h-5 text-primary" />
+            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+              <User className="w-5 h-5 text-foreground" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">드라이버님</p>
+              <p className="text-sm font-semibold text-foreground tracking-tight">드라이버님</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setIsHotlineOpen(true)}
-              className="text-yellow-500"
+              className="text-foreground"
             >
-              <Star className="w-4 h-4 fill-yellow-500" />
+              <Star className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
@@ -229,27 +229,25 @@ const DriverDashboard = () => {
       {/* Quick Actions Bar */}
       <div className="sticky top-[60px] z-40 bg-background/80 backdrop-blur-xl border-b border-border px-4 py-2">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => setIsPatientInfoOpen(true)}
-            className="rounded-full flex-shrink-0 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-secondary text-foreground flex-shrink-0 whitespace-nowrap transition-colors hover:bg-secondary/80"
           >
-            <Activity className="w-4 h-4 mr-1" />
+            <Activity className="w-3.5 h-3.5" />
             환자 정보 입력
-          </Button>
+          </button>
           <button
             onClick={() => setIsSimulateMode(!isSimulateMode)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 whitespace-nowrap ${
               isSimulateMode 
-                ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400" 
-                : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
+                ? "bg-foreground text-background" 
+                : "bg-secondary text-muted-foreground"
             }`}
           >
             {isSimulateMode ? (
-              <ToggleRight className="w-4 h-4" />
+              <ToggleRight className="w-3.5 h-3.5" />
             ) : (
-              <ToggleLeft className="w-4 h-4" />
+              <ToggleLeft className="w-3.5 h-3.5" />
             )}
             시뮬레이션
           </button>
@@ -265,11 +263,11 @@ const DriverDashboard = () => {
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 whitespace-nowrap ${
               isTracking 
-                ? "bg-green-500 text-white" 
-                : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400"
+                ? "bg-foreground text-background" 
+                : "bg-secondary text-muted-foreground"
             }`}
           >
-            <Radio className={`w-4 h-4 ${isTracking ? "animate-pulse" : ""}`} />
+            <Radio className={`w-3.5 h-3.5 ${isTracking ? "animate-pulse" : ""}`} />
             {isTracking ? "위치 공유 중" : "위치 공유"}
           </button>
         </div>
@@ -280,7 +278,7 @@ const DriverDashboard = () => {
         <div className="flex">
           <button
             onClick={() => navigate("/map?mode=driver")}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-5 mx-4 my-1.5 text-sm font-bold text-white bg-primary rounded-lg shadow-sm transition-colors hover:bg-primary/90"
+            className="flex items-center justify-center gap-1.5 py-2.5 px-5 mx-4 my-1.5 text-sm font-bold bg-foreground text-background rounded-lg transition-colors hover:opacity-90"
           >
             <Map className="w-4 h-4" />
             지도
@@ -295,7 +293,7 @@ const DriverDashboard = () => {
               onClick={() => setActiveTab(id as typeof activeTab)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
                 activeTab === id
-                  ? "text-primary border-b-2 border-primary"
+                  ? "text-foreground border-b-2 border-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -322,33 +320,33 @@ const DriverDashboard = () => {
             {/* Pending Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-orange-500" />
+                <AlertCircle className="w-4 h-4 text-foreground" />
                 대기 중인 호출 ({filteredRequests.length})
                 {driverLocation && (
-                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                    📍 {activeRadiusLabel}
+                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary text-foreground">
+                    {activeRadiusLabel}
                   </span>
                 )}
                 {!driverLocation && isTracking && (
-                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
                     위치 확인 중...
                   </span>
                 )}
                 {!isTracking && (
-                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400">
+                  <span className="ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
                     위치 공유 OFF
                   </span>
                 )}
               </h3>
               {filteredRequests.length === 0 ? (
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-border text-center">
-                  <Phone className="w-10 h-10 text-muted-foreground mx-auto mb-2 opacity-50" />
+                <div className="bg-card rounded-2xl p-6 border border-border text-center">
+                  <Phone className="w-10 h-10 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-muted-foreground text-sm">
                     {driverLocation ? "근처에 대기 중인 호출이 없습니다" : "대기 중인 호출이 없습니다"}
                   </p>
                   {!isTracking && (
-                    <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
-                      💡 위치 공유를 켜면 가까운 호출을 우선 받을 수 있습니다
+                    <p className="text-xs text-muted-foreground mt-2">
+                      위치 공유를 켜면 가까운 호출을 우선 받을 수 있습니다
                     </p>
                   )}
                 </div>
@@ -357,11 +355,11 @@ const DriverDashboard = () => {
                   {filteredRequests.map((request) => (
                     <div
                       key={request.id}
-                      className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-border"
+                      className="bg-card rounded-2xl p-4 border border-border"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <p className="font-semibold text-foreground">
+                          <p className="font-semibold text-foreground tracking-tight">
                             {request.patient_name || "환자"}
                           </p>
                           <p className="text-xs text-muted-foreground">
@@ -370,14 +368,14 @@ const DriverDashboard = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           {request.distanceFromDriver !== null && (
-                            <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                            <span className="px-2 py-1 bg-secondary text-foreground text-xs font-bold rounded-full">
                               {request.distanceFromDriver < 1 
                                 ? `${Math.round(request.distanceFromDriver * 1000)}m`
                                 : `${request.distanceFromDriver.toFixed(1)}km`
                               }
                             </span>
                           )}
-                          <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 text-xs font-medium rounded-full">
+                          <span className="px-2 py-1 bg-secondary text-muted-foreground text-xs font-medium rounded-full">
                             대기 중
                           </span>
                         </div>
@@ -390,12 +388,12 @@ const DriverDashboard = () => {
                         </div>
                         {request.destination && (
                           <div className="flex items-start gap-2 text-sm">
-                            <Navigation className="w-4 h-4 text-primary mt-0.5" />
+                            <Navigation className="w-4 h-4 text-foreground mt-0.5" />
                             <span className="text-foreground font-medium">{request.destination}</span>
                           </div>
                         )}
                         {request.patient_condition && (
-                          <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-2 py-1">
+                          <div className="text-xs text-muted-foreground bg-secondary rounded-lg px-2 py-1">
                             환자 상태: {request.patient_condition}
                           </div>
                         )}
@@ -406,7 +404,7 @@ const DriverDashboard = () => {
                               : "거리 미정"}
                           </span>
                           {request.estimated_fee && (
-                            <span className="text-lg font-bold text-primary">
+                            <span className="text-lg font-bold text-foreground">
                               ₩{request.estimated_fee.toLocaleString()}
                             </span>
                           )}
@@ -416,7 +414,7 @@ const DriverDashboard = () => {
                       <Button
                         onClick={() => handleAcceptCall(request.id)}
                         disabled={isDispatchLoading}
-                        className="w-full rounded-xl"
+                        className="w-full rounded-xl bg-foreground text-background hover:opacity-90"
                       >
                         호출 수락
                       </Button>
@@ -429,14 +427,14 @@ const DriverDashboard = () => {
             {/* Completed Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4 text-foreground" />
                 완료된 운행 ({completedRequests.length})
               </h3>
               <div className="space-y-3">
                 {completedRequests.map((request) => (
                   <div
                     key={request.id}
-                    className="bg-gray-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-border opacity-75"
+                    className="bg-secondary rounded-2xl p-4 opacity-75"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -448,7 +446,7 @@ const DriverDashboard = () => {
                         </p>
                       </div>
                       {request.estimated_fee && (
-                        <span className="text-green-600 font-semibold">
+                        <span className="text-foreground font-semibold">
                           +₩{request.estimated_fee.toLocaleString()}
                         </span>
                       )}
