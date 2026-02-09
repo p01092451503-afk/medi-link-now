@@ -206,24 +206,35 @@ serve(async (req) => {
     const sidoResults: Record<string, { count: number; pages: number; withHours: number; source: string; error?: string }> = {};
 
     // B552657 사용 가능 여부 사전 체크
+    let nmcCheckDetail = '';
     try {
       const testUrl = `${NMC_API_URL}?ServiceKey=${serviceKey}&pageNo=1&numOfRows=1`;
+      console.log(`[sync-pharmacies] B552657 pre-check: key length=${serviceKey.length}`);
       const testResp = await fetch(testUrl);
+      console.log(`[sync-pharmacies] B552657 pre-check status: ${testResp.status}`);
+      
       if (testResp.status === 403 || testResp.status === 401) {
         nmcAvailable = false;
-        console.log('[sync-pharmacies] B552657 API not available (403/401), using B551182 only');
+        const body = await testResp.text();
+        nmcCheckDetail = `HTTP ${testResp.status}: ${body.substring(0, 300)}`;
+        console.log(`[sync-pharmacies] B552657 API not available: ${nmcCheckDetail}`);
       } else {
         const testXml = await testResp.text();
         if (testXml.includes('SERVICE_KEY_IS_NOT_REGISTERED_ERROR') || testXml.includes('APPLICATION_ERROR')) {
           nmcAvailable = false;
-          console.log('[sync-pharmacies] B552657 API key not registered, using B551182 only');
+          const errDetail = getValue(testXml, 'returnAuthMsg') || getValue(testXml, 'errMsg') || 'KEY_NOT_REGISTERED';
+          nmcCheckDetail = errDetail;
+          console.log(`[sync-pharmacies] B552657 API key error: ${errDetail}`);
         } else {
-          console.log('[sync-pharmacies] B552657 API available - will fetch with operating hours');
+          const totalCount = getValue(testXml, 'totalCount');
+          console.log(`[sync-pharmacies] B552657 API available! totalCount=${totalCount}`);
+          nmcCheckDetail = `OK (totalCount=${totalCount})`;
         }
       }
-    } catch {
+    } catch (checkErr) {
       nmcAvailable = false;
-      console.log('[sync-pharmacies] B552657 API check failed, using B551182 only');
+      nmcCheckDetail = `Exception: ${checkErr instanceof Error ? checkErr.message : String(checkErr)}`;
+      console.log(`[sync-pharmacies] B552657 API check failed: ${nmcCheckDetail}`);
     }
 
     for (const sido of targetSidos) {
@@ -388,6 +399,7 @@ serve(async (req) => {
     const summary = {
       success: true,
       api: nmcAvailable ? 'B552657 (국립중앙의료원) + B551182 (HIRA) fallback' : 'B551182 (HIRA) only',
+      nmcCheckDetail,
       note: nmcAvailable
         ? '영업시간(dutyTime) 포함 API 사용'
         : '⚠️ B552657 API 활용 신청이 필요합니다. data.go.kr에서 "국립중앙의료원_전국 약국 정보 조회 서비스"를 검색하여 활용 신청해주세요.',
