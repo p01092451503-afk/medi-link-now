@@ -147,15 +147,15 @@ const DrivingLogWidget = ({ onLogComplete, isSimulateMode = false }: DrivingLogW
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-border p-4 min-w-[180px]"
+            className="bg-card rounded-2xl shadow-xl border border-border p-4 min-w-[180px]"
           >
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+              <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
               <span className="text-sm font-semibold text-foreground">운행 중</span>
             </div>
             
-            <div className="flex items-center gap-2 mb-3 bg-gray-50 dark:bg-slate-700 rounded-xl p-3">
-              <Clock className="w-5 h-5 text-primary" />
+            <div className="flex items-center gap-2 mb-3 bg-secondary rounded-xl p-3">
+              <Clock className="w-5 h-5 text-foreground" />
               <span className="text-xl font-mono font-bold text-foreground">
                 {formatTime(elapsedTime)}
               </span>
@@ -177,7 +177,7 @@ const DrivingLogWidget = ({ onLogComplete, isSimulateMode = false }: DrivingLogW
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             onClick={handleStartDriving}
-            className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-full shadow-lg hover:bg-primary/90 transition-colors font-semibold"
+            className="flex items-center gap-2 bg-foreground text-background px-5 py-3 rounded-full shadow-lg hover:opacity-90 transition-colors font-semibold"
           >
             <Play className="w-5 h-5" />
             운행 시작
