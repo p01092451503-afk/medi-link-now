@@ -5,7 +5,7 @@ import {
   Ambulance, Users, MapPin, Clock, Shield, Phone, Activity,
   Bed, Hospital, TrendingUp, Navigation, ChevronRight, Zap,
   Globe, HeartPulse, Brain, Target, TrendingDown, Sparkles,
-  Locate, Pill, Heart, ArrowRight, BarChart3, AlertTriangle,
+  Locate, Pill, Heart, ArrowRight, BarChart3, AlertTriangle, Moon,
 } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
@@ -416,6 +416,7 @@ const Landing = () => {
             <TrustChip icon={<Zap className="w-3.5 h-3.5" />} label="60초 실시간" highlight />
             <TrustChip icon={<Clock className="w-3.5 h-3.5" />} label="24h 연중무휴" />
             <TrustChip icon={<Brain className="w-3.5 h-3.5" />} label="AI 예측" badge="β" />
+            <TrustChip icon={<Moon className="w-3.5 h-3.5" />} label="심야약국" />
             <TrustChip icon={<BarChart3 className="w-3.5 h-3.5" />} label="119 통계" />
           </div>
         </motion.section>
