@@ -29,10 +29,10 @@ interface RevenueStatsWidgetProps {
 }
 
 const PAYMENT_METHOD_COLORS: Record<string, string> = {
-  cash: "hsl(142, 76%, 36%)", // Green
-  card: "hsl(217, 91%, 60%)", // Blue
-  transfer: "hsl(262, 83%, 58%)", // Purple
-  unpaid: "hsl(0, 84%, 60%)", // Red
+  cash: "hsl(var(--foreground))",
+  card: "hsl(var(--muted-foreground))",
+  transfer: "hsl(var(--foreground) / 0.6)",
+  unpaid: "hsl(var(--destructive))",
 };
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -45,35 +45,33 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
 const chartConfig: ChartConfig = {
   revenue: {
     label: "매출",
-    color: "hsl(var(--primary))",
+    color: "hsl(var(--foreground))",
   },
   cash: {
     label: "현금",
-    color: PAYMENT_METHOD_COLORS.cash,
+    color: "hsl(var(--foreground))",
   },
   card: {
     label: "카드",
-    color: PAYMENT_METHOD_COLORS.card,
+    color: "hsl(var(--muted-foreground))",
   },
   transfer: {
     label: "계좌이체",
-    color: PAYMENT_METHOD_COLORS.transfer,
+    color: "hsl(var(--foreground) / 0.6)",
   },
   unpaid: {
     label: "미수금",
-    color: PAYMENT_METHOD_COLORS.unpaid,
+    color: "hsl(var(--destructive))",
   },
 };
 
 const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => {
   const [showCharts, setShowCharts] = useState(false);
 
-  // Calculate monthly total revenue
   const monthlyTotalRevenue = useMemo(() => {
     return logs.reduce((sum, log) => sum + (log.revenue_amount || 0), 0);
   }, [logs]);
 
-  // Calculate daily revenue data for bar chart
   const dailyRevenueData = useMemo(() => {
     const dailyMap: Record<number, number> = {};
     
@@ -84,7 +82,6 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       }
     });
 
-    // Generate data for current month
     const daysInMonth = new Date(
       currentMonth.getFullYear(),
       currentMonth.getMonth() + 1,
@@ -97,7 +94,6 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
     }));
   }, [logs, currentMonth]);
 
-  // Calculate payment method distribution for pie chart
   const paymentMethodData = useMemo(() => {
     const methodMap: Record<string, number> = {
       cash: 0,
@@ -122,7 +118,6 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       }));
   }, [logs]);
 
-  // Get unpaid logs
   const unpaidLogs = useMemo(() => {
     return logs.filter((log) => log.payment_method === "unpaid" && log.revenue_amount);
   }, [logs]);
@@ -140,15 +135,15 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       className="space-y-4"
     >
       {/* Monthly Total Revenue Card */}
-      <div className="bg-gradient-to-br from-primary/60 to-primary/40 rounded-2xl p-4 text-white">
+      <div className="bg-card rounded-2xl p-5 border border-border">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingUp className="w-4 h-4" />
-          <p className="text-xs opacity-80">이번 달 누적 매출</p>
+          <TrendingUp className="w-4 h-4 text-muted-foreground" />
+          <p className="text-xs text-muted-foreground">이번 달 누적 매출</p>
         </div>
-        <p className="text-2xl font-bold">
+        <p className="text-3xl font-bold text-foreground tracking-tight">
           ₩{monthlyTotalRevenue.toLocaleString()}
         </p>
-        <div className="flex items-center gap-3 mt-2 text-xs opacity-80">
+        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
           <span>총 {logs.filter(l => l.revenue_amount).length}건</span>
           <span>
             평균 ₩
@@ -166,14 +161,14 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
       <Button
         variant="outline"
         onClick={() => setShowCharts(!showCharts)}
-        className="w-full rounded-xl py-5 flex items-center justify-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700"
+        className="w-full rounded-2xl py-5 flex items-center justify-center gap-2 border-border bg-card hover:bg-secondary"
       >
-        <BarChart3 className="w-5 h-5 text-primary" />
-        <span>상세 통계 보기</span>
+        <BarChart3 className="w-5 h-5 text-foreground" />
+        <span className="font-medium text-foreground">상세 통계 보기</span>
         {showCharts ? (
-          <ChevronUp className="w-4 h-4 ml-1" />
+          <ChevronUp className="w-4 h-4 ml-1 text-muted-foreground" />
         ) : (
-          <ChevronDown className="w-4 h-4 ml-1" />
+          <ChevronDown className="w-4 h-4 ml-1 text-muted-foreground" />
         )}
       </Button>
 
@@ -189,9 +184,11 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
               {/* Daily Revenue Bar Chart */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-border">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Banknote className="w-5 h-5 text-primary" />
+              <div className="bg-card rounded-2xl p-5 border border-border">
+                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2 tracking-tight">
+                  <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                    <Banknote className="w-4 h-4 text-foreground" />
+                  </div>
                   일별 매출
                 </h3>
                 <div className="h-[200px]">
@@ -199,19 +196,19 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
                     <ChartContainer config={chartConfig}>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={dailyRevenueData}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                           <XAxis
                             dataKey="day"
                             tickLine={false}
                             axisLine={false}
-                            tick={{ fontSize: 10 }}
+                            tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
                             tickFormatter={(value) => `${value}일`}
                             interval="preserveStartEnd"
                           />
                           <YAxis
                             tickLine={false}
                             axisLine={false}
-                            tick={{ fontSize: 10 }}
+                            tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
                             tickFormatter={(value) => `${(value / 10000).toFixed(0)}만`}
                             width={40}
                           />
@@ -221,8 +218,8 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
                           />
                           <Bar
                             dataKey="revenue"
-                            fill="hsl(var(--primary))"
-                            radius={[4, 4, 0, 0]}
+                            fill="hsl(var(--foreground))"
+                            radius={[6, 6, 0, 0]}
                           />
                         </BarChart>
                       </ResponsiveContainer>
@@ -236,9 +233,11 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
               </div>
 
               {/* Payment Method Pie Chart */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-border">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-primary" />
+              <div className="bg-card rounded-2xl p-5 border border-border">
+                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2 tracking-tight">
+                  <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 text-foreground" />
+                  </div>
                   결제 수단별 비율
                 </h3>
                 <div className="h-[200px]">
@@ -293,13 +292,15 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
 
       {/* Unpaid List */}
       {unpaidLogs.length > 0 && (
-        <div className="bg-red-50 dark:bg-red-950/30 rounded-2xl p-5 border border-red-200 dark:border-red-800">
+        <div className="bg-card rounded-2xl p-5 border border-destructive/30">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
+            <h3 className="font-bold text-destructive flex items-center gap-2 tracking-tight">
+              <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+                <AlertCircle className="w-4 h-4 text-destructive" />
+              </div>
               미수금 내역
             </h3>
-            <span className="text-lg font-bold text-red-600 dark:text-red-400">
+            <span className="text-lg font-bold text-destructive">
               총 ₩{totalUnpaid.toLocaleString()}
             </span>
           </div>
@@ -307,7 +308,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
             {unpaidLogs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-xl p-3 border border-red-100 dark:border-red-900"
+                className="flex items-center justify-between bg-secondary rounded-2xl p-3"
               >
                 <div>
                   <p className="font-medium text-foreground text-sm">
@@ -318,7 +319,7 @@ const RevenueStatsWidget = ({ logs, currentMonth }: RevenueStatsWidgetProps) => 
                     {log.patient_name && ` · ${log.patient_name}`}
                   </p>
                 </div>
-                <span className="font-bold text-red-600">
+                <span className="font-bold text-destructive">
                   ₩{(log.revenue_amount || 0).toLocaleString()}
                 </span>
               </div>
