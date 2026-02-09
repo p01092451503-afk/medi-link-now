@@ -44,7 +44,7 @@ const TransferResultModal = ({
     incrementTraffic(hospitalId);
 
     toast({
-      title: "요청 승인됨! ✅",
+      title: "요청 승인됨",
       description: `${hospitalName}에서 이송 요청을 승인했습니다.`,
     });
 
@@ -80,7 +80,7 @@ const TransferResultModal = ({
       updateRequestStatus(requestId, "rejected");
 
       toast({
-        title: "거절 이력 기록 완료 🚫",
+        title: "거절 이력 기록 완료",
         description: `${hospitalName} - ${REJECTION_REASONS.find((r) => r.id === selectedReason)?.label}`,
       });
 
@@ -115,14 +115,14 @@ const TransferResultModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/50 z-[1200]"
+            className="fixed inset-0 bg-black/60 z-[1200]"
           />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[1201] max-w-md mx-auto overflow-hidden"
+            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-background rounded-3xl shadow-2xl z-[1201] max-w-md mx-auto overflow-hidden"
           >
             {/* Header */}
             <div className="px-5 py-4 flex items-center justify-between border-b border-border">
@@ -132,7 +132,7 @@ const TransferResultModal = ({
               </div>
               <button
                 onClick={handleClose}
-                className="p-2 hover:bg-muted rounded-full transition-colors"
+                className="p-2 hover:bg-secondary rounded-full transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -153,17 +153,18 @@ const TransferResultModal = ({
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       onClick={handleAccepted}
-                      className="h-20 flex-col gap-2 rounded-xl bg-green-500 hover:bg-green-600 text-white"
+                      className="h-20 flex-col gap-2 rounded-2xl bg-foreground text-background hover:opacity-90"
                     >
                       <CheckCircle className="w-7 h-7" />
-                      <span className="font-semibold">✅ 수용</span>
+                      <span className="font-bold">수용</span>
                     </Button>
                     <Button
                       onClick={handleRejected}
-                      className="h-20 flex-col gap-2 rounded-xl bg-red-500 hover:bg-red-600 text-white"
+                      variant="outline"
+                      className="h-20 flex-col gap-2 rounded-2xl"
                     >
                       <XCircle className="w-7 h-7" />
-                      <span className="font-semibold">🚫 거절</span>
+                      <span className="font-bold">거절</span>
                     </Button>
                   </div>
                 </motion.div>
@@ -176,9 +177,9 @@ const TransferResultModal = ({
                   animate={{ opacity: 1, x: 0 }}
                   className="space-y-4"
                 >
-                  <div className="bg-red-50 dark:bg-red-950/30 rounded-xl p-3 border border-red-200 dark:border-red-800">
-                    <p className="text-sm text-red-700 dark:text-red-400 font-medium">
-                      🚫 {hospitalName} 거절
+                  <div className="bg-secondary rounded-2xl p-3">
+                    <p className="text-sm text-foreground font-medium">
+                      {hospitalName} 거절
                     </p>
                   </div>
 
@@ -210,14 +211,14 @@ const TransferResultModal = ({
                     <Button
                       variant="outline"
                       onClick={() => setStep("ask")}
-                      className="flex-1 rounded-xl"
+                      className="flex-1 rounded-2xl"
                     >
                       뒤로
                     </Button>
                     <Button
                       onClick={handleSubmitRejection}
                       disabled={!selectedReason || isSubmitting}
-                      className="flex-1 rounded-xl bg-red-500 hover:bg-red-600 text-white"
+                      className="flex-1 rounded-2xl bg-foreground text-background hover:opacity-90"
                     >
                       {isSubmitting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -236,8 +237,8 @@ const TransferResultModal = ({
                   animate={{ opacity: 1, scale: 1 }}
                   className="flex flex-col items-center justify-center py-8"
                 >
-                  <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/50 flex items-center justify-center mb-4">
-                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                    <CheckCircle className="w-8 h-8 text-foreground" />
                   </div>
                   <p className="text-lg font-semibold text-foreground">기록 완료</p>
                 </motion.div>

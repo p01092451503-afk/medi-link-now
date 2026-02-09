@@ -31,11 +31,11 @@ interface PatientInfo {
 }
 
 const ktasLevels = [
-  { value: "1", label: "1등급 - 소생", color: "bg-blue-500" },
-  { value: "2", label: "2등급 - 긴급", color: "bg-red-500" },
-  { value: "3", label: "3등급 - 응급", color: "bg-yellow-500" },
-  { value: "4", label: "4등급 - 준응급", color: "bg-green-500" },
-  { value: "5", label: "5등급 - 비응급", color: "bg-white border border-gray-300" },
+  { value: "1", label: "1등급 - 소생" },
+  { value: "2", label: "2등급 - 긴급" },
+  { value: "3", label: "3등급 - 응급" },
+  { value: "4", label: "4등급 - 준응급" },
+  { value: "5", label: "5등급 - 비응급" },
 ];
 
 const chiefComplaints = [
@@ -76,7 +76,6 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
       spo2: data.spo2 || prev.spo2,
     }));
 
-    // Show success feedback
     const filledFields = [];
     if (data.ageGender) filledFields.push("나이/성별");
     if (data.chiefComplaint) filledFields.push("주 호소");
@@ -143,7 +142,6 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
       return;
     }
 
-    // Mock send action
     toast({
       title: "전송 완료",
       description: hospitalName 
@@ -178,35 +176,34 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed inset-x-4 top-4 bottom-4 bg-background rounded-3xl shadow-2xl z-[2001] max-w-md mx-auto overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-primary to-primary/80 p-5 text-white z-10">
+            <div className="sticky top-0 bg-foreground p-5 text-background z-10">
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full bg-background/10 hover:bg-background/20 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
               
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-background/10 flex items-center justify-center">
                   <Activity className="w-7 h-7" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold">환자 정보 입력</h3>
-                  <p className="text-sm opacity-80">Pre-Triage Info</p>
+                  <p className="text-sm opacity-60">Pre-Triage Info</p>
                 </div>
               </div>
             </div>
 
             {/* Form */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
-              {/* Voice Recorder */}
               <VoiceRecorder
                 onTranscript={handleVoiceTranscript}
                 onParsedData={handleParsedData}
@@ -224,7 +221,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
               {/* Age/Gender */}
               <div>
                 <Label className="text-sm font-medium text-foreground flex items-center gap-2 mb-2">
-                  <User className="w-4 h-4 text-primary" />
+                  <User className="w-4 h-4" />
                   나이/성별
                 </Label>
                 <Input
@@ -238,7 +235,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
               {/* Chief Complaint */}
               <div>
                 <Label className="text-sm font-medium text-foreground flex items-center gap-2 mb-2">
-                  <Heart className="w-4 h-4 text-primary" />
+                  <Heart className="w-4 h-4" />
                   주 호소
                 </Label>
                 <Select
@@ -298,7 +295,7 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
               {/* KTAS Level */}
               <div>
                 <Label className="text-sm font-medium text-foreground flex items-center gap-2 mb-2">
-                  <Droplet className="w-4 h-4 text-primary" />
+                  <Droplet className="w-4 h-4" />
                   KTAS 단계
                 </Label>
                 <div className="grid grid-cols-5 gap-2">
@@ -306,11 +303,11 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
                     <button
                       key={level.value}
                       onClick={() => setPatientInfo({ ...patientInfo, ktasLevel: level.value })}
-                      className={`relative h-12 rounded-xl font-bold text-lg transition-all ${level.color} ${
+                      className={`relative h-12 rounded-xl font-bold text-lg transition-all ${
                         patientInfo.ktasLevel === level.value
-                          ? "ring-2 ring-offset-2 ring-primary scale-105"
-                          : "opacity-70 hover:opacity-100"
-                      } ${level.value === "5" ? "text-gray-700" : "text-white"}`}
+                          ? "bg-foreground text-background ring-2 ring-offset-2 ring-foreground scale-105"
+                          : "bg-secondary text-foreground opacity-70 hover:opacity-100"
+                      }`}
                     >
                       {level.value}
                     </button>
@@ -323,9 +320,9 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
 
               {/* Preview */}
               {generateSummary() && (
-                <div className="bg-muted rounded-xl p-3 border border-border">
+                <div className="bg-secondary rounded-2xl p-3 border border-border">
                   <div className="flex items-center gap-2 mb-1">
-                    <Clock className="w-4 h-4 text-primary" />
+                    <Clock className="w-4 h-4 text-foreground" />
                     <span className="text-xs font-medium text-muted-foreground">미리보기</span>
                   </div>
                   <p className="text-sm font-medium text-foreground">
@@ -339,11 +336,11 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
                 <Button
                   onClick={handleCopy}
                   variant="outline"
-                  className="py-6 rounded-xl font-semibold"
+                  className="py-6 rounded-2xl font-semibold"
                 >
                   {copied ? (
                     <>
-                      <Check className="w-5 h-5 mr-2 text-green-500" />
+                      <Check className="w-5 h-5 mr-2" />
                       복사됨
                     </>
                   ) : (
@@ -355,14 +352,13 @@ const PatientInfoModal = ({ isOpen, onClose, hospitalName, eta = 10 }: PatientIn
                 </Button>
                 <Button
                   onClick={handleSend}
-                  className="py-6 rounded-xl font-semibold bg-gradient-to-r from-primary to-primary/80"
+                  className="py-6 rounded-2xl font-bold bg-foreground text-background hover:opacity-90"
                 >
                   <Send className="w-5 h-5 mr-2" />
                   전송
                 </Button>
               </div>
 
-              {/* Reset Button */}
               <Button
                 onClick={handleReset}
                 variant="ghost"

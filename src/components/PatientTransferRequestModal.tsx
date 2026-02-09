@@ -72,23 +72,20 @@ const PatientTransferRequestModal = ({
 
     setIsSubmitting(true);
 
-    // Add the request
     const requestId = addRequest({
       hospitalId,
       hospitalName,
       patientInfo: formData,
     });
 
-    // Show toast notification
     toast({
-      title: `${hospitalName}에 요청 전송됨!`,
+      title: `${hospitalName}에 요청 전송됨`,
       description: "병원 응답 결과를 기록해주세요.",
     });
 
     onRequestSent(requestId);
     onClose();
 
-    // Reset form
     setFormData({
       age: "",
       gender: "",
@@ -109,31 +106,29 @@ const PatientTransferRequestModal = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-[1100]"
+            className="fixed inset-0 bg-black/60 z-[1100]"
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
+            className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-background rounded-3xl shadow-2xl z-[1101] max-w-md mx-auto max-h-[85vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700 px-5 py-4 flex items-center justify-between rounded-t-2xl">
+            <div className="sticky top-0 bg-background border-b border-border px-5 py-4 flex items-center justify-between rounded-t-3xl">
               <div>
                 <h2 className="text-lg font-bold text-foreground">디지털 이송 요청</h2>
                 <p className="text-xs text-muted-foreground">{hospitalName}</p>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                className="p-2 hover:bg-secondary rounded-full transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -144,7 +139,7 @@ const PatientTransferRequestModal = ({
               {/* Patient Basic Info */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <User className="w-4 h-4 text-primary" />
+                  <User className="w-4 h-4" />
                   환자 기본 정보
                 </div>
                 
@@ -157,7 +152,7 @@ const PatientTransferRequestModal = ({
                       placeholder="예: 65"
                       value={formData.age}
                       onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
-                      className="h-10"
+                      className="h-10 rounded-xl"
                     />
                   </div>
                   
@@ -167,7 +162,7 @@ const PatientTransferRequestModal = ({
                       value={formData.gender}
                       onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
                     >
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-10 rounded-xl">
                         <SelectValue placeholder="선택" />
                       </SelectTrigger>
                       <SelectContent className="z-[1200]">
@@ -184,7 +179,7 @@ const PatientTransferRequestModal = ({
                     value={formData.mainSymptom}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, mainSymptom: value }))}
                   >
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger className="h-10 rounded-xl">
                       <SelectValue placeholder="주증상 선택" />
                     </SelectTrigger>
                     <SelectContent className="z-[1200]">
@@ -199,14 +194,14 @@ const PatientTransferRequestModal = ({
 
                 <div className="space-y-1.5">
                   <Label htmlFor="avpu" className="text-xs flex items-center gap-1">
-                    <Brain className="w-3 h-3 text-purple-500" />
+                    <Brain className="w-3 h-3" />
                     의식 수준 (AVPU)
                   </Label>
                   <Select
                     value={formData.avpu}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, avpu: value }))}
                   >
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger className="h-10 rounded-xl">
                       <SelectValue placeholder="의식 수준 선택" />
                     </SelectTrigger>
                     <SelectContent className="z-[1200]">
@@ -221,7 +216,7 @@ const PatientTransferRequestModal = ({
                 {/* GCS Score */}
                 <div className="space-y-2">
                   <Label className="text-xs flex items-center gap-1">
-                    <Brain className="w-3 h-3 text-indigo-500" />
+                    <Brain className="w-3 h-3" />
                     GCS 점수 (Glasgow Coma Scale)
                   </Label>
                   <div className="grid grid-cols-3 gap-2">
@@ -231,7 +226,7 @@ const PatientTransferRequestModal = ({
                         value={formData.gcsEye}
                         onValueChange={(value) => setFormData(prev => ({ ...prev, gcsEye: value }))}
                       >
-                        <SelectTrigger className="h-9 text-xs">
+                        <SelectTrigger className="h-9 text-xs rounded-xl">
                           <SelectValue placeholder="E" />
                         </SelectTrigger>
                         <SelectContent className="z-[1200]">
@@ -248,7 +243,7 @@ const PatientTransferRequestModal = ({
                         value={formData.gcsVerbal}
                         onValueChange={(value) => setFormData(prev => ({ ...prev, gcsVerbal: value }))}
                       >
-                        <SelectTrigger className="h-9 text-xs">
+                        <SelectTrigger className="h-9 text-xs rounded-xl">
                           <SelectValue placeholder="V" />
                         </SelectTrigger>
                         <SelectContent className="z-[1200]">
@@ -266,7 +261,7 @@ const PatientTransferRequestModal = ({
                         value={formData.gcsMotor}
                         onValueChange={(value) => setFormData(prev => ({ ...prev, gcsMotor: value }))}
                       >
-                        <SelectTrigger className="h-9 text-xs">
+                        <SelectTrigger className="h-9 text-xs rounded-xl">
                           <SelectValue placeholder="M" />
                         </SelectTrigger>
                         <SelectContent className="z-[1200]">
@@ -281,7 +276,7 @@ const PatientTransferRequestModal = ({
                     </div>
                   </div>
                   {formData.gcsEye && formData.gcsVerbal && formData.gcsMotor && (
-                    <div className="text-xs text-center py-1.5 px-3 bg-muted rounded-lg font-medium">
+                    <div className="text-xs text-center py-1.5 px-3 bg-secondary rounded-xl font-medium text-foreground">
                       GCS 총점: {Number(formData.gcsEye) + Number(formData.gcsVerbal) + Number(formData.gcsMotor)}/15
                     </div>
                   )}
@@ -291,14 +286,14 @@ const PatientTransferRequestModal = ({
               {/* Vital Signs */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <Activity className="w-4 h-4 text-red-500" />
+                  <Activity className="w-4 h-4" />
                   활력징후 (Vital Signs)
                 </div>
                 
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-1.5">
                     <Label htmlFor="bp" className="text-xs flex items-center gap-1">
-                      <Heart className="w-3 h-3 text-red-500" />
+                      <Heart className="w-3 h-3" />
                       혈압 (BP)
                     </Label>
                     <Input
@@ -306,13 +301,13 @@ const PatientTransferRequestModal = ({
                       placeholder="120/80"
                       value={formData.bp}
                       onChange={(e) => setFormData(prev => ({ ...prev, bp: e.target.value }))}
-                      className="h-10 text-sm"
+                      className="h-10 text-sm rounded-xl"
                     />
                   </div>
                   
                   <div className="space-y-1.5">
                     <Label htmlFor="hr" className="text-xs flex items-center gap-1">
-                      <Droplet className="w-3 h-3 text-pink-500" />
+                      <Droplet className="w-3 h-3" />
                       심박수 (HR)
                     </Label>
                     <Input
@@ -321,13 +316,13 @@ const PatientTransferRequestModal = ({
                       placeholder="72"
                       value={formData.hr}
                       onChange={(e) => setFormData(prev => ({ ...prev, hr: e.target.value }))}
-                      className="h-10 text-sm"
+                      className="h-10 text-sm rounded-xl"
                     />
                   </div>
                   
                   <div className="space-y-1.5">
                     <Label htmlFor="spo2" className="text-xs flex items-center gap-1">
-                      <Wind className="w-3 h-3 text-blue-500" />
+                      <Wind className="w-3 h-3" />
                       산소포화도
                     </Label>
                     <Input
@@ -336,7 +331,7 @@ const PatientTransferRequestModal = ({
                       placeholder="98"
                       value={formData.spo2}
                       onChange={(e) => setFormData(prev => ({ ...prev, spo2: e.target.value }))}
-                      className="h-10 text-sm"
+                      className="h-10 text-sm rounded-xl"
                     />
                   </div>
                 </div>
@@ -346,11 +341,11 @@ const PatientTransferRequestModal = ({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-6 rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-white font-semibold"
+                className="w-full py-6 rounded-2xl bg-foreground text-background hover:opacity-90 font-bold"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                     전송 중...
                   </div>
                 ) : (
