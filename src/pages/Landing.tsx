@@ -144,10 +144,7 @@ const Landing = () => {
       {/* Header - Toss style minimal */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
         <div className="px-5 py-4 flex items-center justify-between max-w-lg mx-auto">
-          <h1 className="flex items-baseline gap-1.5">
-            <span className="text-lg font-bold text-foreground tracking-tight">파인더</span>
-            <span className="text-[11px] font-semibold text-muted-foreground tracking-wide">Find-ER</span>
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">파인더</h1>
           <ThemeToggle />
         </div>
       </header>
@@ -428,7 +425,7 @@ const Landing = () => {
       {/* Footer - Minimal */}
       <footer className="border-t border-border bg-card">
         <div className="px-5 py-8 max-w-lg mx-auto space-y-4">
-          <p className="text-sm font-bold text-foreground text-center">파인더</p>
+          <p className="text-lg font-bold text-foreground text-center">파인더</p>
           <div className="flex items-center justify-center gap-6">
             <a href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               이용약관
