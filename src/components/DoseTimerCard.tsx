@@ -55,29 +55,14 @@ const formatTime = (ts: number): string => {
 
 const MEDICINE_INFO: Record<
   MedicineType,
-  {
-    label: string;
-    emoji: string;
-    bgClass: string;
-    borderClass: string;
-    textClass: string;
-    icon: typeof Thermometer;
-  }
+  { label: string; icon: typeof Thermometer }
 > = {
   acetaminophen: {
     label: "아세트아미노펜",
-    emoji: "🔴",
-    bgClass: "bg-danger-light",
-    borderClass: "border-danger/20",
-    textClass: "text-danger",
     icon: Thermometer,
   },
   ibuprofen: {
     label: "이부프로펜",
-    emoji: "🔵",
-    bgClass: "bg-primary/10",
-    borderClass: "border-primary/20",
-    textClass: "text-primary",
     icon: Droplets,
   },
 };
@@ -195,16 +180,16 @@ const DoseTimerCard = () => {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border p-5 space-y-4">
+    <div className="bg-secondary rounded-2xl p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-accent flex items-center justify-center">
-            <Clock className="w-4 h-4 text-accent-foreground" />
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
+            <Clock className="w-4.5 h-4.5 text-foreground" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-foreground">복용 타이머</h3>
-            <p className="text-[10px] text-muted-foreground">교차 복용 시간 관리</p>
+            <h3 className="text-[15px] font-bold text-foreground">복용 타이머</h3>
+            <p className="text-[11px] text-muted-foreground">교차 복용 시간 관리</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -212,7 +197,7 @@ const DoseTimerCard = () => {
             onClick={notificationsEnabled ? undefined : handleRequestNotification}
             className={`p-1.5 rounded-lg transition-colors ${
               notificationsEnabled
-                ? "text-success bg-success/10"
+                ? "text-foreground bg-muted"
                 : "text-muted-foreground hover:bg-muted"
             }`}
             title={notificationsEnabled ? "알림 활성화됨" : "알림 활성화"}
@@ -247,15 +232,15 @@ const DoseTimerCard = () => {
             <button
               key={type}
               onClick={() => recordDose(type)}
-              className={`relative overflow-hidden rounded-xl border p-3.5 text-left transition-all ${info.borderClass} ${
+              className={`relative overflow-hidden rounded-xl p-3.5 text-left transition-all ${
                 status.canTake
-                  ? `${info.bgClass} hover:shadow-md active:scale-[0.98]`
-                  : "bg-muted/30 opacity-75"
+                  ? "bg-background hover:shadow-md active:scale-[0.98]"
+                  : "bg-muted/50 opacity-75"
               }`}
             >
               {!status.canTake && status.lastTime && (
                 <motion.div
-                  className={`absolute inset-0 ${info.bgClass} opacity-40`}
+                  className="absolute inset-0 bg-muted opacity-40"
                   initial={{ width: "0%" }}
                   animate={{ width: `${progress * 100}%` }}
                   transition={{ duration: 0.5 }}
@@ -263,7 +248,7 @@ const DoseTimerCard = () => {
               )}
               <div className="relative z-10">
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <Icon className={`w-3.5 h-3.5 ${info.textClass}`} />
+                  <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                   <span className="text-[11px] font-bold text-foreground">{info.label}</span>
                 </div>
                 {status.lastTime ? (
@@ -272,7 +257,7 @@ const DoseTimerCard = () => {
                       마지막: {formatTime(status.lastTime)}
                     </p>
                     <p
-                      className={`text-xs font-bold mt-0.5 ${status.canTake ? "text-success" : info.textClass}`}
+                      className={`text-xs font-bold mt-0.5 ${status.canTake ? "text-foreground" : "text-muted-foreground"}`}
                     >
                       {status.canTake ? (
                         <span className="flex items-center gap-1">
@@ -284,7 +269,7 @@ const DoseTimerCard = () => {
                     </p>
                   </div>
                 ) : (
-                  <p className={`text-xs font-semibold ${info.textClass}`}>지금 복용 기록</p>
+                  <p className="text-xs font-semibold text-muted-foreground">지금 복용 기록</p>
                 )}
               </div>
             </button>
@@ -301,18 +286,8 @@ const DoseTimerCard = () => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div
-              className={`p-3 rounded-xl border text-center ${
-                crossDose.recommend
-                  ? "bg-success/10 border-success/20"
-                  : "bg-warning/10 border-warning/20"
-              }`}
-            >
-              <p
-                className={`text-xs font-semibold ${
-                  crossDose.recommend ? "text-success" : "text-warning"
-                }`}
-              >
+            <div className="p-3 rounded-xl bg-muted text-center">
+              <p className="text-xs font-semibold text-foreground">
                 {crossDose.recommend ? "✅ " : "⏳ "}
                 {crossDose.message}
               </p>
@@ -329,17 +304,14 @@ const DoseTimerCard = () => {
             {[...records]
               .reverse()
               .slice(0, 6)
-              .map((record, i) => {
-                const info = MEDICINE_INFO[record.type];
-                return (
-                  <span
-                    key={i}
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${info.bgClass} ${info.textClass}`}
-                  >
-                    {info.emoji} {formatTime(record.timestamp)}
-                  </span>
-                );
-              })}
+              .map((record, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted text-muted-foreground"
+                >
+                  {record.type === "acetaminophen" ? "A" : "I"} {formatTime(record.timestamp)}
+                </span>
+              ))}
           </div>
         </div>
       )}
