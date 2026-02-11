@@ -256,8 +256,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </button>
               </div>
 
-              {/* 119 Call Button - Guardian/Patient Mode */}
-              {showTransferButton && (
+              {/* 119 Call Button - Paramedic/Driver Mode only */}
+              {(isParamedicMode || isDriverMode) && (
                 <button
                   onClick={() => { window.location.href = "tel:119"; }}
                   className="w-full mb-4 py-4 rounded-2xl bg-destructive text-destructive-foreground font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
