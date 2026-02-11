@@ -256,19 +256,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </button>
               </div>
 
-              {/* Private Ambulance Call Button - Guardian/Patient Mode */}
-              {!showTransferButton && onCallAmbulance && (
-                <div className="mb-5">
-                  <button
-                    onClick={onCallAmbulance}
-                    className="w-full py-4 rounded-2xl bg-foreground text-background font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
-                  >
-                    <Ambulance className="w-5 h-5" />
-                    이 병원으로 사설 구급차 부르기
-                  </button>
-                </div>
-              )}
-
               {/* 119 Verified Badge */}
               <Fire119VerifiedBadge 
                 hospitalName={hospital.nameKr}
@@ -488,6 +475,19 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                   className="border-border text-foreground hover:bg-secondary font-semibold h-14 rounded-2xl"
                 />
               </div>
+
+              {/* Private Ambulance Call Button - Guardian/Patient Mode (below action buttons) */}
+              {!showTransferButton && onCallAmbulance && (
+                <div className="mt-3">
+                  <button
+                    onClick={onCallAmbulance}
+                    className="w-full py-4 rounded-2xl bg-foreground text-background font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
+                  >
+                    <Ambulance className="w-5 h-5" />
+                    이 병원으로 사설 구급차 부르기
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
 
