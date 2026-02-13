@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.sync-pharmacies]
 verify_jwt = false
+
+[functions.request-ambulance]
+verify_jwt = false
