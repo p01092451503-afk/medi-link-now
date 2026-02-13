@@ -11,10 +11,13 @@ import {
   Calculator,
   Pill,
   ChevronRight,
-  Phone
+  Phone,
+  Calendar,
+  Ambulance
 } from "lucide-react";
 import TargetUserInfoModal from "@/components/TargetUserInfoModal";
 import SubPageHeader from "@/components/SubPageHeader";
+import ScheduledCallForm from "@/components/ScheduledCallForm";
 
 type TargetUserType = "parents" | "elderly" | "chronic" | null;
 
@@ -29,6 +32,7 @@ const fadeUp = {
 const GuardianLanding = () => {
   const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState<TargetUserType>(null);
+  const [isScheduledOpen, setIsScheduledOpen] = useState(false);
 
   const features = [
     { icon: Search, title: "AI 증상 검색", description: "증상을 입력하면 AI가 적합한 병원을 추천" },
@@ -119,6 +123,28 @@ const GuardianLanding = () => {
         {/* Quick Links */}
         <motion.section initial="hidden" animate="visible" variants={fadeUp} custom={4} className="px-5 pb-8">
           <p className="text-[13px] font-semibold text-muted-foreground mb-3">더 알아보기</p>
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <button
+              onClick={() => navigate("/map")}
+              className="flex items-center gap-3 p-4 bg-foreground text-background rounded-2xl hover:opacity-90 transition-opacity"
+            >
+              <Ambulance className="w-5 h-5" />
+              <div className="text-left">
+                <p className="text-sm font-bold">사설 구급차</p>
+                <p className="text-[10px] opacity-70">즉시 호출</p>
+              </div>
+            </button>
+            <button
+              onClick={() => setIsScheduledOpen(true)}
+              className="flex items-center gap-3 p-4 bg-card rounded-2xl border border-border hover:bg-secondary transition-colors"
+            >
+              <Calendar className="w-5 h-5 text-primary" />
+              <div className="text-left">
+                <p className="text-sm font-bold text-foreground">예약 호출</p>
+                <p className="text-[10px] text-muted-foreground">퇴원/전원</p>
+              </div>
+            </button>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             {[
               { icon: Heart, label: "가족 카드", onClick: () => navigate("/family") },
@@ -162,6 +188,12 @@ const GuardianLanding = () => {
         isOpen={selectedUserType !== null}
         onClose={() => setSelectedUserType(null)}
         userType={selectedUserType}
+      />
+
+      <ScheduledCallForm
+        isOpen={isScheduledOpen}
+        onClose={() => setIsScheduledOpen(false)}
+        userLocation={null}
       />
     </div>
   );

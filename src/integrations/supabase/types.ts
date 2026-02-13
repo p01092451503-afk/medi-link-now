@@ -89,6 +89,7 @@ export type Database = {
           estimated_distance_km: number | null
           estimated_fee: number | null
           id: string
+          is_scheduled: boolean
           notes: string | null
           patient_condition: string | null
           patient_name: string | null
@@ -96,8 +97,10 @@ export type Database = {
           pickup_lng: number
           pickup_location: string
           requester_id: string | null
+          scheduled_time: string | null
           status: string
           updated_at: string
+          vehicle_type: string | null
         }
         Insert: {
           created_at?: string
@@ -108,6 +111,7 @@ export type Database = {
           estimated_distance_km?: number | null
           estimated_fee?: number | null
           id?: string
+          is_scheduled?: boolean
           notes?: string | null
           patient_condition?: string | null
           patient_name?: string | null
@@ -115,8 +119,10 @@ export type Database = {
           pickup_lng: number
           pickup_location: string
           requester_id?: string | null
+          scheduled_time?: string | null
           status?: string
           updated_at?: string
+          vehicle_type?: string | null
         }
         Update: {
           created_at?: string
@@ -127,6 +133,7 @@ export type Database = {
           estimated_distance_km?: number | null
           estimated_fee?: number | null
           id?: string
+          is_scheduled?: boolean
           notes?: string | null
           patient_condition?: string | null
           patient_name?: string | null
@@ -134,8 +141,81 @@ export type Database = {
           pickup_lng?: number
           pickup_location?: string
           requester_id?: string | null
+          scheduled_time?: string | null
           status?: string
           updated_at?: string
+          vehicle_type?: string | null
+        }
+        Relationships: []
+      }
+      bids: {
+        Row: {
+          bid_amount: number
+          created_at: string
+          driver_id: string
+          id: string
+          message: string | null
+          request_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          bid_amount: number
+          created_at?: string
+          driver_id: string
+          id?: string
+          message?: string | null
+          request_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          bid_amount?: number
+          created_at?: string
+          driver_id?: string
+          id?: string
+          message?: string | null
+          request_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "ambulance_dispatch_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_locations: {
+        Row: {
+          created_at: string
+          driver_id: string
+          id: string
+          is_active: boolean
+          last_updated: string
+          lat: number
+          lng: number
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          id?: string
+          is_active?: boolean
+          last_updated?: string
+          lat: number
+          lng: number
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          id?: string
+          is_active?: boolean
+          last_updated?: string
+          lat?: number
+          lng?: number
         }
         Relationships: []
       }
@@ -528,6 +608,47 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          driver_net_income: number
+          id: string
+          platform_fee: number
+          request_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          driver_net_income?: number
+          id?: string
+          platform_fee?: number
+          request_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          driver_net_income?: number
+          id?: string
+          platform_fee?: number
+          request_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "ambulance_dispatch_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pharmacies: {
         Row: {
           address: string | null
@@ -698,6 +819,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          driver_id: string
+          id: string
+          rating: number
+          request_id: string | null
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          driver_id: string
+          id?: string
+          rating: number
+          request_id?: string | null
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          driver_id?: string
+          id?: string
+          rating?: number
+          request_id?: string | null
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "ambulance_dispatch_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       system_audit_logs: {
         Row: {

@@ -7,7 +7,7 @@ export interface DispatchRequest {
   id: string;
   requester_id: string | null;
   driver_id: string | null;
-  status: "pending" | "accepted" | "en_route" | "arrived" | "completed" | "cancelled";
+  status: "pending" | "accepted" | "en_route" | "arrived" | "completed" | "cancelled" | "scheduled";
   patient_name: string | null;
   patient_condition: string | null;
   pickup_location: string;
@@ -36,7 +36,7 @@ export const useDispatchRequests = () => {
     const { data, error } = await supabase
       .from("ambulance_dispatch_requests")
       .select("*")
-      .eq("status", "pending")
+      .in("status", ["pending", "scheduled"])
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -172,6 +172,7 @@ export const useDispatchRequests = () => {
       arrived: "도착",
       completed: "완료",
       cancelled: "취소됨",
+      scheduled: "예약됨",
     };
 
     toast({

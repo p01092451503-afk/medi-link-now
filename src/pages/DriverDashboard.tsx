@@ -19,7 +19,8 @@ import {
   Loader2,
   ToggleLeft,
   ToggleRight,
-  TrendingUp
+  TrendingUp,
+  Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +41,13 @@ import RejectionTimeline from "@/components/RejectionTimeline";
 import RejectionTickerFeed from "@/components/RejectionTickerFeed";
 import VoiceEmergencyLogFAB from "@/components/VoiceEmergencyLogFAB";
 import { useRejectionLogs } from "@/hooks/useRejectionLogs";
+import { useDriverLocation } from "@/hooks/useDriverLocation";
+import { useReviews } from "@/hooks/useReviews";
+import { useBids } from "@/hooks/useBids";
+import CallWaitingToggle from "@/components/CallWaitingToggle";
+import IncomingCallPopup from "@/components/IncomingCallPopup";
+import DriverReviewCard from "@/components/DriverReviewCard";
+import DriverBidForm from "@/components/DriverBidForm";
 import driverDefaultAvatar from "@/assets/avatars/driver-default.jpg";
 
 // Helper function to format time ago
@@ -80,6 +88,26 @@ const DriverDashboard = () => {
   const { isTracking, startTracking, stopTracking, nearbyDrivers, currentLocation: driverLocation } = useDriverPresence();
   const { pendingRequests, myRequests, acceptRequest, isLoading: isDispatchLoading } = useDispatchRequests();
   const { logs: rejectionLogs } = useRejectionLogs();
+  const { isCallWaiting, toggleCallWaiting } = useDriverLocation();
+  const { driverStats } = useReviews(user?.id);
+  const [incomingCall, setIncomingCall] = useState<any>(null);
+
+  // Listen for broadcast dispatch notifications
+  useEffect(() => {
+    if (!user?.id || !isCallWaiting) return;
+
+    const channel = supabase
+      .channel("dispatch_broadcast")
+      .on("broadcast", { event: "new_dispatch" }, (payload) => {
+        const data = payload.payload;
+        if (data.nearby_driver_ids?.includes(user.id)) {
+          setIncomingCall(data);
+        }
+      })
+      .subscribe();
+
+    return () => { channel.unsubscribe(); };
+  }, [user?.id, isCallWaiting]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -315,11 +343,14 @@ const DriverDashboard = () => {
             animate={{ opacity: 1 }}
             className="space-y-4"
           >
+            {/* Call Waiting Toggle */}
+            <CallWaitingToggle isActive={isCallWaiting} onToggle={toggleCallWaiting} />
+
+            {/* Driver Review Stats */}
+            <DriverReviewCard stats={driverStats} />
+
             {/* Real-time Rejection Ticker Feed */}
             <RejectionTickerFeed />
-            
-            {/* Driving Stats Summary */}
-            <DrivingStatsWidget logs={statsLogs} />
             {/* Pending Calls */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
@@ -426,6 +457,56 @@ const DriverDashboard = () => {
                 </div>
               )}
             </div>
+
+            {/* Scheduled Calls (Bidding) */}
+            {myRequests.filter(r => (r as any).is_scheduled && r.status === "scheduled").length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-foreground" />
+                  예약 호출 (입찰 가능)
+                </h3>
+                <div className="space-y-3">
+                  {myRequests
+                    .filter(r => (r as any).is_scheduled && r.status === "scheduled")
+                    .map(req => (
+                      <div key={req.id} className="bg-card rounded-2xl p-4 border border-border">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <p className="font-semibold text-foreground">{req.patient_name || "환자"}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {(req as any).scheduled_time 
+                                ? new Date((req as any).scheduled_time).toLocaleString("ko-KR") 
+                                : "시간 미정"}
+                            </p>
+                          </div>
+                          <span className="text-xs bg-secondary px-2 py-1 rounded-full text-muted-foreground">예약</span>
+                        </div>
+                        <div className="text-sm text-muted-foreground mb-2">
+                          {req.pickup_location} → {req.destination || "미정"}
+                        </div>
+                        <DriverBidForm 
+                          onSubmit={async (amount, message) => {
+                            const { useBids } = await import("@/hooks/useBids");
+                            // Inline bid creation
+                            const { data, error } = await supabase.from("bids").insert({
+                              request_id: req.id,
+                              driver_id: user!.id,
+                              bid_amount: amount,
+                              message: message || null,
+                            }).select().single();
+                            if (!error) {
+                              toast({ title: "입찰이 등록되었습니다" });
+                            }
+                            return data;
+                          }}
+                          isLoading={false}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
 
             {/* Completed Calls */}
             <div>
@@ -547,6 +628,19 @@ const DriverDashboard = () => {
 
       {/* Voice Emergency Log FAB */}
       <VoiceEmergencyLogFAB />
+
+      {/* Incoming Call Popup */}
+      {incomingCall && (
+        <IncomingCallPopup
+          call={incomingCall}
+          onAccept={async (requestId) => {
+            const success = await acceptRequest(requestId);
+            if (success) setIncomingCall(null);
+            return success;
+          }}
+          onReject={() => setIncomingCall(null)}
+        />
+      )}
     </div>
   );
 };
