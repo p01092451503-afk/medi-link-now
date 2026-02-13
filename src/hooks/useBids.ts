@@ -30,6 +30,34 @@ export const useBids = (requestId?: string) => {
     if (!error) setBids((data || []) as Bid[]);
   }, [requestId]);
 
+  // Fetch driver's own bids with request details
+  const fetchDriverBids = useCallback(async () => {
+    if (!user?.id) return [];
+    const { data, error } = await supabase
+      .from("bids")
+      .select(`
+        *,
+        ambulance_dispatch_requests (
+          id,
+          pickup_location,
+          destination,
+          patient_name,
+          estimated_fee,
+          is_scheduled,
+          scheduled_time,
+          created_at
+        )
+      `)
+      .eq("driver_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching driver bids:", error);
+      return [];
+    }
+    return (data || []) as any[];
+  }, [user?.id]);
+
   const createBid = useCallback(
     async (bidAmount: number, message?: string) => {
       if (!user?.id || !requestId) return null;
@@ -103,5 +131,5 @@ export const useBids = (requestId?: string) => {
     return () => { channel.unsubscribe(); };
   }, [requestId, fetchBids]);
 
-  return { bids, isLoading, createBid, acceptBid, refetch: fetchBids };
+  return { bids, isLoading, createBid, acceptBid, refetch: fetchBids, fetchDriverBids };
 };

@@ -314,24 +314,31 @@ const DriverDashboard = () => {
             <Map className="w-4 h-4" />
             지도
           </button>
-          {[
-            { id: "calls", label: "호출", icon: Phone },
-            { id: "revenue", label: "수익", icon: DollarSign },
-            { id: "log", label: "운행일지", icon: FileText },
-          ].map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setActiveTab(id as typeof activeTab)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
-                activeTab === id
-                  ? "text-foreground border-b-2 border-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </button>
-          ))}
+           {[
+             { id: "calls", label: "호출", icon: Phone },
+             { id: "revenue", label: "수익", icon: DollarSign },
+             { id: "log", label: "운행일지", icon: FileText },
+             { id: "bids", label: "입찰", icon: DollarSign, action: () => navigate("/driver-bids") },
+           ].map(({ id, label, icon: Icon, action }) => (
+             <button
+               key={id}
+               onClick={() => {
+                 if (action) {
+                   action();
+                 } else {
+                   setActiveTab(id as typeof activeTab);
+                 }
+               }}
+               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
+                 activeTab === id
+                   ? "text-foreground border-b-2 border-foreground"
+                   : "text-muted-foreground hover:text-foreground"
+               }`}
+             >
+               <Icon className="w-4 h-4" />
+               {label}
+             </button>
+           ))}
         </div>
       </div>
 
