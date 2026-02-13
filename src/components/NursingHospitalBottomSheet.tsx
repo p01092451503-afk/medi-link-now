@@ -19,6 +19,8 @@ const NursingHospitalBottomSheet = ({
 }: NursingHospitalBottomSheetProps) => {
   const [isAmbulanceModalOpen, setIsAmbulanceModalOpen] = useState(false);
 
+  if (!hospital) return null;
+
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent 
