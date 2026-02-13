@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
-import { Phone, MapPin, Building2, Bed } from "lucide-react";
+import { Phone, MapPin, Building2, Bed, Ambulance } from "lucide-react";
 import { NursingHospital } from "@/hooks/useNursingHospitals";
 import NavigationSelector from "./NavigationSelector";
+import AmbulanceCallModal from "./AmbulanceCallModal";
 
 interface NursingHospitalBottomSheetProps {
   hospital: NursingHospital | null;
@@ -9,12 +11,13 @@ interface NursingHospitalBottomSheetProps {
   onClose: () => void;
 }
 
+
 const NursingHospitalBottomSheet = ({
   hospital,
   isOpen,
   onClose,
 }: NursingHospitalBottomSheetProps) => {
-  if (!hospital) return null;
+  const [isAmbulanceModalOpen, setIsAmbulanceModalOpen] = useState(false);
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -87,33 +90,59 @@ const NursingHospitalBottomSheet = ({
           )}
 
           {/* Action Buttons */}
-          <div className="pt-4 flex gap-3">
-            {/* Phone Call Button */}
-            {hospital.phone && (
-              <a
-                href={`tel:${hospital.phone}`}
-                className="flex-1 h-14 flex items-center justify-center gap-2 bg-purple-600 text-white rounded-2xl font-semibold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/30"
-              >
-                <Phone className="w-5 h-5" />
-                병원 전화
-              </a>
-            )}
-            
-            {/* Navigation Button */}
-            <div className={hospital.phone ? "flex-1" : "w-full"}>
-              <NavigationSelector
-                destination={{
-                  lat: hospital.lat,
-                  lng: hospital.lng,
-                  name: hospital.name,
-                }}
-                variant="outline"
-                size="lg"
-                className="w-full h-14 justify-center border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 rounded-2xl"
-              />
+          <div className="pt-4 space-y-3">
+            {/* Ambulance Call Button */}
+            <button
+              onClick={() => setIsAmbulanceModalOpen(true)}
+              className="w-full h-14 flex items-center justify-center gap-2 bg-purple-600 text-white rounded-2xl font-semibold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/30"
+            >
+              <Ambulance className="w-5 h-5" />
+              사설 구급차 부르기
+            </button>
+
+            {/* Secondary Actions */}
+            <div className="flex gap-3">
+              {/* Phone Call Button */}
+              {hospital.phone && (
+                <a
+                  href={`tel:${hospital.phone}`}
+                  className="flex-1 h-12 flex items-center justify-center gap-2 border border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 rounded-2xl font-semibold hover:bg-purple-50 dark:hover:bg-purple-950/30 transition-colors"
+                >
+                  <Phone className="w-5 h-5" />
+                  병원 전화
+                </a>
+              )}
+              
+              {/* Navigation Button */}
+              <div className={hospital.phone ? "flex-1" : "w-full"}>
+                <NavigationSelector
+                  destination={{
+                    lat: hospital.lat,
+                    lng: hospital.lng,
+                    name: hospital.name,
+                  }}
+                  variant="outline"
+                  size="lg"
+                  className="w-full h-12 justify-center border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 rounded-2xl"
+                />
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Ambulance Call Modal */}
+        {hospital && (
+          <AmbulanceCallModal
+            isOpen={isAmbulanceModalOpen}
+            onClose={() => setIsAmbulanceModalOpen(false)}
+            hospital={{
+              nameKr: hospital.name,
+              address: hospital.address,
+              lat: hospital.lat,
+              lng: hospital.lng,
+            } as any}
+          />
+        )}
       </SheetContent>
     </Sheet>
   );
