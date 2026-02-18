@@ -1,5 +1,6 @@
 import L from "leaflet";
 import { Hospital, FilterType, getHospitalStatus } from "@/data/hospitals";
+import type { LiveStatusLevel } from "@/hooks/useLiveHospitalStatus";
 
 // Rejection alert severity types
 export type RejectionSeverity = 'none' | 'warning' | 'critical';
@@ -110,7 +111,8 @@ export const createHospitalIcon = (
   incomingCount?: number,
   isHighTraffic?: boolean,
   privateTrafficCount?: number,
-  isPediatricSOS?: boolean
+  isPediatricSOS?: boolean,
+  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null
 ) => {
   // Use pediatric SOS colors first, then moonlight, then grade colors
   const colors = isPediatricSOS
@@ -334,9 +336,19 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
-  // Status indicator badge (green = 여유, red = 혼잡)
-  const statusColor = beds > 0 ? '#10B981' : '#EF4444';
-  const statusLabel = beds > 0 ? '여유' : '혼잡';
+  // Status indicator badge - live reports override official data
+  const liveOverride = liveStatus?.status;
+  const statusColor = liveOverride === 'full' ? '#EF4444'
+    : liveOverride === 'busy' ? '#F59E0B'
+    : liveOverride === 'available' ? '#10B981'
+    : beds > 0 ? '#10B981' : '#EF4444';
+  const statusLabel = liveOverride === 'full' ? '만실'
+    : liveOverride === 'busy' ? '혼잡'
+    : liveOverride === 'available' ? '여유'
+    : beds > 0 ? '여유' : '혼잡';
+  const isLiveData = !!liveOverride;
+  const liveIndicator = isLiveData ? `<span style="font-size: 8px; color: #60A5FA; margin-left: 2px;">📡</span>` : '';
+  const liveAnimId = `live-pulse-${Math.random().toString(36).substr(2, 5)}`;
   const statusBadge = `<div style="
       position: absolute;
       bottom: -8px;
@@ -350,9 +362,11 @@ export const createHospitalIcon = (
       border-radius: 6px;
       white-space: nowrap;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      ${isLiveData && liveOverride === 'full' ? `animation: ${liveAnimId} 1.5s ease-in-out infinite;` : ''}
     ">
       <span style="width: 7px; height: 7px; background: ${statusColor}; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 4px ${statusColor};"></span>
       <span style="font-size: 9px; font-weight: 700; color: white;">${statusLabel}</span>
+      ${liveIndicator}
     </div>`;
 
   return L.divIcon({
@@ -377,6 +391,11 @@ export const createHospitalIcon = (
             transform: translateX(-50%) translateY(-6px);
           }
         }
+        ${isLiveData ? `
+        @keyframes ${liveAnimId} {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }` : ''}
         .marker-container:hover .marker-circle-inner {
           transform: scale(1.15);
           box-shadow: 0 6px 16px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.2) !important;
