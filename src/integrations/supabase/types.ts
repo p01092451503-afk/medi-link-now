@@ -400,6 +400,44 @@ export type Database = {
           },
         ]
       }
+      hospital_live_reports: {
+        Row: {
+          comment: string | null
+          created_at: string
+          hospital_id: number
+          id: string
+          reporter_id: string
+          status_level: string
+          valid_until: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          hospital_id: number
+          id?: string
+          reporter_id: string
+          status_level: string
+          valid_until?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          hospital_id?: number
+          id?: string
+          reporter_id?: string
+          status_level?: string
+          valid_until?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_live_reports_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hospital_monitors: {
         Row: {
           bed_type: string

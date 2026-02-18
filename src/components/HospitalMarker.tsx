@@ -2,6 +2,7 @@ import { Marker, Popup, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import { Hospital, getHospitalStatus, FilterType } from "@/data/hospitals";
 import { cleanHospitalName } from "@/lib/utils";
+import { LiveStatusLevel } from "@/hooks/useLiveHospitalStatus";
 
 interface HospitalMarkerProps {
   hospital: Hospital & { distance?: number };
@@ -12,6 +13,7 @@ interface HospitalMarkerProps {
   isHighTraffic?: boolean;
   privateTrafficCount?: number;
   isPediatricSOS?: boolean;
+  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null;
 }
 
 const getDisplayBeds = (hospital: Hospital, filter: FilterType): number => {
@@ -119,7 +121,8 @@ const createMarkerIcon = (
   isMoonlightMode?: boolean,
   isHighTraffic?: boolean,
   privateTrafficCount?: number,
-  isPediatricSOS?: boolean
+  isPediatricSOS?: boolean,
+  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null
 ) => {
   // Use pediatric SOS colors first, then moonlight, then grade colors
   const colors = isPediatricSOS
@@ -220,9 +223,20 @@ const createMarkerIcon = (
       </div>`
     : "";
   
-  // Status indicator badge (green = 여유, red = 혼잡)
-  const statusColor = beds > 0 ? '#10B981' : '#EF4444';
-  const statusLabel = beds > 0 ? '여유' : '혼잡';
+  // Status indicator badge - live reports override official data
+  const liveOverride = liveStatus?.status;
+  const effectiveStatusColor = liveOverride === 'full' ? '#EF4444'
+    : liveOverride === 'busy' ? '#F59E0B'
+    : liveOverride === 'available' ? '#10B981'
+    : beds > 0 ? '#10B981' : '#EF4444';
+  const effectiveStatusLabel = liveOverride === 'full' ? '만실'
+    : liveOverride === 'busy' ? '혼잡'
+    : liveOverride === 'available' ? '여유'
+    : beds > 0 ? '여유' : '혼잡';
+  const isLiveData = !!liveOverride;
+  const liveIndicator = isLiveData
+    ? `<span style="font-size: 8px; color: #60A5FA; margin-left: 2px;">📡</span>`
+    : '';
   const statusBadge = `<div style="
       position: absolute;
       bottom: -8px;
@@ -236,9 +250,11 @@ const createMarkerIcon = (
       border-radius: 6px;
       white-space: nowrap;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      ${isLiveData && liveOverride === 'full' ? 'animation: live-pulse 1.5s ease-in-out infinite;' : ''}
     ">
-      <span style="width: 7px; height: 7px; background: ${statusColor}; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 4px ${statusColor};"></span>
-      <span style="font-size: 9px; font-weight: 700; color: white;">${statusLabel}</span>
+      <span style="width: 7px; height: 7px; background: ${effectiveStatusColor}; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 4px ${effectiveStatusColor};"></span>
+      <span style="font-size: 9px; font-weight: 700; color: white;">${effectiveStatusLabel}</span>
+      ${liveIndicator}
     </div>`;
 
   return L.divIcon({
@@ -248,6 +264,10 @@ const createMarkerIcon = (
         @keyframes pediatric-pulse {
           0%, 100% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.3); opacity: 0.8; }
+        }
+        @keyframes live-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
         }
         .marker-container {
           transition: transform 0.2s ease-out;
@@ -302,7 +322,7 @@ const createMarkerIcon = (
   });
 };
 
-const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0, isPediatricSOS = false }: HospitalMarkerProps) => {
+const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonlightMode = false, isHighTraffic = false, privateTrafficCount = 0, isPediatricSOS = false, liveStatus = null }: HospitalMarkerProps) => {
   const displayBeds = getDisplayBeds(hospital, activeFilter);
   const status = getMarkerStatus(displayBeds);
   
@@ -325,7 +345,8 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
     isMoonlightMode,
     isHighTraffic,
     privateTrafficCount,
-    isPediatricSOS
+    isPediatricSOS,
+    liveStatus
   );
 
   // 등급 한글명 표시
@@ -360,6 +381,9 @@ const HospitalMarker = ({ hospital, onClick, activeFilter, opacity = 1, isMoonli
           <span className="font-semibold">{cleanHospitalName(hospital.nameKr)}</span>
           {gradeKoreanName && (
             <span className="text-xs text-blue-600 font-medium">{gradeKoreanName}</span>
+          )}
+          {liveStatus && (
+            <span className="text-[10px] text-blue-500 font-medium">📡 현장 제보 ({liveStatus.minutesAgo < 1 ? '방금' : `${liveStatus.minutesAgo}분 전`})</span>
           )}
         </div>
       </Tooltip>

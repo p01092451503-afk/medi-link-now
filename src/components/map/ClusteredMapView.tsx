@@ -23,6 +23,7 @@ import { usePrivateTraffic } from "@/contexts/PrivateTrafficContext";
 import NursingHospitalMarker from "../NursingHospitalMarker";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import { useResolvedTheme } from "@/hooks/useResolvedTheme";
+import { useAllLiveReports } from "@/hooks/useLiveHospitalStatus";
 
 // Dark & light tile URLs (CartoDB Voyager/Dark Matter — local-language labels for Korea)
 const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
@@ -385,6 +386,8 @@ const ClusteredMapView = ({
   const { getIncomingCount, getAdjustedBeds } = useIncomingAmbulances();
   // 민간 구급차 트래픽 데이터
   const { getTrafficCount, isHighTraffic } = usePrivateTraffic();
+  // Live crowdsourced status reports
+  const { liveReports: liveStatusReports } = useAllLiveReports();
 
   // react-leaflet's Marker update logic compares position by reference.
   // If we pass a new `[lat, lng]` array on every render, it calls `setLatLng()` each time,
@@ -589,6 +592,13 @@ const ClusteredMapView = ({
             const privateTrafficCount = getTrafficCount(hospital.id);
             const highTraffic = isHighTraffic(hospital.id);
             
+            // Get live crowdsourced status for this hospital
+            const liveReport = liveStatusReports.get(hospital.id);
+            const liveStatusData = liveReport ? {
+              status: liveReport.status_level,
+              minutesAgo: Math.round((Date.now() - new Date(liveReport.created_at).getTime()) / 60000),
+            } : null;
+            
             const icon = createHospitalIcon(
               status,
               displayBeds,
@@ -601,7 +611,8 @@ const ClusteredMapView = ({
               incomingCount,
               highTraffic,
               privateTrafficCount,
-              isPediatricSOS
+              isPediatricSOS,
+              liveStatusData
             );
 
             const gradeKoreanName = getGradeKoreanName(hospital.emergencyGrade);
@@ -620,7 +631,7 @@ const ClusteredMapView = ({
                   mouseover: (e) => {
                     const { clientX, clientY } = e.originalEvent as MouseEvent;
                     setHoverTooltip({
-                      hospital: { ...hospital, gradeKoreanName } as any,
+                      hospital: { ...hospital, gradeKoreanName, liveStatusData } as any,
                       position: { x: clientX, y: clientY },
                     });
                     
@@ -701,6 +712,11 @@ const ClusteredMapView = ({
               {(hoverTooltip.hospital as any).gradeKoreanName && (
                 <span className={`text-xs font-medium ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
                   {(hoverTooltip.hospital as any).gradeKoreanName}
+                </span>
+              )}
+              {(hoverTooltip.hospital as any).liveStatusData && (
+                <span className="text-[10px] text-blue-500 font-medium">
+                  📡 현장 제보 ({(hoverTooltip.hospital as any).liveStatusData.minutesAgo < 1 ? '방금' : `${(hoverTooltip.hospital as any).liveStatusData.minutesAgo}분 전`})
                 </span>
               )}
             </div>

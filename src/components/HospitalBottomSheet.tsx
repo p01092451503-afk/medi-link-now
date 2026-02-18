@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight, Radio } from "lucide-react";
 import MoonlightBadge from "@/components/hospital/MoonlightBadge";
 import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
 import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
@@ -31,6 +31,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIncomingAmbulancesForHospital } from "@/hooks/useIncomingAmbulances";
 import { useTransferRequest } from "@/contexts/TransferRequestContext";
 import { useTransferMode } from "@/contexts/TransferModeContext";
+import { useLiveHospitalStatus } from "@/hooks/useLiveHospitalStatus";
+import LiveStatusBadge from "@/components/hospital/LiveStatusBadge";
+import ReportStatusModal from "@/components/ReportStatusModal";
 
 interface HospitalBottomSheetProps {
   hospital: Hospital | null;
@@ -129,6 +132,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
   const [showRoadview, setShowRoadview] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [lastRequestId, setLastRequestId] = useState<string>("");
   
   const isParamedicMode = searchParams.get("role") === "paramedic";
@@ -137,6 +141,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
   
   const { incomingCount } = useIncomingAmbulancesForHospital(hospital?.id);
   const { isMoonlightHospital } = useMoonlightHospitals();
+  const liveStatus = useLiveHospitalStatus(hospital?.id);
   
   const existingRequest = hospital ? getRequestByHospitalId(hospital.id) : undefined;
   
@@ -256,7 +261,17 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </button>
               </div>
 
-              {/* 119 Call Button - Emergency modes (paramedic, driver, or guardian 119 emergency) */}
+              {/* Live Status Badge */}
+              {liveStatus.isLive && liveStatus.status && liveStatus.minutesAgo !== null && (
+                <div className="mb-4">
+                  <LiveStatusBadge
+                    status={liveStatus.status}
+                    minutesAgo={liveStatus.minutesAgo}
+                    comment={liveStatus.report?.comment}
+                  />
+                </div>
+              )}
+
               {(isParamedicMode || isDriverMode || !isTransferMode) && (
                 <button
                   onClick={() => { window.location.href = "tel:119"; }}
@@ -467,6 +482,17 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </div>
               )}
 
+              {/* Live Report Button - Driver/Paramedic only */}
+              {(isParamedicMode || isDriverMode) && (
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="w-full mb-3 py-4 rounded-2xl bg-secondary text-foreground font-medium text-[14px] flex items-center justify-center gap-2 hover:bg-muted transition-colors border border-border"
+                >
+                  <Radio className="w-4 h-4" />
+                  현장 상황 제보하기
+                </button>
+              )}
+
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -532,6 +558,14 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
             hospitalId={hospital.id}
             hospitalName={cleanHospitalName(hospital.nameKr)}
             requestId={lastRequestId}
+          />
+
+          {/* Report Status Modal */}
+          <ReportStatusModal
+            isOpen={showReportModal}
+            onClose={() => { setShowReportModal(false); liveStatus.refetch(); }}
+            hospitalId={hospital.id}
+            hospitalName={cleanHospitalName(hospital.nameKr)}
           />
         </>
       )}
