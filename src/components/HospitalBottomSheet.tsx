@@ -377,6 +377,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                   icon={Stethoscope}
                   type="general"
                   isHospitalFull={status === "unavailable"}
+                  rawCount={hospital.beds.general}
                 />
                 <BedStatusCard
                   label="소아"
@@ -384,6 +385,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                   icon={Baby}
                   type="pediatric"
                   isHospitalFull={status === "unavailable"}
+                  rawCount={hospital.beds.pediatric}
                 />
                 <BedStatusCard
                   label="열/감염"
