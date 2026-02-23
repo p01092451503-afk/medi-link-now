@@ -310,6 +310,8 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                   <CongestionForecast 
                     hospitalId={hospital.id?.toString() || hospital.name}
                     officialBeds={totalBeds}
+                    hospitalName={hospital.nameKr}
+                    hospitalNumericId={hospital.id}
                   />
                   <ShadowDemandCard 
                     hospitalId={hospital.id?.toString() || hospital.name}
