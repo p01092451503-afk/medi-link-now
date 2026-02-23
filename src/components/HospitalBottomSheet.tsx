@@ -382,6 +382,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     Math.max(0, hospital.beds?.pediatric || 0) +
                     Math.max(0, hospital.beds?.fever || 0)
                   }
+                  hospitalName={hospital.nameKr}
                 />
               </div>
 

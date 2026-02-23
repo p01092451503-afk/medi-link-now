@@ -1,43 +1,75 @@
+import { useMemo } from "react";
 import { Clock } from "lucide-react";
+import { fire119HospitalStats } from "@/data/fire119Stats";
+import { useLiveHospitalStatus, LiveStatusLevel } from "@/hooks/useLiveHospitalStatus";
 
 interface WaitTimePredictionProps {
   hospitalId: number;
   totalBeds?: number;
+  hospitalName?: string;
 }
 
-// Estimate wait time based on available beds and hospital ID for variation
-const estimateWaitTime = (hospitalId: number, totalBeds: number): number => {
+// ── Time-of-day multiplier for wait time ──
+const getTimeOfDayWaitMultiplier = (): number => {
+  const hour = new Date().getHours();
+  if (hour >= 0 && hour < 6) return 1.4;   // late night: long stays
+  if (hour >= 6 && hour < 9) return 1.1;
+  if (hour >= 9 && hour < 17) return 1.15;  // daytime: steady flow
+  if (hour >= 17 && hour < 22) return 1.35; // evening rush
+  return 1.4;                                // late evening
+};
+
+// ── 119 transfer volume multiplier ──
+const get119WaitMultiplier = (hospitalName?: string): number => {
+  if (!hospitalName) return 1.0;
+  const normalized = hospitalName.replace(/\s/g, "");
+  const matched = fire119HospitalStats.find(stat => {
+    const statName = stat.hospitalName.replace(/\s/g, "");
+    return normalized.includes(statName) || statName.includes(normalized);
+  });
+  if (!matched) return 1.0;
+  if (matched.ranking <= 2) return 1.5;
+  if (matched.ranking <= 5) return 1.3;
+  return 1.15;
+};
+
+// ── Live report override ──
+const getLiveReportWaitHours = (status: LiveStatusLevel | null): number | null => {
+  if (!status) return null;
+  switch (status) {
+    case "available": return 15 / 60;  // ~15min
+    case "busy": return 1.5;           // ~1.5h
+    case "full": return 3.5;           // ~3.5h
+  }
+};
+
+// Base wait estimate from bed count (percentage-aware for large hospitals)
+const estimateBaseWaitHours = (hospitalId: number, totalBeds: number): number => {
   if (totalBeds >= 30) {
-    // Very spacious — minimal wait (10~20min)
-    return hospitalId % 2 === 0 ? 10 / 60 : 20 / 60;
+    return hospitalId % 2 === 0 ? 15 / 60 : 25 / 60;
   }
   if (totalBeds >= 15) {
-    // Plenty of beds — short wait (15~30min)
-    const options = [15 / 60, 20 / 60, 30 / 60];
+    const options = [20 / 60, 30 / 60, 40 / 60];
     return options[hospitalId % options.length];
   }
   if (totalBeds >= 8) {
-    // Good availability — moderate-short wait (20~45min)
-    const options = [20 / 60, 30 / 60, 45 / 60];
+    const options = [30 / 60, 45 / 60, 1.0];
     return options[hospitalId % options.length];
   }
   if (totalBeds >= 4) {
-    // Some beds — moderate wait (30min~1.5h)
-    const options = [0.5, 1.0, 1.5];
+    const options = [0.75, 1.0, 1.5];
     return options[hospitalId % options.length];
   }
   if (totalBeds >= 1) {
-    // Very few beds — longer wait (1.5~2.5h)
     const options = [1.5, 2.0, 2.5];
     return options[hospitalId % options.length];
   }
-  // No beds — very long wait (3~4h+)
   const options = [3.0, 3.5, 4.0];
   return options[hospitalId % options.length];
 };
 
 const getWaitTimeConfig = (hours: number) => {
-  if (hours < 1) {
+  if (hours < 0.75) {
     return {
       label: "빠름",
       color: "text-green-600 dark:text-green-400",
@@ -64,14 +96,28 @@ const getWaitTimeConfig = (hours: number) => {
   };
 };
 
-const WaitTimePrediction = ({ hospitalId, totalBeds = 0 }: WaitTimePredictionProps) => {
-  const waitHours = estimateWaitTime(hospitalId, totalBeds);
+const WaitTimePrediction = ({ hospitalId, totalBeds = 0, hospitalName }: WaitTimePredictionProps) => {
+  const liveStatus = useLiveHospitalStatus(hospitalId);
+
+  const waitHours = useMemo(() => {
+    // Priority 1: Live report
+    const liveWait = getLiveReportWaitHours(liveStatus.status);
+    if (liveWait !== null) return liveWait;
+
+    // Priority 2: Corrected estimation
+    let base = estimateBaseWaitHours(hospitalId, totalBeds);
+    base *= getTimeOfDayWaitMultiplier();
+    base *= get119WaitMultiplier(hospitalName);
+    return Math.min(base, 5); // cap at 5 hours
+  }, [hospitalId, totalBeds, hospitalName, liveStatus.status]);
+
   const config = getWaitTimeConfig(waitHours);
 
-  // Format display: show minutes for < 1 hour
   const displayTime = waitHours < 1
+    ? `약 ${Math.max(5, Math.round(waitHours * 60))}분`
+    : waitHours < 2
     ? `약 ${Math.round(waitHours * 60)}분`
-    : `약 ${waitHours}시간`;
+    : `약 ${waitHours.toFixed(1)}시간`;
 
   return (
     <div className={`p-3 rounded-xl ${config.bg} border ${config.border}`}>
