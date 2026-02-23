@@ -130,6 +130,11 @@ const CongestionForecast = ({ hospitalId, officialBeds, hospitalName, hospitalNu
       return getScoreData(liveScore);
     }
 
+    // If beds are negative (overcrowded), force congested
+    if (officialBeds < 0) {
+      return getScoreData(95);
+    }
+
     // Calculate base score from bed availability (percentage-based for large hospitals)
     let score = calculateBaseScore(estimatedBeds, officialBeds);
 

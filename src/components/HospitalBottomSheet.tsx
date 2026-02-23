@@ -403,9 +403,9 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 <WaitTimePrediction
                   hospitalId={hospital.id}
                   totalBeds={
-                    Math.max(0, hospital.beds?.general || 0) +
-                    Math.max(0, hospital.beds?.pediatric || 0) +
-                    Math.max(0, hospital.beds?.fever || 0)
+                    (hospital.beds?.general || 0) +
+                    (hospital.beds?.pediatric || 0) +
+                    (hospital.beds?.fever || 0)
                   }
                   hospitalName={hospital.nameKr}
                 />
