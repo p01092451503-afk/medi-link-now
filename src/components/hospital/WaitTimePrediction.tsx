@@ -104,7 +104,14 @@ const WaitTimePrediction = ({ hospitalId, totalBeds = 0, hospitalName }: WaitTim
     const liveWait = getLiveReportWaitHours(liveStatus.status);
     if (liveWait !== null) return liveWait;
 
-    // Priority 2: Corrected estimation
+    // Priority 2: Overcrowded (negative beds) → force high wait
+    if (totalBeds < 0) {
+      let overcrowdedBase = 3.0 + Math.min(Math.abs(totalBeds) * 0.15, 2.0);
+      overcrowdedBase *= getTimeOfDayWaitMultiplier();
+      return Math.min(overcrowdedBase, 5);
+    }
+
+    // Priority 3: Corrected estimation
     let base = estimateBaseWaitHours(hospitalId, totalBeds);
     base *= getTimeOfDayWaitMultiplier();
     base *= get119WaitMultiplier(hospitalName);
