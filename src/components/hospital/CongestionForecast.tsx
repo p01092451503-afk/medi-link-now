@@ -51,12 +51,12 @@ const get119TransferCorrectionFactor = (hospitalName?: string): number => {
     return normalized.includes(statName) || statName.includes(normalized);
   });
   if (!matched) return 1.0;
-  // TOP 1-2: very high baseline congestion
-  if (matched.ranking <= 2) return 1.5;
+  // TOP 1-2: very high baseline congestion (삼성서울, 서울아산 등)
+  if (matched.ranking <= 2) return 1.6;
   // TOP 3-5: high baseline
-  if (matched.ranking <= 5) return 1.3;
+  if (matched.ranking <= 5) return 1.4;
   // TOP 6-10: moderate baseline
-  return 1.15;
+  return 1.2;
 };
 
 // ── Factor 3: Live report override ──
