@@ -30,15 +30,15 @@ interface ScoreData {
 const getTimeOfDayCorrectionFactor = (): number => {
   const hour = new Date().getHours();
   // 0-5: late night – still busy in big hospitals
-  if (hour >= 0 && hour < 6) return 1.4;
+  if (hour >= 0 && hour < 6) return 1.5;
   // 6-8: early morning – moderate
-  if (hour >= 6 && hour < 9) return 1.1;
-  // 9-16: daytime – standard
-  if (hour >= 9 && hour < 17) return 1.0;
+  if (hour >= 6 && hour < 9) return 1.15;
+  // 9-16: daytime – still busy for major ERs
+  if (hour >= 9 && hour < 17) return 1.2;
   // 17-21: evening rush – high
-  if (hour >= 17 && hour < 22) return 1.3;
+  if (hour >= 17 && hour < 22) return 1.4;
   // 22-24: late evening – high (trauma/drunk injuries)
-  return 1.35;
+  return 1.45;
 };
 
 // ── Factor 2: 119 transfer volume correction ──
@@ -51,12 +51,12 @@ const get119TransferCorrectionFactor = (hospitalName?: string): number => {
     return normalized.includes(statName) || statName.includes(normalized);
   });
   if (!matched) return 1.0;
-  // TOP 1-2: very high baseline congestion
-  if (matched.ranking <= 2) return 1.5;
+  // TOP 1-2: very high baseline congestion (삼성서울, 서울아산 등)
+  if (matched.ranking <= 2) return 1.6;
   // TOP 3-5: high baseline
-  if (matched.ranking <= 5) return 1.3;
+  if (matched.ranking <= 5) return 1.4;
   // TOP 6-10: moderate baseline
-  return 1.15;
+  return 1.2;
 };
 
 // ── Factor 3: Live report override ──
