@@ -279,7 +279,7 @@ const OnboardingPage = () => {
             {step === 0 && <StepIntro />}
             {step === 1 && <StepRole selected={role} onSelect={setRole} />}
             {step === 2 && <StepLocation granted={locationGranted} onRequest={requestLocation} />}
-            {step === 3 && (
+            {step === 3 && showFamilyStep && (
               <StepFamily
                 name={familyName} setName={setFamilyName}
                 relation={familyRelation} setRelation={setFamilyRelation}
