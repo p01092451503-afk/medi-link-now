@@ -27,12 +27,12 @@ const slideVariants = {
 
 /* ────────────────── Step 1: 서비스 소개 ────────────────── */
 const StepIntro = () => (
-  <div className="flex flex-col items-center text-center gap-6 px-4">
-    <span className="text-3xl font-extrabold text-foreground tracking-tight">파인더</span>
+  <div className="flex flex-col items-center text-center px-4">
+    <span className="text-3xl font-extrabold text-foreground tracking-tight mb-10">파인더</span>
     <h1 className="text-2xl font-bold text-foreground">
       Find-ER에 오신 것을 환영합니다
     </h1>
-    <p className="text-muted-foreground leading-relaxed max-w-sm">
+    <p className="text-muted-foreground leading-relaxed max-w-sm mt-4">
       전국 응급실의 <span className="font-semibold text-primary">실시간 병상 현황</span>을
       확인하고, 가장 가까운 병원을 빠르게 찾을 수 있습니다.
     </p>
