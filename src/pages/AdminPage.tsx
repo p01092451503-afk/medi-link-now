@@ -12,6 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useAuth } from "@/hooks/useAuth";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminVerificationTab from "@/components/AdminVerificationTab";
 
 interface RegionUpdateStatus {
   region: string;
