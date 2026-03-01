@@ -548,10 +548,10 @@ const KakaoMapView = ({
           ${congestionBadgeHtml}
           <div class="marker-tooltip" style="
             position: absolute;
-            bottom: 100%;
+            top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            margin-bottom: 8px;
+            margin-top: 6px;
             background: rgba(0, 0, 0, 0.85);
             color: white;
             padding: 6px 10px;
@@ -572,14 +572,14 @@ const KakaoMapView = ({
             </div>
             <div style="
               position: absolute;
-              bottom: -4px;
+              top: -4px;
               left: 50%;
               transform: translateX(-50%);
               width: 0;
               height: 0;
               border-left: 5px solid transparent;
               border-right: 5px solid transparent;
-              border-top: 5px solid rgba(0, 0, 0, 0.85);
+              border-bottom: 5px solid rgba(0, 0, 0, 0.85);
             "></div>
           </div>
           <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;">
