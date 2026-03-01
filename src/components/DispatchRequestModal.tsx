@@ -59,8 +59,8 @@ const DispatchRequestModal = ({
 
   // Sort drivers by distance
   const sortedDrivers = userLocation
-    ? [...drivers]
-        .filter(d => d.isActive)
+    ? [...nearbyDrivers]
+        .filter(d => d.status === "available")
         .map(d => ({
           ...d,
           distance: haversineDistance(userLocation[0], userLocation[1], d.lat, d.lng),

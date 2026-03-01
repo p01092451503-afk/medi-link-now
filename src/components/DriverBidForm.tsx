@@ -101,7 +101,7 @@ const DriverBidForm = ({ onSubmit, isLoading, existingBid, pickupLat, pickupLng,
           )}
           {patientMedical.chronicDiseases && patientMedical.chronicDiseases.length > 0 && (
             <p className="text-xs text-foreground flex items-center gap-1">
-              <Heart className="w-3 h-3 text-red-500" />
+              <Heart className="w-3 h-3 text-destructive" />
               기저질환: <span className="font-semibold">{patientMedical.chronicDiseases.join(", ")}</span>
             </p>
           )}
