@@ -27,8 +27,8 @@ const slideVariants = {
 
 /* ────────────────── Step 1: 서비스 소개 ────────────────── */
 const StepIntro = () => (
-  <div className="flex flex-col items-center text-center gap-6 px-4">
-    <span className="text-3xl font-extrabold text-foreground tracking-tight">파인더</span>
+  <div className="flex flex-col items-center text-center px-4">
+    <span className="text-3xl font-extrabold text-foreground tracking-tight mb-10">파인더</span>
     <h1 className="text-2xl font-bold text-foreground">
       Find-ER에 오신 것을 환영합니다
     </h1>
