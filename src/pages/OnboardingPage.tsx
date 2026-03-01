@@ -254,7 +254,7 @@ const OnboardingPage = () => {
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm px-4 pt-4 pb-2">
         <Progress value={progress} className="h-1.5" />
         <div className="flex justify-between mt-1.5">
-          <span className="text-[10px] text-muted-foreground">{step + 1} / {TOTAL_STEPS}</span>
+          <span className="text-[10px] text-muted-foreground">{step + 1} / {totalSteps}</span>
           {step > 0 && (
             <button onClick={goPrev} className="text-[10px] text-muted-foreground flex items-center gap-0.5">
               <ChevronLeft className="w-3 h-3" /> 이전
