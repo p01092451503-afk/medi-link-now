@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Clock, CloudRain, Building2, Activity, ChevronDown, ChevronUp,
-  AlertTriangle, Heart, Droplet, Baby, Truck, ShieldCheck,
+  AlertTriangle, ShieldCheck, Zap,
 } from 'lucide-react';
 import { useAcceptancePrediction } from '@/hooks/useAcceptancePrediction';
 import { Hospital } from '@/data/hospitals';
@@ -18,32 +18,29 @@ interface Props {
 
 // ── Signal Banner ──
 const SignalBanner = ({ prediction }: { prediction: AcceptancePrediction }) => {
-  const signalEmoji = prediction.signal === 'green' ? '🟢' : prediction.signal === 'yellow' ? '🟡' : '🔴';
-  const signalBg =
-    prediction.signal === 'green'
-      ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
-      : prediction.signal === 'yellow'
-      ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800'
-      : 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800';
-  const signalText =
-    prediction.signal === 'green' ? 'text-green-700 dark:text-green-400'
-    : prediction.signal === 'yellow' ? 'text-orange-700 dark:text-orange-400'
-    : 'text-red-700 dark:text-red-400';
+  const isGood = prediction.signal === 'green';
+  const isCaution = prediction.signal === 'yellow';
 
   return (
-    <div className={`p-4 rounded-2xl border ${signalBg}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">{signalEmoji}</span>
-          <div>
-            <p className={`text-xl font-bold ${signalText}`}>
-              수용 가능성 {prediction.probability}%
-            </p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              데이터 신뢰도: {prediction.confidence === 'high' ? '높음' : prediction.confidence === 'medium' ? '보통' : '낮음'}
-              {' '}({prediction.dataFreshness.sourcesActive}개 소스)
-            </p>
-          </div>
+    <div className={`p-4 rounded-2xl border ${
+      isGood ? 'bg-secondary border-border' : isCaution ? 'bg-secondary border-border' : 'bg-destructive/5 border-destructive/15'
+    }`}>
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+          isGood ? 'bg-foreground' : isCaution ? 'bg-muted-foreground/60' : 'bg-destructive'
+        }`}>
+          <Zap className={`w-5 h-5 ${isGood || isCaution ? 'text-background' : 'text-destructive-foreground'}`} />
+        </div>
+        <div className="flex-1">
+          <p className={`text-xl font-bold tracking-tight ${
+            isGood ? 'text-foreground' : isCaution ? 'text-foreground' : 'text-destructive'
+          }`}>
+            수용 가능성 {prediction.probability}%
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            데이터 신뢰도: {prediction.confidence === 'high' ? '높음' : prediction.confidence === 'medium' ? '보통' : '낮음'}
+            {' · '}{prediction.dataFreshness.sourcesActive}개 소스 활성
+          </p>
         </div>
       </div>
     </div>
@@ -52,23 +49,39 @@ const SignalBanner = ({ prediction }: { prediction: AcceptancePrediction }) => {
 
 // ── Wait Time ──
 const WaitTimeDisplay = ({ prediction }: { prediction: AcceptancePrediction }) => {
-  const waitText =
-    prediction.confidence === 'low'
-      ? `${Math.max(5, prediction.estimatedWaitMin - 15)}~${prediction.estimatedWaitMin + 15}분 (추정)`
-      : `약 ${prediction.estimatedWaitMin}분`;
+  const isLow = prediction.confidence === 'low';
+  const waitText = isLow
+    ? `${Math.max(5, prediction.estimatedWaitMin - 15)}~${prediction.estimatedWaitMin + 15}분`
+    : `약 ${prediction.estimatedWaitMin}분`;
+
+  const speedLabel = prediction.estimatedWaitMin <= 20 ? '빠름' : prediction.estimatedWaitMin <= 45 ? '보통' : '혼잡';
 
   return (
-    <div className="p-3 rounded-xl bg-secondary border border-border">
-      <div className="flex items-center gap-1.5 mb-1">
-        <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-        <span className="text-[11px] text-muted-foreground">예상 대기</span>
+    <div className="p-4 rounded-2xl bg-secondary border border-border">
+      <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center gap-1.5">
+          <Clock className="w-4 h-4 text-muted-foreground" />
+          <span className="text-[12px] text-muted-foreground font-medium">예상 대기시간</span>
+        </div>
+        <span className={`text-[12px] font-bold ${
+          speedLabel === '빠름' ? 'text-foreground' : speedLabel === '보통' ? 'text-muted-foreground' : 'text-destructive'
+        }`}>
+          {speedLabel}
+        </span>
       </div>
-      <p className="text-lg font-bold text-foreground">{waitText}</p>
+      <p className={`text-2xl font-bold tracking-tight ${
+        speedLabel === '혼잡' ? 'text-destructive' : 'text-foreground'
+      }`}>
+        {waitText}
+      </p>
+      <p className="text-[10px] text-muted-foreground mt-1">
+        ※ AI 예측 기반 추정치 (실시간 변동 가능)
+      </p>
     </div>
   );
 };
 
-// ── Condition Grid ──
+// ── Condition Grid (Toss style) ──
 const conditionItems = [
   { key: 'cardiac' as const, label: '심정지', emoji: '🫀' },
   { key: 'stroke' as const, label: '뇌졸중', emoji: '🧠' },
@@ -82,18 +95,27 @@ const ConditionGrid = ({ prediction }: { prediction: AcceptancePrediction }) => 
   <div className="grid grid-cols-3 gap-2">
     {conditionItems.map((item, i) => {
       const available = item.key ? prediction.conditionAcceptance[item.key] : prediction.probability >= 35;
-      const colorClass = available
-        ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
-        : 'bg-red-50 dark:bg-red-950/30 text-red-500 dark:text-red-400 border-red-200 dark:border-red-800';
 
       return (
         <div
           key={i}
-          className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border text-center ${colorClass}`}
+          className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border transition-colors ${
+            available
+              ? 'bg-secondary border-border'
+              : 'bg-destructive/5 border-destructive/15'
+          }`}
         >
-          <span className="text-lg">{item.emoji}</span>
-          <span className="text-[11px] font-medium">{item.label}</span>
-          <span className="text-[10px] font-bold">{available ? '가능' : '불가'}</span>
+          <span className="text-xl">{item.emoji}</span>
+          <span className={`text-[12px] font-semibold ${
+            available ? 'text-foreground' : 'text-destructive'
+          }`}>
+            {item.label}
+          </span>
+          <span className={`text-[11px] font-bold ${
+            available ? 'text-foreground' : 'text-destructive'
+          }`}>
+            {available ? '가능' : '불가'}
+          </span>
         </div>
       );
     })}
@@ -110,13 +132,16 @@ const BreakdownSection = ({ prediction }: { prediction: AcceptancePrediction }) 
   });
 
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
+    <div className="rounded-2xl border border-border overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-3 hover:bg-secondary/50 transition-colors"
+        className="w-full flex items-center justify-between p-3.5 hover:bg-secondary/50 transition-colors"
       >
-        <span className="text-xs font-semibold text-foreground">이 예측의 근거</span>
-        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+        <span className="text-[13px] font-semibold text-foreground">이 예측의 근거</span>
+        {open
+          ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
+          : <ChevronDown className="w-4 h-4 text-muted-foreground" />
+        }
       </button>
       <AnimatePresence>
         {open && (
@@ -126,12 +151,32 @@ const BreakdownSection = ({ prediction }: { prediction: AcceptancePrediction }) 
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="px-3 pb-3 space-y-2 border-t border-border pt-2">
-              <FactorRow icon={Activity} label="현재 병상 점유율" value={`${prediction.breakdown.occupancyScore}%`} score={prediction.breakdown.occupancyScore} />
-              <FactorRow icon={Clock} label="시간대 보정" value={`패턴 ${prediction.breakdown.patternScore}점`} score={prediction.breakdown.patternScore} />
-              <FactorRow icon={CloudRain} label="날씨 영향" value={`환경 ${prediction.breakdown.weatherScore}점`} score={prediction.breakdown.weatherScore} />
-              <FactorRow icon={Building2} label="주변 응급실 과부하" value={`연쇄 ${prediction.breakdown.spilloverScore}점`} score={prediction.breakdown.spilloverScore} />
-              <div className="pt-1.5 text-[10px] text-muted-foreground flex items-center gap-1">
+            <div className="px-3.5 pb-3.5 space-y-3 border-t border-border pt-3">
+              <FactorRow
+                icon={Activity}
+                label="현재 병상 점유율"
+                value={`${prediction.breakdown.occupancyScore}%`}
+                score={prediction.breakdown.occupancyScore}
+              />
+              <FactorRow
+                icon={Clock}
+                label="시간대 보정"
+                value={`${prediction.breakdown.patternScore}점`}
+                score={prediction.breakdown.patternScore}
+              />
+              <FactorRow
+                icon={CloudRain}
+                label="날씨 영향"
+                value={`${prediction.breakdown.weatherScore}점`}
+                score={prediction.breakdown.weatherScore}
+              />
+              <FactorRow
+                icon={Building2}
+                label="주변 응급실 과부하"
+                value={`${prediction.breakdown.spilloverScore}점`}
+                score={prediction.breakdown.spilloverScore}
+              />
+              <div className="pt-2 text-[10px] text-muted-foreground flex items-center gap-1.5 border-t border-border">
                 <ShieldCheck className="w-3 h-3" />
                 마지막 업데이트: {lastUpdatedText}
               </div>
@@ -144,25 +189,27 @@ const BreakdownSection = ({ prediction }: { prediction: AcceptancePrediction }) 
 };
 
 const FactorRow = ({ icon: Icon, label, value, score }: { icon: React.ElementType; label: string; value: string; score: number }) => (
-  <div className="flex items-center gap-2">
-    <Icon className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-    <span className="text-[11px] text-muted-foreground flex-1">{label}</span>
-    <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+  <div className="flex items-center gap-2.5">
+    <div className="w-6 h-6 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+      <Icon className="w-3 h-3 text-muted-foreground" />
+    </div>
+    <span className="text-[12px] text-foreground flex-1">{label}</span>
+    <div className="w-14 h-1.5 bg-secondary rounded-full overflow-hidden">
       <div
-        className="h-full bg-foreground/40 rounded-full"
+        className="h-full bg-foreground/30 rounded-full transition-all"
         style={{ width: `${Math.min(100, score)}%` }}
       />
     </div>
-    <span className="text-[10px] font-mono text-muted-foreground w-14 text-right">{value}</span>
+    <span className="text-[11px] font-mono text-muted-foreground w-10 text-right">{value}</span>
   </div>
 );
 
 // ── Low Confidence Warning ──
 const LowConfidenceWarning = () => (
-  <div className="p-3 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800">
-    <div className="flex items-start gap-2">
-      <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
-      <p className="text-[11px] text-orange-700 dark:text-orange-300 leading-relaxed">
+  <div className="p-3.5 rounded-2xl bg-secondary border border-border">
+    <div className="flex items-start gap-2.5">
+      <AlertTriangle className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+      <p className="text-[12px] text-muted-foreground leading-relaxed">
         실시간 데이터 연결이 제한되어 통계 기반으로 추정합니다.
         반드시 병원에 직접 확인하세요.
       </p>
@@ -222,7 +269,7 @@ const AcceptancePredictionPanel = ({ hospitalId, hospital, allHospitals }: Props
 
       {/* ③ Condition Grid */}
       <div>
-        <p className="text-xs font-semibold text-foreground mb-2">증상별 수용 가능 여부</p>
+        <p className="text-[13px] font-semibold text-foreground mb-2">증상별 수용 가능 여부</p>
         <ConditionGrid prediction={prediction} />
       </div>
 
