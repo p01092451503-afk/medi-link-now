@@ -118,7 +118,7 @@ const StepLocation = ({ granted, onRequest }: { granted: boolean | null; onReque
       </Button>
     )}
     {granted === true && (
-      <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-medium">
+      <div className="flex items-center gap-2 text-success font-medium">
         <Check className="w-5 h-5" /> 위치 권한이 허용되었습니다
       </div>
     )}
