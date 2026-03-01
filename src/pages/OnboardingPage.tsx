@@ -32,7 +32,7 @@ const StepIntro = () => (
     <h1 className="text-2xl font-bold text-foreground">
       Find-ER에 오신 것을 환영합니다
     </h1>
-    <p className="text-muted-foreground leading-relaxed max-w-sm">
+    <p className="text-muted-foreground leading-relaxed max-w-sm mt-4">
       전국 응급실의 <span className="font-semibold text-primary">실시간 병상 현황</span>을
       확인하고, 가장 가까운 병원을 빠르게 찾을 수 있습니다.
     </p>
