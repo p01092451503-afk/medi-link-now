@@ -31,6 +31,7 @@ interface KakaoMapViewProps {
   activeAmbulanceTrips?: AmbulanceTrip[];
   incomingByHospital?: Map<number, number>;
   onZoomChange?: (zoom: number) => void;
+  onDragEnd?: (center: [number, number]) => void;
   nightCareHospitals?: HospitalDetailData[];
   onNightCareHospitalClick?: (hospital: HospitalDetailData) => void;
   onLoadError?: (error: string) => void;
@@ -189,6 +190,7 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
+  onDragEnd,
   onLoadError,
   isPediatricSOS = false,
 }: KakaoMapViewProps) => {
@@ -307,6 +309,11 @@ const KakaoMapView = ({
           const currentKakaoZoom = map.getLevel();
           const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
           onZoomChange?.(leafletZoom);
+        });
+
+        window.kakao.maps.event.addListener(map, "dragend", () => {
+          const latlng = map.getCenter();
+          onDragEnd?.([latlng.getLat(), latlng.getLng()]);
         });
 
         setIsLoaded(true);

@@ -568,6 +568,13 @@ const MapPage = () => {
     }
   }, [userLocation]);
 
+  // When user drags/pans the map, remove radius filter so all hospitals in view appear
+  const handleMapDragEnd = useCallback((newCenter: [number, number]) => {
+    setActiveRadius("all");
+    setActiveMajorRegion("all");
+    setActiveRegion("all");
+  }, []);
+
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
@@ -612,6 +619,7 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             onZoomChange={handleZoomChange}
+            onDragEnd={handleMapDragEnd}
             onLoadError={(error) => {
               console.warn("[MapPage] 카카오맵 로드 실패, Leaflet으로 전환:", error);
               setKakaoFailed(true);
