@@ -45,7 +45,7 @@ const DispatchRequestModal = ({
   pickupAddress = "",
 }: DispatchRequestModalProps) => {
   const { createRequest, isLoading, pendingRequests, myRequests } = useDispatchRequests();
-  const { drivers } = useDriverPresence();
+  const { nearbyDrivers } = useDriverPresence();
   const [formData, setFormData] = useState({
     patientName: "",
     patientCondition: "",
