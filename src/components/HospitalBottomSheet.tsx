@@ -405,18 +405,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 />
               </div>
 
-              {/* Wait Time Prediction */}
-              <div className="mb-6">
-                <WaitTimePrediction
-                  hospitalId={hospital.id}
-                  totalBeds={
-                    (hospital.beds?.general || 0) +
-                    (hospital.beds?.pediatric || 0) +
-                    (hospital.beds?.fever || 0)
-                  }
-                  hospitalName={hospital.nameKr}
-                />
-              </div>
+              {/* Wait Time Prediction removed — consolidated into AcceptancePredictionPanel */}
 
               {/* Procedure Availability */}
               {hospital.acceptance && (
