@@ -97,10 +97,10 @@ const StepRole = ({ selected, onSelect }: { selected: UserRole | null; onSelect:
 const StepLocation = ({ granted, onRequest }: { granted: boolean | null; onRequest: () => void }) => (
   <div className="flex flex-col items-center text-center gap-6 px-4">
     <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${
-      granted ? "bg-green-100 dark:bg-green-900/30" : "bg-primary/10"
+      granted ? "bg-success/10" : "bg-primary/10"
     }`}>
       {granted ? (
-        <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
+        <Check className="w-10 h-10 text-success" />
       ) : (
         <Locate className="w-10 h-10 text-primary" />
       )}
