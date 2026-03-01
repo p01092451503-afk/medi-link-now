@@ -23,14 +23,8 @@ const Landing = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [locationDenied, setLocationDenied] = useState(false);
-  const [logoTextIndex, setLogoTextIndex] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLogoTextIndex((prev) => (prev === 0 ? 1 : 0));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+
 
   useEffect(() => {
     setIsLocating(true);
