@@ -619,6 +619,7 @@ const MapPage = () => {
             onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
             activeAmbulanceTrips={activeAmbulanceTrips}
             onZoomChange={handleZoomChange}
+            onDragEnd={handleMapDragEnd}
             onLoadError={(error) => {
               console.warn("[MapPage] 카카오맵 로드 실패, Leaflet으로 전환:", error);
               setKakaoFailed(true);
