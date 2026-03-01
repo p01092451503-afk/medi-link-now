@@ -22,6 +22,7 @@ import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 import CongestionForecast from "@/components/hospital/CongestionForecast";
 
 import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
+import AcceptancePredictionPanel from "@/components/hospital/AcceptancePredictionPanel";
 import Fire119VerifiedBadge from "@/components/hospital/Fire119VerifiedBadge";
 import NavigationSelector from "@/components/NavigationSelector";
 import QuickRejectionButton from "@/components/QuickRejectionButton";
@@ -341,6 +342,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     officialBeds={totalBeds}
                   />
                 </div>
+              </div>
+
+              {/* AI Acceptance Prediction Panel */}
+              <div className="mb-6">
+                <AcceptancePredictionPanel hospitalId={hospital.id} />
               </div>
 
               {/* Bed Status Grid */}

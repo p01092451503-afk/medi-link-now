@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown, MapPin, Building2 } from "lucide-react";
+import { ChevronUp, ChevronDown, MapPin, Building2, BarChart3 } from "lucide-react";
 import { Hospital, regionOptions } from "@/data/hospitals";
+import RegionalHeatmapChart from "@/components/hospital/RegionalHeatmapChart";
 
 interface RegionStats {
   id: string;
@@ -17,6 +18,7 @@ interface RegionalStatsCardProps {
 
 const RegionalStatsCard = ({ hospitals, onRegionClick }: RegionalStatsCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(false);
 
   // Calculate stats by major region
   const regionStats: RegionStats[] = regionOptions
@@ -49,7 +51,7 @@ const RegionalStatsCard = ({ hospitals, onRegionClick }: RegionalStatsCardProps)
     <motion.div
       layout
       className="absolute bottom-44 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
-      style={{ width: isExpanded ? 220 : 180 }}
+      style={{ width: showHeatmap ? 280 : isExpanded ? 220 : 180 }}
     >
       {/* Header */}
       <div
@@ -127,6 +129,25 @@ const RegionalStatsCard = ({ hospitals, onRegionClick }: RegionalStatsCardProps)
             </button>
           </div>
         )}
+
+        {/* Heatmap Toggle */}
+        <div className="mt-2 pt-2 border-t border-gray-100">
+          <button
+            onClick={() => setShowHeatmap(!showHeatmap)}
+            className="w-full text-[10px] text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-1"
+          >
+            <BarChart3 className="w-3 h-3" />
+            {showHeatmap ? '히트맵 닫기' : '시간대별 히트맵'}
+          </button>
+          {showHeatmap && (
+            <div className="mt-2">
+              <RegionalHeatmapChart
+                hospitals={hospitals}
+                regionLabel={regionStats[0]?.labelKr || '전체'}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );
