@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { TransferModeProvider } from "@/contexts/TransferModeContext";
 import { TransferRequestProvider } from "@/contexts/TransferRequestContext";
 import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
@@ -42,6 +42,47 @@ const RootRedirect = () => {
   return <Navigate to={isOnboarded ? "/landing" : "/onboarding"} replace />;
 };
 
+const AppRoutes = () => {
+  const location = useLocation();
+  const isMapRoute = location.pathname === "/map";
+
+  return (
+    <>
+      <ScrollToTop />
+      <div className={isMapRoute ? "h-[100dvh] overflow-hidden" : "pb-14 sm:pb-0"}>
+        <Routes>
+          <Route path="/" element={<RootRedirect />} />
+          <Route path="/intro" element={<Landing />} />
+          <Route path="/landing" element={<Landing />} />
+          <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/guardian" element={<GuardianLanding />} />
+          <Route path="/driver-intro" element={<DriverLanding />} />
+          <Route path="/paramedic" element={<ParamedicLanding />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/family" element={<FamilyPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/driver" element={<DriverDashboard />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/install" element={<InstallPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/fare-calculator" element={<FareCalculatorPage />} />
+          <Route path="/logs" element={<RejectionLogsPage />} />
+          <Route path="/driver-bids" element={<DriverBidHistoryPage />} />
+          <Route path="/payments" element={<PaymentsPage />} />
+          <Route path="/driver-registration" element={<DriverRegistrationPage />} />
+          <Route path="/medicine-guide" element={<MedicineGuidePage />} />
+          <Route path="/emergency-guide" element={<EmergencyGuidePage />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      <BottomNavBar />
+    </>
+  );
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -53,37 +94,7 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                  <ScrollToTop />
-                  <div className="pb-14 sm:pb-0">
-                    <Routes>
-                      <Route path="/" element={<RootRedirect />} />
-                      <Route path="/intro" element={<Landing />} />
-                      <Route path="/landing" element={<Landing />} />
-                      <Route path="/onboarding" element={<OnboardingPage />} />
-                      <Route path="/guardian" element={<GuardianLanding />} />
-                      <Route path="/driver-intro" element={<DriverLanding />} />
-                      <Route path="/paramedic" element={<ParamedicLanding />} />
-                      <Route path="/map" element={<MapPage />} />
-                      <Route path="/family" element={<FamilyPage />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/driver" element={<DriverDashboard />} />
-                      <Route path="/admin" element={<AdminPage />} />
-                      <Route path="/admin/login" element={<AdminLogin />} />
-                      <Route path="/install" element={<InstallPage />} />
-                      <Route path="/terms" element={<TermsPage />} />
-                      <Route path="/privacy" element={<PrivacyPage />} />
-                       <Route path="/fare-calculator" element={<FareCalculatorPage />} />
-                       <Route path="/logs" element={<RejectionLogsPage />} />
-                       <Route path="/driver-bids" element={<DriverBidHistoryPage />} />
-                       <Route path="/payments" element={<PaymentsPage />} />
-                       <Route path="/driver-registration" element={<DriverRegistrationPage />} />
-                       <Route path="/medicine-guide" element={<MedicineGuidePage />} />
-                       <Route path="/emergency-guide" element={<EmergencyGuidePage />} />
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </div>
-                  <BottomNavBar />
+                  <AppRoutes />
                 </BrowserRouter>
               </PrivateTrafficProvider>
             </TransferRequestProvider>
