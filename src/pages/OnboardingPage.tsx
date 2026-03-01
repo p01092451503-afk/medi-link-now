@@ -14,7 +14,8 @@ import { toast } from "@/hooks/use-toast";
 
 const ONBOARDED_KEY = "find-er-onboarded";
 const ROLE_KEY = "find-er-user-role";
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS_WITH_FAMILY = 4;
+const TOTAL_STEPS_WITHOUT_FAMILY = 3;
 
 type UserRole = "guardian" | "driver" | "paramedic";
 
