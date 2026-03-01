@@ -329,6 +329,19 @@ export default function AdminPage() {
       </header>
 
       <main className="container px-4 py-6 space-y-6">
+        <Tabs defaultValue="data" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 mb-4">
+            <TabsTrigger value="data">
+              <Database className="w-4 h-4 mr-1.5" />
+              데이터 관리
+            </TabsTrigger>
+            <TabsTrigger value="verification">
+              <ShieldCheck className="w-4 h-4 mr-1.5" />
+              기사 인증
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="data" className="space-y-6">
         {/* Status Card */}
         <Card>
           <CardHeader>
