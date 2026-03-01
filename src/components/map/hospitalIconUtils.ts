@@ -28,6 +28,11 @@ export const getDisplayBeds = (hospital: Hospital, filter: FilterType): number =
   }
 };
 
+/** Check if hospital is fully saturated (all bed types <= 0) */
+export const isHospitalSaturated = (hospital: Hospital): boolean => {
+  return (hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever) <= 0;
+};
+
 export const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" => {
   if (beds === 0) return "unavailable";
   if (beds <= 2) return "limited";
@@ -112,14 +117,24 @@ export const createHospitalIcon = (
   isHighTraffic?: boolean,
   privateTrafficCount?: number,
   isPediatricSOS?: boolean,
-  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null
+  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null,
+  isSaturated?: boolean,
+  estimatedWaitMinutes?: number,
 ) => {
-  // Use pediatric SOS colors first, then moonlight, then grade colors
-  const colors = isPediatricSOS
-    ? getPediatricSOSColors()
-    : isMoonlightMode
-      ? getMoonlightColors()
-      : getGradeColors(emergencyGrade);
+  // Saturated hospitals get gray colors regardless of grade
+  const getSaturatedColors = () => ({
+    available: { bg: "#9CA3AF", border: "#6B7280", text: "#FFFFFF" },
+    limited: { bg: "#9CA3AF", border: "#6B7280", text: "#FFFFFF" },
+    unavailable: { bg: "#6B7280", border: "#4B5563", text: "#FFFFFF" },
+  });
+
+  const colors = isSaturated
+    ? getSaturatedColors()
+    : isPediatricSOS
+      ? getPediatricSOSColors()
+      : isMoonlightMode
+        ? getMoonlightColors()
+        : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
   const hasIncoming = incomingCount && incomingCount > 0;
@@ -336,13 +351,37 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
+  // Saturated wait-time tooltip (shown on hover via CSS)
+  const saturatedBadge = isSaturated && estimatedWaitMinutes
+    ? `<div style="
+        position: absolute;
+        top: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(107, 114, 128, 0.95);
+        color: white;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        z-index: 20;
+        pointer-events: none;
+      ">
+        포화 — 대기 약 ${estimatedWaitMinutes}분
+      </div>`
+    : '';
+
   // Status indicator badge - live reports override official data
   const liveOverride = liveStatus?.status;
-  const statusColor = liveOverride === 'full' ? '#EF4444'
+  const statusColor = isSaturated ? '#6B7280'
+    : liveOverride === 'full' ? '#EF4444'
     : liveOverride === 'busy' ? '#F59E0B'
     : liveOverride === 'available' ? '#10B981'
     : beds > 0 ? '#10B981' : '#EF4444';
-  const statusLabel = liveOverride === 'full' ? '만실'
+  const statusLabel = isSaturated ? '포화'
+    : liveOverride === 'full' ? '만실'
     : liveOverride === 'busy' ? '혼잡'
     : liveOverride === 'available' ? '여유'
     : beds > 0 ? '여유' : '혼잡';
@@ -408,6 +447,7 @@ export const createHospitalIcon = (
         align-items: center;
         cursor: pointer;
       ">
+        ${saturatedBadge}
         ${floatingTrafficBadge}
         ${rejectionBadge}
         <div class="marker-circle-inner" style="

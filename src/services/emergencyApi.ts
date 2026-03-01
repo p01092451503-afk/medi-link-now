@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { hospitals as mockHospitals, Hospital } from "@/data/hospitals";
+import { config } from "@/lib/config";
 
 interface ERApiResponse {
   success: boolean;
@@ -13,7 +14,6 @@ interface ERApiResponse {
     feverBeds: number;
     lat?: number;
     lng?: number;
-    // Extended fields
     isTraumaCenter?: boolean;
     acceptance?: {
       heart: boolean;
@@ -29,9 +29,20 @@ interface ERApiResponse {
   useMockData?: boolean;
 }
 
+/** Individual hospital ER status from ErmctInfoInqireService */
+export interface ERStatusData {
+  hpid: string;
+  hospitalName: string;
+  generalBeds: number;
+  pediatricBeds: number;
+  isolationBeds: number;
+  updatedAt: string;
+  source: 'api' | 'cache' | 'mock';
+  reliability: number; // 0-100
+}
+
 // City name mapping to Korean government API format
 const cityMapping: Record<string, string> = {
-  // 광역시/특별시/도
   seoul: "서울특별시",
   incheon: "인천광역시",
   gyeonggi: "경기도",
@@ -49,12 +60,11 @@ const cityMapping: Record<string, string> = {
   gyeongbuk: "경상북도",
   gyeongnam: "경상남도",
   jeju: "제주특별자치도",
-  all: "서울특별시", // Default to Seoul for "all"
+  all: "서울특별시",
 };
 
-// Sub-region (시/군/구) to parent region mapping for API calls
+// Sub-region to parent region mapping
 const subRegionToParent: Record<string, string> = {
-  // 서울 구
   "seoul-gangnam": "seoul", "seoul-gangdong": "seoul", "seoul-gangbuk": "seoul", "seoul-gangseo": "seoul",
   "seoul-gwanak": "seoul", "seoul-gwangjin": "seoul", "seoul-guro": "seoul", "seoul-geumcheon": "seoul",
   "seoul-nowon": "seoul", "seoul-dobong": "seoul", "seoul-dongdaemun": "seoul", "seoul-dongjak": "seoul",
@@ -62,11 +72,9 @@ const subRegionToParent: Record<string, string> = {
   "seoul-seongbuk": "seoul", "seoul-songpa": "seoul", "seoul-yangcheon": "seoul", "seoul-yeongdeungpo": "seoul",
   "seoul-yongsan": "seoul", "seoul-eunpyeong": "seoul", "seoul-jongno": "seoul", "seoul-jung": "seoul",
   "seoul-jungnang": "seoul",
-  // 인천 구/군
   "incheon-jung": "incheon", "incheon-dong": "incheon", "incheon-michuhol": "incheon", "incheon-yeonsu": "incheon",
   "incheon-namdong": "incheon", "incheon-bupyeong": "incheon", "incheon-gyeyang": "incheon", "incheon-seo": "incheon",
   "incheon-ganghwa": "incheon", "incheon-ongjin": "incheon",
-  // 경기도 시/군
   "gyeonggi-suwon": "gyeonggi", "gyeonggi-seongnam": "gyeonggi", "gyeonggi-goyang": "gyeonggi", "gyeonggi-yongin": "gyeonggi",
   "gyeonggi-bucheon": "gyeonggi", "gyeonggi-ansan": "gyeonggi", "gyeonggi-anyang": "gyeonggi", "gyeonggi-namyangju": "gyeonggi",
   "gyeonggi-hwaseong": "gyeonggi", "gyeonggi-pyeongtaek": "gyeonggi", "gyeonggi-uijeongbu": "gyeonggi", "gyeonggi-siheung": "gyeonggi",
@@ -75,51 +83,119 @@ const subRegionToParent: Record<string, string> = {
   "gyeonggi-anseong": "gyeonggi", "gyeonggi-uiwang": "gyeonggi", "gyeonggi-yangju": "gyeonggi", "gyeonggi-pocheon": "gyeonggi",
   "gyeonggi-yeoju": "gyeonggi", "gyeonggi-dongducheon": "gyeonggi", "gyeonggi-guri": "gyeonggi", "gyeonggi-gwacheon": "gyeonggi",
   "gyeonggi-gapyeong": "gyeonggi", "gyeonggi-yangpyeong": "gyeonggi", "gyeonggi-yeoncheon": "gyeonggi",
-  // 부산 구/군
   "busan-jung": "busan", "busan-seo": "busan", "busan-dong": "busan", "busan-yeongdo": "busan",
   "busan-busanjin": "busan", "busan-dongnae": "busan", "busan-nam": "busan", "busan-buk": "busan",
   "busan-haeundae": "busan", "busan-saha": "busan", "busan-geumjeong": "busan", "busan-gangseo": "busan",
   "busan-yeonje": "busan", "busan-suyeong": "busan", "busan-sasang": "busan", "busan-gijang": "busan",
-  // 대구 구/군
   "daegu-jung": "daegu", "daegu-dong": "daegu", "daegu-seo": "daegu", "daegu-nam": "daegu",
   "daegu-buk": "daegu", "daegu-suseong": "daegu", "daegu-dalseo": "daegu", "daegu-dalseong": "daegu", "daegu-gunwi": "daegu",
-  // 대전 구
   "daejeon-dong": "daejeon", "daejeon-jung": "daejeon", "daejeon-seo": "daejeon", "daejeon-yuseong": "daejeon", "daejeon-daedeok": "daejeon",
-  // 광주 구
   "gwangju-dong": "gwangju", "gwangju-seo": "gwangju", "gwangju-nam": "gwangju", "gwangju-buk": "gwangju", "gwangju-gwangsan": "gwangju",
-  // 울산 구/군
   "ulsan-jung": "ulsan", "ulsan-nam": "ulsan", "ulsan-dong": "ulsan", "ulsan-buk": "ulsan", "ulsan-ulju": "ulsan",
-  // 강원 시
   "gangwon-chuncheon": "gangwon", "gangwon-wonju": "gangwon", "gangwon-gangneung": "gangwon", "gangwon-donghae": "gangwon",
   "gangwon-sokcho": "gangwon", "gangwon-samcheok": "gangwon", "gangwon-taebaek": "gangwon",
-  // 충북 시
   "chungbuk-cheongju": "chungbuk", "chungbuk-chungju": "chungbuk", "chungbuk-jecheon": "chungbuk",
-  // 충남 시
   "chungnam-cheonan": "chungnam", "chungnam-asan": "chungnam", "chungnam-gongju": "chungnam",
   "chungnam-nonsan": "chungnam", "chungnam-seosan": "chungnam", "chungnam-dangjin": "chungnam",
-  // 전북 시
   "jeonbuk-jeonju": "jeonbuk", "jeonbuk-gunsan": "jeonbuk", "jeonbuk-iksan": "jeonbuk",
   "jeonbuk-jeongeup": "jeonbuk", "jeonbuk-namwon": "jeonbuk", "jeonbuk-gimje": "jeonbuk",
-  // 전남 시
   "jeonnam-mokpo": "jeonnam", "jeonnam-yeosu": "jeonnam", "jeonnam-suncheon": "jeonnam",
   "jeonnam-naju": "jeonnam", "jeonnam-gwangyang": "jeonnam",
-  // 경북 시
   "gyeongbuk-pohang": "gyeongbuk", "gyeongbuk-gyeongju": "gyeongbuk", "gyeongbuk-gimcheon": "gyeongbuk",
   "gyeongbuk-andong": "gyeongbuk", "gyeongbuk-gumi": "gyeongbuk", "gyeongbuk-yeongju": "gyeongbuk",
   "gyeongbuk-sangju": "gyeongbuk", "gyeongbuk-mungyeong": "gyeongbuk", "gyeongbuk-gyeongsan": "gyeongbuk",
-  // 경남 시
   "gyeongnam-changwon": "gyeongnam", "gyeongnam-jinju": "gyeongnam", "gyeongnam-tongyeong": "gyeongnam",
   "gyeongnam-sacheon": "gyeongnam", "gyeongnam-gimhae": "gyeongnam", "gyeongnam-miryang": "gyeongnam",
   "gyeongnam-geoje": "gyeongnam", "gyeongnam-yangsan": "gyeongnam",
-  // 제주 시
   "jeju-jeju": "jeju", "jeju-seogwipo": "jeju",
 };
 
-// Get the parent region for API calls (sub-regions use their parent's API endpoint)
 const getApiRegion = (regionId: string): string => {
-  const parentRegion = subRegionToParent[regionId];
-  return parentRegion || regionId;
+  return subRegionToParent[regionId] || regionId;
 };
+
+/**
+ * Fetch real-time ER status for a specific hospital by hpid
+ * Uses ErmctInfoInqireService API via Edge Function
+ * Falls back to cache/mock on error
+ */
+export const fetchERStatus = async (hpid: string): Promise<ERStatusData> => {
+  try {
+    const response = await fetch(
+      `${config.supabase.url}/functions/v1/fetch-er-data`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${config.supabase.anonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ hpid }),
+      }
+    );
+
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    
+    const result = await response.json();
+
+    if (result.success && result.data && result.data.length > 0) {
+      const item = result.data[0];
+      return {
+        hpid,
+        hospitalName: item.hospitalName,
+        generalBeds: item.generalBeds,
+        pediatricBeds: item.pediatricBeds,
+        isolationBeds: 0,
+        updatedAt: new Date().toISOString(),
+        source: 'api',
+        reliability: 95,
+      };
+    }
+
+    // Fallback: try cache
+    return await fetchERStatusFromCache(hpid);
+  } catch (err) {
+    console.warn(`[fetchERStatus] API failed for ${hpid}, falling back to cache:`, err);
+    return await fetchERStatusFromCache(hpid);
+  }
+};
+
+/** Fallback: read from hospital_status_cache table */
+async function fetchERStatusFromCache(hpid: string): Promise<ERStatusData> {
+  try {
+    const { data, error } = await supabase
+      .from('hospital_status_cache')
+      .select('*')
+      .eq('hpid', hpid)
+      .maybeSingle();
+
+    if (data && !error) {
+      const ageMinutes = (Date.now() - new Date(data.last_updated).getTime()) / 60000;
+      return {
+        hpid,
+        hospitalName: '',
+        generalBeds: data.general_beds,
+        pediatricBeds: data.pediatric_beds,
+        isolationBeds: data.isolation_beds,
+        updatedAt: data.last_updated,
+        source: 'cache',
+        reliability: Math.max(10, 80 - Math.floor(ageMinutes)),
+      };
+    }
+  } catch {}
+
+  // Final fallback: mock
+  const mock = mockHospitals.find(h => String(h.id) === hpid);
+  return {
+    hpid,
+    hospitalName: mock?.nameKr || '',
+    generalBeds: mock?.beds.general ?? 0,
+    pediatricBeds: mock?.beds.pediatric ?? 0,
+    isolationBeds: 0,
+    updatedAt: new Date().toISOString(),
+    source: 'mock',
+    reliability: 20,
+  };
+}
 
 /**
  * Fetches real-time ER bed data from the Korean Government API via Edge Function
@@ -127,9 +203,8 @@ const getApiRegion = (regionId: string): string => {
  */
 export const getRealTimeBeds = async (
   regionId: string = "seoul"
-): Promise<{ hospitals: Hospital[]; isRealtime: boolean; error?: string }> => {
+): Promise<{ hospitals: Hospital[]; isRealtime: boolean; error?: string; lastUpdated?: Date; source?: string }> => {
   try {
-    // Get the API region (parent region for sub-regions)
     const apiRegionId = getApiRegion(regionId);
     const city = cityMapping[apiRegionId] || cityMapping.seoul;
     
@@ -145,30 +220,30 @@ export const getRealTimeBeds = async (
         hospitals: mockHospitals,
         isRealtime: false,
         error: "API 호출 실패, 샘플 데이터를 표시합니다",
+        source: 'mock',
       };
     }
 
     if (!data?.success || data?.useMockData) {
-      console.log("API returned useMockData flag or failed:", data?.error);
       return {
         hospitals: mockHospitals,
         isRealtime: false,
         error: data?.error || "API 키가 설정되지 않음",
+        source: 'mock',
       };
     }
 
     if (!data.data || data.data.length === 0) {
-      console.log("No data returned from API, using mock data");
       return {
         hospitals: mockHospitals,
         isRealtime: false,
         error: "API에서 데이터가 반환되지 않음",
+        source: 'mock',
       };
     }
 
-    // Transform API data to Hospital format
     const transformedHospitals: Hospital[] = data.data.map((item, index) => ({
-      id: index + 1000, // Use numeric ID starting from 1000 for API data
+      id: index + 1000,
       name: item.hospitalName,
       nameKr: item.hospitalName,
       address: item.address || "",
@@ -180,20 +255,19 @@ export const getRealTimeBeds = async (
         pediatric: item.pediatricBeds,
         fever: item.feverBeds,
       },
-      equipment: ["CT", "MRI"], // Default equipment since API doesn't provide this
+      equipment: ["CT", "MRI"],
       category: "응급의료기관",
       region: regionId,
-      // Extended fields
       isTraumaCenter: item.isTraumaCenter,
       acceptance: item.acceptance,
       alertMessage: item.alertMessage,
     }));
 
-    console.log(`Successfully fetched ${transformedHospitals.length} hospitals from API`);
-
     return {
       hospitals: transformedHospitals,
       isRealtime: true,
+      lastUpdated: new Date(),
+      source: 'api',
     };
   } catch (err) {
     console.error("Error in getRealTimeBeds:", err);
@@ -201,17 +275,13 @@ export const getRealTimeBeds = async (
       hospitals: mockHospitals,
       isRealtime: false,
       error: "네트워크 오류",
+      source: 'mock',
     };
   }
 };
 
-/**
- * Get mock hospitals filtered by region (for fallback)
- */
 export const getMockHospitals = (regionId?: string): Hospital[] => {
-  if (!regionId || regionId === "all") {
-    return mockHospitals;
-  }
+  if (!regionId || regionId === "all") return mockHospitals;
   
   return mockHospitals.filter((h) => {
     const hospitalRegion = h.address.includes("서울") ? "seoul" :
@@ -222,7 +292,6 @@ export const getMockHospitals = (regionId?: string): Hospital[] => {
       h.address.includes("대전") ? "daejeon" :
       h.address.includes("광주") ? "gwangju" :
       h.address.includes("울산") ? "ulsan" : "seoul";
-    
     return hospitalRegion === regionId;
   });
 };
