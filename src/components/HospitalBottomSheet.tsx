@@ -148,7 +148,7 @@ const AcceptanceBadge = ({
   </div>
 );
 
-const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance }: HospitalBottomSheetProps) => {
+const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance, allHospitals }: HospitalBottomSheetProps) => {
   const [searchParams] = useSearchParams();
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const { user } = useAuth();
