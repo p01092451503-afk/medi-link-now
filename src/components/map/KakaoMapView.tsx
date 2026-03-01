@@ -311,6 +311,11 @@ const KakaoMapView = ({
           onZoomChange?.(leafletZoom);
         });
 
+        window.kakao.maps.event.addListener(map, "dragend", () => {
+          const latlng = map.getCenter();
+          onDragEnd?.([latlng.getLat(), latlng.getLng()]);
+        });
+
         setIsLoaded(true);
       })
       .catch((error) => {
