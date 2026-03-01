@@ -1,7 +1,8 @@
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { DriverPresence } from "@/hooks/useDriverPresence";
-import { Ambulance, Clock, Phone } from "lucide-react";
+import { Ambulance, Clock, Phone, ShieldCheck } from "lucide-react";
+import DriverVerifiedBadge from "@/components/DriverVerifiedBadge";
 
 interface DriverMarkerProps {
   driver: DriverPresence;
