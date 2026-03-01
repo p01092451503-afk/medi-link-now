@@ -28,6 +28,11 @@ export const getDisplayBeds = (hospital: Hospital, filter: FilterType): number =
   }
 };
 
+/** Check if hospital is fully saturated (all bed types <= 0) */
+export const isHospitalSaturated = (hospital: Hospital): boolean => {
+  return (hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever) <= 0;
+};
+
 export const getMarkerStatus = (beds: number): "available" | "limited" | "unavailable" => {
   if (beds === 0) return "unavailable";
   if (beds <= 2) return "limited";
