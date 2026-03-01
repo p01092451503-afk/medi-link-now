@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { config } from "@/lib/config";
 
 export interface HolidayPharmacy {
   id: string;
@@ -30,10 +31,10 @@ export const useHolidayPharmacies = (enabled: boolean = false) => {
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-holiday-pharmacies?numOfRows=500`,
+          `${config.supabase.url}/functions/v1/fetch-holiday-pharmacies?numOfRows=500`,
           {
             headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              'Authorization': `Bearer ${config.supabase.anonKey}`,
               'Content-Type': 'application/json',
             },
           }

@@ -29,11 +29,29 @@ git clone <YOUR_GIT_URL>
 # Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Step 3: Create .env file from example
+cp .env.example .env
+# Edit .env with your actual values
+
+# Step 4: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
+```
+
+### 환경변수 설정
+
+`.env.example` 파일을 복사하여 `.env` 파일을 생성하고, 실제 값을 입력하세요.
+
+| 변수명 | 필수 | 설명 |
+|--------|------|------|
+| `VITE_SUPABASE_PROJECT_ID` | ✅ | Lovable Cloud 프로젝트 ID |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | ✅ | Lovable Cloud 공개 키 |
+| `VITE_SUPABASE_URL` | ✅ | Lovable Cloud API URL |
+| `VITE_KAKAO_MAP_API_KEY` | ❌ | 카카오맵 API 키 (지도 기능) |
+
+> ⚠️ `.env` 파일은 절대 Git에 커밋하지 마세요!
 ```
 
 **Edit a file directly in GitHub**

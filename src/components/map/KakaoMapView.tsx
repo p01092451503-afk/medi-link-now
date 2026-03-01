@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { config } from "@/lib/config";
 import { Hospital, FilterType } from "@/data/hospitals";
 import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
@@ -134,7 +135,7 @@ const loadKakaoSDK = (): Promise<void> => {
     }
 
     // 3. Create script
-    const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
+    const apiKey = config.kakao.mapApiKey;
     if (!apiKey) {
       reject(new Error("VITE_KAKAO_MAP_API_KEY가 설정되지 않았습니다"));
       return;
