@@ -28,6 +28,7 @@ import MedicineGuidePage from "./pages/MedicineGuidePage";
 import EmergencyGuidePage from "./pages/EmergencyGuidePage";
 import DriverBidHistoryPage from "./pages/DriverBidHistoryPage";
 import PaymentsPage from "./pages/PaymentsPage";
+import DriverRegistrationPage from "./pages/DriverRegistrationPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
