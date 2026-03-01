@@ -447,6 +447,7 @@ export const createHospitalIcon = (
         align-items: center;
         cursor: pointer;
       ">
+        ${saturatedBadge}
         ${floatingTrafficBadge}
         ${rejectionBadge}
         <div class="marker-circle-inner" style="
