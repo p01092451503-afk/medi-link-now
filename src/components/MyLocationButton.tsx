@@ -25,7 +25,7 @@ const MyLocationButton = ({ onClick, isLoading }: MyLocationButtonProps) => {
       } : {}}
       onClick={onClick}
       disabled={isLoading}
-      className="fab-button bottom-32 right-4"
+      className="fab-button bottom-safe-2 right-4"
       aria-label="Center on my location"
     >
       {isLoading ? (
