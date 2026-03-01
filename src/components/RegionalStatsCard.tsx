@@ -18,6 +18,7 @@ interface RegionalStatsCardProps {
 
 const RegionalStatsCard = ({ hospitals, onRegionClick }: RegionalStatsCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(false);
 
   // Calculate stats by major region
   const regionStats: RegionStats[] = regionOptions
