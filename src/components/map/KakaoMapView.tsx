@@ -190,6 +190,7 @@ const KakaoMapView = ({
   activeAmbulanceTrips = [],
   incomingByHospital,
   onZoomChange,
+  onDragEnd,
   onLoadError,
   isPediatricSOS = false,
 }: KakaoMapViewProps) => {
