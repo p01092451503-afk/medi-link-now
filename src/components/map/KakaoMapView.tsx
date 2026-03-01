@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { config } from "@/lib/config";
 import { Hospital, FilterType } from "@/data/hospitals";
 import { Loader2 } from "lucide-react";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";

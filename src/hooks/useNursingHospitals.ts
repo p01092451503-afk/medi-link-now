@@ -31,10 +31,10 @@ export const useNursingHospitals = (enabled: boolean = false) => {
       try {
         // Fetch all nursing hospitals (request up to 1000)
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-nursing-hospitals?numOfRows=1000`,
+          `${config.supabase.url}/functions/v1/fetch-nursing-hospitals?numOfRows=1000`,
           {
             headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              'Authorization': `Bearer ${config.supabase.anonKey}`,
               'Content-Type': 'application/json',
             },
           }

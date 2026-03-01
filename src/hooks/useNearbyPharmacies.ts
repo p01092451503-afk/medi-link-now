@@ -233,10 +233,10 @@ export const useNearbyPharmacies = ({
       console.log('[useNearbyPharmacies] DB empty at all radii, calling Edge Function...');
       const maxRadius = SEARCH_RADII[SEARCH_RADII.length - 1];
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-nearby-pharmacies?lat=${lat}&lng=${lng}&radius=${maxRadius}`,
+        `${config.supabase.url}/functions/v1/fetch-nearby-pharmacies?lat=${lat}&lng=${lng}&radius=${maxRadius}`,
         {
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Authorization': `Bearer ${config.supabase.anonKey}`,
             'Content-Type': 'application/json',
           },
         }
