@@ -28,7 +28,7 @@ const slideVariants = {
 const StepIntro = () => (
   <div className="flex flex-col items-center text-center gap-6 px-4">
     <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
-      <Hospital className="w-10 h-10 text-primary" />
+      <span className="text-2xl font-extrabold text-primary">파인더</span>
     </div>
     <h1 className="text-2xl font-bold text-foreground">
       Find-ER에 오신 것을 환영합니다
