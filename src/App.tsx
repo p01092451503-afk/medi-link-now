@@ -27,6 +27,7 @@ import OnboardingPage from "./pages/OnboardingPage";
 import MedicineGuidePage from "./pages/MedicineGuidePage";
 import EmergencyGuidePage from "./pages/EmergencyGuidePage";
 import DriverBidHistoryPage from "./pages/DriverBidHistoryPage";
+import PaymentsPage from "./pages/PaymentsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,7 @@ const App = () => (
                    <Route path="/fare-calculator" element={<FareCalculatorPage />} />
                    <Route path="/logs" element={<RejectionLogsPage />} />
                    <Route path="/driver-bids" element={<DriverBidHistoryPage />} />
+                   <Route path="/payments" element={<PaymentsPage />} />
                    <Route path="/medicine-guide" element={<MedicineGuidePage />} />
                    <Route path="/emergency-guide" element={<EmergencyGuidePage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

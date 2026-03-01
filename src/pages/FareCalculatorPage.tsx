@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
+import PaymentButton from "@/components/PaymentButton";
 
 // 요금 계산 로직 (대한민국 법정 요금 기준)
 const FARE_CONFIG = {
@@ -345,16 +346,25 @@ const FareCalculatorPage = () => {
           </div>
         )}
 
-        {/* 이미지 저장 버튼 */}
-        {distance !== null && (
-          <Button
-            onClick={handleSaveImage}
-            variant="outline"
-            className="w-full"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            예상 견적서 이미지 저장
-          </Button>
+        {/* 결제 & 이미지 저장 버튼 */}
+        {distance !== null && currentFare && (
+          <div className="space-y-3">
+            <PaymentButton
+              amount={currentFare.total}
+              origin={origin}
+              destination={destination}
+              distanceKm={distance}
+              vehicleType={activeTab}
+            />
+            <Button
+              onClick={handleSaveImage}
+              variant="outline"
+              className="w-full"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              예상 견적서 이미지 저장
+            </Button>
+          </div>
         )}
 
         {/* 요금 기준 안내 */}
