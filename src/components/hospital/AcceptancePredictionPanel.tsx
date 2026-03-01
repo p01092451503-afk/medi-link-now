@@ -83,12 +83,12 @@ const WaitTimeDisplay = ({ prediction }: { prediction: AcceptancePrediction }) =
 
 // ── Condition Grid (Toss style) ──
 const conditionItems = [
-  { key: 'cardiac' as const, label: '심정지', emoji: '🫀' },
-  { key: 'stroke' as const, label: '뇌졸중', emoji: '🧠' },
-  { key: 'trauma' as const, label: '중증외상', emoji: '🚨' },
-  { key: 'pediatric' as const, label: '소아응급', emoji: '👶' },
-  { key: 'dialysis' as const, label: '투석', emoji: '💉' },
-  { key: null, label: '일반응급', emoji: '✅' },
+  { key: 'cardiac' as const, label: '심정지' },
+  { key: 'stroke' as const, label: '뇌졸중' },
+  { key: 'trauma' as const, label: '중증외상' },
+  { key: 'pediatric' as const, label: '소아응급' },
+  { key: 'dialysis' as const, label: '투석' },
+  { key: null, label: '일반응급' },
 ];
 
 const ConditionGrid = ({ prediction }: { prediction: AcceptancePrediction }) => (
@@ -99,19 +99,18 @@ const ConditionGrid = ({ prediction }: { prediction: AcceptancePrediction }) => 
       return (
         <div
           key={i}
-          className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border transition-colors ${
+          className={`flex items-center justify-between py-2.5 px-3 rounded-xl border transition-colors ${
             available
               ? 'bg-secondary border-border'
               : 'bg-destructive/5 border-destructive/15'
           }`}
         >
-          <span className="text-xl">{item.emoji}</span>
-          <span className={`text-[12px] font-semibold ${
+          <span className={`text-[13px] font-semibold ${
             available ? 'text-foreground' : 'text-destructive'
           }`}>
             {item.label}
           </span>
-          <span className={`text-[11px] font-bold ${
+          <span className={`text-[12px] font-bold ${
             available ? 'text-foreground' : 'text-destructive'
           }`}>
             {available ? '가능' : '불가'}
