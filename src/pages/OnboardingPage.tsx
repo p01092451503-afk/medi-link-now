@@ -14,7 +14,8 @@ import { toast } from "@/hooks/use-toast";
 
 const ONBOARDED_KEY = "find-er-onboarded";
 const ROLE_KEY = "find-er-user-role";
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS_WITH_FAMILY = 4;
+const TOTAL_STEPS_WITHOUT_FAMILY = 3;
 
 type UserRole = "guardian" | "driver" | "paramedic";
 
@@ -190,7 +191,10 @@ const OnboardingPage = () => {
   const [familyRelation, setFamilyRelation] = useState("");
   const [familyBlood, setFamilyBlood] = useState("");
 
-  const progress = ((step + 1) / TOTAL_STEPS) * 100;
+  const showFamilyStep = role === "guardian" || role === null;
+  const totalSteps = showFamilyStep ? TOTAL_STEPS_WITH_FAMILY : TOTAL_STEPS_WITHOUT_FAMILY;
+
+  const progress = ((step + 1) / totalSteps) * 100;
 
   const goNext = useCallback(() => {
     if (step === 1 && !role) {
@@ -198,8 +202,8 @@ const OnboardingPage = () => {
       return;
     }
     setDirection(1);
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
-  }, [step, role]);
+    setStep((s) => Math.min(s + 1, totalSteps - 1));
+  }, [step, role, totalSteps]);
 
   const goPrev = useCallback(() => {
     setDirection(-1);
@@ -242,7 +246,7 @@ const OnboardingPage = () => {
     navigate(role ? routeMap[role] : "/map", { replace: true });
   }, [role, familyName, familyRelation, familyBlood, navigate]);
 
-  const isLastStep = step === TOTAL_STEPS - 1;
+  const isLastStep = step === totalSteps - 1;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -250,7 +254,7 @@ const OnboardingPage = () => {
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm px-4 pt-4 pb-2">
         <Progress value={progress} className="h-1.5" />
         <div className="flex justify-between mt-1.5">
-          <span className="text-[10px] text-muted-foreground">{step + 1} / {TOTAL_STEPS}</span>
+          <span className="text-[10px] text-muted-foreground">{step + 1} / {totalSteps}</span>
           {step > 0 && (
             <button onClick={goPrev} className="text-[10px] text-muted-foreground flex items-center gap-0.5">
               <ChevronLeft className="w-3 h-3" /> 이전
@@ -275,7 +279,7 @@ const OnboardingPage = () => {
             {step === 0 && <StepIntro />}
             {step === 1 && <StepRole selected={role} onSelect={setRole} />}
             {step === 2 && <StepLocation granted={locationGranted} onRequest={requestLocation} />}
-            {step === 3 && (
+            {step === 3 && showFamilyStep && (
               <StepFamily
                 name={familyName} setName={setFamilyName}
                 relation={familyRelation} setRelation={setFamilyRelation}
