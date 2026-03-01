@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import html2canvas from "html2canvas";
+import PaymentButton from "@/components/PaymentButton";
 
 // 요금 계산 로직 (대한민국 법정 요금 기준)
 const FARE_CONFIG = {
