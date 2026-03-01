@@ -658,7 +658,16 @@ export default function AdminPage() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <AdminVerificationTab />
+          </TabsContent>
+        </Tabs>
       </main>
+    </div>
+  );
+}
     </div>
   );
 }
