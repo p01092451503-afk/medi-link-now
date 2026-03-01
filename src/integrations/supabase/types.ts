@@ -219,6 +219,95 @@ export type Database = {
         }
         Relationships: []
       }
+      driver_verification_documents: {
+        Row: {
+          document_type: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          uploaded_at: string
+          verification_id: string
+        }
+        Insert: {
+          document_type: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          uploaded_at?: string
+          verification_id: string
+        }
+        Update: {
+          document_type?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          uploaded_at?: string
+          verification_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_verification_documents_verification_id_fkey"
+            columns: ["verification_id"]
+            isOneToOne: false
+            referencedRelation: "driver_verifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_verifications: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          driver_id: string
+          driver_name: string
+          driver_phone: string
+          experience_years: number | null
+          expires_at: string | null
+          id: string
+          license_type: string | null
+          rejection_reason: string | null
+          status: string
+          updated_at: string
+          verification_notes: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          driver_id: string
+          driver_name: string
+          driver_phone: string
+          experience_years?: number | null
+          expires_at?: string | null
+          id?: string
+          license_type?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          verification_notes?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          driver_id?: string
+          driver_name?: string
+          driver_phone?: string
+          experience_years?: number | null
+          expires_at?: string | null
+          id?: string
+          license_type?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          verification_notes?: string | null
+        }
+        Relationships: []
+      }
       driving_logs: {
         Row: {
           created_at: string

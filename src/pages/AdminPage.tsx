@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble, Clock, MapPin, LogOut } from "lucide-react";
+import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble, Clock, MapPin, LogOut, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useAuth } from "@/hooks/useAuth";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminVerificationTab from "@/components/AdminVerificationTab";
 
 interface RegionUpdateStatus {
   region: string;
@@ -327,6 +329,19 @@ export default function AdminPage() {
       </header>
 
       <main className="container px-4 py-6 space-y-6">
+        <Tabs defaultValue="data" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 mb-4">
+            <TabsTrigger value="data">
+              <Database className="w-4 h-4 mr-1.5" />
+              데이터 관리
+            </TabsTrigger>
+            <TabsTrigger value="verification">
+              <ShieldCheck className="w-4 h-4 mr-1.5" />
+              기사 인증
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="data" className="space-y-6">
         {/* Status Card */}
         <Card>
           <CardHeader>
@@ -643,6 +658,12 @@ export default function AdminPage() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <AdminVerificationTab />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

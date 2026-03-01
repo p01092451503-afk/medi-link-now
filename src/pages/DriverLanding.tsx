@@ -56,7 +56,7 @@ const DriverLanding = () => {
             </p>
           </motion.div>
 
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="mt-7">
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="mt-7 space-y-3">
             <button
               onClick={() => navigate("/login")}
               className="w-full flex items-center justify-center gap-2 py-4 bg-foreground text-background rounded-2xl font-semibold text-[15px] hover:opacity-90 active:scale-[0.98] transition-all"
@@ -64,7 +64,14 @@ const DriverLanding = () => {
               드라이버 로그인
               <ArrowRight className="w-4 h-4" />
             </button>
-            <p className="text-xs text-center text-muted-foreground mt-3">
+            <button
+              onClick={() => navigate("/driver-registration")}
+              className="w-full flex items-center justify-center gap-2 py-3 border border-primary text-primary rounded-2xl font-semibold text-[15px] hover:bg-primary/5 active:scale-[0.98] transition-all"
+            >
+              <Shield className="w-4 h-4" />
+              기사 인증 신청
+            </button>
+            <p className="text-xs text-center text-muted-foreground">
               아직 계정이 없으신가요? 로그인 화면에서 가입할 수 있습니다
             </p>
           </motion.div>
