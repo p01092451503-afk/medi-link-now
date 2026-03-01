@@ -347,7 +347,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
 
               {/* AI Acceptance Prediction Panel */}
               <div className="mb-6">
-                <AcceptancePredictionPanel hospitalId={hospital.id} />
+                <AcceptancePredictionPanel hospitalId={hospital.id} hospital={hospital} allHospitals={allHospitals} />
               </div>
 
               {/* Bed Status Grid */}
