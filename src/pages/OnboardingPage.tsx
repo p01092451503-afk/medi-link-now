@@ -191,7 +191,10 @@ const OnboardingPage = () => {
   const [familyRelation, setFamilyRelation] = useState("");
   const [familyBlood, setFamilyBlood] = useState("");
 
-  const progress = ((step + 1) / TOTAL_STEPS) * 100;
+  const showFamilyStep = role === "guardian" || role === null;
+  const totalSteps = showFamilyStep ? TOTAL_STEPS_WITH_FAMILY : TOTAL_STEPS_WITHOUT_FAMILY;
+
+  const progress = ((step + 1) / totalSteps) * 100;
 
   const goNext = useCallback(() => {
     if (step === 1 && !role) {
@@ -199,8 +202,8 @@ const OnboardingPage = () => {
       return;
     }
     setDirection(1);
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
-  }, [step, role]);
+    setStep((s) => Math.min(s + 1, totalSteps - 1));
+  }, [step, role, totalSteps]);
 
   const goPrev = useCallback(() => {
     setDirection(-1);
