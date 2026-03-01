@@ -17,6 +17,12 @@ export default {
       },
     },
     extend: {
+      spacing: {
+        "nav": "var(--nav-height)",
+        "safe-1": "var(--safe-bottom-1)",
+        "safe-2": "var(--safe-bottom-2)",
+        "safe-3": "var(--safe-bottom-3)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
