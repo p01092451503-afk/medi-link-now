@@ -152,19 +152,8 @@ const Landing = () => {
       {/* Header - Toss style minimal */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
         <div className="px-5 py-4 flex items-center justify-between max-w-lg mx-auto">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight relative h-8 flex items-center">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={logoTextIndex}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className={logoTextIndex === 1 ? "font-logo" : ""}
-              >
-                {logoTextIndex === 0 ? "파인더" : "Find-ER"}
-              </motion.span>
-            </AnimatePresence>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
+            파인더
           </h1>
           <ThemeToggle />
         </div>
