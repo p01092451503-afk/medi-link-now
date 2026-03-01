@@ -465,7 +465,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-20 left-4 right-4 z-40"
+            className="fixed bottom-safe-1 left-4 right-4 z-40"
           >
             <div className="bg-card rounded-2xl border border-border p-4">
               <div className="flex items-center gap-3 mb-3">
