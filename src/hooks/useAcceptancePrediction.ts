@@ -174,7 +174,7 @@ export function useAcceptancePrediction(
     const acc = hospital.acceptance;
     const conditionAcceptance = {
       cardiac: acc?.heart ?? false,
-      stroke: acc?.brainBleed ?? false || acc?.brainStroke ?? false,
+      stroke: (acc?.brainBleed ?? false) || (acc?.brainStroke ?? false),
       trauma: hospital.isTraumaCenter ?? false,
       pediatric: hospital.beds.pediatric > 0,
       dialysis: acc?.dialysis ?? false,
