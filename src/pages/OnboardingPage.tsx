@@ -246,7 +246,7 @@ const OnboardingPage = () => {
     navigate(role ? routeMap[role] : "/map", { replace: true });
   }, [role, familyName, familyRelation, familyBlood, navigate]);
 
-  const isLastStep = step === TOTAL_STEPS - 1;
+  const isLastStep = step === totalSteps - 1;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
