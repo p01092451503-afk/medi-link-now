@@ -117,14 +117,24 @@ export const createHospitalIcon = (
   isHighTraffic?: boolean,
   privateTrafficCount?: number,
   isPediatricSOS?: boolean,
-  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null
+  liveStatus?: { status: LiveStatusLevel; minutesAgo: number } | null,
+  isSaturated?: boolean,
+  estimatedWaitMinutes?: number,
 ) => {
-  // Use pediatric SOS colors first, then moonlight, then grade colors
-  const colors = isPediatricSOS
-    ? getPediatricSOSColors()
-    : isMoonlightMode
-      ? getMoonlightColors()
-      : getGradeColors(emergencyGrade);
+  // Saturated hospitals get gray colors regardless of grade
+  const getSaturatedColors = () => ({
+    available: { bg: "#9CA3AF", border: "#6B7280", text: "#FFFFFF" },
+    limited: { bg: "#9CA3AF", border: "#6B7280", text: "#FFFFFF" },
+    unavailable: { bg: "#6B7280", border: "#4B5563", text: "#FFFFFF" },
+  });
+
+  const colors = isSaturated
+    ? getSaturatedColors()
+    : isPediatricSOS
+      ? getPediatricSOSColors()
+      : isMoonlightMode
+        ? getMoonlightColors()
+        : getGradeColors(emergencyGrade);
   const color = colors[status];
   const gradeLabel = getGradeLabel(emergencyGrade);
   const hasIncoming = incomingCount && incomingCount > 0;
