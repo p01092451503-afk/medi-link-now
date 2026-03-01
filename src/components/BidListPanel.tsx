@@ -1,5 +1,6 @@
 import { Star, Check, DollarSign, MessageSquare, Users, Clock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Bid } from "@/hooks/useBids";
 import { motion } from "framer-motion";
 
@@ -7,9 +8,30 @@ interface BidListPanelProps {
   bids: Bid[];
   onAcceptBid: (bidId: string, driverId: string) => Promise<boolean>;
   isRequester: boolean;
+  isLoading?: boolean;
 }
 
-const BidListPanel = ({ bids, onAcceptBid, isRequester }: BidListPanelProps) => {
+export const BidListSkeleton = () => (
+  <div className="space-y-3">
+    <div className="flex items-center justify-between">
+      <Skeleton className="h-5 w-28" />
+      <Skeleton className="h-6 w-24 rounded-full" />
+    </div>
+    {[1, 2, 3].map((i) => (
+      <div key={i} className="rounded-2xl p-4 border border-border space-y-3">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-7 w-24" />
+          <Skeleton className="h-5 w-14 rounded-full" />
+        </div>
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-10 w-full rounded-xl" />
+      </div>
+    ))}
+  </div>
+);
+
+const BidListPanel = ({ bids, onAcceptBid, isRequester, isLoading }: BidListPanelProps) => {
+  if (isLoading) return <BidListSkeleton />;
   const pendingBids = bids.filter(b => b.status === "pending");
   const fastestBid = pendingBids.length > 0
     ? pendingBids.reduce((min, b) => b.bid_amount < min.bid_amount ? b : min, pendingBids[0])

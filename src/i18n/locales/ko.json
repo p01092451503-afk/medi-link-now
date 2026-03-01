@@ -1,0 +1,41 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "close": "닫기",
+    "back": "뒤로",
+    "search": "검색",
+    "call119": "긴급 신고: 119"
+  },
+  "nav": {
+    "map": "지도",
+    "search": "검색",
+    "request": "요청",
+    "profile": "프로필"
+  },
+  "map": {
+    "title": "응급실 지도",
+    "myLocation": "내 위치",
+    "available": "여유",
+    "limited": "혼잡",
+    "unavailable": "만실"
+  },
+  "hospital": {
+    "beds": "병상",
+    "general": "성인",
+    "pediatric": "소아",
+    "fever": "열/감염",
+    "call": "전화하기",
+    "waitTime": "예상 대기 시간"
+  },
+  "error": {
+    "title": "일시적인 오류가 발생했습니다",
+    "message": "잠시 후 다시 시도해주세요.",
+    "reload": "새로고침"
+  }
+}

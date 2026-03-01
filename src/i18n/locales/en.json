@@ -1,0 +1,41 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "back": "Back",
+    "search": "Search",
+    "call119": "Emergency: 119"
+  },
+  "nav": {
+    "map": "Map",
+    "search": "Search",
+    "request": "Request",
+    "profile": "Profile"
+  },
+  "map": {
+    "title": "ER Map",
+    "myLocation": "My Location",
+    "available": "Available",
+    "limited": "Limited",
+    "unavailable": "Full"
+  },
+  "hospital": {
+    "beds": "Beds",
+    "general": "General",
+    "pediatric": "Pediatric",
+    "fever": "Fever/Infection",
+    "call": "Call",
+    "waitTime": "Estimated Wait Time"
+  },
+  "error": {
+    "title": "A temporary error occurred",
+    "message": "Please try again later.",
+    "reload": "Reload"
+  }
+}

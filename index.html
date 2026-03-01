@@ -3,10 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Find-ER - 실시간 응급 병상 찾기</title>
-    <meta name="description" content="실시간 응급실 병상 현황을 확인하세요. Find-ER은 구급대원과 환자가 가장 가까운 응급실을 찾을 수 있도록 도와줍니다." />
+    <title>Find-ER — 전국 응급실 실시간 현황</title>
+    <meta name="description" content="전국 응급실 실시간 병상 현황을 한눈에. 가장 가까운 응급실을 찾고, AI 수용 예측과 실시간 정보로 빠르게 대응하세요." />
     <meta name="author" content="Find-ER" />
     <meta name="theme-color" content="#0055FF" />
+    <meta name="keywords" content="응급실, 병상, 실시간, 응급의료, 구급차, 병원, ER, 응급" />
+    <link rel="canonical" href="https://find-bed-now.lovable.app/" />
     
     <!-- PWA Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -17,14 +19,53 @@
     <link rel="icon" href="data:," />
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <meta property="og:title" content="Find-ER | 응급 병상 찾기" />
-    <meta property="og:description" content="실시간 응급실 병상 현황 조회 서비스" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="전국 응급실 실시간 현황 — FIND-ER" />
+    <meta property="og:description" content="전국 응급실 병상 현황을 실시간으로 확인하고, AI 예측으로 최적의 응급실을 찾으세요." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://find-bed-now.lovable.app/" />
+    <meta property="og:image" content="https://find-bed-now.lovable.app/pwa-512x512.png" />
+    <meta property="og:site_name" content="Find-ER" />
+    <meta property="og:locale" content="ko_KR" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@FindER" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="전국 응급실 실시간 현황 — FIND-ER" />
+    <meta name="twitter:description" content="전국 응급실 병상 현황을 실시간으로 확인하고, AI 예측으로 최적의 응급실을 찾으세요." />
+    <meta name="twitter:image" content="https://find-bed-now.lovable.app/pwa-512x512.png" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalOrganization",
+      "name": "Find-ER",
+      "url": "https://find-bed-now.lovable.app",
+      "logo": "https://find-bed-now.lovable.app/pwa-512x512.png",
+      "description": "전국 응급실 실시간 병상 현황 조회 및 AI 수용 예측 서비스",
+      "medicalSpecialty": "Emergency",
+      "areaServed": {
+        "@type": "Country",
+        "name": "대한민국"
+      },
+      "sameAs": []
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Find-ER",
+      "url": "https://find-bed-now.lovable.app",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      }
+    }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
