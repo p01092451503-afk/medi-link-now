@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown, MapPin, Building2 } from "lucide-react";
+import { ChevronUp, ChevronDown, MapPin, Building2, BarChart3 } from "lucide-react";
 import { Hospital, regionOptions } from "@/data/hospitals";
+import RegionalHeatmapChart from "@/components/hospital/RegionalHeatmapChart";
 
 interface RegionStats {
   id: string;
