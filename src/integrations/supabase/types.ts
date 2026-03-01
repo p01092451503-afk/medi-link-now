@@ -646,6 +646,95 @@ export type Database = {
           },
         ]
       }
+      payment_records: {
+        Row: {
+          amount: number
+          created_at: string
+          deferred_reason: string | null
+          destination: string | null
+          distance_km: number | null
+          driver_consent: boolean | null
+          driver_id: string | null
+          driver_settlement: number
+          id: string
+          is_deferred: boolean
+          order_id: string
+          origin: string | null
+          payment_key: string | null
+          payment_method: string | null
+          payment_status: string
+          platform_fee: number
+          receipt_url: string | null
+          request_id: string | null
+          settled: boolean
+          settled_at: string | null
+          settlement_week: string | null
+          updated_at: string
+          user_id: string
+          vehicle_type: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          deferred_reason?: string | null
+          destination?: string | null
+          distance_km?: number | null
+          driver_consent?: boolean | null
+          driver_id?: string | null
+          driver_settlement?: number
+          id?: string
+          is_deferred?: boolean
+          order_id: string
+          origin?: string | null
+          payment_key?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          platform_fee?: number
+          receipt_url?: string | null
+          request_id?: string | null
+          settled?: boolean
+          settled_at?: string | null
+          settlement_week?: string | null
+          updated_at?: string
+          user_id: string
+          vehicle_type?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          deferred_reason?: string | null
+          destination?: string | null
+          distance_km?: number | null
+          driver_consent?: boolean | null
+          driver_id?: string | null
+          driver_settlement?: number
+          id?: string
+          is_deferred?: boolean
+          order_id?: string
+          origin?: string | null
+          payment_key?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          platform_fee?: number
+          receipt_url?: string | null
+          request_id?: string | null
+          settled?: boolean
+          settled_at?: string | null
+          settlement_week?: string | null
+          updated_at?: string
+          user_id?: string
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_records_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "ambulance_dispatch_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
