@@ -530,7 +530,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-20 left-4 right-4 z-40"
+            className="fixed bottom-safe-1 left-4 right-4 z-40"
           >
             <Sheet open={isSelectingHospital} onOpenChange={setIsSelectingHospital}>
               <SheetTrigger asChild>

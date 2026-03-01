@@ -684,7 +684,7 @@ const MapPage = () => {
         </div>
 
         {/* Utility Buttons (Legend + Map Toggle + Location) */}
-        <div className="absolute right-4 bottom-32 z-[1000] flex flex-col gap-3">
+        <div className="absolute right-4 bottom-safe-2 z-[1000] flex flex-col gap-3">
           {/* My Location Button - Apple Maps style */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>

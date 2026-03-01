@@ -138,7 +138,7 @@ const DrivingLogWidget = ({ onLogComplete, isSimulateMode = false }: DrivingLogW
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-20 right-4 z-[1000]"
+      className="fixed bottom-safe-1 right-4 z-[1000]"
     >
       <AnimatePresence mode="wait">
         {isDriving ? (
