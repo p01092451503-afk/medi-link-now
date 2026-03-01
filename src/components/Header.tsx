@@ -19,12 +19,7 @@ const Header = ({ onSearch }: HeaderProps) => {
       <div className="flex items-center gap-3 pointer-events-auto">
         {/* Logo and Title */}
         <div className="flex items-center gap-2 bg-card rounded-xl px-4 py-2.5 shadow-soft">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">F</span>
-          </div>
-          <div className="hidden sm:flex items-baseline gap-1.5">
-            <span className="font-logo font-extrabold text-foreground">Find-ER</span>
-          </div>
+          <span className="text-lg font-extrabold text-foreground tracking-tight">파인더</span>
         </div>
 
         {/* Search Bar */}
