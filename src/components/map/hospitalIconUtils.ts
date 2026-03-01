@@ -351,13 +351,37 @@ export const createHospitalIcon = (
       </div>`
     : "";
 
+  // Saturated wait-time tooltip (shown on hover via CSS)
+  const saturatedBadge = isSaturated && estimatedWaitMinutes
+    ? `<div style="
+        position: absolute;
+        top: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(107, 114, 128, 0.95);
+        color: white;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        z-index: 20;
+        pointer-events: none;
+      ">
+        포화 — 대기 약 ${estimatedWaitMinutes}분
+      </div>`
+    : '';
+
   // Status indicator badge - live reports override official data
   const liveOverride = liveStatus?.status;
-  const statusColor = liveOverride === 'full' ? '#EF4444'
+  const statusColor = isSaturated ? '#6B7280'
+    : liveOverride === 'full' ? '#EF4444'
     : liveOverride === 'busy' ? '#F59E0B'
     : liveOverride === 'available' ? '#10B981'
     : beds > 0 ? '#10B981' : '#EF4444';
-  const statusLabel = liveOverride === 'full' ? '만실'
+  const statusLabel = isSaturated ? '포화'
+    : liveOverride === 'full' ? '만실'
     : liveOverride === 'busy' ? '혼잡'
     : liveOverride === 'available' ? '여유'
     : beds > 0 ? '여유' : '혼잡';
