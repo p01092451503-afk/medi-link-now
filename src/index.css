@@ -63,6 +63,12 @@
 
     --radius: 0.75rem;
 
+    /* Layout safe-area tokens */
+    --nav-height: 56px;               /* BottomNavBar h-14 = 56px */
+    --safe-bottom-1: 72px;            /* Just above nav: nav + 16px gap */
+    --safe-bottom-2: 128px;           /* Second tier: legends, utility buttons */
+    --safe-bottom-3: 160px;           /* Third tier: FABs above legends */
+
     /* Sidebar (if needed) */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

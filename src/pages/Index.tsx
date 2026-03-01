@@ -240,7 +240,7 @@ const Index = () => {
       )}
 
       {/* Legend with realtime status */}
-      <div className="absolute bottom-24 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+      <div className="absolute bottom-safe-1 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-xs font-semibold text-foreground">병상 현황</h4>
           <button

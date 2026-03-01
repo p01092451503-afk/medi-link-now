@@ -50,7 +50,7 @@ const RegionalStatsCard = ({ hospitals, onRegionClick }: RegionalStatsCardProps)
   return (
     <motion.div
       layout
-      className="absolute bottom-44 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
+      className="absolute bottom-safe-3 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
       style={{ width: showHeatmap ? 280 : isExpanded ? 220 : 180 }}
     >
       {/* Header */}
