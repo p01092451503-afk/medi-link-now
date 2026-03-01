@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { config } from "@/lib/config";
 
 export interface HolidayPharmacy {
   id: string;

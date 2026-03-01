@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { config } from "@/lib/config";
 
 export interface NursingHospital {
   id: string;
