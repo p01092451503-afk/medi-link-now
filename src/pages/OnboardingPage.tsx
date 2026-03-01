@@ -31,7 +31,7 @@ const StepIntro = () => (
       <Hospital className="w-10 h-10 text-primary" />
     </div>
     <h1 className="text-2xl font-bold text-foreground">
-      Medi-Link에 오신 것을 환영합니다
+      Find-ER에 오신 것을 환영합니다
     </h1>
     <p className="text-muted-foreground leading-relaxed max-w-sm">
       전국 응급실의 <span className="font-semibold text-primary">실시간 병상 현황</span>을
