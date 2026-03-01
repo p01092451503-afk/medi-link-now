@@ -27,6 +27,7 @@ import OnboardingPage from "./pages/OnboardingPage";
 import MedicineGuidePage from "./pages/MedicineGuidePage";
 import EmergencyGuidePage from "./pages/EmergencyGuidePage";
 import DriverBidHistoryPage from "./pages/DriverBidHistoryPage";
+import PaymentsPage from "./pages/PaymentsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
