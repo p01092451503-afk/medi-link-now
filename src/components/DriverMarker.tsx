@@ -107,7 +107,10 @@ const DriverMarker = ({ driver, onCallDriver }: DriverMarkerProps) => {
               <Ambulance className="w-4 h-4 text-primary" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-sm">{driver.name}</h3>
+              <div className="flex items-center gap-1">
+                <h3 className="font-semibold text-sm">{driver.name}</h3>
+                <DriverVerifiedBadge driverId={driver.id} size="sm" />
+              </div>
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${statusInfo.color}`}>
                 {statusInfo.text}
               </span>
