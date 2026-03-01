@@ -292,7 +292,7 @@ const OnboardingPage = () => {
 
       {/* Bottom buttons */}
       <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm px-4 pb-6 pt-3 flex gap-3">
-        {isLastStep ? (
+        {isLastStep && showFamilyStep ? (
           <>
             <Button variant="outline" className="flex-1 gap-1" onClick={handleComplete}>
               <SkipForward className="w-4 h-4" /> 건너뛰기
@@ -301,6 +301,10 @@ const OnboardingPage = () => {
               <Check className="w-4 h-4" /> 등록 완료
             </Button>
           </>
+        ) : isLastStep ? (
+          <Button className="w-full gap-1" onClick={handleComplete} size="lg">
+            <Check className="w-4 h-4" /> 시작하기
+          </Button>
         ) : (
           <Button className="w-full gap-1" onClick={goNext} size="lg">
             다음 <ChevronRight className="w-4 h-4" />
