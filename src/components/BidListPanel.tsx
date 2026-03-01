@@ -1,5 +1,6 @@
 import { Star, Check, DollarSign, MessageSquare, Users, Clock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Bid } from "@/hooks/useBids";
 import { motion } from "framer-motion";
 
