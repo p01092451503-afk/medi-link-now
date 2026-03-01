@@ -560,7 +560,7 @@ const MapPage = () => {
     : undefined;
 
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col">
+    <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col !pb-0">
       {/* Splash Screen */}
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
@@ -882,7 +882,7 @@ const MapPage = () => {
 
         {/* Radius Chips - Capsule style, hidden when hospital selected */}
         {!selectedHospital && !selectedNursingHospital && (
-          <div className="absolute bottom-[40px] left-4 z-[999]">
+          <div className="absolute bottom-[72px] left-4 z-[999]">
             <RadiusChips
               activeRadius={activeRadius}
               onRadiusChange={handleRadiusChange}
