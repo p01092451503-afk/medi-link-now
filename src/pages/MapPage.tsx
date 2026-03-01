@@ -882,7 +882,7 @@ const MapPage = () => {
 
         {/* Radius Chips - Capsule style, hidden when hospital selected */}
         {!selectedHospital && !selectedNursingHospital && (
-          <div className="absolute bottom-[40px] left-4 z-[999]">
+          <div className="absolute bottom-[72px] left-4 z-[999]">
             <RadiusChips
               activeRadius={activeRadius}
               onRadiusChange={handleRadiusChange}
