@@ -344,6 +344,11 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </div>
               </div>
 
+              {/* AI Acceptance Prediction Panel */}
+              <div className="mb-6">
+                <AcceptancePredictionPanel hospitalId={hospital.id} />
+              </div>
+
               {/* Bed Status Grid */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
