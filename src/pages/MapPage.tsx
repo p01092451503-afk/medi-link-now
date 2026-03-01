@@ -568,6 +568,13 @@ const MapPage = () => {
     }
   }, [userLocation]);
 
+  // When user drags/pans the map, remove radius filter so all hospitals in view appear
+  const handleMapDragEnd = useCallback((newCenter: [number, number]) => {
+    setActiveRadius("all");
+    setActiveMajorRegion("all");
+    setActiveRegion("all");
+  }, []);
+
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
