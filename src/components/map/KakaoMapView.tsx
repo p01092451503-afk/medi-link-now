@@ -357,14 +357,18 @@ const KakaoMapView = ({
     };
   }, []);
 
-  // Update center and zoom when props change
+  // Update center when props change
   useEffect(() => {
     if (!mapRef.current || !isLoaded) return;
-
     const newCenter = new window.kakao.maps.LatLng(center[0], center[1]);
     mapRef.current.setCenter(newCenter);
+  }, [center, isLoaded]);
+
+  // Update zoom when props change
+  useEffect(() => {
+    if (!mapRef.current || !isLoaded) return;
     mapRef.current.setLevel(leafletToKakaoZoom(zoom));
-  }, [center, zoom, isLoaded]);
+  }, [zoom, isLoaded]);
 
   // Update user location marker
   useEffect(() => {
