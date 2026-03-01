@@ -95,7 +95,7 @@ const DriverBidForm = ({ onSubmit, isLoading, existingBid, pickupLat, pickupLng,
           )}
           {patientMedical.allergies && patientMedical.allergies.length > 0 && (
             <p className="text-xs text-foreground flex items-center gap-1">
-              <AlertTriangle className="w-3 h-3 text-orange-500" />
+              <AlertTriangle className="w-3 h-3 text-destructive" />
               알레르기: <span className="font-semibold">{patientMedical.allergies.join(", ")}</span>
             </p>
           )}
