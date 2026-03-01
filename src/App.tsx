@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { TransferModeProvider } from "@/contexts/TransferModeContext";
 import { TransferRequestProvider } from "@/contexts/TransferRequestContext";
 import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
@@ -31,6 +31,13 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const ONBOARDED_KEY = "find-er-onboarded";
+
+const RootRedirect = () => {
+  const isOnboarded = localStorage.getItem(ONBOARDED_KEY) === "true";
+  return <Navigate to={isOnboarded ? "/landing" : "/onboarding"} replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="find-er-theme">
@@ -43,10 +50,10 @@ const App = () => (
               <BrowserRouter>
                 <ScrollToTop />
                 <Routes>
-                  <Route path="/" element={<Landing />} />
+                  <Route path="/" element={<RootRedirect />} />
                   <Route path="/intro" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
-                  {/* <Route path="/onboarding" element={<OnboardingPage />} /> */}
+                  <Route path="/onboarding" element={<OnboardingPage />} />
                   <Route path="/guardian" element={<GuardianLanding />} />
                   <Route path="/driver-intro" element={<DriverLanding />} />
                   <Route path="/paramedic" element={<ParamedicLanding />} />
