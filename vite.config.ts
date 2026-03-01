@@ -20,14 +20,23 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "robots.txt"],
       manifest: {
-        name: "Medi-Link - 응급 병상 찾기",
-        short_name: "Medi-Link",
+        name: "파인더 - 응급 병상 찾기",
+        short_name: "파인더",
         description: "실시간 응급실 병상 현황 조회 서비스",
         theme_color: "#0055FF",
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",
         start_url: "/",
+        shortcuts: [
+          {
+            name: "SOS 긴급 호출",
+            short_name: "SOS",
+            description: "응급 상황 시 즉시 도움 요청",
+            url: "/map?sos=true",
+            icons: [{ src: "/pwa-192x192.png", sizes: "192x192" }],
+          },
+        ],
         icons: [
           {
             src: "/pwa-192x192.png",
