@@ -42,6 +42,7 @@ interface HospitalBottomSheetProps {
   distance?: number;
   userLocation?: [number, number] | null;
   onCallAmbulance?: () => void;
+  allHospitals?: Hospital[];
 }
 
 const BedStatusCard = ({
