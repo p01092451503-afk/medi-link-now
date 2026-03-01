@@ -560,7 +560,7 @@ const MapPage = () => {
     : undefined;
 
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col">
+    <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col !pb-0">
       {/* Splash Screen */}
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
