@@ -129,6 +129,25 @@ const RegionalStatsCard = ({ hospitals, onRegionClick }: RegionalStatsCardProps)
             </button>
           </div>
         )}
+
+        {/* Heatmap Toggle */}
+        <div className="mt-2 pt-2 border-t border-gray-100">
+          <button
+            onClick={() => setShowHeatmap(!showHeatmap)}
+            className="w-full text-[10px] text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-1"
+          >
+            <BarChart3 className="w-3 h-3" />
+            {showHeatmap ? '히트맵 닫기' : '시간대별 히트맵'}
+          </button>
+          {showHeatmap && (
+            <div className="mt-2">
+              <RegionalHeatmapChart
+                hospitals={hospitals}
+                regionLabel={regionStats[0]?.labelKr || '전체'}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );
