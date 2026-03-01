@@ -493,30 +493,6 @@ const MapPage = () => {
   }, []);
 
   const handleMyLocation = useCallback(() => {
-    // Toggle off: if location is already set, clear it and show all hospitals
-    if (userLocation) {
-      setUserLocation(null);
-      setActiveRadius("all");
-      setActiveMajorRegion("all");
-      setActiveRegion("all");
-      setMapCenter([36.5, 127.5]); // Center of Korea
-      setMapZoom(7); // Zoom out to see whole country
-      
-      // Show appropriate message based on active filter
-      if (activeFilter === "traumaCenter") {
-        toast({
-          title: "전국 외상센터 표시",
-          description: "전국의 모든 권역외상센터를 표시합니다.",
-        });
-      } else {
-        toast({
-          title: "전국 병원 표시",
-          description: "전국의 모든 병원 마커를 표시합니다.",
-        });
-      }
-      return;
-    }
-
     if (!navigator.geolocation) {
       toast({ title: "위치 서비스를 사용할 수 없습니다" });
       return;
@@ -532,8 +508,6 @@ const MapPage = () => {
         setActiveRadius(10);
         setMapZoom(getZoomForRadius(10));
         
-        // Use "all" region to show nearby hospitals across boundaries
-        // (radius filter handles distance-based filtering)
         setActiveMajorRegion("all");
         setActiveRegion("all");
         
@@ -549,7 +523,7 @@ const MapPage = () => {
       },
       { enableHighAccuracy: true, timeout: 5000 }
     );
-  }, [activeRadius, userLocation]);
+  }, []);
 
   const handleRadiusChange = useCallback((radius: number | "all") => {
     setActiveRadius(radius);
