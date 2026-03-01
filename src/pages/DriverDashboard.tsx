@@ -380,7 +380,21 @@ const DriverDashboard = () => {
                   </span>
                 )}
               </h3>
-              {filteredRequests.length === 0 ? (
+              {isDispatchLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-card rounded-2xl p-4 border border-border space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-5 w-20" />
+                        <Skeleton className="h-5 w-14 rounded-full" />
+                      </div>
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-10 w-full rounded-xl" />
+                    </div>
+                  ))}
+                </div>
+              ) : filteredRequests.length === 0 ? (
                 <div className="bg-card rounded-2xl p-6 border border-border text-center">
                   <Phone className="w-10 h-10 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-muted-foreground text-sm">
