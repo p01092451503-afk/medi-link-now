@@ -1,73 +1,178 @@
-import { motion } from 'framer-motion';
-import { Brain, Clock, TrendingDown, TrendingUp, Minus, CloudRain, Timer, Building2, Activity } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { useAcceptancePrediction, AcceptancePrediction } from '@/hooks/useAcceptancePrediction';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  Brain, Clock, CloudRain, Building2, Activity, ChevronDown, ChevronUp,
+  AlertTriangle, Heart, Droplet, Baby, Truck, ShieldCheck,
+} from 'lucide-react';
+import { useAcceptancePrediction } from '@/hooks/useAcceptancePrediction';
+import { Hospital } from '@/data/hospitals';
+import { AcceptancePrediction } from '@/types/acceptance';
+import { formatDistanceToNow } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
-interface AcceptancePredictionPanelProps {
+interface Props {
   hospitalId: number | undefined;
+  hospital?: Hospital | null;
+  allHospitals?: Hospital[];
 }
 
-const ConfidenceBadge = ({ level }: { level: 'high' | 'medium' | 'low' }) => {
-  const config = {
-    high: { label: '높음', className: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400' },
-    medium: { label: '보통', className: 'bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-400' },
-    low: { label: '낮음', className: 'bg-muted text-muted-foreground' },
-  };
-  const c = config[level];
-  return (
-    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${c.className}`}>
-      신뢰도 {c.label}
-    </span>
-  );
-};
-
-const GaugeBar = ({ value, label }: { value: number; label: string }) => {
-  const getColor = (v: number) => {
-    if (v >= 70) return 'bg-green-500';
-    if (v >= 40) return 'bg-orange-500';
-    return 'bg-red-500';
-  };
+// ── Signal Banner ──
+const SignalBanner = ({ prediction }: { prediction: AcceptancePrediction }) => {
+  const signalEmoji = prediction.signal === 'green' ? '🟢' : prediction.signal === 'yellow' ? '🟡' : '🔴';
+  const signalBg =
+    prediction.signal === 'green'
+      ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+      : prediction.signal === 'yellow'
+      ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800'
+      : 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800';
+  const signalText =
+    prediction.signal === 'green' ? 'text-green-700 dark:text-green-400'
+    : prediction.signal === 'yellow' ? 'text-orange-700 dark:text-orange-400'
+    : 'text-red-700 dark:text-red-400';
 
   return (
-    <div className="space-y-1.5">
+    <div className={`p-4 rounded-2xl border ${signalBg}`}>
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-foreground">{label}</span>
-        <span className="text-sm font-bold text-foreground">{value}%</span>
-      </div>
-      <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${value}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className={`h-full rounded-full ${getColor(value)}`}
-        />
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">{signalEmoji}</span>
+          <div>
+            <p className={`text-xl font-bold ${signalText}`}>
+              수용 가능성 {prediction.probability}%
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              데이터 신뢰도: {prediction.confidence === 'high' ? '높음' : prediction.confidence === 'medium' ? '보통' : '낮음'}
+              {' '}({prediction.dataFreshness.sourcesActive}개 소스)
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const FactorItem = ({ icon: Icon, label, score }: { icon: React.ElementType; label: string; score: number }) => (
-  <div className="flex items-center gap-2">
-    <Icon className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-    <span className="text-[11px] text-muted-foreground flex-1">{label}</span>
-    <div className="w-12 h-1.5 bg-secondary rounded-full overflow-hidden">
-      <div
-        className="h-full bg-foreground/40 rounded-full transition-all"
-        style={{ width: `${score}%` }}
-      />
+// ── Wait Time ──
+const WaitTimeDisplay = ({ prediction }: { prediction: AcceptancePrediction }) => {
+  const waitText =
+    prediction.confidence === 'low'
+      ? `${Math.max(5, prediction.estimatedWaitMin - 15)}~${prediction.estimatedWaitMin + 15}분 (추정)`
+      : `약 ${prediction.estimatedWaitMin}분`;
+
+  return (
+    <div className="p-3 rounded-xl bg-secondary border border-border">
+      <div className="flex items-center gap-1.5 mb-1">
+        <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+        <span className="text-[11px] text-muted-foreground">예상 대기</span>
+      </div>
+      <p className="text-lg font-bold text-foreground">{waitText}</p>
     </div>
-    <span className="text-[10px] font-mono text-muted-foreground w-7 text-right">{score}</span>
+  );
+};
+
+// ── Condition Grid ──
+const conditionItems = [
+  { key: 'cardiac' as const, label: '심정지', emoji: '🫀' },
+  { key: 'stroke' as const, label: '뇌졸중', emoji: '🧠' },
+  { key: 'trauma' as const, label: '중증외상', emoji: '🚨' },
+  { key: 'pediatric' as const, label: '소아응급', emoji: '👶' },
+  { key: 'dialysis' as const, label: '투석', emoji: '💉' },
+  { key: null, label: '일반응급', emoji: '✅' },
+];
+
+const ConditionGrid = ({ prediction }: { prediction: AcceptancePrediction }) => (
+  <div className="grid grid-cols-3 gap-2">
+    {conditionItems.map((item, i) => {
+      const available = item.key ? prediction.conditionAcceptance[item.key] : prediction.probability >= 35;
+      const colorClass = available
+        ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
+        : 'bg-red-50 dark:bg-red-950/30 text-red-500 dark:text-red-400 border-red-200 dark:border-red-800';
+
+      return (
+        <div
+          key={i}
+          className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border text-center ${colorClass}`}
+        >
+          <span className="text-lg">{item.emoji}</span>
+          <span className="text-[11px] font-medium">{item.label}</span>
+          <span className="text-[10px] font-bold">{available ? '가능' : '불가'}</span>
+        </div>
+      );
+    })}
   </div>
 );
 
-const AcceptancePredictionPanel = ({ hospitalId }: AcceptancePredictionPanelProps) => {
-  const { data: prediction, isLoading } = useAcceptancePrediction(hospitalId);
+// ── Breakdown Section ──
+const BreakdownSection = ({ prediction }: { prediction: AcceptancePrediction }) => {
+  const [open, setOpen] = useState(false);
+
+  const lastUpdatedText = formatDistanceToNow(prediction.dataFreshness.lastUpdated, {
+    addSuffix: true,
+    locale: ko,
+  });
+
+  return (
+    <div className="border border-border rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-3 hover:bg-secondary/50 transition-colors"
+      >
+        <span className="text-xs font-semibold text-foreground">이 예측의 근거</span>
+        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="px-3 pb-3 space-y-2 border-t border-border pt-2">
+              <FactorRow icon={Activity} label="현재 병상 점유율" value={`${prediction.breakdown.occupancyScore}%`} score={prediction.breakdown.occupancyScore} />
+              <FactorRow icon={Clock} label="시간대 보정" value={`패턴 ${prediction.breakdown.patternScore}점`} score={prediction.breakdown.patternScore} />
+              <FactorRow icon={CloudRain} label="날씨 영향" value={`환경 ${prediction.breakdown.weatherScore}점`} score={prediction.breakdown.weatherScore} />
+              <FactorRow icon={Building2} label="주변 응급실 과부하" value={`연쇄 ${prediction.breakdown.spilloverScore}점`} score={prediction.breakdown.spilloverScore} />
+              <div className="pt-1.5 text-[10px] text-muted-foreground flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" />
+                마지막 업데이트: {lastUpdatedText}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const FactorRow = ({ icon: Icon, label, value, score }: { icon: React.ElementType; label: string; value: string; score: number }) => (
+  <div className="flex items-center gap-2">
+    <Icon className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+    <span className="text-[11px] text-muted-foreground flex-1">{label}</span>
+    <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+      <div
+        className="h-full bg-foreground/40 rounded-full"
+        style={{ width: `${Math.min(100, score)}%` }}
+      />
+    </div>
+    <span className="text-[10px] font-mono text-muted-foreground w-14 text-right">{value}</span>
+  </div>
+);
+
+// ── Low Confidence Warning ──
+const LowConfidenceWarning = () => (
+  <div className="p-3 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800">
+    <div className="flex items-start gap-2">
+      <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
+      <p className="text-[11px] text-orange-700 dark:text-orange-300 leading-relaxed">
+        실시간 데이터 연결이 제한되어 통계 기반으로 추정합니다.
+        반드시 병원에 직접 확인하세요.
+      </p>
+    </div>
+  </div>
+);
+
+// ── Main Panel ──
+const AcceptancePredictionPanel = ({ hospitalId, hospital, allHospitals }: Props) => {
+  const { data: prediction, isLoading } = useAcceptancePrediction(hospitalId, hospital, allHospitals);
 
   if (isLoading) {
     return (
@@ -96,90 +201,36 @@ const AcceptancePredictionPanel = ({ hospitalId }: AcceptancePredictionPanelProp
     );
   }
 
-  const prob = prediction.acceptance_probability;
-  const waitMin = prediction.estimated_wait_minutes;
-  const forecast = prediction.forecast_30min;
-  const diff = forecast - prob;
-
-  const formatWait = () => {
-    if (prediction.confidence === 'low') {
-      const low = Math.max(5, waitMin - 15);
-      const high = waitMin + 15;
-      return `~${low}–${high}분`;
-    }
-    return `${waitMin}분`;
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 rounded-2xl bg-secondary border border-border space-y-4"
+      className="space-y-3"
     >
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4 text-foreground" />
-          <h4 className="text-sm font-bold text-foreground">AI 수용 예측</h4>
-          <span className="text-[9px] font-bold text-background bg-foreground px-2 py-0.5 rounded-full">v2</span>
-        </div>
-        <ConfidenceBadge level={prediction.confidence} />
+      <div className="flex items-center gap-2">
+        <Brain className="w-4 h-4 text-foreground" />
+        <h4 className="text-sm font-bold text-foreground">AI 4계층 수용 예측</h4>
+        <span className="text-[9px] font-bold text-background bg-foreground px-2 py-0.5 rounded-full">v3</span>
       </div>
 
-      {/* Main Gauge */}
-      <GaugeBar value={prob} label="현재 수용 가능성" />
+      {/* ① Signal Banner */}
+      <SignalBanner prediction={prediction} />
 
-      {/* Wait & Forecast */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-xl bg-background border border-border">
-          <div className="flex items-center gap-1.5 mb-1">
-            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-[11px] text-muted-foreground">예상 대기</span>
-          </div>
-          <p className="text-lg font-bold text-foreground">{formatWait()}</p>
-        </div>
-        <div className="p-3 rounded-xl bg-background border border-border">
-          <div className="flex items-center gap-1.5 mb-1">
-            <Timer className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-[11px] text-muted-foreground">30분 후</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <p className="text-lg font-bold text-foreground">{forecast}%</p>
-            {diff > 0 ? (
-              <TrendingUp className="w-3.5 h-3.5 text-green-500" />
-            ) : diff < 0 ? (
-              <TrendingDown className="w-3.5 h-3.5 text-red-500" />
-            ) : (
-              <Minus className="w-3.5 h-3.5 text-muted-foreground" />
-            )}
-          </div>
-        </div>
+      {/* ② Wait Time */}
+      <WaitTimeDisplay prediction={prediction} />
+
+      {/* ③ Condition Grid */}
+      <div>
+        <p className="text-xs font-semibold text-foreground mb-2">증상별 수용 가능 여부</p>
+        <ConditionGrid prediction={prediction} />
       </div>
 
-      {/* Factor Breakdown */}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button className="w-full text-left">
-              <div className="space-y-1.5 pt-2 border-t border-border">
-                <p className="text-[10px] font-medium text-muted-foreground mb-2">예측 근거 (탭하여 상세)</p>
-                <FactorItem icon={Activity} label="병상 가용률" score={prediction.factors.bed_availability_score} />
-                <FactorItem icon={Clock} label="시간대 패턴" score={prediction.factors.time_pattern_score} />
-                <FactorItem icon={Building2} label="주변 경쟁" score={prediction.factors.nearby_competition_score} />
-                <FactorItem icon={CloudRain} label="기상 영향" score={prediction.factors.weather_score} />
-                <FactorItem icon={TrendingUp} label="과거 수용률" score={prediction.factors.historical_acceptance_score} />
-              </div>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[280px] p-3">
-            <div className="space-y-1.5 text-xs">
-              <p className="font-semibold">가중치 알고리즘</p>
-              <p>병상 35% · 과거수용 25% · 시간대 15% · 경쟁 15% · 기상 10%</p>
-              <p className="text-muted-foreground mt-1">Open-Meteo API로 실시간 날씨 반영</p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {/* ④ Breakdown */}
+      <BreakdownSection prediction={prediction} />
+
+      {/* ⑤ Low confidence warning */}
+      {prediction.confidence === 'low' && <LowConfidenceWarning />}
     </motion.div>
   );
 };

@@ -42,6 +42,7 @@ interface HospitalBottomSheetProps {
   distance?: number;
   userLocation?: [number, number] | null;
   onCallAmbulance?: () => void;
+  allHospitals?: Hospital[];
 }
 
 const BedStatusCard = ({
@@ -147,7 +148,7 @@ const AcceptanceBadge = ({
   </div>
 );
 
-const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance }: HospitalBottomSheetProps) => {
+const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance, allHospitals }: HospitalBottomSheetProps) => {
   const [searchParams] = useSearchParams();
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
   const { user } = useAuth();
@@ -346,7 +347,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
 
               {/* AI Acceptance Prediction Panel */}
               <div className="mb-6">
-                <AcceptancePredictionPanel hospitalId={hospital.id} />
+                <AcceptancePredictionPanel hospitalId={hospital.id} hospital={hospital} allHospitals={allHospitals} />
               </div>
 
               {/* Bed Status Grid */}
