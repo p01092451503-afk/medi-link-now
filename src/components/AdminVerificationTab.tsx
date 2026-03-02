@@ -83,11 +83,7 @@ const AdminVerificationTab = () => {
   const pendingCount = pendingVerifications.filter(v => v.status === "pending").length;
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
+    return <AmbulanceLoader variant="section" />;
   }
 
   return (
