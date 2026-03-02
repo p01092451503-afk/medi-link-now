@@ -83,27 +83,6 @@ const Index = () => {
     }
   }, []);
 
-  const handleMyLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      toast({ title: "위치 서비스를 사용할 수 없습니다" });
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const newLocation: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-        setUserLocation(newLocation);
-        setMapCenter(newLocation);
-        setIsLocating(false);
-        toast({ title: "현재 위치를 찾았습니다!" });
-      },
-      () => {
-        setIsLocating(false);
-        toast({ title: "서울 기본 위치를 사용합니다" });
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  }, []);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
