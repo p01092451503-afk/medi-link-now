@@ -33,7 +33,7 @@ const Index = () => {
   const [activeRegion, setActiveRegion] = useState<RegionType>("all");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [isLocating, setIsLocating] = useState(false);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [excludeFullHospitals, setExcludeFullHospitals] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
