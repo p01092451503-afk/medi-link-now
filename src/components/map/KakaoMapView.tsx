@@ -99,43 +99,64 @@ const KOREA_BOUNDS = {
   ne: { lat: 38.8, lng: 132.0 },
 };
 
-// Kakao Maps SDK loader — singleton, no retry, domain-auth detection
+// Kakao Maps SDK loader — singleton + strict mode safe
 const SCRIPT_ID = "kakao-map-sdk";
+let kakaoSdkLoadPromise: Promise<void> | null = null;
+
+const waitForKakaoReady = (timeoutMs = 10000): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const startedAt = Date.now();
+
+    const check = () => {
+      if (window.kakao?.maps?.Map) {
+        resolve();
+        return;
+      }
+
+      if (window.kakao?.maps?.load) {
+        window.kakao.maps.load(() => resolve());
+        return;
+      }
+
+      if (Date.now() - startedAt >= timeoutMs) {
+        reject(
+          new Error(
+            `카카오맵 SDK 준비 시간 초과 (${timeoutMs}ms).\n현재 도메인: ${window.location.origin}`
+          )
+        );
+        return;
+      }
+
+      setTimeout(check, 120);
+    };
+
+    check();
+  });
+};
 
 const loadKakaoSDK = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    // 1) Already loaded and initialized
-    if (window.kakao?.maps?.Map) {
-      console.log("[KakaoSDK] Already fully initialized");
-      resolve();
-      return;
-    }
+  if (window.kakao?.maps?.Map) return Promise.resolve();
+  if (kakaoSdkLoadPromise) return kakaoSdkLoadPromise;
 
-    // 2) kakao object exists but maps not initialized yet (autoload=false)
-    if (window.kakao?.maps?.load) {
-      console.log("[KakaoSDK] kakao.maps.load exists, calling it...");
-      window.kakao.maps.load(() => {
-        console.log("[KakaoSDK] maps.load() completed ✅");
-        resolve();
-      });
-      return;
-    }
-
-    // 3) Remove any existing script to avoid stale state
-    const existingScript = document.getElementById(SCRIPT_ID);
-    if (existingScript) {
-      console.log("[KakaoSDK] Removing stale script tag");
-      existingScript.remove();
-    }
-
-    // 4) Create fresh script
+  kakaoSdkLoadPromise = new Promise((resolve, reject) => {
     const apiKey = config.kakao.mapApiKey;
     if (!apiKey) {
+      kakaoSdkLoadPromise = null;
       reject(new Error("VITE_KAKAO_MAP_API_KEY가 설정되지 않았습니다"));
       return;
     }
 
-    console.log("[KakaoSDK] Creating script, origin:", window.location.origin);
+    // 이미 script가 있으면 중복 생성하지 말고 준비 완료만 대기
+    const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+    if (existingScript) {
+      waitForKakaoReady(10000)
+        .then(resolve)
+        .catch((err) => {
+          kakaoSdkLoadPromise = null;
+          reject(err);
+        });
+      return;
+    }
 
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
@@ -143,36 +164,27 @@ const loadKakaoSDK = (): Promise<void> => {
     script.async = true;
 
     script.onload = () => {
-      console.log("[KakaoSDK] Script onload. window.kakao:", typeof window.kakao, "maps:", typeof window.kakao?.maps);
-
-      if (!window.kakao) {
-        reject(new Error(
-          `카카오맵 도메인 인증 실패.\n` +
-          `현재 도메인: ${window.location.origin}\n` +
-          `카카오 개발자 콘솔에서 이 도메인이 JS 앱키 "${apiKey.slice(0, 8)}..."의 웹 플랫폼에 등록되어 있는지 확인하세요.`
-        ));
-        return;
-      }
-
-      if (!window.kakao.maps?.load) {
-        reject(new Error("카카오맵 SDK 로드 완료되었으나 maps.load가 없습니다"));
-        return;
-      }
-
-      window.kakao.maps.load(() => {
-        console.log("[KakaoSDK] maps.load() completed ✅");
-        resolve();
-      });
+      waitForKakaoReady(10000)
+        .then(resolve)
+        .catch((err) => {
+          kakaoSdkLoadPromise = null;
+          reject(err);
+        });
     };
 
-    script.onerror = (e) => {
-      console.error("[KakaoSDK] Script network error:", e);
-      script.remove();
-      reject(new Error("카카오맵 스크립트 로드 실패 (네트워크 오류)"));
+    script.onerror = () => {
+      kakaoSdkLoadPromise = null;
+      reject(
+        new Error(
+          `카카오맵 스크립트 로드 실패(네트워크/CSP).\n현재 도메인: ${window.location.origin}`
+        )
+      );
     };
 
     document.head.appendChild(script);
   });
+
+  return kakaoSdkLoadPromise;
 };
 
 const KakaoMapView = ({
