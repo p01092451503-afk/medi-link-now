@@ -5,7 +5,6 @@ import {
   MapPin, 
   User, 
   FileText, 
-  Send, 
   Send,
   Ambulance,
   Navigation,
@@ -13,6 +12,7 @@ import {
   Timer,
   Users
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { DriverPresence } from "@/hooks/useDriverPresence";
 import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import { useDriverPresence } from "@/hooks/useDriverPresence";
