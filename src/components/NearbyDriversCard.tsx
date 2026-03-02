@@ -6,9 +6,9 @@ import {
   Clock, 
   Phone, 
   ChevronUp,
-  Loader2,
   Navigation
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { DriverPresence } from "@/hooks/useDriverPresence";
 import { calculateDistance } from "@/data/hospitals";
 
@@ -89,7 +89,7 @@ const NearbyDriversCard = ({
           <h4 className="text-xs font-semibold">주변 구급대원</h4>
         </div>
         <div className="flex items-center gap-1">
-          {isLoading && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
+          {isLoading && <AmbulanceLoader variant="inline" />}
           <button
             onClick={(e) => {
               e.stopPropagation();

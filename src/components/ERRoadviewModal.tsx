@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, AlertTriangle, Loader2, Ambulance, MapPin, RotateCcw } from "lucide-react";
+import { X, AlertTriangle, Ambulance, MapPin, RotateCcw } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 
 interface ERRoadviewModalProps {
@@ -143,10 +144,7 @@ const ERRoadviewModal = ({
             <div className="flex-1 relative bg-secondary min-h-[280px] md:min-h-[350px]">
               {isLoading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-secondary">
-                  <Loader2 className="w-10 h-10 text-foreground animate-spin mb-4" />
-                  <p className="text-sm text-muted-foreground">
-                    로드뷰를 불러오는 중...
-                  </p>
+                  <AmbulanceLoader variant="section" message="로드뷰를 불러오는 중" />
                 </div>
               )}
 

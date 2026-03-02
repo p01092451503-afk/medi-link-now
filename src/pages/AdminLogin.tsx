@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, Mail, Lock, Loader2, AlertTriangle } from "lucide-react";
+import { Shield, Mail, Lock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -177,7 +177,7 @@ const AdminLogin = () => {
             className="w-full py-6 rounded-xl text-base font-semibold bg-amber-500 hover:bg-amber-600 text-slate-900"
           >
             {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <AmbulanceLoader variant="inline" />
             ) : (
               "관리자 로그인"
             )}

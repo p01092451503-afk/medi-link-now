@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Loader2, Sparkles, Edit3, Check, X, RotateCcw } from "lucide-react";
+import { Mic, MicOff, Sparkles, Edit3, Check, X, RotateCcw } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
@@ -402,8 +403,7 @@ const VoiceRecorder = ({ onTranscript, onParsedData }: VoiceRecorderProps) => {
                   <div className="flex items-center gap-2 mb-1">
                     {isProcessingAI ? (
                       <>
-                        <Loader2 className="w-4 h-4 text-purple-500 dark:text-purple-400 animate-spin" />
-                        <span className="text-xs font-medium text-purple-600 dark:text-purple-400">AI 분석 중...</span>
+                        <AmbulanceLoader variant="inline" message="AI 분석 중" />
                       </>
                     ) : (
                       <>

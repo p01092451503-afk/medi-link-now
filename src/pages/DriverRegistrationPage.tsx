@@ -5,6 +5,7 @@ import {
   User, Phone, Upload, FileText, ShieldCheck, CheckCircle,
   Loader2, ArrowRight, ArrowLeft, Camera, X, AlertCircle
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -264,7 +265,7 @@ const DriverRegistrationPage = () => {
                   <ArrowLeft className="w-4 h-4 mr-1" /> 이전
                 </Button>
                 <Button onClick={handleSubmit} disabled={!canProceedStep1 || isSubmitting} className="flex-1 rounded-2xl py-6">
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>제출하기 <ArrowRight className="w-4 h-4 ml-1" /></>}
+                  {isSubmitting ? <AmbulanceLoader variant="inline" /> : <>제출하기 <ArrowRight className="w-4 h-4 ml-1" /></>}
                 </Button>
               </div>
             </motion.div>

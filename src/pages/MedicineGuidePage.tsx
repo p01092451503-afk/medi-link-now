@@ -9,8 +9,8 @@ import {
   Pill,
   Droplets,
   Scale,
-  Loader2,
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -191,10 +191,7 @@ const MedicineGuidePage = () => {
             className="w-full py-6 rounded-2xl text-[15px] font-bold bg-foreground text-background hover:opacity-90 active:scale-[0.98] transition-all border-0"
           >
             {isLocating ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                위치 확인 중...
-              </>
+              <AmbulanceLoader variant="inline" message="위치 확인 중" />
             ) : (
               <>
                 <MapPin className="w-5 h-5 mr-2" />

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle, Loader2 } from "lucide-react";
+import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Tooltip,
@@ -195,7 +196,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                   <p className="text-xs text-slate-500 dark:text-slate-400">실시간 이동 현황</p>
                   <div className="flex items-baseline gap-1">
                     {isLoading ? (
-                      <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
+                      <AmbulanceLoader variant="inline" />
                     ) : (
                       <>
                         <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ambulancesEnRoute}</p>
@@ -247,7 +248,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                   <div className="flex items-center justify-center gap-1">
                     <Ambulance className="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" />
                     {isLoading ? (
-                      <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
+                      <AmbulanceLoader variant="inline" />
                     ) : (
                       <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ambulancesEnRoute}</p>
                     )}
