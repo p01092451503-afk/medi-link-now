@@ -103,6 +103,11 @@ const KOREA_BOUNDS = {
 const SCRIPT_ID = "kakao-map-sdk";
 let kakaoSdkLoadPromise: Promise<void> | null = null;
 
+const isLovablePreviewHost = () => {
+  const host = window.location.hostname;
+  return host.endsWith("lovableproject.com");
+};
+
 const waitForKakaoReady = (timeoutMs = 10000): Promise<void> => {
   return new Promise((resolve, reject) => {
     const startedAt = Date.now();
@@ -136,6 +141,15 @@ const waitForKakaoReady = (timeoutMs = 10000): Promise<void> => {
 
 const loadKakaoSDK = (): Promise<void> => {
   if (window.kakao?.maps?.Map) return Promise.resolve();
+
+  if (isLovablePreviewHost()) {
+    return Promise.reject(
+      new Error(
+        `미리보기 도메인(${window.location.origin})에서는 카카오맵 SDK가 브라우저 보안 정책(ORB)으로 차단될 수 있습니다. 배포 도메인에서 확인해 주세요.`
+      )
+    );
+  }
+
   if (kakaoSdkLoadPromise) return kakaoSdkLoadPromise;
 
   kakaoSdkLoadPromise = new Promise((resolve, reject) => {
@@ -176,7 +190,7 @@ const loadKakaoSDK = (): Promise<void> => {
       kakaoSdkLoadPromise = null;
       reject(
         new Error(
-          `카카오맵 스크립트 로드 실패(네트워크/CSP).\n현재 도메인: ${window.location.origin}`
+          `카카오맵 스크립트 로드 실패(네트워크/도메인/브라우저 보안정책).\n현재 도메인: ${window.location.origin}`
         )
       );
     };

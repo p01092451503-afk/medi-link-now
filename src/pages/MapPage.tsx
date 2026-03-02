@@ -601,7 +601,7 @@ const MapPage = () => {
               setKakaoFailed(true);
               toast({
                 title: "카카오맵 로드 실패",
-                description: "기본 지도(Leaflet)로 자동 전환되었습니다.",
+                description: "미리보기에서는 기본 지도로 전환될 수 있어요. 배포 도메인에서 카카오맵을 확인해 주세요.",
                 duration: 3000,
               });
             }}
