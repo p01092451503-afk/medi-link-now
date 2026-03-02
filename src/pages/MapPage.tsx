@@ -53,7 +53,7 @@ import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import DemandForecastTicker from "@/components/map/DemandForecastTicker";
 import PediatricSOSToggle from "@/components/PediatricSOSToggle";
 import FirstAidFAB from "@/components/FirstAidFAB";
-
+import DataSourceBadge from "@/components/DataSourceBadge";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
