@@ -369,9 +369,8 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   if (isLoading) {
     return (
       <div className="fixed bottom-safe-1 left-4 right-4 z-40">
-        <div className="bg-card rounded-2xl border border-border p-4 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-foreground mr-2" />
-          <span className="text-sm text-muted-foreground">로딩 중...</span>
+        <div className="bg-card rounded-2xl border border-border p-4">
+          <AmbulanceLoader variant="section" message="로딩" />
         </div>
       </div>
     );
