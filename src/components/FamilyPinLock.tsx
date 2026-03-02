@@ -82,7 +82,7 @@ export const PinEntryScreen = ({
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className={`w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 ${error ? "animate-shake" : ""}`}
+        className={`w-full max-w-sm bg-card rounded-3xl shadow-2xl p-8 ${error ? "animate-shake" : ""}`}
       >
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
