@@ -13,11 +13,11 @@ const FirstAidFAB = () => {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-safe-3 left-4 z-40 flex items-center gap-2 px-5 py-4 min-w-[56px] min-h-[56px] rounded-full bg-foreground text-background font-bold shadow-lg hover:opacity-90 transition-all active:scale-95"
+        className="fixed bottom-safe-1 left-2 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground/90 text-background text-[11px] font-semibold shadow-md backdrop-blur-sm hover:opacity-90 transition-all active:scale-95"
         aria-label="응급 처치 가이드"
       >
-        <ShieldAlert className="w-4 h-4" />
-        <span className="text-sm">응급처치</span>
+        <ShieldAlert className="w-3.5 h-3.5" />
+        <span>응급처치</span>
       </motion.button>
 
       <FirstAidModal
