@@ -627,12 +627,6 @@ const DriverDashboard = () => {
 
       {/* Rejection Logger FAB removed per user request */}
 
-      {/* Trip Management Widget - 통합된 이송/운행 관리 */}
-      <TripManagementWidget 
-        onLogComplete={handleLogComplete}
-        onRevenueUpdate={handleRevenueUpdate}
-        isSimulateMode={isSimulateMode}
-      />
 
       {/* Patient Info Modal */}
       <PatientInfoModal
