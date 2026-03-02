@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, EyeOff } from "lucide-react";
+import { Search, Menu, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, EyeOff } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
@@ -33,7 +33,7 @@ const Index = () => {
   const [activeRegion, setActiveRegion] = useState<RegionType>("all");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [isLocating, setIsLocating] = useState(false);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [excludeFullHospitals, setExcludeFullHospitals] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
@@ -83,27 +83,6 @@ const Index = () => {
     }
   }, []);
 
-  const handleMyLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      toast({ title: "위치 서비스를 사용할 수 없습니다" });
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const newLocation: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-        setUserLocation(newLocation);
-        setMapCenter(newLocation);
-        setIsLocating(false);
-        toast({ title: "현재 위치를 찾았습니다!" });
-      },
-      () => {
-        setIsLocating(false);
-        toast({ title: "서울 기본 위치를 사용합니다" });
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  }, []);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
@@ -240,21 +219,6 @@ const Index = () => {
       )}
 
       {/* Right Side Controls */}
-      <div className="fixed bottom-6 right-4 z-[1000] flex flex-col gap-2 items-center">
-        
-        {/* Location FAB */}
-        <button
-          onClick={handleMyLocation}
-          disabled={isLocating}
-          className="rounded-full shadow-lg p-4 bg-white border border-gray-100 hover:bg-gray-50 transition-colors disabled:opacity-70"
-        >
-          {isLocating ? (
-            <Loader2 className="w-6 h-6 text-primary animate-spin" />
-          ) : (
-            <Crosshair className="w-6 h-6 text-primary" />
-          )}
-        </button>
-      </div>
 
       {/* Bottom Sheet */}
       <AnimatePresence>
