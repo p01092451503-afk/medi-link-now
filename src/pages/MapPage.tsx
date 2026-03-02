@@ -525,13 +525,6 @@ const MapPage = () => {
     );
   }, []);
 
-  const handleRadiusChange = useCallback((radius: number | "all") => {
-    setActiveRadius(radius);
-    if (userLocation && radius !== "all") {
-      setMapZoom(getZoomForRadius(radius));
-      setMapCenter(userLocation);
-    }
-  }, [userLocation]);
 
   // Sync radius chip when map zoom changes (via pinch/scroll/slider)
   const handleZoomChange = useCallback((zoom: number) => {
