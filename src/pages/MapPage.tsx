@@ -567,7 +567,7 @@ const MapPage = () => {
         <TrustBadge />
 
         {/* Data Source Badge */}
-        <div className="absolute bottom-safe-1 right-2 z-[1000]">
+        <div className="absolute top-2 left-2 z-[1000]">
           <DataSourceBadge
             source={isQueryError ? "mock" : lastApiRefresh ? "realtime" : "cache"}
             lastUpdated={lastUpdated}
