@@ -226,6 +226,16 @@ const EmergencyGuidePage = () => {
         </div>
       </main>
 
+      {/* Fixed 119 Call Button */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-gradient-to-t from-background via-background to-transparent">
+        <a
+          href="tel:119"
+          className="flex items-center justify-center gap-2 w-full max-w-lg mx-auto py-4 rounded-2xl bg-destructive text-destructive-foreground text-base font-bold shadow-lg active:scale-[0.98] transition-transform"
+        >
+          <Phone className="w-5 h-5" />
+          119 전화하기
+        </a>
+      </div>
     </div>
   );
 };
