@@ -404,10 +404,7 @@ export default function AdminPage() {
                 variant="secondary"
               >
                 {isSyncingBeds ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    갱신 중...
-                  </>
+                  <AmbulanceLoader variant="inline" message="갱신 중" />
                 ) : (
                   <>
                     <BedDouble className="h-4 w-4 mr-2" />
