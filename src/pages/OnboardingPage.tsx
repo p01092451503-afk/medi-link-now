@@ -249,7 +249,7 @@ const OnboardingPage = () => {
   const isLastStep = step === totalSteps - 1;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Progress bar */}
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm px-4 pt-4 pb-2">
         <Progress value={progress} className="h-1.5" />
