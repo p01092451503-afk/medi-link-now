@@ -224,48 +224,68 @@ serve(async (req) => {
     const isAlreadyEncoded = SERVICE_KEY.includes('%');
     const encodedKey = isAlreadyEncoded ? SERVICE_KEY : encodeURIComponent(SERVICE_KEY);
     
-    let apiUrl = `${API_ENDPOINTS.beds}?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(bodyCity)}&numOfRows=100&pageNo=1`;
-
-    if (bodyDistrict) {
-      apiUrl += `&STAGE2=${encodeURIComponent(bodyDistrict)}`;
-    }
-
     console.log(`Fetching ER data for: ${bodyCity} ${bodyDistrict}`);
 
+    // Helper: fetch all beds with pagination
+    async function fetchAllBeds(key: string, city: string, district: string): Promise<string[]> {
+      const allItemXmls: string[] = [];
+      let pageNo = 1;
+      const pageSize = 100;
+
+      while (true) {
+        let url = `${API_ENDPOINTS.beds}?serviceKey=${key}&STAGE1=${encodeURIComponent(city)}&numOfRows=${pageSize}&pageNo=${pageNo}`;
+        if (district) {
+          url += `&STAGE2=${encodeURIComponent(district)}`;
+        }
+
+        console.log(`Fetching beds page ${pageNo}...`);
+        const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/xml' } });
+
+        if (!res.ok) {
+          console.error(`Beds API page ${pageNo} returned status: ${res.status}`);
+          break;
+        }
+
+        const xml = await res.text();
+        if (pageNo === 1) {
+          console.log(`Beds XML page 1 (first 500 chars): ${xml.substring(0, 500)}`);
+        }
+
+        // Parse totalCount from first page
+        const totalCount = parseInt(getValue(xml, 'totalCount')) || 0;
+
+        // Extract items
+        const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+        let match;
+        let pageItems = 0;
+        while ((match = itemRegex.exec(xml)) !== null) {
+          allItemXmls.push(match[1]);
+          pageItems++;
+        }
+
+        console.log(`Page ${pageNo}: ${pageItems} items (total so far: ${allItemXmls.length}/${totalCount})`);
+
+        if (allItemXmls.length >= totalCount) break;
+        if (pageItems < pageSize) break;
+        pageNo++;
+        if (pageNo > 10) break; // 안전장치
+      }
+
+      return allItemXmls;
+    }
+
     // Fetch all data in parallel
-    const [bedsResponse, acceptanceData, messagesData, traumaCenters] = await Promise.all([
-      fetch(apiUrl, { method: 'GET', headers: { 'Accept': 'application/xml' } }),
+    const [bedItems, acceptanceData, messagesData, traumaCenters] = await Promise.all([
+      fetchAllBeds(encodedKey, bodyCity, bodyDistrict),
       fetchAcceptanceData(SERVICE_KEY, bodyCity),
       fetchMessages(SERVICE_KEY, bodyCity),
       fetchTraumaCenters(SERVICE_KEY),
     ]);
 
-    if (!bedsResponse.ok) {
-      console.error(`Beds API returned status: ${bedsResponse.status}`);
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: `API returned status ${bedsResponse.status}`,
-          useMockData: true 
-        }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200 
-        }
-      );
-    }
-
-    const xmlText = await bedsResponse.text();
-    console.log(`Received beds XML response (first 500 chars): ${xmlText.substring(0, 500)}`);
-
-    // Parse XML response
+    // Parse bed items into hospitals
     const hospitals: ERData[] = [];
-    
-    const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-    let match;
 
-    while ((match = itemRegex.exec(xmlText)) !== null) {
-      const itemXml = match[1];
+    for (const itemXml of bedItems) {
       const hpid = getValue(itemXml, 'hpid');
 
       const hospital: ERData = {
@@ -273,12 +293,11 @@ serve(async (req) => {
         hospitalName: getValue(itemXml, 'dutyName'),
         address: getValue(itemXml, 'dutyAddr'),
         phone: getValue(itemXml, 'dutyTel3') || getValue(itemXml, 'dutyTel1'),
-        generalBeds: getNumValue(itemXml, 'hvec'), // 응급실 일반 병상
-        pediatricBeds: getNumValue(itemXml, 'hvoc'), // 소아 병상
-        feverBeds: getNumValue(itemXml, 'hv29') + getNumValue(itemXml, 'hv30'), // 음압격리병상 + 일반격리병상
+        generalBeds: getNumValue(itemXml, 'hvec'),
+        pediatricBeds: getNumValue(itemXml, 'hvoc'),
+        feverBeds: getNumValue(itemXml, 'hv29') + getNumValue(itemXml, 'hv30'),
         lat: parseFloat(getValue(itemXml, 'wgs84Lat')) || undefined,
         lng: parseFloat(getValue(itemXml, 'wgs84Lon')) || undefined,
-        // Enrich with additional data
         isTraumaCenter: traumaCenters.has(hpid),
         acceptance: acceptanceData.get(hpid),
         alertMessage: messagesData.get(hpid),
