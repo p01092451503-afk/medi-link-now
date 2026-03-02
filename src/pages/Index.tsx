@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, EyeOff } from "lucide-react";
-import MapLegendPopup from "@/components/map/MapLegendPopup";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
