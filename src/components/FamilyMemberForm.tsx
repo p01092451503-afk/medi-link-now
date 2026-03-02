@@ -291,7 +291,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-3 px-2 rounded-xl text-sm font-medium transition-all ${
                         bloodType === key
                           ? "bg-red-500 text-white"
-                          : "bg-gray-100 text-foreground hover:bg-gray-200"
+                          : "bg-secondary text-foreground hover:bg-accent"
                       }`}
                     >
                       {label}
