@@ -210,7 +210,7 @@ export const PinSettingsModal = ({
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[2001] max-h-[80vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-card rounded-t-3xl shadow-2xl z-[2001] max-h-[80vh] overflow-y-auto"
           >
             <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
