@@ -279,7 +279,7 @@ const TransferResultModal = ({
                       disabled={!selectedReason || isSubmitting}
                       className="flex-1 min-h-[48px] rounded-2xl bg-foreground text-background hover:opacity-90"
                     >
-                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "거절 기록 저장"}
+                      {isSubmitting ? <AmbulanceLoader variant="inline" /> : "거절 기록 저장"}
                     </Button>
                   </div>
                 </motion.div>

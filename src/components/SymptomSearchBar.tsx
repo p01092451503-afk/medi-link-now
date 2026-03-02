@@ -220,7 +220,7 @@ const SymptomSearchBar = ({
       <div className="relative">
         <div className="absolute left-4 top-1/2 -translate-y-1/2">
           {isAnalyzing ? (
-            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+            <AmbulanceLoader variant="inline" />
           ) : analysis ? (
             getIconForResult(analysis.icon)
           ) : (

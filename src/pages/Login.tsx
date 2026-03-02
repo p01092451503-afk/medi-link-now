@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Ambulance, Mail, Lock, Loader2, Users } from "lucide-react";
+import { Ambulance, Mail, Lock, Users } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";

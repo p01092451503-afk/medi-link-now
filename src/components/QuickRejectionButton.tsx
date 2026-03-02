@@ -177,8 +177,7 @@ const QuickRejectionButton = ({
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      제보 중...
+                      <AmbulanceLoader variant="inline" message="제보 중" />
                     </>
                   ) : (
                     <>

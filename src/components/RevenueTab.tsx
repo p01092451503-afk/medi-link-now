@@ -347,7 +347,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
         <div className="space-y-3">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 text-foreground animate-spin" />
+              <AmbulanceLoader variant="section" />
             </div>
           ) : matchedTrips.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-sm">

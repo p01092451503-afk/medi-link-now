@@ -247,7 +247,7 @@ const CompactAIPrediction = ({ hospitalId, officialBeds }: CompactAIPredictionPr
                   <div className="flex items-center justify-center gap-1">
                     <Ambulance className="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" />
                     {isLoading ? (
-                      <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
+                      <AmbulanceLoader variant="inline" />
                     ) : (
                       <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ambulancesEnRoute}</p>
                     )}

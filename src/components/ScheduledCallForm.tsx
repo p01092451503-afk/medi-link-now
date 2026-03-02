@@ -191,7 +191,7 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
                 className="w-full py-6 text-base font-bold rounded-2xl bg-foreground text-background hover:opacity-90"
               >
                 {isLoading ? (
-                  <><Loader2 className="w-5 h-5 animate-spin mr-2" /> 등록 중...</>
+                  <AmbulanceLoader variant="inline" message="등록 중" />
                 ) : (
                   <><Send className="w-5 h-5 mr-2" /> 예약 호출 등록</>
                 )}
