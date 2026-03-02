@@ -6,7 +6,7 @@ import {
   User, 
   FileText, 
   Send, 
-  Loader2,
+  Send,
   Ambulance,
   Navigation,
   Clock,
