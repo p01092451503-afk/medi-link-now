@@ -1,11 +1,11 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
 import { useMapProvider } from "@/hooks/useMapProvider";
 import KakaoMapView from "@/components/map/KakaoMapView";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import { useNursingHospitals } from "@/hooks/useNursingHospitals";
 import { useHospitalDetails } from "@/hooks/useHospitalDetails";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
-import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
+
 import DispatchRequestModal from "@/components/DispatchRequestModal";
 
 import OfflineBanner from "@/components/OfflineBanner";
@@ -100,21 +100,21 @@ const MapPage = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
-  const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
+  
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
   const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao, setMapProvider } = useMapProvider();
   const [kakaoFailed, setKakaoFailed] = useState(false);
-  const locationButtonRef = useRef<HTMLButtonElement>(null);
+  
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("seoul");
   const [activeRegion, setActiveRegion] = useState<RegionType>("seoul");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [isLocating, setIsLocating] = useState(false);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(10);
@@ -492,38 +492,6 @@ const MapPage = () => {
     );
   }, []);
 
-  const handleMyLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      toast({ title: "위치 서비스를 사용할 수 없습니다" });
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const newLocation: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-        setUserLocation(newLocation);
-        setMapCenter(newLocation);
-        
-        // Always set radius to 10km as default when clicking "My Location"
-        setActiveRadius(10);
-        setMapZoom(getZoomForRadius(10));
-        
-        setActiveMajorRegion("all");
-        setActiveRegion("all");
-        
-        setIsLocating(false);
-        toast({
-          title: "현재 위치를 찾았습니다!",
-          description: "반경 10km 내 병원을 표시합니다.",
-        });
-      },
-      () => {
-        setIsLocating(false);
-        toast({ title: "위치를 찾을 수 없습니다" });
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  }, []);
 
 
   // Sync radius chip when map zoom changes (via pinch/scroll/slider)
@@ -557,9 +525,6 @@ const MapPage = () => {
       {/* Splash Screen */}
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
-
-      {/* Location Coachmark */}
-      <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
 
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
@@ -679,92 +644,6 @@ const MapPage = () => {
           </div>
         </div>
 
-        {/* Utility Buttons (Legend + Map Toggle + Location) */}
-        <div className="absolute right-4 bottom-safe-3 z-[1000] flex flex-col gap-3">
-          {/* My Location Button - Apple Maps style */}
-          <HoverCard openDelay={100} closeDelay={100}>
-            <HoverCardTrigger asChild>
-              <motion.button
-                ref={locationButtonRef}
-                onClick={handleMyLocation}
-                disabled={isLocating}
-                className={`relative w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-300 disabled:opacity-70 overflow-hidden ${
-                  userLocation
-                    ? "bg-emerald-500 shadow-emerald-500/40"
-                    : "bg-primary shadow-primary/20"
-                }`}
-                aria-label="내 위치에서 가까운 병원 찾기"
-                whileTap={{ scale: 0.92 }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                {/* Soft glow background animation when inactive */}
-                {!userLocation && !isLocating && (
-                  <motion.div
-                    className="absolute inset-0 bg-white/20 rounded-2xl"
-                    animate={{ 
-                      scale: [1, 1.15, 1],
-                      opacity: [0.3, 0.1, 0.3]
-                    }}
-                    transition={{ 
-                      duration: 2.5, 
-                      repeat: Infinity, 
-                      ease: "easeInOut"
-                    }}
-                  />
-                )}
-                
-                {/* Active state indicator */}
-                {userLocation && !isLocating && (
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-                
-                {/* Icon */}
-                {isLocating ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Loader2 className="w-6 h-6 text-white" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    animate={userLocation ? { scale: [1, 0.9, 1] } : {}}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Crosshair className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  </motion.div>
-                )}
-              </motion.button>
-            </HoverCardTrigger>
-            <HoverCardContent
-              side="left"
-              sideOffset={16}
-              className="w-auto max-w-[200px] p-3.5 bg-card shadow-2xl border border-border rounded-xl"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md">
-                  <MapPin className="w-5 h-5 text-white" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-bold text-foreground">
-                    {userLocation ? "위치 확인됨" : "내 주변 병원 찾기"}
-                  </p>
-                  <p className="text-xs text-muted-foreground leading-snug">
-                    {userLocation
-                      ? "탭하여 해제하면\n전국 병원을 표시합니다"
-                      : "탭하면 가까운 응급실을\n거리순으로 안내합니다"}
-                  </p>
-                </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
 
         {/* Data Source removed - update time moved to RadiusChips */}
 
