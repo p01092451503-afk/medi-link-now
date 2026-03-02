@@ -177,7 +177,7 @@ const AdminLogin = () => {
             className="w-full py-6 rounded-xl text-base font-semibold bg-amber-500 hover:bg-amber-600 text-slate-900"
           >
             {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <AmbulanceLoader variant="inline" />
             ) : (
               "관리자 로그인"
             )}
