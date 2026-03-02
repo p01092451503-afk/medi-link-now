@@ -124,7 +124,7 @@ const DriverBidForm = ({ onSubmit, isLoading, existingBid, pickupLat, pickupLng,
             className="min-h-[56px] flex-col gap-1.5 rounded-2xl bg-foreground text-background hover:opacity-90"
           >
             {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <AmbulanceLoader variant="inline" />
             ) : (
               <>
                 <Zap className="w-5 h-5" />
