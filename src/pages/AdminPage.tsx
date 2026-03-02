@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble, Clock, MapPin, LogOut, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, BedDouble, Clock, MapPin, LogOut, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -360,10 +360,7 @@ export default function AdminPage() {
                 size="lg"
               >
                 {isSyncing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    동기화 중...
-                  </>
+                  <AmbulanceLoader variant="inline" message="동기화 중" />
                 ) : (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2" />
@@ -407,10 +404,7 @@ export default function AdminPage() {
                 variant="secondary"
               >
                 {isSyncingBeds ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    갱신 중...
-                  </>
+                  <AmbulanceLoader variant="inline" message="갱신 중" />
                 ) : (
                   <>
                     <BedDouble className="h-4 w-4 mr-2" />
@@ -600,10 +594,7 @@ export default function AdminPage() {
                         onClick={() => handleSyncBatch(batch)}
                       >
                         {isCurrentBatch ? (
-                          <>
-                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                            처리 중
-                          </>
+                          <AmbulanceLoader variant="inline" message="처리 중" />
                         ) : (
                           <>
                             <RefreshCw className="h-3 w-3 mr-1" />

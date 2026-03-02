@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { DollarSign, Send, Loader2, Zap, MapPin, Clock, AlertTriangle, Heart, Pill } from "lucide-react";
+import { DollarSign, Send, Zap, MapPin, Clock, AlertTriangle, Heart, Pill } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -123,7 +124,7 @@ const DriverBidForm = ({ onSubmit, isLoading, existingBid, pickupLat, pickupLng,
             className="min-h-[56px] flex-col gap-1.5 rounded-2xl bg-foreground text-background hover:opacity-90"
           >
             {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <AmbulanceLoader variant="inline" />
             ) : (
               <>
                 <Zap className="w-5 h-5" />
@@ -185,7 +186,7 @@ const DriverBidForm = ({ onSubmit, isLoading, existingBid, pickupLat, pickupLng,
               className="flex-1 min-h-[48px] rounded-xl bg-foreground text-background hover:opacity-90"
             >
               {isLoading ? (
-                <><Loader2 className="w-4 h-4 animate-spin mr-1" /> 제출 중...</>
+                <AmbulanceLoader variant="inline" message="제출 중" />
               ) : (
                 <><Send className="w-4 h-4 mr-1" /> 입찰 제출</>
               )}

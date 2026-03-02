@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { AlertTriangle, Users, Loader2, CheckCircle2, ArrowRight, ChevronDown } from "lucide-react";
+import { AlertTriangle, Users, CheckCircle2, ArrowRight, ChevronDown } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useHospitalEnRouteCount } from "@/hooks/useAmbulanceTrips";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -69,7 +70,7 @@ const ShadowDemandCard = ({ hospitalId, officialBeds }: ShadowDemandCardProps) =
                     <Users className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                   </div>
                   {isLoading ? (
-                    <Loader2 className="w-5 h-5 mx-auto text-orange-500 animate-spin" />
+                    <AmbulanceLoader variant="inline" />
                   ) : (
                     <p className="text-2xl font-black text-orange-600 dark:text-orange-400">{ambulancesEnRoute}</p>
                   )}
