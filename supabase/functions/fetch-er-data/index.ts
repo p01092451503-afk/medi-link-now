@@ -24,12 +24,28 @@ interface ERData {
   hospitalName: string;
   address: string;
   phone: string;
-  generalBeds: number;
-  pediatricBeds: number;
-  feverBeds: number;
+  // 병상 현황
+  generalBeds: number;       // hvec - 응급실 일반 병상
+  pediatricBeds: number;     // hvicc - 소아 중환자실
+  feverBeds: number;         // hvs01 - 코호트 격리
+  icuBeds: number;           // hvcc - 일반 중환자실
+  surgicalIcuBeds: number;   // hv2 - 외과 중환자실
+  medicalIcuBeds: number;    // hv3 - 내과 중환자실
+  operatingRooms: number;    // hvoc - 수술실
+  neonatalIcuBeds: number;   // hvncc - 신생아 중환자실
+  // 장비 현황
+  equipment: {
+    ct: boolean;             // hvctayn
+    mri: boolean;            // hvmriayn
+    angio: boolean;          // hvangio - 혈관촬영기
+    ventilator: boolean;     // hvventiayn - 인공호흡기
+    ecmo: boolean;           // hvecmoayn - 에크모
+  };
+  // 운영 상태
+  erDivision: string;        // dutyDiv - 응급의료기관 구분
+  traumaYn: string;          // 권역외상센터 여부
   lat?: number;
   lng?: number;
-  // New fields
   isTraumaCenter?: boolean;
   acceptance?: {
     heart: boolean;
@@ -293,9 +309,26 @@ serve(async (req) => {
         hospitalName: getValue(itemXml, 'dutyName'),
         address: getValue(itemXml, 'dutyAddr'),
         phone: getValue(itemXml, 'dutyTel3') || getValue(itemXml, 'dutyTel1'),
+        // 병상 현황
         generalBeds: getNumValue(itemXml, 'hvec'),
-        pediatricBeds: getNumValue(itemXml, 'hvoc'),
-        feverBeds: getNumValue(itemXml, 'hv29') + getNumValue(itemXml, 'hv30'),
+        pediatricBeds: getNumValue(itemXml, 'hvicc'),
+        feverBeds: getNumValue(itemXml, 'hvs01'),
+        icuBeds: getNumValue(itemXml, 'hvcc'),
+        surgicalIcuBeds: getNumValue(itemXml, 'hv2'),
+        medicalIcuBeds: getNumValue(itemXml, 'hv3'),
+        operatingRooms: getNumValue(itemXml, 'hvoc'),
+        neonatalIcuBeds: getNumValue(itemXml, 'hvncc'),
+        // 장비 현황
+        equipment: {
+          ct: getBoolValue(itemXml, 'hvctayn'),
+          mri: getBoolValue(itemXml, 'hvmriayn'),
+          angio: getBoolValue(itemXml, 'hvangio'),
+          ventilator: getBoolValue(itemXml, 'hvventiayn'),
+          ecmo: getBoolValue(itemXml, 'hvecmoayn'),
+        },
+        // 운영 상태
+        erDivision: getValue(itemXml, 'dutyDiv'),
+        traumaYn: getValue(itemXml, 'MKioskTy28'),
         lat: parseFloat(getValue(itemXml, 'wgs84Lat')) || undefined,
         lng: parseFloat(getValue(itemXml, 'wgs84Lon')) || undefined,
         isTraumaCenter: traumaCenters.has(hpid),
