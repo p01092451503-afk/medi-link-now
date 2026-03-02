@@ -332,6 +332,7 @@ serve(async (req) => {
           angio: getBoolValue(itemXml, 'hvangio'),
           ventilator: getBoolValue(itemXml, 'hvventiayn'),
           ecmo: getBoolValue(itemXml, 'hvecmoayn'),
+          incubator: getBoolValue(itemXml, 'hvincuayn'),
         },
         // 운영 상태
         erDivision: getValue(itemXml, 'dutyDiv'),

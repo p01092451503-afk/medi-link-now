@@ -280,8 +280,18 @@ export const getRealTimeBeds = async (
         general: item.generalBeds,
         pediatric: item.pediatricBeds,
         fever: item.feverBeds,
+        icu: item.icuBeds,
+        medicalIcu: item.medicalIcuBeds,
+        surgicalIcu: item.surgicalIcuBeds,
+        operatingRoom: item.operatingRooms,
+        neonatalIcu: item.neonatalIcuBeds,
       },
-      equipment: ["CT", "MRI"],
+      equipment: item.equipment
+        ? Object.entries(item.equipment)
+            .filter(([_, v]) => v === true)
+            .map(([k]) => k.toUpperCase())
+        : [],
+      equipmentDetail: item.equipment,
       category: "응급의료기관",
       region: regionId,
       isTraumaCenter: item.isTraumaCenter,
