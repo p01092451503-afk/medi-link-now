@@ -226,18 +226,6 @@ const EmergencyGuidePage = () => {
         </div>
       </main>
 
-      {/* Sticky 119 Call Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-xl border-t border-border p-4 safe-bottom">
-        <div className="max-w-lg mx-auto">
-          <button
-            onClick={() => (window.location.href = 'tel:119')}
-            className="w-full py-4 rounded-2xl text-[15px] font-bold bg-destructive text-destructive-foreground hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
-            <Phone className="w-5 h-5" />
-            119 전화하기
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
