@@ -315,7 +315,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         chronicDiseases.includes(disease)
                           ? "bg-primary text-white"
-                          : "bg-gray-100 text-foreground hover:bg-gray-200"
+                          : "bg-secondary text-foreground hover:bg-accent"
                       }`}
                     >
                       {chronicDiseases.includes(disease) && <Check className="w-4 h-4" />}
