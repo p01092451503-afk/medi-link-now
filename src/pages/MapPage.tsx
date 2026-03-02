@@ -889,17 +889,6 @@ const MapPage = () => {
           <TransferFilterChips />
         )}
 
-        {/* Radius Chips - Capsule style, hidden when hospital selected */}
-        {!selectedHospital && !selectedNursingHospital && (
-          <div className="absolute bottom-safe-1 left-4 z-[999]">
-            <RadiusChips
-              activeRadius={activeRadius}
-              onRadiusChange={handleRadiusChange}
-              userLocation={userLocation}
-              lastUpdated={lastUpdated}
-            />
-          </div>
-        )}
       </div>
 
 
