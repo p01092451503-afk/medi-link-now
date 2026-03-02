@@ -210,7 +210,13 @@ serve(async (req) => {
         JSON.stringify({ 
           success: false, 
           error: "API key not configured",
-          useMockData: true 
+          useMockData: true,
+          diagnostics: {
+            reason: 'API_KEY_NOT_CONFIGURED',
+            message: 'Supabase Secrets에 PUBLIC_DATA_PORTAL_KEY가 등록되지 않았습니다.',
+            setupGuide: 'supabase/README.md 참고',
+            timestamp: new Date().toISOString(),
+          }
         }),
         { 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
