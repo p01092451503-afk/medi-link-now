@@ -311,8 +311,8 @@ export const PinSettingsModal = ({
                 </div>
               )}
 
-              <div className="p-4 bg-blue-50 rounded-xl">
-                <p className="text-sm text-blue-700">
+              <div className="p-4 bg-accent rounded-xl">
+                <p className="text-sm text-accent-foreground">
                   💡 비밀번호를 설정하면 가족 의료 정보 페이지에 접근할 때마다 비밀번호를 입력해야 합니다.
                 </p>
               </div>

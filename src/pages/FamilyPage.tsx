@@ -312,7 +312,7 @@ const FamilyPage = () => {
               {isAuthenticated && (
                 <button
                   onClick={() => setShowSyncModal(true)}
-                  className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full hover:bg-green-200 transition-colors flex items-center gap-1"
+                  className="ml-2 px-2 py-0.5 bg-success/10 text-success text-xs rounded-full hover:bg-success/20 transition-colors flex items-center gap-1"
                 >
                   <Cloud className="w-3 h-3" />
                   클라우드 저장
