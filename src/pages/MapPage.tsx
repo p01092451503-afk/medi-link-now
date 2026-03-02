@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
-import TrustBadge from "@/components/TrustBadge";
+
 import SplashScreen from "@/components/SplashScreen";
 import { useMapProvider } from "@/hooks/useMapProvider";
 import KakaoMapView from "@/components/map/KakaoMapView";
@@ -563,9 +563,6 @@ const MapPage = () => {
 
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
-        {/* Trust Badge */}
-        <TrustBadge />
-
         {/* Data Source Badge */}
         <div className="absolute bottom-safe-1 right-2 z-[1000]">
           <DataSourceBadge
@@ -683,7 +680,7 @@ const MapPage = () => {
         </div>
 
         {/* Utility Buttons (Legend + Map Toggle + Location) */}
-        <div className="absolute right-4 bottom-safe-2 z-[1000] flex flex-col gap-3">
+        <div className="absolute right-4 bottom-safe-3 z-[1000] flex flex-col gap-3">
           {/* My Location Button - Apple Maps style */}
           <HoverCard openDelay={100} closeDelay={100}>
             <HoverCardTrigger asChild>
