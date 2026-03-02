@@ -340,7 +340,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         allergies.includes(allergy)
                           ? "bg-orange-500 text-white"
-                          : "bg-gray-100 text-foreground hover:bg-gray-200"
+                          : "bg-secondary text-foreground hover:bg-accent"
                       }`}
                     >
                       {allergies.includes(allergy) && <Check className="w-4 h-4" />}
