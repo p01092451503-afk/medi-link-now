@@ -97,7 +97,7 @@ const MapPage = () => {
   const isDriverMode = searchParams.get("mode") === "driver";
   const hideMode = searchParams.get("hideMode") === "true";
   const isParamedicMode = searchParams.get("role") === "paramedic";
-  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, refetch } = useRealtimeHospitals();
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
