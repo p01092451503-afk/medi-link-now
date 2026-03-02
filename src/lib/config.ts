@@ -6,10 +6,8 @@
 function getEnvVar(key: string, required: boolean = true): string {
   const value = import.meta.env[key] as string | undefined;
   if (required && (!value || value.trim() === '')) {
-    throw new Error(
-      `[Config] 필수 환경변수 "${key}"가 설정되지 않았습니다.\n` +
-      `.env 파일에 ${key}=<값> 형태로 추가해주세요.\n` +
-      `.env.example 파일을 참고하세요.`
+    console.warn(
+      `[Config] 환경변수 "${key}"가 설정되지 않았습니다. 기본값을 사용합니다.`
     );
   }
   return value || '';
@@ -28,7 +26,7 @@ export const config = {
 
 /**
  * 앱 시작 시 호출하여 필수 환경변수를 검증합니다.
- * 누락된 변수가 있으면 명확한 에러 메시지와 함께 실패합니다.
+ * 누락된 변수가 있으면 콘솔에 경고를 출력하지만 앱은 계속 실행됩니다.
  */
 export function validateEnv(): void {
   const requiredVars = [
@@ -43,14 +41,13 @@ export function validateEnv(): void {
 
   if (missing.length > 0) {
     const message = [
-      '🚨 필수 환경변수가 누락되었습니다:',
+      '⚠️ 필수 환경변수가 누락되었습니다:',
       ...missing.map((key) => `  - ${key}`),
       '',
       '.env.example 파일을 참고하여 .env 파일을 생성해주세요.',
     ].join('\n');
 
-    console.error(message);
-    throw new Error(message);
+    console.warn(message);
   }
 
   // 선택적 변수 경고
