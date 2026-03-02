@@ -53,7 +53,7 @@ import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import DemandForecastTicker from "@/components/map/DemandForecastTicker";
 import PediatricSOSToggle from "@/components/PediatricSOSToggle";
 import FirstAidFAB from "@/components/FirstAidFAB";
-
+import DataSourceBadge from "@/components/DataSourceBadge";
 
 // Map default center (Seoul)
 const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
@@ -97,7 +97,7 @@ const MapPage = () => {
   const isDriverMode = searchParams.get("mode") === "driver";
   const hideMode = searchParams.get("hideMode") === "true";
   const isParamedicMode = searchParams.get("role") === "paramedic";
-  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, refetch } = useRealtimeHospitals();
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
@@ -572,6 +572,15 @@ const MapPage = () => {
       <div className="relative flex-1 h-full">
         {/* Trust Badge */}
         <TrustBadge />
+
+        {/* Data Source Badge */}
+        <div className="absolute top-2 left-2 z-[1000]">
+          <DataSourceBadge
+            source={isQueryError ? "mock" : lastApiRefresh ? "realtime" : "cache"}
+            lastUpdated={lastUpdated}
+            lastApiRefresh={lastApiRefresh}
+          />
+        </div>
 
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
