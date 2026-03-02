@@ -23,7 +23,7 @@ const BottomNavBar = () => {
   }, [user]);
 
   // 바텀 내비 표시 안 할 페이지들
-  const hideOnPaths = ["/onboarding", "/landing", "/intro", "/", "/admin", "/admin/login"];
+  const hideOnPaths = ["/onboarding", "/landing", "/intro", "/", "/admin", "/admin/login", "/paramedic", "/driver-intro"];
   if (hideOnPaths.includes(location.pathname)) return null;
 
   const guardianNav = [
