@@ -249,7 +249,7 @@ const OnboardingPage = () => {
   const isLastStep = step === totalSteps - 1;
 
   return (
-    <div className="h-screen bg-background flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Progress bar */}
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm px-4 pt-4 pb-2">
         <Progress value={progress} className="h-1.5" />
@@ -264,7 +264,7 @@ const OnboardingPage = () => {
       </div>
 
       {/* Slide content */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden py-4 min-h-0">
+      <div className="flex-1 flex items-center justify-center overflow-hidden py-8">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={step}

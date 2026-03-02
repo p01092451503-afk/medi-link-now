@@ -297,6 +297,15 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </div>
               )}
 
+              {(isParamedicMode || isDriverMode || !isTransferMode) && (
+                <button
+                  onClick={() => { window.location.href = "tel:119"; }}
+                  className="w-full mb-4 py-4 rounded-2xl bg-destructive text-destructive-foreground font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
+                >
+                  <Phone className="w-5 h-5" />
+                  119 전화하기
+                </button>
+              )}
 
               {/* 119 Verified Badge */}
               <Fire119VerifiedBadge
