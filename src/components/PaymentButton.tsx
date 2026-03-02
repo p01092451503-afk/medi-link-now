@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CreditCard, AlertTriangle, Loader2 } from "lucide-react";
+import { CreditCard, AlertTriangle } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useAuth } from "@/hooks/useAuth";
 import { usePayments } from "@/hooks/usePayments";
 import { requestPayment } from "@/services/paymentService";
