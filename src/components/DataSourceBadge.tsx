@@ -64,7 +64,9 @@ const DataSourceBadge = ({ source, lastUpdated, lastApiRefresh }: DataSourceBadg
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dot}`} />
         <Zap className="w-2.5 h-2.5 text-primary/70" />
         {config.label}
-      </button>
+        {config.time && (
+          <span className="text-muted-foreground/60 ml-0.5">{config.time}</span>
+        )}
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-sm">
