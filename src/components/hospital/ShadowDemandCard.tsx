@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { AlertTriangle, Users, Loader2, CheckCircle2, ArrowRight, ChevronDown } from "lucide-react";
+import { AlertTriangle, Users, CheckCircle2, ArrowRight, ChevronDown } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useHospitalEnRouteCount } from "@/hooks/useAmbulanceTrips";
 import { motion, AnimatePresence } from "framer-motion";
 
