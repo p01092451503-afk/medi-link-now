@@ -360,10 +360,7 @@ export default function AdminPage() {
                 size="lg"
               >
                 {isSyncing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    동기화 중...
-                  </>
+                  <AmbulanceLoader variant="inline" message="동기화 중" />
                 ) : (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2" />
