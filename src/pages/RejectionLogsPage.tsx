@@ -271,10 +271,7 @@ const RejectionLogsPage = () => {
 
         {/* Timeline */}
         {isLoading ? (
-          <div className="text-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">로딩 중...</p>
-          </div>
+          <AmbulanceLoader variant="section" message="로딩" />
         ) : todayLogs.length === 0 ? (
           <div className="text-center py-16">
             <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4 opacity-50" />

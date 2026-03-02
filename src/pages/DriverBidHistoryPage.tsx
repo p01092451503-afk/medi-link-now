@@ -138,10 +138,7 @@ const DriverBidHistoryPage = () => {
       {/* Content */}
       <main className="p-4">
         {isLoading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-foreground"></div>
-            <p className="text-muted-foreground text-sm mt-2">불러오는 중...</p>
-          </div>
+          <AmbulanceLoader variant="section" message="불러오는 중" />
         ) : driverBids.length === 0 ? (
           <div className="bg-card rounded-2xl p-8 border border-border text-center">
             <DollarSign className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />

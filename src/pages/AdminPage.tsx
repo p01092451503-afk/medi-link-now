@@ -161,11 +161,7 @@ export default function AdminPage() {
 
   // Show loading while checking auth/role
   if (isAuthLoading || isAdmin === null) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <AmbulanceLoader variant="fullscreen" message="관리자 페이지 로딩" />;
   }
 
   // Handle bed status sync for all cities
