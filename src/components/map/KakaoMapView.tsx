@@ -307,42 +307,57 @@ const KakaoMapView = ({
 
     loadKakaoSDK()
       .then(() => {
-        if (!mounted || !mapContainerRef.current) return;
+        const initializeMap = (attempt = 0) => {
+          if (!mounted || !mapContainerRef.current) return;
 
-        const { offsetWidth, offsetHeight } = mapContainerRef.current;
-        if (offsetWidth === 0 || offsetHeight === 0) return;
+          const { offsetWidth, offsetHeight } = mapContainerRef.current;
+          if ((offsetWidth === 0 || offsetHeight === 0) && attempt < 20) {
+            setTimeout(() => initializeMap(attempt + 1), 100);
+            return;
+          }
 
-        const options = {
-          center: new window.kakao.maps.LatLng(center[0], center[1]),
-          level: leafletToKakaoZoom(zoom),
-          minLevel: 1,
-          maxLevel: 13,
+          if (offsetWidth === 0 || offsetHeight === 0) {
+            const message = "카카오맵 컨테이너 크기를 확인할 수 없어 초기화에 실패했습니다.";
+            console.error("[KakaoMap] Init failed:", message);
+            setLoadError(message);
+            onLoadError?.(message);
+            return;
+          }
+
+          const options = {
+            center: new window.kakao.maps.LatLng(center[0], center[1]),
+            level: leafletToKakaoZoom(zoom),
+            minLevel: 1,
+            maxLevel: 13,
+          };
+
+          const map = new window.kakao.maps.Map(mapContainerRef.current, options);
+          mapRef.current = map;
+
+          window.kakao.maps.event.addListener(map, "click", () => {
+            if (spiderfyManagerRef.current?.isSpiderfied()) {
+              spiderfyManagerRef.current.unspiderfy();
+            }
+          });
+
+          window.kakao.maps.event.addListener(map, "zoom_changed", () => {
+            if (spiderfyManagerRef.current?.isSpiderfied()) {
+              spiderfyManagerRef.current.unspiderfy();
+            }
+            const currentKakaoZoom = map.getLevel();
+            const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
+            onZoomChange?.(leafletZoom);
+          });
+
+          window.kakao.maps.event.addListener(map, "dragend", () => {
+            const latlng = map.getCenter();
+            onDragEnd?.([latlng.getLat(), latlng.getLng()]);
+          });
+
+          setIsLoaded(true);
         };
 
-        const map = new window.kakao.maps.Map(mapContainerRef.current, options);
-        mapRef.current = map;
-
-        window.kakao.maps.event.addListener(map, "click", () => {
-          if (spiderfyManagerRef.current?.isSpiderfied()) {
-            spiderfyManagerRef.current.unspiderfy();
-          }
-        });
-
-        window.kakao.maps.event.addListener(map, "zoom_changed", () => {
-          if (spiderfyManagerRef.current?.isSpiderfied()) {
-            spiderfyManagerRef.current.unspiderfy();
-          }
-          const currentKakaoZoom = map.getLevel();
-          const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
-          onZoomChange?.(leafletZoom);
-        });
-
-        window.kakao.maps.event.addListener(map, "dragend", () => {
-          const latlng = map.getCenter();
-          onDragEnd?.([latlng.getLat(), latlng.getLng()]);
-        });
-
-        setIsLoaded(true);
+        initializeMap();
       })
       .catch((error) => {
         console.error("[KakaoMap] Init failed:", error.message);
