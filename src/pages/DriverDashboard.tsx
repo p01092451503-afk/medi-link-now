@@ -17,7 +17,6 @@ import {
   Star,
   Radio,
   ToggleLeft,
-  ToggleLeft,
   ToggleRight,
   TrendingUp,
   Calendar

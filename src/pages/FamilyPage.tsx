@@ -9,7 +9,6 @@ import {
   Heart,
   Shield,
   LogIn,
-  LogIn,
   AlertCircle,
   Settings,
   Cloud
