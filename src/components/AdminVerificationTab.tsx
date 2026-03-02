@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import {
-  ShieldCheck, ShieldX, Eye, Loader2, CheckCircle, XCircle,
+  ShieldCheck, ShieldX, Eye, CheckCircle, XCircle,
   FileText, Clock, User, Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
