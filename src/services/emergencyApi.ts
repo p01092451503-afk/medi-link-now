@@ -225,10 +225,17 @@ export const getRealTimeBeds = async (
     }
 
     if (!data?.success || data?.useMockData) {
+      if ((data as any)?.diagnostics?.reason === 'API_KEY_NOT_CONFIGURED') {
+        console.warn(
+          '[FIND-ER] NEDIS API 키 미설정 — Mock 데이터 표시 중\n' +
+          '해결: supabase secrets set PUBLIC_DATA_PORTAL_KEY=<키>\n' +
+          '상세: supabase/README.md 참고'
+        );
+      }
       return {
         hospitals: mockHospitals,
         isRealtime: false,
-        error: data?.error || "API 키가 설정되지 않음",
+        error: (data as any)?.diagnostics?.message || data?.error || "API 키가 설정되지 않음",
         source: 'mock',
       };
     }
