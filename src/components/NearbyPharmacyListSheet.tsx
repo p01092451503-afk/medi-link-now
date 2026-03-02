@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Pill, Loader2, Info, Moon, Clock, CheckCircle } from "lucide-react";
+import { X, Pill, Info, Moon, Clock, CheckCircle } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { NearbyPharmacy, PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
 import PharmacyCard from "@/components/pharmacy/PharmacyCard";
