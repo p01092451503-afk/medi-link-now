@@ -40,6 +40,7 @@ interface ERData {
     angio: boolean;          // hvangio - 혈관촬영기
     ventilator: boolean;     // hvventiayn - 인공호흡기
     ecmo: boolean;           // hvecmoayn - 에크모
+    incubator: boolean;      // hvincuayn - 인큐베이터
   };
   // 운영 상태
   erDivision: string;        // dutyDiv - 응급의료기관 구분
@@ -331,6 +332,7 @@ serve(async (req) => {
           angio: getBoolValue(itemXml, 'hvangio'),
           ventilator: getBoolValue(itemXml, 'hvventiayn'),
           ecmo: getBoolValue(itemXml, 'hvecmoayn'),
+          incubator: getBoolValue(itemXml, 'hvincuayn'),
         },
         // 운영 상태
         erDivision: getValue(itemXml, 'dutyDiv'),

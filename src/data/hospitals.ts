@@ -23,8 +23,21 @@ export interface Hospital {
     general: number;
     pediatric: number;
     fever: number;
+    icu?: number;
+    medicalIcu?: number;
+    surgicalIcu?: number;
+    operatingRoom?: number;
+    neonatalIcu?: number;
   };
   equipment: string[];
+  equipmentDetail?: {
+    ct: boolean;
+    mri: boolean;
+    angio: boolean;
+    ventilator: boolean;
+    ecmo: boolean;
+    incubator: boolean;
+  };
   distance?: number;
   region: string;
   // New fields for extended API data

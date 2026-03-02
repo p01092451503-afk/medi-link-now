@@ -12,6 +12,19 @@ interface ERApiResponse {
     generalBeds: number;
     pediatricBeds: number;
     feverBeds: number;
+    icuBeds: number;
+    medicalIcuBeds: number;
+    surgicalIcuBeds: number;
+    operatingRooms: number;
+    neonatalIcuBeds: number;
+    equipment?: {
+      ct: boolean;
+      mri: boolean;
+      angio: boolean;
+      ventilator: boolean;
+      ecmo: boolean;
+      incubator: boolean;
+    };
     lat?: number;
     lng?: number;
     isTraumaCenter?: boolean;
@@ -27,6 +40,12 @@ interface ERApiResponse {
   count?: number;
   error?: string;
   useMockData?: boolean;
+  diagnostics?: {
+    reason: string;
+    message: string;
+    setupGuide: string;
+    timestamp: string;
+  };
 }
 
 /** Individual hospital ER status from ErmctInfoInqireService */
@@ -261,8 +280,18 @@ export const getRealTimeBeds = async (
         general: item.generalBeds,
         pediatric: item.pediatricBeds,
         fever: item.feverBeds,
+        icu: item.icuBeds,
+        medicalIcu: item.medicalIcuBeds,
+        surgicalIcu: item.surgicalIcuBeds,
+        operatingRoom: item.operatingRooms,
+        neonatalIcu: item.neonatalIcuBeds,
       },
-      equipment: ["CT", "MRI"],
+      equipment: item.equipment
+        ? Object.entries(item.equipment)
+            .filter(([_, v]) => v === true)
+            .map(([k]) => k.toUpperCase())
+        : [],
+      equipmentDetail: item.equipment,
       category: "응급의료기관",
       region: regionId,
       isTraumaCenter: item.isTraumaCenter,
