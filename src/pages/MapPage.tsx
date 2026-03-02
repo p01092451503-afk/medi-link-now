@@ -100,7 +100,7 @@ const MapPage = () => {
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
-  const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
+  
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
