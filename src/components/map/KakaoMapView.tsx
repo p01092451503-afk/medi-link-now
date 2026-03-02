@@ -953,23 +953,6 @@ const KakaoMapView = ({
           0%, 100% { transform: translateX(-50%) translateY(0); }
           50% { transform: translateX(-50%) translateY(-4px); }
         }
-        @keyframes ambulance-drive {
-          0% { transform: translateX(-60px); }
-          100% { transform: translateX(60px); }
-        }
-        @keyframes ambulance-bounce {
-          0%, 100% { transform: translateY(0); }
-          25% { transform: translateY(-2px); }
-          75% { transform: translateY(1px); }
-        }
-        @keyframes road-dash {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-24px); }
-        }
-        @keyframes loading-dot {
-          0%, 80%, 100% { opacity: 0.3; }
-          40% { opacity: 1; }
-        }
       `}</style>
       {/* Always render container so ref is available */}
       <div 
