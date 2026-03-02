@@ -104,69 +104,70 @@ const SCRIPT_ID = "kakao-map-sdk";
 
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // 1. Already loaded
-    if (window.kakao?.maps?.load) {
-      console.log("[KakaoMap] SDK already loaded");
-      window.kakao.maps.load(() => resolve());
-      return;
-    }
-
-    // 2. Script tag exists → wait for it
-    if (document.getElementById(SCRIPT_ID)) {
-      console.log("[KakaoMap] Script tag exists, polling...");
-      let attempts = 0;
+    const waitForKakao = (timeoutMs: number, label: string) => {
+      const startedAt = Date.now();
       const interval = setInterval(() => {
         if (window.kakao?.maps?.load) {
           clearInterval(interval);
           window.kakao.maps.load(() => resolve());
-        } else if (attempts > 20) {
-          // 2초 대기 후 타임아웃
+          return;
+        }
+
+        if (Date.now() - startedAt > timeoutMs) {
           clearInterval(interval);
           if (!window.kakao) {
-            console.error("❌ 카카오맵 인증 실패! 현재 도메인:", window.location.origin);
-            console.error("이 도메인을 카카오 개발자 센터 > 플랫폼 > Web에 정확히 등록해주세요.");
             reject(new Error(`카카오맵 도메인 인증 실패 — 현재 도메인: ${window.location.origin}`));
           } else {
-            reject(new Error("카카오맵 SDK 로드 타임아웃 (기존 스크립트)"));
+            reject(new Error(`카카오맵 SDK 로드 타임아웃 (${label})`));
           }
         }
-        attempts++;
       }, 100);
+    };
+
+    // 1) Already loaded
+    if (window.kakao?.maps?.load) {
+      window.kakao.maps.load(() => resolve());
       return;
     }
 
-    // 3. Create script
+    // 2) Existing script tag: attach listeners + wait longer (avoid async race)
+    const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+    if (existingScript) {
+      existingScript.addEventListener("load", () => {
+        if (window.kakao?.maps?.load) {
+          window.kakao.maps.load(() => resolve());
+        }
+      }, { once: true });
+
+      existingScript.addEventListener("error", () => {
+        reject(new Error("카카오맵 스크립트 로드 실패 (기존 스크립트)"));
+      }, { once: true });
+
+      waitForKakao(10000, "기존 스크립트");
+      return;
+    }
+
+    // 3) Create script dynamically
     const apiKey = config.kakao.mapApiKey;
     if (!apiKey) {
       reject(new Error("VITE_KAKAO_MAP_API_KEY가 설정되지 않았습니다"));
       return;
     }
 
-    console.log("[KakaoMap] Creating script tag...");
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
 
     script.onload = () => {
-      console.log("[KakaoMap] Script onload fired");
-
-      // 핵심: onload 후 window.kakao가 없으면 도메인 인증 실패
-      if (!window.kakao) {
-        console.error("❌ 카카오맵 인증 실패! 현재 도메인:", window.location.origin);
-        console.error("이 도메인을 카카오 개발자 센터 > 플랫폼 > Web에 정확히 등록해주세요.");
+      if (!window.kakao?.maps?.load) {
         reject(new Error(`카카오맵 도메인 인증 실패 — 현재 도메인: ${window.location.origin}`));
         return;
       }
-
-      window.kakao.maps.load(() => {
-        console.log("[KakaoMap] maps.load() completed ✅");
-        resolve();
-      });
+      window.kakao.maps.load(() => resolve());
     };
 
     script.onerror = () => {
-      console.error("[KakaoMap] Script network error");
       script.remove();
       reject(new Error("카카오맵 스크립트 로드 실패 (네트워크 오류)"));
     };
