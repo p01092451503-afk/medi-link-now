@@ -309,9 +309,26 @@ serve(async (req) => {
         hospitalName: getValue(itemXml, 'dutyName'),
         address: getValue(itemXml, 'dutyAddr'),
         phone: getValue(itemXml, 'dutyTel3') || getValue(itemXml, 'dutyTel1'),
+        // 병상 현황
         generalBeds: getNumValue(itemXml, 'hvec'),
-        pediatricBeds: getNumValue(itemXml, 'hvoc'),
-        feverBeds: getNumValue(itemXml, 'hv29') + getNumValue(itemXml, 'hv30'),
+        pediatricBeds: getNumValue(itemXml, 'hvicc'),
+        feverBeds: getNumValue(itemXml, 'hvs01'),
+        icuBeds: getNumValue(itemXml, 'hvcc'),
+        surgicalIcuBeds: getNumValue(itemXml, 'hv2'),
+        medicalIcuBeds: getNumValue(itemXml, 'hv3'),
+        operatingRooms: getNumValue(itemXml, 'hvoc'),
+        neonatalIcuBeds: getNumValue(itemXml, 'hvncc'),
+        // 장비 현황
+        equipment: {
+          ct: getBoolValue(itemXml, 'hvctayn'),
+          mri: getBoolValue(itemXml, 'hvmriayn'),
+          angio: getBoolValue(itemXml, 'hvangio'),
+          ventilator: getBoolValue(itemXml, 'hvventiayn'),
+          ecmo: getBoolValue(itemXml, 'hvecmoayn'),
+        },
+        // 운영 상태
+        erDivision: getValue(itemXml, 'dutyDiv'),
+        traumaYn: getValue(itemXml, 'MKioskTy28'),
         lat: parseFloat(getValue(itemXml, 'wgs84Lat')) || undefined,
         lng: parseFloat(getValue(itemXml, 'wgs84Lon')) || undefined,
         isTraumaCenter: traumaCenters.has(hpid),
