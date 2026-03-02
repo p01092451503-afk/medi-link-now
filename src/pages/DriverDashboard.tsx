@@ -642,8 +642,6 @@ const DriverDashboard = () => {
         onToggleFavorite={toggleFavorite}
       />
 
-      {/* Voice Emergency Log FAB */}
-      <VoiceEmergencyLogFAB />
 
       {/* Incoming Call Popup */}
       {incomingCall && (
