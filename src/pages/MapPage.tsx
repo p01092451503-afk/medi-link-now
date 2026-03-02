@@ -26,7 +26,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
 import ClusteredMapView from "@/components/map/ClusteredMapView";
-import RadiusChips from "@/components/map/RadiusChips";
+
 import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
