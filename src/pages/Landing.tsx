@@ -242,7 +242,7 @@ const Landing = () => {
                   } disabled:opacity-50`}
                 >
                   {isLocating ? (
-                    <div className="w-3 h-3 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+                    <AmbulanceLoader variant="inline" />
                   ) : (
                     <Navigation className="w-3 h-3" />
                   )}

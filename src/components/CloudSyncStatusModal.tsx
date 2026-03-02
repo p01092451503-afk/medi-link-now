@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cloud, CloudOff, Check, RefreshCw, X } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 
 interface CloudSyncStatusModalProps {
@@ -120,8 +121,8 @@ const CloudSyncStatusModal = ({
             }`}
             variant={isStale ? "default" : "outline"}
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-            {isLoading ? "동기화 중..." : "지금 동기화"}
+            {isLoading ? <AmbulanceLoader variant="inline" message="동기화 중" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            {isLoading ? "" : "지금 동기화"}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground mt-4">

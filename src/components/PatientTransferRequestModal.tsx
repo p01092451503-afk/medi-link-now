@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, User, Activity, Heart, Droplet, Wind, Send, Brain } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -344,10 +345,7 @@ const PatientTransferRequestModal = ({
                 className="w-full py-6 rounded-2xl bg-foreground text-background hover:opacity-90 font-bold"
               >
                 {isSubmitting ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                    전송 중...
-                  </div>
+                  <AmbulanceLoader variant="inline" message="전송 중" />
                 ) : (
                   <div className="flex items-center gap-2">
                     <Send className="w-4 h-4" />
