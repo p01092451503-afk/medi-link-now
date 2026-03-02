@@ -67,6 +67,7 @@ const DataSourceBadge = ({ source, lastUpdated, lastApiRefresh }: DataSourceBadg
         {config.time && (
           <span className="text-muted-foreground/60 ml-0.5">{config.time}</span>
         )}
+      </button>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-sm">
