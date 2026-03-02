@@ -183,7 +183,7 @@ const MedicineGuidePage = () => {
       </main>
 
       {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-xl border-t border-border p-4 safe-bottom">
+      <div className="fixed bottom-safe-1 left-0 right-0 bg-background/90 backdrop-blur-xl border-t border-border px-4 pb-2 pt-4">
         <div className="max-w-lg mx-auto">
           <Button
             onClick={handleFindPharmacy}
