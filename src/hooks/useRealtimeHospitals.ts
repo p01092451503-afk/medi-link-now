@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { config } from "@/lib/config";
 import { supabase } from "@/integrations/supabase/client";
 import { hospitals as staticHospitals, Hospital } from "@/data/hospitals";
 
