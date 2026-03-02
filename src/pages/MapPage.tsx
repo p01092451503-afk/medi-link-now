@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Crosshair, Loader2, MapPin, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
 import { useMapProvider } from "@/hooks/useMapProvider";
