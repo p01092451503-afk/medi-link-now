@@ -9,7 +9,6 @@ import {
   X,
   Search,
   Ambulance,
-  Ambulance,
   Clock,
   Building2,
 } from "lucide-react";
