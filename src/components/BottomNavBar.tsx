@@ -43,26 +43,31 @@ const BottomNavBar = () => {
   const navItems = role === "driver" ? driverNav : guardianNav;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-[900] bg-background/95 backdrop-blur-xl border-t border-border safe-area-bottom">
-      <div className="flex items-center justify-around h-14 max-w-lg mx-auto px-2">
-        {navItems.map(({ path, label, icon: Icon }) => {
-          const basePath = path.split("?")[0];
-          const isActive = location.pathname === basePath;
-          return (
-            <button
-              key={path}
-              onClick={() => navigate(path)}
-              className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 min-h-[44px] transition-colors ${
-                isActive
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium">{label}</span>
-            </button>
-          );
-        })}
+    <nav className="fixed bottom-0 left-0 right-0 z-[900] safe-area-bottom">
+      <div className="mx-3 mb-2">
+        <div className="flex items-center justify-around h-[58px] max-w-lg mx-auto px-1 bg-card/90 backdrop-blur-2xl rounded-2xl shadow-lg border border-border/50">
+          {navItems.map(({ path, label, icon: Icon }) => {
+            const basePath = path.split("?")[0];
+            const isActive = location.pathname === basePath;
+            return (
+              <button
+                key={path}
+                onClick={() => navigate(path)}
+                className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 min-h-[44px] transition-all duration-200 ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground/70"
+                }`}
+              >
+                {isActive && (
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-5 h-[3px] rounded-full bg-primary" />
+                )}
+                <Icon className={`w-[22px] h-[22px] transition-transform duration-200 ${isActive ? "scale-110" : ""}`} />
+                <span className={`text-[10px] transition-all duration-200 ${isActive ? "font-bold" : "font-medium"}`}>{label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );
