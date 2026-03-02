@@ -153,7 +153,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-secondary rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
