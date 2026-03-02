@@ -563,9 +563,6 @@ const MapPage = () => {
 
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
-        {/* Trust Badge */}
-        <TrustBadge />
-
         {/* Data Source Badge */}
         <div className="absolute bottom-safe-1 right-2 z-[1000]">
           <DataSourceBadge
