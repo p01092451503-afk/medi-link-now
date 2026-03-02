@@ -26,7 +26,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
 import ClusteredMapView from "@/components/map/ClusteredMapView";
-import RadiusChips from "@/components/map/RadiusChips";
+
 import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
@@ -525,13 +525,6 @@ const MapPage = () => {
     );
   }, []);
 
-  const handleRadiusChange = useCallback((radius: number | "all") => {
-    setActiveRadius(radius);
-    if (userLocation && radius !== "all") {
-      setMapZoom(getZoomForRadius(radius));
-      setMapCenter(userLocation);
-    }
-  }, [userLocation]);
 
   // Sync radius chip when map zoom changes (via pinch/scroll/slider)
   const handleZoomChange = useCallback((zoom: number) => {
@@ -889,17 +882,6 @@ const MapPage = () => {
           <TransferFilterChips />
         )}
 
-        {/* Radius Chips - Capsule style, hidden when hospital selected */}
-        {!selectedHospital && !selectedNursingHospital && (
-          <div className="absolute bottom-safe-1 left-4 z-[999]">
-            <RadiusChips
-              activeRadius={activeRadius}
-              onRadiusChange={handleRadiusChange}
-              userLocation={userLocation}
-              lastUpdated={lastUpdated}
-            />
-          </div>
-        )}
       </div>
 
 
