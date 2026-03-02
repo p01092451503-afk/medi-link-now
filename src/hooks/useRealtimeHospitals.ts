@@ -65,7 +65,6 @@ export const useRealtimeHospitals = () => {
   const [lastApiRefresh, setLastApiRefresh] = useState<Date | null>(null);
   const isMounted = useRef(true);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const isMounted = useRef(true);
 
   // Fetch hospitals - merge DB data with static data for fallback
   const fetchHospitalData = useCallback(async () => {
