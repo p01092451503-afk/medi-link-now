@@ -235,8 +235,39 @@ export const useRealtimeHospitals = () => {
   useEffect(() => {
     isMounted.current = true;
     
-    // Fetch initial data
+    // Fetch initial data from DB + trigger API refresh
     fetchHospitalData();
+    triggerApiRefresh();
+
+    // 5분 간격 폴링
+    const POLL_INTERVAL = 5 * 60 * 1000;
+    
+    const startPolling = () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      pollingRef.current = setInterval(() => {
+        triggerApiRefresh();
+      }, POLL_INTERVAL);
+    };
+
+    const stopPolling = () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    };
+
+    // Visibility change: 비활성 시 폴링 중단, 복귀 시 즉시 갱신 + 재시작
+    const handleVisibility = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        triggerApiRefresh();
+        startPolling();
+      }
+    };
+
+    startPolling();
+    document.addEventListener('visibilitychange', handleVisibility);
 
     // Subscribe to realtime updates for bed status
     const statusChannel = supabase
@@ -276,9 +307,11 @@ export const useRealtimeHospitals = () => {
 
     return () => {
       isMounted.current = false;
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibility);
       supabase.removeChannel(statusChannel);
     };
-  }, [fetchHospitalData]);
+  }, [fetchHospitalData, triggerApiRefresh]);
 
   return {
     hospitals,
