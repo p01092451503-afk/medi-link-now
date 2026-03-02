@@ -243,7 +243,7 @@ const FamilyPage = () => {
                   onClick={() => navigate("/login?mode=guardian&returnTo=/family")}
                   size="sm"
                   variant="outline"
-                  className="border-yellow-400 text-yellow-800 hover:bg-yellow-100"
+                  className="border-warning/50 text-foreground hover:bg-warning/10"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   로그인하고 안전하게 저장하기
