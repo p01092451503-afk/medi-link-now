@@ -219,21 +219,6 @@ const Index = () => {
       )}
 
       {/* Right Side Controls */}
-      <div className="fixed bottom-6 right-4 z-[1000] flex flex-col gap-2 items-center">
-        
-        {/* Location FAB */}
-        <button
-          onClick={handleMyLocation}
-          disabled={isLocating}
-          className="rounded-full shadow-lg p-4 bg-white border border-gray-100 hover:bg-gray-50 transition-colors disabled:opacity-70"
-        >
-          {isLocating ? (
-            <Loader2 className="w-6 h-6 text-primary animate-spin" />
-          ) : (
-            <Crosshair className="w-6 h-6 text-primary" />
-          )}
-        </button>
-      </div>
 
       {/* Bottom Sheet */}
       <AnimatePresence>
