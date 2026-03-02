@@ -559,9 +559,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
 
                 <ScrollArea className="h-[calc(80vh-180px)]">
                   {isLoadingHospitals ? (
-                    <div className="flex items-center justify-center py-12">
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                    </div>
+                    <AmbulanceLoader variant="section" />
                   ) : filteredHospitals.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                       <MapPin className="w-10 h-10 mx-auto mb-2 opacity-50" />
