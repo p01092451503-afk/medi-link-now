@@ -5,7 +5,7 @@ import { ArrowLeft, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "luc
 import SplashScreen from "@/components/SplashScreen";
 import { useMapProvider } from "@/hooks/useMapProvider";
 import KakaoMapView from "@/components/map/KakaoMapView";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
