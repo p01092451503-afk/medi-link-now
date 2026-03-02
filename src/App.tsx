@@ -59,33 +59,35 @@ const AppRoutes = () => {
     <>
       <ScrollToTop />
       <div className={isMapRoute ? "h-[100dvh] overflow-hidden" : "pb-14 sm:pb-0"}>
-        <Routes>
-          <Route path="/" element={<RootRedirect />} />
-          <Route path="/intro" element={<Landing />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
-          <Route path="/guardian" element={<GuardianLanding />} />
-          <Route path="/driver-intro" element={<DriverLanding />} />
-          <Route path="/paramedic" element={<ParamedicLanding />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/family" element={<FamilyPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/driver" element={<DriverDashboard />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/install" element={<InstallPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/fare-calculator" element={<FareCalculatorPage />} />
-          <Route path="/logs" element={<RejectionLogsPage />} />
-          <Route path="/driver-bids" element={<DriverBidHistoryPage />} />
-          <Route path="/payments" element={<PaymentsPage />} />
-          <Route path="/driver-registration" element={<DriverRegistrationPage />} />
-          <Route path="/medicine-guide" element={<MedicineGuidePage />} />
-          <Route path="/emergency-guide" element={<EmergencyGuidePage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<RootRedirect />} />
+            <Route path="/intro" element={<Landing />} />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/guardian" element={<GuardianLanding />} />
+            <Route path="/driver-intro" element={<DriverLanding />} />
+            <Route path="/paramedic" element={<ParamedicLanding />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/family" element={<FamilyPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/driver" element={<DriverDashboard />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/install" element={<InstallPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/fare-calculator" element={<FareCalculatorPage />} />
+            <Route path="/logs" element={<RejectionLogsPage />} />
+            <Route path="/driver-bids" element={<DriverBidHistoryPage />} />
+            <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/driver-registration" element={<DriverRegistrationPage />} />
+            <Route path="/medicine-guide" element={<MedicineGuidePage />} />
+            <Route path="/emergency-guide" element={<EmergencyGuidePage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </div>
       <BottomNavBar />
     </>
