@@ -9,7 +9,6 @@ import {
   AlertCircle,
   X,
   Clock,
-  Clock,
   MapPin,
   Navigation,
   Car

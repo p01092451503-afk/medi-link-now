@@ -9,7 +9,6 @@ import {
   RotateCcw,
   Check,
   RefreshCw,
-  RefreshCw,
   Bell,
   User,
   Flame,
