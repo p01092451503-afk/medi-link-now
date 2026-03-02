@@ -44,7 +44,7 @@ import { useHospitalDetails } from "@/hooks/useHospitalDetails";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
 import LocationCoachmark, { useLocationCoachmark } from "@/components/LocationCoachmark";
 import DispatchRequestModal from "@/components/DispatchRequestModal";
-import MapLegendPopup from "@/components/map/MapLegendPopup";
+
 import OfflineBanner from "@/components/OfflineBanner";
 import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";

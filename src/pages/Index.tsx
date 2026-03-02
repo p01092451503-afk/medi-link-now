@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { Search, Menu, Crosshair, Loader2, X, Phone, Navigation, Stethoscope, Baby, Thermometer, RefreshCw, Info, EyeOff } from "lucide-react";
-import MapLegendPopup from "@/components/map/MapLegendPopup";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -239,48 +239,8 @@ const Index = () => {
         </div>
       )}
 
-      {/* Legend with realtime status */}
-      <div className="absolute bottom-safe-1 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-semibold text-foreground">병상 현황</h4>
-          <button
-            onClick={() => {
-              refetch();
-              toast({ title: "데이터를 새로고침했습니다" });
-            }}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <RefreshCw className={`w-3 h-3 text-muted-foreground ${isLoadingHospitals ? "animate-spin" : ""}`} />
-          </button>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span className="text-xs text-muted-foreground">여유</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <span className="text-xs text-muted-foreground">혼잡</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <span className="text-xs text-muted-foreground">만실</span>
-          </div>
-        </div>
-        {lastUpdated && (
-          <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t">
-            업데이트: {lastUpdated.toLocaleTimeString("ko-KR")}
-          </p>
-        )}
-      </div>
-
       {/* Right Side Controls */}
       <div className="fixed bottom-6 right-4 z-[1000] flex flex-col gap-2 items-center">
-        {/* Map Legend Help Button */}
-        <MapLegendPopup />
-        
-        {/* Spacer */}
-        <div className="h-2" />
         
         {/* Location FAB */}
         <button
