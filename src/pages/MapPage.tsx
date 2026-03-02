@@ -573,6 +573,15 @@ const MapPage = () => {
         {/* Trust Badge */}
         <TrustBadge />
 
+        {/* Data Source Badge */}
+        <div className="absolute top-2 left-2 z-[1000]">
+          <DataSourceBadge
+            source={isQueryError ? "mock" : lastApiRefresh ? "realtime" : "cache"}
+            lastUpdated={lastUpdated}
+            lastApiRefresh={lastApiRefresh}
+          />
+        </div>
+
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
