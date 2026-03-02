@@ -202,8 +202,8 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                                 ? "bg-blue-500 text-white" 
                                 : key === "female"
                                   ? "bg-pink-500 text-white"
-                                  : "bg-gray-500 text-white"
-                              : "bg-gray-100 text-foreground hover:bg-gray-200"
+                                  : "bg-muted-foreground text-white"
+                              : "bg-secondary text-foreground hover:bg-accent"
                           }`}
                         >
                           {key === "male" ? "👨 " : key === "female" ? "👩 " : ""}{label}
