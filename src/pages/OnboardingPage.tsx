@@ -264,7 +264,7 @@ const OnboardingPage = () => {
       </div>
 
       {/* Slide content */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden py-8">
+      <div className="flex-1 flex items-center justify-center overflow-hidden py-4 min-h-0">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={step}
