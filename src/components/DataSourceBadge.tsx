@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Shield, Zap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { AnimatePresence, motion } from "framer-motion";
 
 type DataSource = "realtime" | "cache" | "mock";
 
@@ -11,6 +13,7 @@ interface DataSourceBadgeProps {
 
 const DataSourceBadge = ({ source, lastUpdated, lastApiRefresh }: DataSourceBadgeProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const getMinutesAgo = (date: Date | null): number | null => {
     if (!date) return null;
@@ -24,44 +27,79 @@ const DataSourceBadge = ({ source, lastUpdated, lastApiRefresh }: DataSourceBadg
     if (source === "mock") {
       return {
         dot: "bg-destructive",
-        bg: "bg-destructive/10 border-destructive/30",
+        bg: "bg-white/90 border-destructive/30 shadow-lg",
         text: "text-destructive",
         label: "샘플 데이터 표시 중",
-        clickable: true,
+        fullLabel: "⚠️ 샘플 데이터 표시 중",
+        isMock: true,
       };
     }
 
     if (source === "cache" || (cacheMinutes !== null && cacheMinutes > 20)) {
       return {
         dot: "bg-warning",
-        bg: "bg-warning/10 border-warning/30",
+        bg: "bg-white/90 border-warning/30 shadow-lg",
         text: "text-warning",
-        label: `캐시 데이터 · ${cacheMinutes ?? "?"}분 전`,
-        clickable: false,
+        label: `캐시 · ${cacheMinutes ?? "?"}분 전`,
+        fullLabel: `캐시 데이터 사용 중 · ${cacheMinutes ?? "?"}분 전 갱신`,
+        isMock: false,
       };
     }
 
     return {
       dot: "bg-success animate-pulse",
-      bg: "bg-success/10 border-success/30",
-      text: "text-success",
-      label: `실시간 NEDIS 연동 중${apiMinutes !== null ? ` · ${apiMinutes}분 전 갱신` : ""}`,
-      clickable: false,
+      bg: "bg-white/90 border-muted shadow-lg",
+      text: "text-muted-foreground",
+      label: `${apiMinutes ?? 0}분 전`,
+      fullLabel: `Powered by NEDIS & 119 Data · ${apiMinutes ?? 0}분 전 갱신`,
+      isMock: false,
     };
   };
 
   const config = getConfig();
 
+  const handleClick = () => {
+    if (config.isMock) {
+      setShowModal(true);
+    } else {
+      setIsExpanded((prev) => !prev);
+    }
+  };
+
   return (
     <>
       <button
-        onClick={() => {
-          if (source === "mock") setShowModal(true);
-        }}
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border backdrop-blur-sm transition-all ${config.bg} ${config.text} ${source === "mock" ? "cursor-pointer hover:opacity-80" : "cursor-default"}`}
+        onClick={handleClick}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium border backdrop-blur-sm transition-all ${config.bg} ${config.text} cursor-pointer hover:shadow-xl active:scale-95`}
       >
-        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dot}`} />
-        {config.label}
+        <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
+        <AnimatePresence mode="wait">
+          {isExpanded ? (
+            <motion.span
+              key="full"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: "auto", opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden whitespace-nowrap flex items-center gap-1"
+            >
+              <Zap className="w-3 h-3 text-primary shrink-0" />
+              {config.fullLabel}
+            </motion.span>
+          ) : (
+            <motion.span
+              key="short"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: "auto", opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden whitespace-nowrap flex items-center gap-1"
+            >
+              <Zap className="w-3 h-3 text-primary shrink-0" />
+              {config.isMock ? config.label : config.label}
+            </motion.span>
+          )}
+        </AnimatePresence>
       </button>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
