@@ -150,10 +150,7 @@ const PaymentButton = ({
         size="lg"
       >
         {isProcessing ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            처리 중...
-          </>
+          <AmbulanceLoader variant="inline" message="처리 중" />
         ) : (
           <>
             <CreditCard className="w-4 h-4 mr-2" />

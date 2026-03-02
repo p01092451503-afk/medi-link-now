@@ -186,7 +186,7 @@ const DriverBidForm = ({ onSubmit, isLoading, existingBid, pickupLat, pickupLng,
               className="flex-1 min-h-[48px] rounded-xl bg-foreground text-background hover:opacity-90"
             >
               {isLoading ? (
-                <><Loader2 className="w-4 h-4 animate-spin mr-1" /> 제출 중...</>
+                <AmbulanceLoader variant="inline" message="제출 중" />
               ) : (
                 <><Send className="w-4 h-4 mr-1" /> 입찰 제출</>
               )}

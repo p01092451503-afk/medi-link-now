@@ -260,7 +260,7 @@ const AdminVerificationTab = () => {
               onClick={handleReject}
               disabled={!rejectReason.trim() || rejectVerification.isPending}
             >
-              {rejectVerification.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "반려하기"}
+              {rejectVerification.isPending ? <AmbulanceLoader variant="inline" /> : "반려하기"}
             </Button>
           </DialogFooter>
         </DialogContent>

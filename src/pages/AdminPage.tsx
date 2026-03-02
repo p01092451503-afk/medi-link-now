@@ -594,10 +594,7 @@ export default function AdminPage() {
                         onClick={() => handleSyncBatch(batch)}
                       >
                         {isCurrentBatch ? (
-                          <>
-                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                            처리 중
-                          </>
+                          <AmbulanceLoader variant="inline" message="처리 중" />
                         ) : (
                           <>
                             <RefreshCw className="h-3 w-3 mr-1" />
