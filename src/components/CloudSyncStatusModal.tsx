@@ -121,8 +121,8 @@ const CloudSyncStatusModal = ({
             }`}
             variant={isStale ? "default" : "outline"}
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-            {isLoading ? "동기화 중..." : "지금 동기화"}
+            {isLoading ? <AmbulanceLoader variant="inline" message="동기화 중" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            {isLoading ? "" : "지금 동기화"}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground mt-4">

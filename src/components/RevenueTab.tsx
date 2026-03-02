@@ -323,7 +323,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
               disabled={isLoading}
               className="p-2 hover:bg-secondary rounded-full transition-colors"
             >
-              <RefreshCw className={`w-4 h-4 text-muted-foreground ${isLoading ? "animate-spin" : ""}`} />
+              {isLoading ? <AmbulanceLoader variant="inline" /> : <RefreshCw className="w-4 h-4 text-muted-foreground" />}
             </button>
             <span className="text-xs bg-secondary text-foreground px-2.5 py-1 rounded-full flex items-center gap-1 font-medium">
               <Bell className="w-3 h-3" />
