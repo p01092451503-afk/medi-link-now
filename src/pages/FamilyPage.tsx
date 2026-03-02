@@ -236,7 +236,7 @@ const FamilyPage = () => {
                 <p className="text-sm text-foreground font-medium mb-1">
                   로그인하지 않으면 데이터가 기기에만 저장됩니다
                 </p>
-                <p className="text-xs text-yellow-700 mb-3">
+                <p className="text-xs text-muted-foreground mb-3">
                   다른 기기에서 접속하거나 브라우저 캐시를 삭제하면 데이터가 사라질 수 있습니다.
                 </p>
                 <Button
