@@ -66,25 +66,6 @@ export const useRealtimeHospitals = () => {
   const isMounted = useRef(true);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Trigger Edge Function to refresh ER data from public API
-  const triggerApiRefresh = useCallback(async () => {
-    try {
-      console.log('[useRealtimeHospitals] Triggering API refresh via fetch-er-data...');
-      const { data, error } = await supabase.functions.invoke('fetch-er-data', {
-        body: { city: '서울특별시' },
-      });
-      if (error) {
-        console.error('[useRealtimeHospitals] API refresh error:', error);
-      } else {
-        console.log(`[useRealtimeHospitals] API refresh success: ${data?.count || 0} hospitals`);
-        setLastApiRefresh(new Date());
-        // Re-fetch from DB to pick up new cache data
-        await fetchHospitalData();
-      }
-    } catch (err) {
-      console.error('[useRealtimeHospitals] API refresh failed:', err);
-    }
-  }, [fetchHospitalData]);
 
   // Fetch hospitals - merge DB data with static data for fallback
   const fetchHospitalData = useCallback(async () => {
