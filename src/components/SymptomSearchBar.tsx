@@ -17,6 +17,7 @@ import { FilterType, Hospital, filterHospitals, calculateDistance, getHospitalSt
 import { analyzeSymptom, getSymptomExamples, SymptomAnalysisResult } from "@/utils/symptomAnalyzer";
 import { useToast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 
 interface SymptomSearchBarProps {
   value: string;

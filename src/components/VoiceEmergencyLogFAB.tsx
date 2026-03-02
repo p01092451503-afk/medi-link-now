@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Loader2, Sparkles, X, AlertTriangle, Check, Edit3, RotateCcw } from "lucide-react";
+import { Mic, MicOff, Sparkles, X, AlertTriangle, Check, Edit3, RotateCcw } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
