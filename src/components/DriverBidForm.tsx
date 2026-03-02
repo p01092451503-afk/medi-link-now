@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { DollarSign, Send, Loader2, Zap, MapPin, Clock, AlertTriangle, Heart, Pill } from "lucide-react";
+import { DollarSign, Send, Zap, MapPin, Clock, AlertTriangle, Heart, Pill } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
