@@ -769,7 +769,7 @@ const MapPage = () => {
         {/* Data Source removed - update time moved to RadiusChips */}
 
         {/* Header */}
-        <header className="absolute top-5 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
+        <header className="absolute top-2 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
           <div className="flex items-center gap-3 min-w-max">
             <button
               onClick={() => navigate("/")}
@@ -796,7 +796,7 @@ const MapPage = () => {
 
         {/* Filter Chips - Single row horizontal scroll */}
         {!isTransferMode ? (
-          <div className="absolute top-[5.5rem] left-0 right-0 z-[999] px-4">
+          <div className="absolute top-[4.5rem] left-0 right-0 z-[999] px-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {filterOptions
                 .filter((f) => (f.category === "bed" || f.category === "special") && !f.parent)
