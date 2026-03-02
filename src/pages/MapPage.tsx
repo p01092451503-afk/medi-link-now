@@ -114,7 +114,7 @@ const MapPage = () => {
   const [activeRegion, setActiveRegion] = useState<RegionType>("seoul");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [isLocating, setIsLocating] = useState(false);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState<number>(10);
