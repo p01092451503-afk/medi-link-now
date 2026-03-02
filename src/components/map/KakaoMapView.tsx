@@ -104,55 +104,38 @@ const SCRIPT_ID = "kakao-map-sdk";
 
 const loadKakaoSDK = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const waitForKakao = (timeoutMs: number, label: string) => {
-      const startedAt = Date.now();
-      const interval = setInterval(() => {
-        if (window.kakao?.maps?.load) {
-          clearInterval(interval);
-          window.kakao.maps.load(() => resolve());
-          return;
-        }
+    // 1) Already loaded and initialized
+    if (window.kakao?.maps?.Map) {
+      console.log("[KakaoSDK] Already fully initialized");
+      resolve();
+      return;
+    }
 
-        if (Date.now() - startedAt > timeoutMs) {
-          clearInterval(interval);
-          if (!window.kakao) {
-            reject(new Error(`카카오맵 도메인 인증 실패 — 현재 도메인: ${window.location.origin}`));
-          } else {
-            reject(new Error(`카카오맵 SDK 로드 타임아웃 (${label})`));
-          }
-        }
-      }, 100);
-    };
-
-    // 1) Already loaded
+    // 2) kakao object exists but maps not initialized yet (autoload=false)
     if (window.kakao?.maps?.load) {
-      window.kakao.maps.load(() => resolve());
+      console.log("[KakaoSDK] kakao.maps.load exists, calling it...");
+      window.kakao.maps.load(() => {
+        console.log("[KakaoSDK] maps.load() completed ✅");
+        resolve();
+      });
       return;
     }
 
-    // 2) Existing script tag: attach listeners + wait longer (avoid async race)
-    const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+    // 3) Remove any existing script to avoid stale state
+    const existingScript = document.getElementById(SCRIPT_ID);
     if (existingScript) {
-      existingScript.addEventListener("load", () => {
-        if (window.kakao?.maps?.load) {
-          window.kakao.maps.load(() => resolve());
-        }
-      }, { once: true });
-
-      existingScript.addEventListener("error", () => {
-        reject(new Error("카카오맵 스크립트 로드 실패 (기존 스크립트)"));
-      }, { once: true });
-
-      waitForKakao(10000, "기존 스크립트");
-      return;
+      console.log("[KakaoSDK] Removing stale script tag");
+      existingScript.remove();
     }
 
-    // 3) Create script dynamically
+    // 4) Create fresh script
     const apiKey = config.kakao.mapApiKey;
     if (!apiKey) {
       reject(new Error("VITE_KAKAO_MAP_API_KEY가 설정되지 않았습니다"));
       return;
     }
+
+    console.log("[KakaoSDK] Creating script, origin:", window.location.origin);
 
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
@@ -160,14 +143,30 @@ const loadKakaoSDK = (): Promise<void> => {
     script.async = true;
 
     script.onload = () => {
-      if (!window.kakao?.maps?.load) {
-        reject(new Error(`카카오맵 도메인 인증 실패 — 현재 도메인: ${window.location.origin}`));
+      console.log("[KakaoSDK] Script onload. window.kakao:", typeof window.kakao, "maps:", typeof window.kakao?.maps);
+
+      if (!window.kakao) {
+        reject(new Error(
+          `카카오맵 도메인 인증 실패.\n` +
+          `현재 도메인: ${window.location.origin}\n` +
+          `카카오 개발자 콘솔에서 이 도메인이 JS 앱키 "${apiKey.slice(0, 8)}..."의 웹 플랫폼에 등록되어 있는지 확인하세요.`
+        ));
         return;
       }
-      window.kakao.maps.load(() => resolve());
+
+      if (!window.kakao.maps?.load) {
+        reject(new Error("카카오맵 SDK 로드 완료되었으나 maps.load가 없습니다"));
+        return;
+      }
+
+      window.kakao.maps.load(() => {
+        console.log("[KakaoSDK] maps.load() completed ✅");
+        resolve();
+      });
     };
 
-    script.onerror = () => {
+    script.onerror = (e) => {
+      console.error("[KakaoSDK] Script network error:", e);
       script.remove();
       reject(new Error("카카오맵 스크립트 로드 실패 (네트워크 오류)"));
     };
