@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,12 +37,7 @@ const PaymentsPage = lazy(() => import("./pages/PaymentsPage"));
 const DriverRegistrationPage = lazy(() => import("./pages/DriverRegistrationPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-[60dvh]">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);
-
+const PageLoader = () => <AmbulanceLoader variant="fullscreen" />;
 const queryClient = new QueryClient();
 
 const ONBOARDED_KEY = "find-er-onboarded";
