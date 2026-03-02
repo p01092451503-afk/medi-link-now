@@ -97,7 +97,7 @@ const MapPage = () => {
   const isDriverMode = searchParams.get("mode") === "driver";
   const hideMode = searchParams.get("hideMode") === "true";
   const isParamedicMode = searchParams.get("role") === "paramedic";
-  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { showCoachmark, dismissCoachmark } = useLocationCoachmark();
@@ -569,9 +569,9 @@ const MapPage = () => {
         {/* Data Source Badge */}
         <div className="absolute bottom-safe-1 right-2 z-[1000]">
           <DataSourceBadge
-            source={isQueryError ? "mock" : lastApiRefresh ? "realtime" : "cache"}
-            lastUpdated={lastUpdated}
-            lastApiRefresh={lastApiRefresh}
+            isRealtime={isRealtime}
+            source={dataSource}
+            lastUpdated={lastApiRefresh || lastUpdated}
           />
         </div>
 

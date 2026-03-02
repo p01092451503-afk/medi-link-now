@@ -313,12 +313,27 @@ export const useRealtimeHospitals = () => {
     };
   }, [fetchHospitalData, triggerApiRefresh]);
 
+  // Derive data source
+  const source: 'api' | 'db' | 'cache' | 'mock' = isError
+    ? 'mock'
+    : lastApiRefresh
+      ? 'api'
+      : lastUpdated
+        ? 'cache'
+        : 'mock';
+
+  const isRealtime = source === 'api';
+  const isPolling = pollingRef.current !== null;
+
   return {
     hospitals,
     isLoading,
     isError,
+    isRealtime,
+    source,
     lastUpdated,
     lastApiRefresh,
+    isPolling,
     refetch: fetchHospitalData,
     triggerApiRefresh,
   };
