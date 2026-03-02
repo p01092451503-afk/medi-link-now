@@ -21,24 +21,34 @@ const DataSourceBadge = ({ source, lastUpdated, lastApiRefresh }: DataSourceBadg
   const apiMinutes = getMinutesAgo(lastApiRefresh);
   const cacheMinutes = getMinutesAgo(lastUpdated);
 
+  const formatTime = (date: Date | null): string => {
+    if (!date) return "";
+    const h = date.getHours().toString().padStart(2, "0");
+    const m = date.getMinutes().toString().padStart(2, "0");
+    return `${h}:${m}`;
+  };
+
   const getConfig = () => {
     if (source === "mock") {
       return {
         dot: "bg-destructive",
         label: "샘플 데이터",
+        time: "",
         isMock: true,
       };
     }
     if (source === "cache" || (cacheMinutes !== null && cacheMinutes > 20)) {
       return {
         dot: "bg-warning",
-        label: `캐시 · ${cacheMinutes ?? "?"}분 전`,
+        label: "캐시",
+        time: formatTime(lastUpdated),
         isMock: false,
       };
     }
     return {
       dot: "bg-success animate-pulse",
       label: "NEDIS · 119",
+      time: formatTime(lastApiRefresh),
       isMock: false,
     };
   };
@@ -54,6 +64,9 @@ const DataSourceBadge = ({ source, lastUpdated, lastApiRefresh }: DataSourceBadg
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dot}`} />
         <Zap className="w-2.5 h-2.5 text-primary/70" />
         {config.label}
+        {config.time && (
+          <span className="text-muted-foreground/60 ml-0.5">{config.time}</span>
+        )}
       </button>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
