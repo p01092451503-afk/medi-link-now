@@ -16,7 +16,7 @@ import {
   Activity,
   Star,
   Radio,
-  Loader2,
+  ToggleLeft,
   ToggleLeft,
   ToggleRight,
   TrendingUp,

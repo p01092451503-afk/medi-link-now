@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { X, MapPin, Hospital, Check, Loader2 } from 'lucide-react';
+import { X, MapPin, Hospital, Check } from 'lucide-react';
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from '@/components/ui/button';
 import { useRejectionLogs, REJECTION_REASONS } from '@/hooks/useRejectionLogs';

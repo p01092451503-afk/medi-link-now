@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, Loader2, BedDouble, Clock, MapPin, LogOut, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Database, RefreshCw, CheckCircle, AlertCircle, BedDouble, Clock, MapPin, LogOut, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

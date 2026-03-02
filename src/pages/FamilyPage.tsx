@@ -8,7 +8,7 @@ import {
   Users, 
   Heart,
   Shield,
-  Loader2,
+  LogIn,
   LogIn,
   AlertCircle,
   Settings,
