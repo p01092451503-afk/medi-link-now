@@ -578,8 +578,34 @@ const MapPage = () => {
         {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
-        {/* Map View - Kakao or Leaflet (auto-fallback on Kakao failure) */}
-        {isKakao && !kakaoFailed ? (
+        {/* Map View - Kakao or error screen */}
+        {kakaoFailed ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+            <div className="flex flex-col items-center gap-4 p-8 max-w-sm text-center">
+              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
+                <MapIcon className="w-8 h-8 text-destructive" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">카카오맵 로딩 실패</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                지도를 불러올 수 없습니다.<br />
+                네트워크 연결을 확인하거나,<br />
+                카카오 개발자 콘솔에서 현재 도메인이<br />
+                등록되어 있는지 확인해 주세요.
+              </p>
+              <p className="text-xs text-muted-foreground/60 font-mono">
+                {window.location.origin}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setKakaoFailed(false)}
+                className="mt-2"
+              >
+                다시 시도
+              </Button>
+            </div>
+          </div>
+        ) : (
           <KakaoMapView
             hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
             onHospitalClick={handleHospitalClick}
@@ -597,38 +623,9 @@ const MapPage = () => {
             onZoomChange={handleZoomChange}
             onDragEnd={handleMapDragEnd}
             onLoadError={(error) => {
-              console.warn("[MapPage] 카카오맵 로드 실패, Leaflet으로 전환:", error);
+              console.warn("[MapPage] 카카오맵 로드 실패:", error);
               setKakaoFailed(true);
-              toast({
-                title: "카카오맵 로드 실패",
-                description: "미리보기에서는 기본 지도로 전환될 수 있어요. 배포 도메인에서 카카오맵을 확인해 주세요.",
-                duration: 3000,
-              });
             }}
-          />
-        ) : (
-          <ClusteredMapView
-            hospitals={isPharmacyFilter ? [] : (isTransferMode && transferFilter === "nursing" ? [] : filteredHospitals)}
-            onHospitalClick={handleHospitalClick}
-            userLocation={userLocation}
-            center={mapCenter}
-            zoom={mapZoom}
-            activeFilter={activeFilter}
-            activeRadius={activeRadius}
-            liveReports={liveReports}
-            nearbyDrivers={nearbyDrivers}
-            onCallDriver={handleCallDriver}
-            holidayPharmacies={[]}
-            nearbyPharmacies={[]}
-            onPharmacyClick={(pharmacy) => setSelectedPharmacy(pharmacy)}
-            activeAmbulanceTrips={activeAmbulanceTrips}
-            isMoonlightMode={false}
-            isPediatricSOS={isPediatricSOS}
-            rejectionAlerts={isDriverMode ? rejectionAlerts : undefined}
-            isDriverMode={isDriverMode}
-            nursingHospitals={filteredNursingHospitals}
-            onNursingHospitalClick={(hospital) => setSelectedNursingHospital(hospital)}
-            onZoomChange={handleZoomChange}
           />
         )}
 
