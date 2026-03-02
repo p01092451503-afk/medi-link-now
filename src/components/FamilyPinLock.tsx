@@ -110,7 +110,7 @@ export const PinEntryScreen = ({
             <button
               type="button"
               onClick={() => setShowPin(!showPin)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-secondary rounded-full"
             >
               {showPin ? (
                 <EyeOff className="w-5 h-5 text-muted-foreground" />
