@@ -232,7 +232,7 @@ export const PinSettingsModal = ({
 
             <div className="p-5 space-y-6">
               {!isSettingPin ? (
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
                   <div className="flex items-center gap-3">
                     <Lock className="w-5 h-5 text-primary" />
                     <div>
