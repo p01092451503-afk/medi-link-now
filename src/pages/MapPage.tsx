@@ -492,38 +492,6 @@ const MapPage = () => {
     );
   }, []);
 
-  const handleMyLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      toast({ title: "위치 서비스를 사용할 수 없습니다" });
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const newLocation: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-        setUserLocation(newLocation);
-        setMapCenter(newLocation);
-        
-        // Always set radius to 10km as default when clicking "My Location"
-        setActiveRadius(10);
-        setMapZoom(getZoomForRadius(10));
-        
-        setActiveMajorRegion("all");
-        setActiveRegion("all");
-        
-        setIsLocating(false);
-        toast({
-          title: "현재 위치를 찾았습니다!",
-          description: "반경 10km 내 병원을 표시합니다.",
-        });
-      },
-      () => {
-        setIsLocating(false);
-        toast({ title: "위치를 찾을 수 없습니다" });
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  }, []);
 
 
   // Sync radius chip when map zoom changes (via pinch/scroll/slider)
