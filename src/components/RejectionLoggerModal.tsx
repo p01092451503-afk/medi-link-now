@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { X, MapPin, Hospital, Check, Loader2 } from 'lucide-react';
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from '@/components/ui/button';
 import { useRejectionLogs, REJECTION_REASONS } from '@/hooks/useRejectionLogs';
 import { useRealtimeHospitals } from '@/hooks/useRealtimeHospitals';
@@ -161,10 +162,7 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
             </div>
 
             {!userLocation ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-foreground" />
-                <span className="ml-2 text-muted-foreground">위치 확인 중...</span>
-              </div>
+              <AmbulanceLoader variant="section" message="위치 확인 중" />
             ) : nearestHospitals.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 주변 병원을 찾을 수 없습니다

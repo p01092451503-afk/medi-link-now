@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Navigation,
@@ -368,9 +369,8 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
   if (isLoading) {
     return (
       <div className="fixed bottom-safe-1 left-4 right-4 z-40">
-        <div className="bg-card rounded-2xl border border-border p-4 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-foreground mr-2" />
-          <span className="text-sm text-muted-foreground">로딩 중...</span>
+        <div className="bg-card rounded-2xl border border-border p-4">
+          <AmbulanceLoader variant="section" message="로딩" />
         </div>
       </div>
     );
@@ -559,9 +559,7 @@ const TripManagementWidget = ({ onLogComplete, onRevenueUpdate, isSimulateMode =
 
                 <ScrollArea className="h-[calc(80vh-180px)]">
                   {isLoadingHospitals ? (
-                    <div className="flex items-center justify-center py-12">
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                    </div>
+                    <AmbulanceLoader variant="section" />
                   ) : filteredHospitals.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                       <MapPin className="w-10 h-10 mx-auto mb-2 opacity-50" />

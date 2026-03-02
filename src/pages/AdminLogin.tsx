@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Shield, Mail, Lock, Loader2, AlertTriangle } from "lucide-react";
@@ -104,11 +105,7 @@ const AdminLogin = () => {
   };
 
   if (isAuthLoading || isCheckingRole) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <AmbulanceLoader variant="fullscreen" />;
   }
 
   return (

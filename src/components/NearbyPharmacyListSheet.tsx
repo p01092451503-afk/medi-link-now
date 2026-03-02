@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Pill, Loader2, Info, Moon, Clock, CheckCircle } from "lucide-react";
+import { X, Pill, Info, Moon, Clock, CheckCircle } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { NearbyPharmacy, PharmacyFilterType } from "@/hooks/useNearbyPharmacies";
 import PharmacyCard from "@/components/pharmacy/PharmacyCard";
@@ -116,10 +117,7 @@ const NearbyPharmacyListSheet = ({
               {/* Loading */}
               {isLoading && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="text-sm">약국 정보를 불러오는 중...</span>
-                  </div>
+                  <AmbulanceLoader variant="section" message="약국 정보를 불러오는 중" />
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800 rounded-xl">
                       <Skeleton className="h-5 w-32 mb-2" />

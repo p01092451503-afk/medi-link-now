@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -175,11 +176,7 @@ const FamilyPage = () => {
   };
 
   if (isAuthLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+    return <AmbulanceLoader variant="fullscreen" />;
   }
 
   // Show PIN entry screen if PIN is enabled and not verified
@@ -278,11 +275,7 @@ const FamilyPage = () => {
         </motion.div>
 
         {/* Loading State */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          </div>
-        )}
+        {isLoading && <AmbulanceLoader variant="section" />}
 
         {/* Empty State */}
         {!isLoading && members.length === 0 && (
