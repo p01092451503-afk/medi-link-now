@@ -193,7 +193,7 @@ const RevenueTab = ({ todayRevenue, completedTrips }: RevenueTabProps) => {
             className="rounded-xl bg-foreground text-background hover:opacity-90"
           >
             {acceptingId === trip.id ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <AmbulanceLoader variant="inline" />
             ) : (
               "콜 수락"
             )}
