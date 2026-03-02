@@ -318,6 +318,8 @@ export const useRealtimeHospitals = () => {
     isLoading,
     isError,
     lastUpdated,
+    lastApiRefresh,
     refetch: fetchHospitalData,
+    triggerApiRefresh,
   };
 };
