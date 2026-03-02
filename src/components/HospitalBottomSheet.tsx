@@ -338,10 +338,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     hospitalName={hospital.nameKr}
                     hospitalNumericId={hospital.id}
                   />
-                  <ShadowDemandCard 
-                    hospitalId={hospital.id?.toString() || hospital.name}
-                    officialBeds={totalBeds}
-                  />
+                  {/* ShadowDemandCard hidden - no incoming data currently */}
                 </div>
               </div>
 
