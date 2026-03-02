@@ -526,9 +526,6 @@ const MapPage = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
 
-      {/* Location Coachmark */}
-      <LocationCoachmark show={showCoachmark} onDismiss={dismissCoachmark} targetRef={locationButtonRef} />
-
       {/* Map Container - Full height */}
       <div className="relative flex-1 h-full">
         {/* Data Source Badge */}
