@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, XCircle, X, Loader2, Star, Share2, MapPin, User, ExternalLink } from "lucide-react";
+import { CheckCircle, XCircle, X, Star, Share2, MapPin, User, ExternalLink } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import {
   Select,

@@ -6,9 +6,9 @@ import {
   Clock, 
   Phone, 
   ChevronUp,
-  Loader2,
   Navigation
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { DriverPresence } from "@/hooks/useDriverPresence";
 import { calculateDistance } from "@/data/hospitals";
 

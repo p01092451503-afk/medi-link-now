@@ -5,6 +5,7 @@ import {
   User, Phone, Upload, FileText, ShieldCheck, CheckCircle,
   Loader2, ArrowRight, ArrowLeft, Camera, X, AlertCircle
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";

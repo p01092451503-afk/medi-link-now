@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, Clock, MapPin, User, FileText, Send, Loader2 } from "lucide-react";
+import { X, Calendar, Clock, MapPin, User, FileText, Send } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

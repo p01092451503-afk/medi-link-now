@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle, Loader2 } from "lucide-react";
+import { Sparkles, TrendingDown, TrendingUp, Minus, ChevronDown, Ambulance, HelpCircle } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Tooltip,

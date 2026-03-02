@@ -8,7 +8,7 @@ import {
   TrendingUp,
   RotateCcw,
   Check,
-  Loader2,
+  RefreshCw,
   RefreshCw,
   Bell,
   User,

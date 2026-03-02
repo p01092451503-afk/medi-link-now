@@ -9,8 +9,8 @@ import {
   Pill,
   Droplets,
   Scale,
-  Loader2,
 } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";

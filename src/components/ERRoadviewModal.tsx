@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, AlertTriangle, Loader2, Ambulance, MapPin, RotateCcw } from "lucide-react";
+import { X, AlertTriangle, Ambulance, MapPin, RotateCcw } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 
 interface ERRoadviewModalProps {

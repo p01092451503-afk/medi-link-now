@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ban, X, Check, Loader2 } from "lucide-react";
+import { Ban, X, Check } from "lucide-react";
+import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { SHARED_REJECTION_REASONS, useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import { toast } from "@/hooks/use-toast";

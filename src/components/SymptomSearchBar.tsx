@@ -8,7 +8,7 @@ import {
   Thermometer,
   AlertCircle,
   X,
-  Loader2,
+  Clock,
   Clock,
   MapPin,
   Navigation,
