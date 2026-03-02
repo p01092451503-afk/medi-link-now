@@ -134,7 +134,7 @@ const Login = () => {
               className="w-full py-4 rounded-2xl bg-foreground text-background text-[15px] font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center"
             >
               {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <AmbulanceLoader variant="inline" />
               ) : isLogin ? "로그인" : "회원가입"}
             </button>
           </form>
