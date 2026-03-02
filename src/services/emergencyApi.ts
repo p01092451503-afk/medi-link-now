@@ -12,6 +12,19 @@ interface ERApiResponse {
     generalBeds: number;
     pediatricBeds: number;
     feverBeds: number;
+    icuBeds: number;
+    medicalIcuBeds: number;
+    surgicalIcuBeds: number;
+    operatingRooms: number;
+    neonatalIcuBeds: number;
+    equipment?: {
+      ct: boolean;
+      mri: boolean;
+      angio: boolean;
+      ventilator: boolean;
+      ecmo: boolean;
+      incubator: boolean;
+    };
     lat?: number;
     lng?: number;
     isTraumaCenter?: boolean;
@@ -27,6 +40,12 @@ interface ERApiResponse {
   count?: number;
   error?: string;
   useMockData?: boolean;
+  diagnostics?: {
+    reason: string;
+    message: string;
+    setupGuide: string;
+    timestamp: string;
+  };
 }
 
 /** Individual hospital ER status from ErmctInfoInqireService */
