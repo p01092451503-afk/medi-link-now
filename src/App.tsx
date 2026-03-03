@@ -58,7 +58,6 @@ const AppRoutes = () => {
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<RootRedirect />} />
-            <Route path="/intro" element={<Landing />} />
             <Route path="/landing" element={<Landing />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/guardian" element={<GuardianLanding />} />
