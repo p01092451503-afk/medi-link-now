@@ -17,9 +17,6 @@ import {
 import { useHotlines } from "@/components/HotlineManager";
 import { toast } from "@/hooks/use-toast";
 import ERRoadviewModal from "@/components/ERRoadviewModal";
-import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
-import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
-import CongestionForecast from "@/components/hospital/CongestionForecast";
 
 import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
 import AcceptancePredictionPanel from "@/components/hospital/AcceptancePredictionPanel";
@@ -297,15 +294,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 </div>
               )}
 
-              {(isParamedicMode || isDriverMode || !isTransferMode) && (
-                <button
-                  onClick={() => { window.location.href = "tel:119"; }}
-                  className="w-full mb-4 py-4 rounded-2xl bg-destructive text-destructive-foreground font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
-                >
-                  <Phone className="w-5 h-5" />
-                  119 전화하기
-                </button>
-              )}
 
               {/* 119 Verified Badge */}
               <Fire119VerifiedBadge
@@ -314,33 +302,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 showChart={true}
               />
 
-              {/* AI Predictive Section */}
-              <div className="relative mb-6 p-4 rounded-2xl bg-secondary border border-border">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-bold text-foreground">AI 예측 분석</h3>
-                      <span className="text-[9px] font-bold text-background bg-foreground px-2 py-0.5 rounded-full">
-                        BETA
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Predictive Analytics</p>
-                  </div>
-                  <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
-                </div>
-                
-                {/* Cards */}
-                <div className="space-y-3">
-                  <CongestionForecast 
-                    hospitalId={hospital.id?.toString() || hospital.name}
-                    officialBeds={totalBeds}
-                    hospitalName={hospital.nameKr}
-                    hospitalNumericId={hospital.id}
-                  />
-                  {/* ShadowDemandCard hidden - no incoming data currently */}
-                </div>
-              </div>
 
               {/* AI Acceptance Prediction Panel */}
               <div className="mb-6">
@@ -511,6 +472,17 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 >
                   <Radio className="w-4 h-4" />
                   현장 상황 제보하기
+                </button>
+              )}
+
+              {/* 119 Call Button */}
+              {(isParamedicMode || isDriverMode || !isTransferMode) && (
+                <button
+                  onClick={() => { window.location.href = "tel:119"; }}
+                  className="w-full mb-3 py-4 rounded-2xl bg-destructive text-destructive-foreground font-semibold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"
+                >
+                  <Phone className="w-5 h-5" />
+                  119 전화하기
                 </button>
               )}
 
