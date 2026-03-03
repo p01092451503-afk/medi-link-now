@@ -63,11 +63,11 @@
 
     --radius: 0.75rem;
 
-    /* Layout safe-area tokens */
-    --nav-height: 56px;               /* BottomNavBar h-14 = 56px */
-    --safe-bottom-1: 72px;            /* Just above nav: nav + 16px gap */
-    --safe-bottom-2: 128px;           /* Second tier: legends, utility buttons */
-    --safe-bottom-3: 160px;           /* Third tier: FABs above legends */
+    /* Layout safe-area tokens — floating nav: 58px tall + 8px mb-2 = 66px */
+    --nav-height: 66px;               /* BottomNavBar total height incl. margin */
+    --safe-bottom-1: 84px;            /* Just above nav: nav + 18px gap */
+    --safe-bottom-2: 136px;           /* Second tier: legends, utility buttons */
+    --safe-bottom-3: 168px;           /* Third tier: FABs above legends */
 
     /* Sidebar (if needed) */
     --sidebar-background: 0 0% 98%;
