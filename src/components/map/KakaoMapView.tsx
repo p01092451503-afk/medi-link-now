@@ -105,7 +105,11 @@ let kakaoSdkLoadPromise: Promise<void> | null = null;
 
 const isLovablePreviewHost = () => {
   const host = window.location.hostname;
-  return host.endsWith("lovableproject.com");
+  return (
+    host.endsWith("lovableproject.com") ||
+    host.endsWith("lovable.app") ||
+    host.includes("id-preview--")
+  );
 };
 
 const waitForKakaoReady = (timeoutMs = 10000): Promise<void> => {
@@ -177,7 +181,18 @@ const loadKakaoSDK = (): Promise<void> => {
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`;
     script.async = true;
 
+    const scriptLoadTimeout = window.setTimeout(() => {
+      kakaoSdkLoadPromise = null;
+      script.remove();
+      reject(
+        new Error(
+          `카카오맵 스크립트 로드 시간 초과(8초). 네트워크/도메인 허용 설정을 확인해 주세요.\n현재 도메인: ${window.location.origin}`
+        )
+      );
+    }, 8000);
+
     script.onload = () => {
+      window.clearTimeout(scriptLoadTimeout);
       waitForKakaoReady(10000)
         .then(resolve)
         .catch((err) => {
@@ -187,6 +202,7 @@ const loadKakaoSDK = (): Promise<void> => {
     };
 
     script.onerror = () => {
+      window.clearTimeout(scriptLoadTimeout);
       kakaoSdkLoadPromise = null;
       reject(
         new Error(
