@@ -228,22 +228,22 @@ const FamilyPage = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-warning/10 border border-warning/30 rounded-xl p-4"
+            className="bg-yellow-50 border border-yellow-200 rounded-xl p-4"
           >
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm text-foreground font-medium mb-1">
+                <p className="text-sm text-yellow-800 font-medium mb-1">
                   로그인하지 않으면 데이터가 기기에만 저장됩니다
                 </p>
-                <p className="text-xs text-muted-foreground mb-3">
+                <p className="text-xs text-yellow-700 mb-3">
                   다른 기기에서 접속하거나 브라우저 캐시를 삭제하면 데이터가 사라질 수 있습니다.
                 </p>
                 <Button
                   onClick={() => navigate("/login?mode=guardian&returnTo=/family")}
                   size="sm"
                   variant="outline"
-                  className="border-warning/50 text-foreground hover:bg-warning/10"
+                  className="border-yellow-400 text-yellow-800 hover:bg-yellow-100"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   로그인하고 안전하게 저장하기
@@ -312,7 +312,7 @@ const FamilyPage = () => {
               {isAuthenticated && (
                 <button
                   onClick={() => setShowSyncModal(true)}
-                  className="ml-2 px-2 py-0.5 bg-success/10 text-success text-xs rounded-full hover:bg-success/20 transition-colors flex items-center gap-1"
+                  className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full hover:bg-green-200 transition-colors flex items-center gap-1"
                 >
                   <Cloud className="w-3 h-3" />
                   클라우드 저장
