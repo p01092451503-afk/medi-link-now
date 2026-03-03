@@ -17,8 +17,6 @@ import {
 import { useHotlines } from "@/components/HotlineManager";
 import { toast } from "@/hooks/use-toast";
 import ERRoadviewModal from "@/components/ERRoadviewModal";
-import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
-import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
 
 
 import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
@@ -327,10 +325,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-0.5">Predictive Analytics</p>
                   </div>
-                  <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
                 </div>
-                
-                {/* ShadowDemandCard hidden - no incoming data currently */}
               </div>
 
               {/* AI Acceptance Prediction Panel */}
