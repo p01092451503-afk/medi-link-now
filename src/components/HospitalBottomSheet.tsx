@@ -19,7 +19,7 @@ import { toast } from "@/hooks/use-toast";
 import ERRoadviewModal from "@/components/ERRoadviewModal";
 import BedTrendIndicator from "@/components/hospital/BedTrendIndicator";
 import ShadowDemandCard from "@/components/hospital/ShadowDemandCard";
-import CongestionForecast from "@/components/hospital/CongestionForecast";
+
 
 import AIAcceptanceBadge from "@/components/hospital/AIAcceptanceBadge";
 import AcceptancePredictionPanel from "@/components/hospital/AcceptancePredictionPanel";
