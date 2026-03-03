@@ -330,16 +330,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                   <BedTrendIndicator hospitalId={hospital.id?.toString() || hospital.name} />
                 </div>
                 
-                {/* Cards */}
-                <div className="space-y-3">
-                  <CongestionForecast 
-                    hospitalId={hospital.id?.toString() || hospital.name}
-                    officialBeds={totalBeds}
-                    hospitalName={hospital.nameKr}
-                    hospitalNumericId={hospital.id}
-                  />
-                  {/* ShadowDemandCard hidden - no incoming data currently */}
-                </div>
+                {/* ShadowDemandCard hidden - no incoming data currently */}
               </div>
 
               {/* AI Acceptance Prediction Panel */}
