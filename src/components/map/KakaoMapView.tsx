@@ -105,7 +105,11 @@ let kakaoSdkLoadPromise: Promise<void> | null = null;
 
 const isLovablePreviewHost = () => {
   const host = window.location.hostname;
-  return host.endsWith("lovableproject.com");
+  return (
+    host.endsWith("lovableproject.com") ||
+    host.endsWith("lovable.app") ||
+    host.includes("id-preview--")
+  );
 };
 
 const waitForKakaoReady = (timeoutMs = 10000): Promise<void> => {
