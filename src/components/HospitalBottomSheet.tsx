@@ -332,12 +332,6 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                 
                 {/* Cards */}
                 <div className="space-y-3">
-                  <CongestionForecast 
-                    hospitalId={hospital.id?.toString() || hospital.name}
-                    officialBeds={totalBeds}
-                    hospitalName={hospital.nameKr}
-                    hospitalNumericId={hospital.id}
-                  />
                   {/* ShadowDemandCard hidden - no incoming data currently */}
                 </div>
               </div>
