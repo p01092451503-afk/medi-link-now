@@ -54,7 +54,7 @@ const AppRoutes = () => {
   return (
     <>
       <ScrollToTop />
-      <div className={isMapRoute ? "h-[100dvh] overflow-hidden" : "pb-20 sm:pb-0"}>
+      <div className={isMapRoute ? "h-[100dvh] overflow-hidden" : "pb-14 sm:pb-0"}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<RootRedirect />} />

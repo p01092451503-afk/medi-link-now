@@ -166,7 +166,7 @@ const GuardianLanding = () => {
         </motion.section>
 
         {/* Emergency Call */}
-        <motion.section initial="hidden" animate="visible" variants={fadeUp} custom={5} className="px-5 pb-6">
+        <motion.section initial="hidden" animate="visible" variants={fadeUp} custom={5} className="px-5 pb-12">
           <div className="flex items-center justify-between p-4 bg-card rounded-2xl border border-border">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-danger flex items-center justify-center">
