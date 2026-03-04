@@ -82,7 +82,7 @@ export const PinEntryScreen = ({
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className={`w-full max-w-sm bg-card rounded-3xl shadow-2xl p-8 ${error ? "animate-shake" : ""}`}
+        className={`w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 ${error ? "animate-shake" : ""}`}
       >
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
@@ -110,7 +110,7 @@ export const PinEntryScreen = ({
             <button
               type="button"
               onClick={() => setShowPin(!showPin)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-secondary rounded-full"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full"
             >
               {showPin ? (
                 <EyeOff className="w-5 h-5 text-muted-foreground" />
@@ -210,9 +210,9 @@ export const PinSettingsModal = ({
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-0 left-0 right-0 bg-card rounded-t-3xl shadow-2xl z-[2001] max-h-[80vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[2001] max-h-[80vh] overflow-y-auto"
           >
-            <div className="sticky top-0 bg-card border-b border-border px-5 py-4 flex items-center justify-between">
+            <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Settings className="w-5 h-5 text-primary" />
@@ -224,7 +224,7 @@ export const PinSettingsModal = ({
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-secondary rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -232,7 +232,7 @@ export const PinSettingsModal = ({
 
             <div className="p-5 space-y-6">
               {!isSettingPin ? (
-                <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div className="flex items-center gap-3">
                     <Lock className="w-5 h-5 text-primary" />
                     <div>
@@ -311,8 +311,8 @@ export const PinSettingsModal = ({
                 </div>
               )}
 
-              <div className="p-4 bg-accent rounded-xl">
-                <p className="text-sm text-accent-foreground">
+              <div className="p-4 bg-blue-50 rounded-xl">
+                <p className="text-sm text-blue-700">
                   💡 비밀번호를 설정하면 가족 의료 정보 페이지에 접근할 때마다 비밀번호를 입력해야 합니다.
                 </p>
               </div>

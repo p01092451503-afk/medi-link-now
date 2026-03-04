@@ -136,10 +136,10 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-card rounded-t-3xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="sticky top-0 bg-card border-b border-border px-5 py-4 flex items-center justify-between z-10">
+            <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <UserPlus className="w-5 h-5 text-primary" />
@@ -153,7 +153,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-secondary rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -202,8 +202,8 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                                 ? "bg-blue-500 text-white" 
                                 : key === "female"
                                   ? "bg-pink-500 text-white"
-                                  : "bg-muted-foreground text-white"
-                              : "bg-secondary text-foreground hover:bg-accent"
+                                  : "bg-gray-500 text-white"
+                              : "bg-gray-100 text-foreground hover:bg-gray-200"
                           }`}
                         >
                           {key === "male" ? "👨 " : key === "female" ? "👩 " : ""}{label}
@@ -291,7 +291,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-3 px-2 rounded-xl text-sm font-medium transition-all ${
                         bloodType === key
                           ? "bg-red-500 text-white"
-                          : "bg-secondary text-foreground hover:bg-accent"
+                          : "bg-gray-100 text-foreground hover:bg-gray-200"
                       }`}
                     >
                       {label}
@@ -315,7 +315,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         chronicDiseases.includes(disease)
                           ? "bg-primary text-white"
-                          : "bg-secondary text-foreground hover:bg-accent"
+                          : "bg-gray-100 text-foreground hover:bg-gray-200"
                       }`}
                     >
                       {chronicDiseases.includes(disease) && <Check className="w-4 h-4" />}
@@ -340,7 +340,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         allergies.includes(allergy)
                           ? "bg-orange-500 text-white"
-                          : "bg-secondary text-foreground hover:bg-accent"
+                          : "bg-gray-100 text-foreground hover:bg-gray-200"
                       }`}
                     >
                       {allergies.includes(allergy) && <Check className="w-4 h-4" />}
@@ -365,7 +365,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
                       className={`py-2 px-4 rounded-full text-sm font-medium transition-all flex items-center gap-1 ${
                         medications.includes(med)
                           ? "bg-purple-500 text-white"
-                          : "bg-secondary text-foreground hover:bg-accent"
+                          : "bg-gray-100 text-foreground hover:bg-gray-200"
                       }`}
                     >
                       {medications.includes(med) && <Check className="w-4 h-4" />}
