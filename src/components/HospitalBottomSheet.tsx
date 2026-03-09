@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight, Radio } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight, Radio } from "lucide-react";
+import BedStatusCard from "@/components/hospital/BedStatusCard";
+import AcceptanceBadge from "@/components/hospital/AcceptanceBadge";
 import MoonlightBadge from "@/components/hospital/MoonlightBadge";
 import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
 import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
