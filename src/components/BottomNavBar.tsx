@@ -43,7 +43,7 @@ const BottomNavBar = () => {
   const navItems = role === "driver" ? driverNav : guardianNav;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-[900] safe-area-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-[900] safe-area-bottom" role="navigation" aria-label="메인 내비게이션">
       <div className="mx-3 mb-2">
         <div className="flex items-center justify-around h-[58px] max-w-lg mx-auto px-1 bg-card/90 backdrop-blur-2xl rounded-2xl shadow-lg border border-border/50">
           {navItems.map(({ path, label, icon: Icon }) => {
