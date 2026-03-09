@@ -709,7 +709,7 @@ const MapPage = () => {
                     >
                       {isTraumaCenter && (
                         <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                          isActive ? "bg-white/20" : "bg-purple-100"
+                          isActive ? "bg-white/20" : "bg-purple-100 dark:bg-purple-900/50"
                         }`}>+</span>
                       )}
                       {f.labelKr}

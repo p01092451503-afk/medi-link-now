@@ -160,7 +160,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-xl"
+              className="w-full max-w-sm bg-card rounded-2xl p-5 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Share Modal Header */}

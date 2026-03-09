@@ -297,7 +297,7 @@ const FareCalculatorPage = () => {
 
         {/* 결과 섹션 */}
         {distance !== null && (
-          <div ref={receiptRef} className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div ref={receiptRef} className="bg-card rounded-xl shadow-lg overflow-hidden">
             {/* 영수증 헤더 */}
             <div className="bg-primary text-primary-foreground p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-1">
