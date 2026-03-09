@@ -6,7 +6,7 @@ import BedStatusCard from "@/components/hospital/BedStatusCard";
 import AcceptanceBadge from "@/components/hospital/AcceptanceBadge";
 import MoonlightBadge from "@/components/hospital/MoonlightBadge";
 import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
-import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
+
 import { cleanHospitalName } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
