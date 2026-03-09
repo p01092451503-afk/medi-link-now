@@ -20,8 +20,8 @@ const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   
-  const [email, setEmail] = useState(mode === "driver" ? "p01092451503@gmail.com" : "");
-  const [password, setPassword] = useState(mode === "driver" ? "111111" : "");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (isAuthenticated && !isAuthLoading) {

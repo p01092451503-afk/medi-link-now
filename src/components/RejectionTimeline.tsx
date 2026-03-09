@@ -60,7 +60,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
+      className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden"
     >
       {/* Header */}
       <button
@@ -160,7 +160,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-xl"
+              className="w-full max-w-sm bg-card rounded-2xl p-5 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Share Modal Header */}

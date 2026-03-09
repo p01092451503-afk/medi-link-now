@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
-import { X, Phone, Stethoscope, Baby, Thermometer, Info, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight, Radio } from "lucide-react";
+import { X, Phone, Stethoscope, Baby, Thermometer, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight, Radio } from "lucide-react";
+import BedStatusCard from "@/components/hospital/BedStatusCard";
+import AcceptanceBadge from "@/components/hospital/AcceptanceBadge";
 import MoonlightBadge from "@/components/hospital/MoonlightBadge";
 import { useMoonlightHospitals } from "@/hooks/useMoonlightHospitals";
-import WaitTimePrediction from "@/components/hospital/WaitTimePrediction";
+
 import { cleanHospitalName } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -42,108 +44,7 @@ interface HospitalBottomSheetProps {
   allHospitals?: Hospital[];
 }
 
-const BedStatusCard = ({
-  label,
-  count,
-  adjustedCount,
-  incomingCount,
-  icon: Icon,
-  type,
-  showTooltip,
-  tooltipText,
-  isHospitalFull,
-  rawCount,
-}: {
-  label: string;
-  count: number;
-  adjustedCount?: number;
-  incomingCount?: number;
-  icon: React.ElementType;
-  type: "general" | "pediatric" | "fever";
-  showTooltip?: boolean;
-  tooltipText?: string;
-  isHospitalFull?: boolean;
-  rawCount?: number;
-}) => {
-  const displayCount = adjustedCount !== undefined ? adjustedCount : Math.max(0, count);
-  const hasIncoming = incomingCount !== undefined && incomingCount > 0;
-  const isAvailable = displayCount > 0;
-  // Detect overcrowded state: raw NEDIS value is negative
-  const isOvercrowded = (rawCount !== undefined && rawCount < 0) || (count < 0 && adjustedCount === undefined);
-  const overflowCount = isOvercrowded ? Math.abs(rawCount ?? count) : 0;
 
-  return (
-    <div className={`flex flex-col items-center justify-center p-4 rounded-2xl ${
-      isOvercrowded ? "bg-destructive/10 ring-1 ring-destructive/20" : "bg-secondary"
-    }`}>
-      <Icon className={`w-5 h-5 mb-1.5 ${
-        isOvercrowded ? "text-destructive" : isAvailable ? "text-foreground" : "text-muted-foreground/50"
-      }`} />
-      {isOvercrowded ? (
-        <>
-          <span className="text-2xl font-bold tracking-tight text-destructive">0</span>
-          <div className="flex flex-col items-center gap-0.5 mt-1">
-            <span className="text-[11px] text-muted-foreground">{label}</span>
-            <span className="text-[10px] font-bold text-destructive animate-pulse">
-              초과 {overflowCount}명
-            </span>
-          </div>
-        </>
-      ) : (
-        <>
-          <span className={`text-2xl font-bold tracking-tight ${
-            isAvailable ? "text-foreground" : isHospitalFull ? "text-destructive" : "text-muted-foreground/40"
-          }`}>
-            {displayCount}
-          </span>
-          <div className="flex flex-col items-center gap-0.5 mt-1">
-            <div className="flex items-center gap-1">
-              <span className="text-[11px] text-muted-foreground">{label}</span>
-              {showTooltip && tooltipText && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="w-3 h-3 text-muted-foreground/50" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-xs max-w-[200px]">{tooltipText}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
-            {hasIncoming && (
-              <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-0.5">
-                <Truck className="w-3 h-3" />
-                이송 중 {incomingCount}대
-              </span>
-            )}
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
-
-const AcceptanceBadge = ({
-  label,
-  available,
-  icon: Icon,
-}: {
-  label: string;
-  available: boolean;
-  icon: React.ElementType;
-}) => (
-  <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-medium ${
-    available
-      ? "bg-secondary text-foreground"
-      : "bg-secondary text-muted-foreground/40"
-  }`}>
-    <Icon className="w-4 h-4" />
-    <span>{label}</span>
-    <span className="ml-auto text-[11px]">{available ? "가능" : "불가"}</span>
-  </div>
-);
 
 const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance, allHospitals }: HospitalBottomSheetProps) => {
   const [searchParams] = useSearchParams();
@@ -213,6 +114,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/40 z-[1001]"
+            aria-hidden="true"
           />
 
           {/* Bottom Sheet */}
@@ -222,6 +124,9 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 500 }}
             className="fixed bottom-0 left-0 right-0 bg-background rounded-t-3xl shadow-2xl z-[1002] max-h-[85vh] overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${hospital ? cleanHospitalName(hospital.nameKr) : ''} 병원 정보`}
           >
             {/* Handle */}
             <div className="flex justify-center py-3">
