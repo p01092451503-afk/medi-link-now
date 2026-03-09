@@ -136,7 +136,7 @@ const FamilyMemberForm = ({ isOpen, onClose, onSave, initialData }: FamilyMember
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 bg-background rounded-t-3xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center justify-between z-10">
