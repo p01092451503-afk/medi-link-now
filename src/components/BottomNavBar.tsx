@@ -53,6 +53,8 @@ const BottomNavBar = () => {
               <button
                 key={path}
                 onClick={() => navigate(path)}
+                aria-label={label}
+                aria-current={isActive ? "page" : undefined}
                 className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 min-h-[44px] transition-all duration-200 ${
                   isActive
                     ? "text-primary"
