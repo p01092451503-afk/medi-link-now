@@ -60,7 +60,7 @@ const RejectionTimeline = ({ compact = false }: Props) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
+      className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden"
     >
       {/* Header */}
       <button
