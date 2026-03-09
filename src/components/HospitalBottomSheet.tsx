@@ -114,6 +114,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/40 z-[1001]"
+            aria-hidden="true"
           />
 
           {/* Bottom Sheet */}
