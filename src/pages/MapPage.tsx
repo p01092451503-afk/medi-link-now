@@ -704,7 +704,7 @@ const MapPage = () => {
                           ? isTraumaCenter
                             ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/30"
                             : "bg-primary text-white shadow-md"
-                          : "bg-white/70 backdrop-blur-sm text-gray-600 border border-gray-200/60 hover:bg-white/90"
+                          : "bg-card/70 backdrop-blur-sm text-muted-foreground border border-border/60 hover:bg-card/90"
                       }`}
                     >
                       {isTraumaCenter && (
