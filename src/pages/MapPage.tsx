@@ -1,6 +1,6 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Plus, Minus, Heart, Siren, Truck, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, Map as MapIcon } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
 import { useMapProvider } from "@/hooks/useMapProvider";
@@ -9,29 +9,21 @@ import KakaoMapView from "@/components/map/KakaoMapView";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import L from "leaflet";
 import {
   Hospital,
   FilterType,
   filterOptions,
-  filterHospitals,
   calculateDistance,
-  RegionType,
-  MajorRegionType,
   regionOptions,
   filterHospitalsByRegion,
-  findNearestMajorRegion,
-  findNearestSubRegion,
 } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
-import ClusteredMapView from "@/components/map/ClusteredMapView";
 
 import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
-import { useTransferMode, TransferFilterType } from "@/contexts/TransferModeContext";
-import { getTransferBeds, getTotalICU } from "@/data/transferBedsMock";
+import { useTransferMode } from "@/contexts/TransferModeContext";
 import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
@@ -40,11 +32,8 @@ import { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
 import { useAmbulanceTrips } from "@/hooks/useAmbulanceTrips";
 import { useSharedRejectionLogs } from "@/hooks/useSharedRejectionLogs";
 import { useNursingHospitals } from "@/hooks/useNursingHospitals";
-import { useHospitalDetails } from "@/hooks/useHospitalDetails";
 import AmbulanceCallModal from "@/components/AmbulanceCallModal";
-
 import DispatchRequestModal from "@/components/DispatchRequestModal";
-
 import OfflineBanner from "@/components/OfflineBanner";
 import PharmacyBottomSheet from "@/components/PharmacyBottomSheet";
 import HospitalBottomSheet from "@/components/HospitalBottomSheet";
@@ -55,24 +44,8 @@ import PediatricSOSToggle from "@/components/PediatricSOSToggle";
 import FirstAidFAB from "@/components/FirstAidFAB";
 import DataSourceBadge from "@/components/DataSourceBadge";
 
-// Map default center (Seoul)
-const DEFAULT_CENTER: [number, number] = [37.5, 127.0];
-
-// Calculate zoom level to fit radius
-const getZoomForRadius = (radiusKm: number): number => {
-  if (radiusKm <= 5) return 13;
-  if (radiusKm <= 10) return 12;
-  if (radiusKm <= 20) return 11;
-  return 10;
-};
-
-// Reverse: get closest radius from zoom level
-const getRadiusForZoom = (zoom: number): number => {
-  if (zoom >= 13) return 5;
-  if (zoom >= 12) return 10;
-  if (zoom >= 11) return 20;
-  return 30;
-};
+import { useUserGeolocation } from "@/hooks/useUserGeolocation";
+import { useMapFilters, getZoomForRadius, getRadiusForZoom } from "@/hooks/useMapFilters";
 
 // Tooltip definitions for special filter chips
 const getFilterTooltip = (filterId: string): string | null => {
@@ -91,100 +64,90 @@ const getFilterTooltip = (filterId: string): string | null => {
       return null;
   }
 };
+
 const MapPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isDriverMode = searchParams.get("mode") === "driver";
   const hideMode = searchParams.get("hideMode") === "true";
   const isParamedicMode = searchParams.get("role") === "paramedic";
+
+  // Data hooks
   const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
-  
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
   const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao, setMapProvider } = useMapProvider();
-  const [kakaoFailed, setKakaoFailed] = useState(false);
-  
 
-  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
-  const [activeMajorRegion, setActiveMajorRegion] = useState<MajorRegionType>("seoul");
-  const [activeRegion, setActiveRegion] = useState<RegionType>("seoul");
+  // Geolocation
+  const { userLocation, setUserLocation, userDistrictName } = useUserGeolocation();
+
+  // Filters & map state
+  const mapFilters = useMapFilters(hospitalData, userLocation);
+  const {
+    activeFilter, setActiveFilter,
+    activeMajorRegion, setActiveMajorRegion,
+    activeRegion, setActiveRegion,
+    searchQuery, setSearchQuery,
+    activeRadius, setActiveRadius,
+    isPediatricSOS, setIsPediatricSOS,
+    mapCenter, setMapCenter,
+    mapZoom, setMapZoom,
+    filteredHospitals,
+    handleMajorRegionChange: baseHandleMajorRegionChange,
+    handleSubRegionChange: baseHandleSubRegionChange,
+  } = mapFilters;
+
+  // UI state
+  const [kakaoFailed, setKakaoFailed] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  
-  const [searchQuery, setSearchQuery] = useState("");
-  const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
-  const [mapZoom, setMapZoom] = useState<number>(10);
   const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
   const [showDispatchModal, setShowDispatchModal] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState<DriverPresence | null>(null);
-  const [excludeFullHospitals, setExcludeFullHospitals] = useState(false);
-  const [activeRadius, setActiveRadius] = useState<number | "all">("all");
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
-  const [isPediatricSOS, setIsPediatricSOS] = useState(false);
-  const [userDistrictName, setUserDistrictName] = useState<string | undefined>(undefined);
-
   const [showSplash, setShowSplash] = useState(false);
 
-  // Reverse geocode user location to get district name
-  useEffect(() => {
-    if (!userLocation) {
-      setUserDistrictName(undefined);
-      return;
-    }
-    
-    const [lat, lng] = userLocation;
-    
-    // Use Kakao geocoder if available
-    if ((window as any).kakao?.maps?.services) {
-      const kakaoApi = (window as any).kakao;
-      const geocoder = new kakaoApi.maps.services.Geocoder();
-      geocoder.coord2RegionCode(lng, lat, (result: any, status: any) => {
-        if (status === kakaoApi.maps.services.Status.OK && result.length > 0) {
-          // Find the H (행정동) type first, fall back to B (법정동)
-          const region = result.find((r: any) => r.region_type === "H") || result[0];
-          // region_2depth_name = 구/군 name (e.g. "강남구", "수원시 장안구")
-          const districtName = region.region_2depth_name || region.region_1depth_name;
-          setUserDistrictName(districtName);
-        }
-      });
-    } else {
-      // Fallback: use Nominatim reverse geocoding when Kakao SDK is not available
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&accept-language=ko`)
-        .then(res => res.json())
-        .then(data => {
-          const addr = data?.address;
-          // Try city_district (구), city, county, town in order
-          const districtName = addr?.city_district || addr?.borough || addr?.city || addr?.county || addr?.town || addr?.suburb;
-          if (districtName) {
-            setUserDistrictName(districtName);
-          }
-        })
-        .catch(err => {
-          console.error('Reverse geocoding fallback failed:', err);
-        });
-    }
-  }, [userLocation]);
+  // Region change with location reset
+  const handleMajorRegionChange = useCallback((region: any) => {
+    setUserLocation(null);
+    setActiveRadius("all");
+    baseHandleMajorRegionChange(region);
+  }, [baseHandleMajorRegionChange, setUserLocation, setActiveRadius]);
+
+  const handleSubRegionChange = useCallback((region: any) => {
+    setUserLocation(null);
+    setActiveRadius("all");
+    baseHandleSubRegionChange(region);
+  }, [baseHandleSubRegionChange, setUserLocation, setActiveRadius]);
 
   // Auto-set mode based on URL params
   useEffect(() => {
     if (hideMode) {
       setMode("transfer");
     } else {
-      // Reset to emergency mode when entering without hideMode (guardian/patient mode)
       setMode("emergency");
     }
   }, [hideMode, setMode]);
 
-  // Get rejection alerts for hospitals - convert to RejectionAlertInfo format
+  // Auto-focus on user location
+  useEffect(() => {
+    if (userLocation) {
+      setMapCenter(userLocation);
+      setActiveRadius(10);
+      setMapZoom(getZoomForRadius(10));
+      setActiveMajorRegion("all" as any);
+      setActiveRegion("all" as any);
+    }
+  }, [userLocation]);
+
+  // Rejection alerts
   const rejectionAlerts = useMemo(() => {
     const warnings = getActiveWarnings();
     const alerts = new Map<number, { severity: 'none' | 'warning' | 'critical'; count: number; reasons?: string[] }>();
-    
     warnings.forEach((status, hospitalId) => {
       alerts.set(hospitalId, {
         severity: status.severity,
@@ -192,11 +155,10 @@ const MapPage = () => {
         reasons: status.reasons,
       });
     });
-    
     return alerts;
   }, [getActiveWarnings]);
 
-  // Fetch holiday pharmacies when filter is set to 'pharmacy' (legacy)
+  // Pharmacy filter
   const isPharmacyFilter = activeFilter === "pharmacy";
   const { pharmacies: holidayPharmacies, isLoading: isLoadingPharmacies } = useHolidayPharmacies(isPharmacyFilter);
 
@@ -205,202 +167,87 @@ const MapPage = () => {
     setShowDispatchModal(true);
   }, []);
 
-  const { filteredHospitals } = useMemo(() => {
-    let result = isTransferMode ? [...hospitalData] : filterHospitals(hospitalData, activeFilter);
-    
-    // Pediatric SOS mode: filter to only pediatric-capable hospitals
-    if (isPediatricSOS && !isTransferMode) {
-      result = result.filter((h) => h.beds.pediatric > 0);
-    }
-    result = filterHospitalsByRegion(result, activeRegion);
-    
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((h) => h.name.toLowerCase().includes(query) || h.nameKr.includes(query));
-    }
-
-    // Exclude full hospitals (total beds = 0)
-    if (excludeFullHospitals && !isTransferMode) {
-      result = result.filter((h) => {
-        const totalBeds = (h.beds?.general || 0) + (h.beds?.pediatric || 0) + (h.beds?.fever || 0);
-        return totalBeds > 0;
-      });
-    }
-
-    // Transfer mode filtering based on transfer filter
-    if (isTransferMode && transferFilter !== "all") {
-      result = result.filter((h) => {
-        const transferBeds = getTransferBeds(h.id);
-        switch (transferFilter) {
-          case "hospital":
-            // Show hospitals with any available transfer beds
-            return (transferBeds.icuGeneral + transferBeds.icuNeuro + transferBeds.icuCardio + transferBeds.ward + transferBeds.isolation) > 0;
-          default:
-            return true;
-        }
-      });
-    }
-
-    // Filter by radius if set and user location available
-    if (userLocation && activeRadius !== "all") {
-      result = result.filter((h) => {
-        const distance = calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng);
-        return distance <= activeRadius;
-      });
-    }
-
-    // Add distance and sort
-    if (userLocation) {
-      result = result.map((h) => ({
-        ...h,
-        distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng),
-      }));
-      
-      // In transfer mode, sort by total ICU first, then distance
-      if (isTransferMode) {
-        result.sort((a, b) => {
-          const icuA = getTotalICU(getTransferBeds(a.id));
-          const icuB = getTotalICU(getTransferBeds(b.id));
-          if (icuB !== icuA) return icuB - icuA; // Higher ICU first
-          return (a.distance || 0) - (b.distance || 0);
-        });
-      } else {
-        result.sort((a, b) => (a.distance || 0) - (b.distance || 0));
-      }
-    } else if (isTransferMode) {
-      // Even without location, sort by ICU in transfer mode
-      result.sort((a, b) => {
-        const icuA = getTotalICU(getTransferBeds(a.id));
-        const icuB = getTotalICU(getTransferBeds(b.id));
-        return icuB - icuA;
-      });
-    }
-
-    return { filteredHospitals: result };
-  }, [activeFilter, activeRegion, searchQuery, excludeFullHospitals, userLocation, hospitalData, activeRadius, isTransferMode, transferFilter, isPediatricSOS]);
-
-  // Filter holiday pharmacies by selected region
+  // Filter pharmacies by region
   const filteredPharmacies = useMemo(() => {
     if (!isPharmacyFilter || holidayPharmacies.length === 0) return [];
     if (activeRegion === "all") return holidayPharmacies;
-
     const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
     if (!selectedRegion) return holidayPharmacies;
 
-    // If it's a sub-region, filter by both parent and sub-region
     if (selectedRegion.parent) {
       const parentRegion = regionOptions.find((r) => r.id === selectedRegion.parent);
       const parentLabel = parentRegion?.labelKr || "";
       const simplifiedParent = parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
-
       return holidayPharmacies.filter((p) => {
         const address = p.address || "";
-        const hasParentRegion = simplifiedParent ? address.includes(simplifiedParent) : true;
-        const hasSubRegion = address.includes(selectedRegion.labelKr);
-        return hasParentRegion && hasSubRegion;
+        return (simplifiedParent ? address.includes(simplifiedParent) : true) && address.includes(selectedRegion.labelKr);
       });
     }
 
-    // Major region filtering
     const majorLabel = selectedRegion.labelKr || "";
     const simplifiedMajorLabel = majorLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
-
-    return holidayPharmacies.filter((p) => {
-      const address = p.address || "";
-      return address.includes(simplifiedMajorLabel);
-    });
+    return holidayPharmacies.filter((p) => (p.address || "").includes(simplifiedMajorLabel));
   }, [isPharmacyFilter, holidayPharmacies, activeRegion]);
 
-  // Filter nursing hospitals by region and distance
+  // Filter nursing hospitals
   const filteredNursingHospitals = useMemo(() => {
     if (!isTransferMode || nursingHospitals.length === 0) return [];
-    
-    // Hide nursing hospitals when hospital or any hospital sub-filter is selected
     if (transferFilter === "hospital") return [];
-    
     let result = [...nursingHospitals];
-    
-    // Filter by region if not "all"
+
     if (activeRegion !== "all") {
       const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
       if (selectedRegion) {
         if (selectedRegion.parent) {
-          // Sub-region filtering
           const parentRegion = regionOptions.find((r) => r.id === selectedRegion.parent);
           const parentLabel = parentRegion?.labelKr || "";
           const simplifiedParent = parentLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
-          
           result = result.filter((h) => {
             const address = h.address || "";
-            const hasParentRegion = simplifiedParent ? address.includes(simplifiedParent) : true;
-            const hasSubRegion = address.includes(selectedRegion.labelKr);
-            return hasParentRegion && hasSubRegion;
+            return (simplifiedParent ? address.includes(simplifiedParent) : true) && address.includes(selectedRegion.labelKr);
           });
         } else {
-          // Major region filtering
           const majorLabel = selectedRegion.labelKr || "";
           const simplifiedMajorLabel = majorLabel.replace("광역시", "").replace("특별시", "").replace("특별자치시", "").replace("특별자치도", "").replace("도", "");
-          
-          result = result.filter((h) => {
-            const address = h.address || "";
-            return address.includes(simplifiedMajorLabel);
-          });
+          result = result.filter((h) => (h.address || "").includes(simplifiedMajorLabel));
         }
       }
     }
-    
-    // Filter by radius if set and user location available
+
     if (userLocation && activeRadius !== "all") {
-      result = result.filter((h) => {
-        const distance = calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng);
-        return distance <= activeRadius;
-      });
+      result = result.filter((h) => calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) <= activeRadius);
     }
-    
-    // Add distance and sort by proximity
+
     if (userLocation) {
-      result = result.map((h) => ({
-        ...h,
-        distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng),
-      }));
+      result = result.map((h) => ({ ...h, distance: calculateDistance(userLocation[0], userLocation[1], h.lat, h.lng) }));
       result.sort((a, b) => ((a as any).distance || 0) - ((b as any).distance || 0));
     }
-    
+
     return result;
   }, [isTransferMode, nursingHospitals, activeRegion, userLocation, activeRadius, transferFilter]);
 
-  // Show message when no trauma centers in selected region and recommend nearest one
+  // Trauma center toast
   useEffect(() => {
     if (activeFilter === "traumaCenter" && filteredHospitals.length === 0 && activeRegion !== "all") {
       const selectedRegion = regionOptions.find((r) => r.id === activeRegion);
       const regionName = selectedRegion?.labelKr || activeRegion;
-      
-      // Use user location if available, otherwise fall back to region center
       const referencePoint = userLocation || selectedRegion?.center || mapCenter;
       const isUserLocationBased = !!userLocation;
-      
-      // Find nearest trauma center from all hospitals
       const allTraumaCenters = hospitalData.filter((h) => h.isTraumaCenter === true);
-      
+
       if (allTraumaCenters.length > 0) {
-        // Calculate distance from reference point to each trauma center
         const traumaCentersWithDistance = allTraumaCenters.map((tc) => ({
           ...tc,
           distanceFromRef: calculateDistance(referencePoint[0], referencePoint[1], tc.lat, tc.lng),
         }));
-        
-        // Sort by distance and get the nearest one
         traumaCentersWithDistance.sort((a, b) => a.distanceFromRef - b.distanceFromRef);
         const nearest = traumaCentersWithDistance[0];
-        
-        // Calculate estimated arrival time (average city speed: 35 km/h)
         const estimatedMinutes = Math.round((nearest.distanceFromRef / 35) * 60);
-        const timeDisplay = estimatedMinutes < 60 
-          ? `약 ${estimatedMinutes}분` 
+        const timeDisplay = estimatedMinutes < 60
+          ? `약 ${estimatedMinutes}분`
           : `약 ${Math.floor(estimatedMinutes / 60)}시간 ${estimatedMinutes % 60}분`;
-        
         const locationLabel = isUserLocationBased ? "내 위치에서" : `${regionName}에서`;
-        
+
         const { dismiss } = toast({
           title: `${regionName}에는 외상센터가 없습니다`,
           description: `${locationLabel} 가장 가까운 외상센터: ${cleanHospitalName(nearest.nameKr)} (${nearest.distanceFromRef.toFixed(1)}km, ${timeDisplay})`,
@@ -410,14 +257,10 @@ const MapPage = () => {
               variant="outline"
               size="sm"
               onClick={() => {
-                // 토스트 즉시 닫기
                 dismiss();
-                // 지역 필터를 전체로 변경하여 외상센터가 표시되도록 함
-                setActiveMajorRegion("all");
-                setActiveRegion("all");
-                // 바텀시트가 화면 하단 약 40%를 차지하므로, 마커가 가려지지 않도록
-                // 지도 중심을 마커 위치보다 약간 아래로 이동 (위도 감소)
-                const offsetLat = nearest.lat - 0.015; // 마커를 화면 상단 쪽으로 배치
+                setActiveMajorRegion("all" as any);
+                setActiveRegion("all" as any);
+                const offsetLat = nearest.lat - 0.015;
                 setMapCenter([offsetLat, nearest.lng]);
                 setMapZoom(14);
                 setSelectedHospital(nearest);
@@ -437,84 +280,23 @@ const MapPage = () => {
     }
   }, [activeFilter, filteredHospitals.length, activeRegion, hospitalData, mapCenter, userLocation]);
 
-
-  const handleMajorRegionChange = useCallback((region: MajorRegionType) => {
-    setActiveMajorRegion(region);
-    setActiveRegion(region);
-    
-    // Clear user location and radius when manually selecting a region
-    setUserLocation(null);
-    setActiveRadius("all");
-    
-    const regionData = regionOptions.find((r) => r.id === region);
-    if (regionData) {
-      setMapCenter(regionData.center);
-      setMapZoom(regionData.zoom || 11);
-    }
-  }, []);
-
-  const handleSubRegionChange = useCallback((region: RegionType) => {
-    setActiveRegion(region);
-    
-    // Clear user location and radius when manually selecting a sub-region
-    setUserLocation(null);
-    setActiveRadius("all");
-    
-    const regionData = regionOptions.find((r) => r.id === region);
-    if (regionData) {
-      setMapCenter(regionData.center);
-      setMapZoom(regionData.zoom || 13);
-    }
-  }, []);
-
-  // Auto-focus: Get user location on mount
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const newLocation: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-        setUserLocation(newLocation);
-        setMapCenter(newLocation);
-        setActiveRadius(10); // Default 10km radius
-        setMapZoom(getZoomForRadius(10));
-        
-        // When location is active, use "all" region to show nearby hospitals
-        // across administrative boundaries (radius filter handles distance)
-        setActiveMajorRegion("all");
-        setActiveRegion("all");
-      },
-      () => {
-        // Silently fail on initial auto-location
-        console.log("Auto-location failed, using default center");
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  }, []);
-
-
-
-  // Sync radius chip when map zoom changes (via pinch/scroll/slider)
   const handleZoomChange = useCallback((zoom: number) => {
     setMapZoom(zoom);
     if (userLocation) {
-      const newRadius = getRadiusForZoom(zoom);
-      setActiveRadius(newRadius);
+      setActiveRadius(getRadiusForZoom(zoom));
     }
-  }, [userLocation]);
+  }, [userLocation, setMapZoom, setActiveRadius]);
 
-  // When user drags/pans the map, remove radius filter so all hospitals in view appear
-  const handleMapDragEnd = useCallback((newCenter: [number, number]) => {
+  const handleMapDragEnd = useCallback(() => {
     setActiveRadius("all");
-    setActiveMajorRegion("all");
-    setActiveRegion("all");
-  }, []);
+    setActiveMajorRegion("all" as any);
+    setActiveRegion("all" as any);
+  }, [setActiveRadius, setActiveMajorRegion, setActiveRegion]);
 
   const handleHospitalClick = useCallback((hospital: Hospital) => {
     setSelectedHospital(hospital);
     setMapCenter([hospital.lat, hospital.lng]);
-  }, []);
-
+  }, [setMapCenter]);
 
   const selectedDistance = selectedHospital && userLocation
     ? calculateDistance(userLocation[0], userLocation[1], selectedHospital.lat, selectedHospital.lng)
@@ -522,11 +304,9 @@ const MapPage = () => {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden flex flex-col !pb-0">
-      {/* Splash Screen */}
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
-
-      {/* Map Container - Full height */}
+      {/* Map Container */}
       <div className="relative flex-1 h-full">
         {/* Data Source Badge */}
         <div className="absolute bottom-safe-1 right-2 z-[1000]">
@@ -537,10 +317,8 @@ const MapPage = () => {
           />
         </div>
 
-        {/* Offline/Error Banner */}
         <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
 
-        {/* Map View - Kakao or error screen */}
         {kakaoFailed ? (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
             <div className="flex flex-col items-center gap-4 p-8 max-w-sm text-center">
@@ -554,15 +332,8 @@ const MapPage = () => {
                 카카오 개발자 콘솔에서 현재 도메인이<br />
                 등록되어 있는지 확인해 주세요.
               </p>
-              <p className="text-xs text-muted-foreground/60 font-mono">
-                {window.location.origin}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setKakaoFailed(false)}
-                className="mt-2"
-              >
+              <p className="text-xs text-muted-foreground/60 font-mono">{window.location.origin}</p>
+              <Button variant="outline" size="sm" onClick={() => setKakaoFailed(false)} className="mt-2">
                 다시 시도
               </Button>
             </div>
@@ -591,10 +362,9 @@ const MapPage = () => {
           />
         )}
 
-        {/* Zoom Controls - Slim Vertical Slider */}
+        {/* Zoom Controls */}
         <div className="absolute right-3 top-1/2 -translate-y-1/2 z-[1000]">
           <div className="bg-card/10 dark:bg-card/8 backdrop-blur-sm rounded-full shadow-none border border-border/10 px-1.5 py-3 flex flex-col items-center gap-1.5">
-            {/* Zoom In */}
             <button
               onClick={() => setMapZoom(Math.min(18, mapZoom + 1))}
               className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card/60 transition-colors text-sm font-medium"
@@ -602,8 +372,6 @@ const MapPage = () => {
             >
               +
             </button>
-            
-            {/* Vertical Slider */}
             <div className="h-24 flex items-center justify-center">
               <input
                 type="range"
@@ -613,27 +381,11 @@ const MapPage = () => {
                 onChange={(e) => setMapZoom(Number(e.target.value))}
                 className="h-20 w-1 appearance-none bg-muted-foreground/20 rounded-full cursor-pointer
                   [writing-mode:vertical-lr] [direction:rtl]
-                  [&::-webkit-slider-thumb]:appearance-none
-                  [&::-webkit-slider-thumb]:w-3.5
-                  [&::-webkit-slider-thumb]:h-3.5
-                  [&::-webkit-slider-thumb]:rounded-full
-                  [&::-webkit-slider-thumb]:bg-primary
-                  [&::-webkit-slider-thumb]:shadow-sm
-                  [&::-webkit-slider-thumb]:cursor-pointer
-                  [&::-webkit-slider-thumb]:transition-transform
-                  [&::-webkit-slider-thumb]:hover:scale-110
-                  [&::-moz-range-thumb]:w-3.5
-                  [&::-moz-range-thumb]:h-3.5
-                  [&::-moz-range-thumb]:rounded-full
-                  [&::-moz-range-thumb]:bg-primary
-                  [&::-moz-range-thumb]:border-0
-                  [&::-moz-range-thumb]:shadow-sm
-                  [&::-moz-range-thumb]:cursor-pointer"
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-sm [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110
+                  [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-sm [&::-moz-range-thumb]:cursor-pointer"
                 aria-label="줌 레벨 조절"
               />
             </div>
-            
-            {/* Zoom Out */}
             <button
               onClick={() => setMapZoom(Math.max(5, mapZoom - 1))}
               className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-card/60 transition-colors text-sm font-medium"
@@ -644,36 +396,29 @@ const MapPage = () => {
           </div>
         </div>
 
-
-        {/* Data Source removed - update time moved to RadiusChips */}
-
         {/* Header */}
         <header className="absolute top-2 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
           <div className="flex items-center gap-3 min-w-max">
             <button
               onClick={() => navigate("/")}
               className="flex items-center justify-center w-8 h-8 bg-card rounded-full shadow-lg border border-border text-foreground hover:bg-secondary transition-colors flex-shrink-0"
+              aria-label="뒤로가기"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
 
-
-            {/* Mode Toggle (hidden when hideMode is true) */}
             {!hideMode && <ModeToggle />}
 
-
-
-           {/* 119 Stats Button */}
-           {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (
-              <DemandForecastTicker 
+            {!selectedHospital && !selectedNursingHospital && !selectedPharmacy && (
+              <DemandForecastTicker
                 regionId={activeRegion !== "all" ? activeRegion : undefined}
                 userDistrictName={userDistrictName}
               />
-           )}
+            )}
           </div>
         </header>
 
-        {/* Filter Chips - Single row horizontal scroll */}
+        {/* Filter Chips */}
         {!isTransferMode ? (
           <div className="absolute top-[4.5rem] left-0 right-0 z-[999] px-4">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
@@ -686,13 +431,13 @@ const MapPage = () => {
 
                   const handleFilterClick = () => {
                     setActiveFilter(f.id);
-                    setIsPediatricSOS(false); // Auto-disable pediatric SOS when switching filters
+                    setIsPediatricSOS(false);
                     setSelectedHospital(null);
                     setSelectedPharmacy(null);
                   };
 
-                    const tooltipText = getFilterTooltip(f.id);
-                    const chipButton = (
+                  const tooltipText = getFilterTooltip(f.id);
+                  const chipButton = (
                     <motion.button
                       key={f.id}
                       onClick={handleFilterClick}
@@ -706,6 +451,8 @@ const MapPage = () => {
                             : "bg-primary text-white shadow-md"
                           : "bg-card/70 backdrop-blur-sm text-muted-foreground border border-border/60 hover:bg-card/90"
                       }`}
+                      aria-label={`${f.labelKr} 필터`}
+                      aria-pressed={isActive}
                     >
                       {isTraumaCenter && (
                         <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold ${
@@ -714,35 +461,28 @@ const MapPage = () => {
                       )}
                       {f.labelKr}
                     </motion.button>
+                  );
+
+                  if (tooltipText) {
+                    return (
+                      <Tooltip key={f.id}>
+                        <TooltipTrigger asChild>{chipButton}</TooltipTrigger>
+                        <TooltipContent side="bottom" className="max-w-[200px] text-center text-xs">
+                          {tooltipText}
+                        </TooltipContent>
+                      </Tooltip>
                     );
-
-                    if (tooltipText) {
-                      return (
-                        <Tooltip key={f.id}>
-                          <TooltipTrigger asChild>
-                            {chipButton}
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" className="max-w-[200px] text-center text-xs">
-                            {tooltipText}
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    }
-
-                    return chipButton;
+                  }
+                  return chipButton;
                 })}
 
-              {/* Pediatric SOS Toggle - placed after filter chips */}
               {!isDriverMode && !isParamedicMode && (
                 <PediatricSOSToggle
                   isActive={isPediatricSOS}
                   onToggle={() => {
-                    setIsPediatricSOS(prev => {
+                    setIsPediatricSOS((prev: boolean) => {
                       const next = !prev;
-                      if (next) {
-                        // Entering pediatric SOS: reset filter to "all" for full coverage
-                        setActiveFilter("all");
-                      }
+                      if (next) setActiveFilter("all");
                       return next;
                     });
                     setSelectedHospital(null);
@@ -754,11 +494,9 @@ const MapPage = () => {
         ) : (
           <TransferFilterChips />
         )}
-
       </div>
 
-
-      {/* Bottom Sheet for Selected Hospital */}
+      {/* Bottom Sheets & Modals */}
       <HospitalBottomSheet
         hospital={selectedHospital}
         onClose={() => setSelectedHospital(null)}
@@ -767,7 +505,6 @@ const MapPage = () => {
         onCallAmbulance={() => setShowAmbulanceModal(true)}
       />
 
-      {/* Ambulance Call Modal */}
       <AmbulanceCallModal
         isOpen={showAmbulanceModal}
         onClose={() => setShowAmbulanceModal(false)}
@@ -776,7 +513,6 @@ const MapPage = () => {
         userLocation={userLocation}
       />
 
-      {/* Dispatch Request Modal */}
       <DispatchRequestModal
         isOpen={showDispatchModal}
         onClose={() => {
@@ -787,24 +523,20 @@ const MapPage = () => {
         userLocation={userLocation}
       />
 
-      {/* Pharmacy Bottom Sheet */}
       <PharmacyBottomSheet
         pharmacy={selectedPharmacy}
         isOpen={!!selectedPharmacy}
         onClose={() => setSelectedPharmacy(null)}
       />
 
-      {/* Nursing Hospital Bottom Sheet */}
       <NursingHospitalBottomSheet
         hospital={selectedNursingHospital}
         isOpen={!!selectedNursingHospital}
         onClose={() => setSelectedNursingHospital(null)}
       />
 
-      {/* My Requests Panel - Floating */}
       <MyRequestsPanel />
 
-      {/* First Aid Guide FAB - for guardians/patients */}
       {!isParamedicMode && !isDriverMode && <FirstAidFAB />}
     </div>
   );
