@@ -46,8 +46,6 @@ interface HospitalBottomSheetProps {
 
 
 
-);
-
 const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCallAmbulance, allHospitals }: HospitalBottomSheetProps) => {
   const [searchParams] = useSearchParams();
   const { addHotline, removeHotline, isHotline, hotlines } = useHotlines();
