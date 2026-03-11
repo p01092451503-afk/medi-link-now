@@ -105,7 +105,7 @@ const InstallPage = () => {
                   이미 설치되었습니다!
                 </h3>
                 <p className="text-green-600 dark:text-green-500 text-sm">
-                  홈 화면에서 Medi-Link 앱을 찾아보세요.
+                  홈 화면에서 FIND-ER 앱을 찾아보세요.
                 </p>
               </CardContent>
             </Card>
