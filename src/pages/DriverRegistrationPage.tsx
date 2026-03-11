@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User, Phone, Upload, FileText, ShieldCheck, CheckCircle,
-  Loader2, ArrowRight, ArrowLeft, Camera, X, AlertCircle
+  Loader2, ArrowRight, ArrowLeft, Camera, X, AlertCircle, Building2, Car
 } from "lucide-react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Input } from "@/components/ui/input";
@@ -15,12 +15,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDriverVerification } from "@/hooks/useDriverVerification";
 import { toast } from "@/hooks/use-toast";
 
-const STEPS = ["기본 정보", "서류 업로드", "제출 완료"];
+const STEPS = ["기본 정보", "면허·사업자 정보", "서류 업로드", "제출 완료"];
 
 const DOCUMENT_TYPES = [
-  { key: "operation_permit", label: "구급차 운행 허가증", desc: "이미지 또는 PDF", icon: FileText },
-  { key: "qualification", label: "응급구조사 자격증 / 운전면허증", desc: "이미지 또는 PDF", icon: ShieldCheck },
-  { key: "vehicle_registration", label: "차량 등록증", desc: "이미지 또는 PDF", icon: FileText },
+  { key: "operation_permit", label: "응급환자이송업 허가증 사본", desc: "이미지 또는 PDF", icon: ShieldCheck },
+  { key: "qualification", label: "응급구조사 자격증 / 운전면허증", desc: "이미지 또는 PDF", icon: FileText },
+  { key: "vehicle_registration", label: "차량 등록증", desc: "이미지 또는 PDF", icon: Car },
 ];
 
 const DriverRegistrationPage = () => {
@@ -33,6 +33,9 @@ const DriverRegistrationPage = () => {
   const [phone, setPhone] = useState("");
   const [licenseType, setLicenseType] = useState("emt");
   const [experienceYears, setExperienceYears] = useState(1);
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [businessRegNumber, setBusinessRegNumber] = useState("");
+  const [vehicleRegNumber, setVehicleRegNumber] = useState("");
   const [files, setFiles] = useState<Record<string, File | null>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -96,6 +99,7 @@ const DriverRegistrationPage = () => {
     try {
       const result = await createVerification.mutateAsync({
         name, phone, licenseType, experienceYears,
+        licenseNumber, businessRegNumber, vehicleRegNumber,
       });
 
       // Upload documents
@@ -105,7 +109,7 @@ const DriverRegistrationPage = () => {
         }
       }
 
-      setStep(2);
+      setStep(3);
       toast({ title: "인증 신청이 완료되었습니다!" });
     } catch (error) {
       toast({ title: "오류가 발생했습니다", description: (error as Error).message, variant: "destructive" });
@@ -115,7 +119,8 @@ const DriverRegistrationPage = () => {
   };
 
   const canProceedStep0 = name.trim() && phone.trim();
-  const canProceedStep1 = Object.keys(files).length >= 2; // At least 2 documents
+  const canProceedStep1 = licenseNumber.trim() && businessRegNumber.trim() && vehicleRegNumber.trim();
+  const canProceedStep2 = Object.keys(files).length >= 2;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -148,7 +153,7 @@ const DriverRegistrationPage = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">이름</Label>
+                  <Label htmlFor="name">이름 <span className="text-destructive">*</span></Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input id="name" placeholder="홍길동" value={name} onChange={e => setName(e.target.value)} className="pl-10 rounded-xl" />
@@ -156,7 +161,7 @@ const DriverRegistrationPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">연락처</Label>
+                  <Label htmlFor="phone">연락처 <span className="text-destructive">*</span></Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input id="phone" placeholder="010-1234-5678" value={phone} onChange={e => setPhone(e.target.value)} className="pl-10 rounded-xl" />
@@ -198,9 +203,73 @@ const DriverRegistrationPage = () => {
             </motion.div>
           )}
 
-          {/* Step 1: Document Upload */}
+          {/* Step 1: License & Business Info */}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
+              <div>
+                <h2 className="text-lg font-bold mb-1">면허·사업자 정보</h2>
+                <p className="text-sm text-muted-foreground">응급환자이송업 관련 필수 정보를 입력해주세요</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="licenseNumber">응급환자이송업 허가번호 <span className="text-destructive">*</span></Label>
+                  <div className="relative">
+                    <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="licenseNumber"
+                      placeholder="허가번호를 입력하세요"
+                      value={licenseNumber}
+                      onChange={e => setLicenseNumber(e.target.value)}
+                      className="pl-10 rounded-xl"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">시·도지사가 발급한 응급환자이송업 허가번호</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="businessRegNumber">사업자등록번호 <span className="text-destructive">*</span></Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="businessRegNumber"
+                      placeholder="000-00-00000"
+                      value={businessRegNumber}
+                      onChange={e => setBusinessRegNumber(e.target.value)}
+                      className="pl-10 rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="vehicleRegNumber">구급차 등록번호 <span className="text-destructive">*</span></Label>
+                  <div className="relative">
+                    <Car className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="vehicleRegNumber"
+                      placeholder="12가 3456"
+                      value={vehicleRegNumber}
+                      onChange={e => setVehicleRegNumber(e.target.value)}
+                      className="pl-10 rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep(0)} className="flex-1 rounded-2xl py-6">
+                  <ArrowLeft className="w-4 h-4 mr-1" /> 이전
+                </Button>
+                <Button onClick={() => setStep(2)} disabled={!canProceedStep1} className="flex-1 rounded-2xl py-6">
+                  다음 <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 2: Document Upload */}
+          {step === 2 && (
+            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
               <div>
                 <h2 className="text-lg font-bold mb-1">서류 업로드</h2>
                 <p className="text-sm text-muted-foreground">인증에 필요한 서류를 업로드해주세요 (최소 2개)</p>
@@ -261,19 +330,19 @@ const DriverRegistrationPage = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep(0)} className="flex-1 rounded-2xl py-6">
+                <Button variant="outline" onClick={() => setStep(1)} className="flex-1 rounded-2xl py-6">
                   <ArrowLeft className="w-4 h-4 mr-1" /> 이전
                 </Button>
-                <Button onClick={handleSubmit} disabled={!canProceedStep1 || isSubmitting} className="flex-1 rounded-2xl py-6">
+                <Button onClick={handleSubmit} disabled={!canProceedStep2 || isSubmitting} className="flex-1 rounded-2xl py-6">
                   {isSubmitting ? <AmbulanceLoader variant="inline" /> : <>제출하기 <ArrowRight className="w-4 h-4 ml-1" /></>}
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 2: Complete */}
-          {step === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12">
+          {/* Step 3: Complete */}
+          {step === 3 && (
+            <motion.div key="step3" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12">
               <div className="w-20 h-20 rounded-full bg-primary/10 mx-auto mb-6 flex items-center justify-center">
                 <CheckCircle className="w-10 h-10 text-primary" />
               </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useDriverVerification } from "./useDriverVerification";
+import { toast } from "@/hooks/use-toast";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
 export interface DriverPresence {
@@ -21,11 +23,15 @@ interface UseDriverPresenceOptions {
 export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
   const { trackOwnLocation = false, updateIntervalMs = 10000 } = options;
   const { user } = useAuth();
+  const { verification } = useDriverVerification();
   const [nearbyDrivers, setNearbyDrivers] = useState<DriverPresence[]>([]);
   const [isTracking, setIsTracking] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
   const watchIdRef = useRef<number | null>(null);
+
+  const isVerified = verification?.status === "approved" &&
+    verification.expires_at && new Date(verification.expires_at) > new Date();
 
   // Subscribe to driver presence channel
   useEffect(() => {
@@ -85,6 +91,16 @@ export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
       return;
     }
 
+    // Block unverified drivers
+    if (!isVerified) {
+      toast({
+        title: "기사 인증이 필요합니다",
+        description: "기사 인증 완료 후 영업 가능합니다",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsTracking(true);
 
     const updateLocation = (position: GeolocationPosition) => {
@@ -121,7 +137,7 @@ export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
         timeout: 15000,
       }
     );
-  }, [user?.id, updateIntervalMs]);
+  }, [user?.id, updateIntervalMs, isVerified]);
 
   const stopTracking = useCallback(() => {
     if (watchIdRef.current !== null) {
@@ -153,15 +169,16 @@ export const useDriverPresence = (options: UseDriverPresenceOptions = {}) => {
 
   // Auto start tracking if option is set
   useEffect(() => {
-    if (trackOwnLocation && user?.id) {
+    if (trackOwnLocation && user?.id && isVerified) {
       startTracking({ name: user.email || "구급대원" });
       return () => stopTracking();
     }
-  }, [trackOwnLocation, user?.id, startTracking, stopTracking, user?.email]);
+  }, [trackOwnLocation, user?.id, startTracking, stopTracking, user?.email, isVerified]);
 
   return {
     nearbyDrivers,
     isTracking,
+    isVerified,
     currentLocation,
     startTracking,
     stopTracking,
