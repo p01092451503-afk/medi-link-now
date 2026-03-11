@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import * as Sentry from "@sentry/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Ambulance, Phone, MapPin, Check, Clock, AlertCircle, Brain, Loader2 } from "lucide-react";
+import { X, Ambulance, Phone, MapPin, Check, Clock, AlertCircle, Brain, Loader2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +9,7 @@ import { Hospital } from "@/data/hospitals";
 import { cleanHospitalName } from "@/lib/utils";
 import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import { useSymptomAnalysis, SYMPTOM_CHIPS } from "@/hooks/useSymptomAnalysis";
+import ReviewModal from "@/components/ReviewModal";
 import type { SymptomAnalysisResult } from "@/hooks/useSymptomAnalysis";
 
 interface AmbulanceCallModalProps {
@@ -19,7 +20,7 @@ interface AmbulanceCallModalProps {
   userLocation?: [number, number] | null;
 }
 
-type CallState = "form" | "submitting" | "submitted" | "accepted";
+type CallState = "form" | "submitting" | "submitted" | "accepted" | "completed";
 
 const severityConfig = {
   critical: { bg: "bg-destructive/10", border: "border-destructive/30", text: "text-destructive", label: "위급" },
@@ -103,11 +104,21 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
     }
   }, [isOpen]);
 
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [completedDriverId, setCompletedDriverId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!createdRequestId) return;
     const myReq = myRequests.find((r) => r.id === createdRequestId);
     if (myReq && myReq.status === "accepted") {
       setCallState("accepted");
+    }
+    if (myReq && myReq.status === "completed" && callState !== "completed") {
+      setCallState("completed");
+      if (myReq.driver_id) {
+        setCompletedDriverId(myReq.driver_id);
+        setShowReviewModal(true);
+      }
     }
   }, [myRequests, createdRequestId]);
 
@@ -414,9 +425,39 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                   <Button onClick={onClose} variant="outline" className="w-full py-4 rounded-2xl">닫기</Button>
                 </motion.div>
               )}
+              {callState === "completed" && (
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-6 space-y-5">
+                  <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto">
+                    <Check className="w-10 h-10 text-foreground" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-foreground mb-2">이송이 완료되었습니다</h4>
+                    <p className="text-sm text-muted-foreground">안전하게 도착하셨길 바랍니다</p>
+                  </div>
+                  {!showReviewModal && (
+                    <Button
+                      onClick={() => setShowReviewModal(true)}
+                      className="w-full py-5 rounded-2xl text-base font-bold"
+                    >
+                      <Star className="w-5 h-5 mr-2" />
+                      기사님 리뷰 남기기
+                    </Button>
+                  )}
+                  <Button onClick={onClose} variant="outline" className="w-full py-4 rounded-2xl">닫기</Button>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         </>
+      )}
+
+      {createdRequestId && completedDriverId && (
+        <ReviewModal
+          isOpen={showReviewModal}
+          onClose={() => setShowReviewModal(false)}
+          requestId={createdRequestId}
+          driverId={completedDriverId}
+        />
       )}
     </AnimatePresence>
   );
