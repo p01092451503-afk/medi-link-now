@@ -32,7 +32,7 @@ interface HospitalStatusCache {
   last_updated: string;
 }
 
-export type DataSource = "api" | "db" | "cache" | "mock";
+export type DataSource = "api" | "db" | "cache" | "mock" | "offline";
 
 export interface HospitalWithMeta extends Hospital {
   dataSource?: DataSource;
@@ -50,6 +50,32 @@ export interface UseHospitalsResult {
   lastUpdated: Date | null;
   lastApiRefresh: Date | null;
   refetch: () => void;
+}
+
+// localStorage cache helpers
+const ER_CACHE_KEY = "er_cache";
+const CACHE_MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
+
+interface ErCache {
+  data: { hospitals: HospitalWithMeta[]; hasApiData: boolean };
+  timestamp: number;
+}
+
+function saveToLocalCache(data: { hospitals: HospitalWithMeta[]; hasApiData: boolean }) {
+  try {
+    const cache: ErCache = { data, timestamp: Date.now() };
+    localStorage.setItem(ER_CACHE_KEY, JSON.stringify(cache));
+  } catch { /* quota exceeded — ignore */ }
+}
+
+function loadFromLocalCache(): ErCache | null {
+  try {
+    const raw = localStorage.getItem(ER_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as ErCache;
+  } catch {
+    return null;
+  }
 }
 
 // Convert DB hospital to app Hospital format
