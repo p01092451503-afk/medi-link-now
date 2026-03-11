@@ -261,6 +261,7 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
+          business_reg_number: string | null
           created_at: string
           driver_id: string
           driver_name: string
@@ -268,15 +269,20 @@ export type Database = {
           experience_years: number | null
           expires_at: string | null
           id: string
+          license_doc_url: string | null
+          license_number: string | null
           license_type: string | null
           rejection_reason: string | null
           status: string
           updated_at: string
+          vehicle_doc_url: string | null
+          vehicle_reg_number: string | null
           verification_notes: string | null
         }
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
+          business_reg_number?: string | null
           created_at?: string
           driver_id: string
           driver_name: string
@@ -284,15 +290,20 @@ export type Database = {
           experience_years?: number | null
           expires_at?: string | null
           id?: string
+          license_doc_url?: string | null
+          license_number?: string | null
           license_type?: string | null
           rejection_reason?: string | null
           status?: string
           updated_at?: string
+          vehicle_doc_url?: string | null
+          vehicle_reg_number?: string | null
           verification_notes?: string | null
         }
         Update: {
           approved_at?: string | null
           approved_by?: string | null
+          business_reg_number?: string | null
           created_at?: string
           driver_id?: string
           driver_name?: string
@@ -300,10 +311,14 @@ export type Database = {
           experience_years?: number | null
           expires_at?: string | null
           id?: string
+          license_doc_url?: string | null
+          license_number?: string | null
           license_type?: string | null
           rejection_reason?: string | null
           status?: string
           updated_at?: string
+          vehicle_doc_url?: string | null
+          vehicle_reg_number?: string | null
           verification_notes?: string | null
         }
         Relationships: []
