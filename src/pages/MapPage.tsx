@@ -72,7 +72,7 @@ const MapPage = () => {
   const isParamedicMode = searchParams.get("role") === "paramedic";
 
   // Data hooks
-  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();

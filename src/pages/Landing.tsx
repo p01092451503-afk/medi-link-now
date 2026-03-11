@@ -19,7 +19,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const Landing = () => {
   const navigate = useNavigate();
   const { setMode } = useTransferMode();
-  const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
+  const { hospitals, isLoading, lastUpdated } = useHospitals();
   const [activeTab, setActiveTab] = useState<"national" | "local">("local");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
