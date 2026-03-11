@@ -82,13 +82,14 @@ const DataSourceBadge = ({ isRealtime, source, lastUpdated }: DataSourceBadgePro
   const badge = (
     <button
       onClick={handleClick}
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] leading-[24px] font-medium backdrop-blur-sm border shadow-sm ${config.bg} ${config.textColor} ${config.clickable ? "cursor-pointer hover:opacity-80" : "cursor-default"}`}
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md border shadow-md ${config.bg} ${config.textColor} ${config.clickable ? "cursor-pointer hover:opacity-80" : "cursor-default"}`}
+      style={{ backgroundColor: 'hsl(var(--card) / 0.85)' }}
     >
-      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dot}`} />
+      <span className={`w-2 h-2 rounded-full shrink-0 ${config.dot}`} />
       {config.icon}
-      {config.label}
+      <span className="tracking-tight">{config.label}</span>
       {lastUpdated && source !== "mock" && (
-        <span className="ml-0.5 opacity-70">
+        <span className="ml-0.5 opacity-80 font-medium">
           {lastUpdated.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}
         </span>
       )}
