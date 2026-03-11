@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { hospitals as staticHospitals, Hospital } from "@/data/hospitals";
@@ -32,7 +32,7 @@ interface HospitalStatusCache {
   last_updated: string;
 }
 
-export type DataSource = "api" | "db" | "cache" | "mock";
+export type DataSource = "api" | "db" | "cache" | "mock" | "offline";
 
 export interface HospitalWithMeta extends Hospital {
   dataSource?: DataSource;
@@ -50,6 +50,32 @@ export interface UseHospitalsResult {
   lastUpdated: Date | null;
   lastApiRefresh: Date | null;
   refetch: () => void;
+}
+
+// localStorage cache helpers
+const ER_CACHE_KEY = "er_cache";
+const CACHE_MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
+
+interface ErCache {
+  data: { hospitals: HospitalWithMeta[]; hasApiData: boolean };
+  timestamp: number;
+}
+
+function saveToLocalCache(data: { hospitals: HospitalWithMeta[]; hasApiData: boolean }) {
+  try {
+    const cache: ErCache = { data, timestamp: Date.now() };
+    localStorage.setItem(ER_CACHE_KEY, JSON.stringify(cache));
+  } catch { /* quota exceeded — ignore */ }
+}
+
+function loadFromLocalCache(): ErCache | null {
+  try {
+    const raw = localStorage.getItem(ER_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as ErCache;
+  } catch {
+    return null;
+  }
 }
 
 // Convert DB hospital to app Hospital format
@@ -210,6 +236,13 @@ export function useHospitals(): UseHospitalsResult {
     refetchOnWindowFocus: true,
   });
 
+  // Save to localStorage on successful fetch
+  useEffect(() => {
+    if (data) {
+      saveToLocalCache(data);
+    }
+  }, [data]);
+
   // Trigger Edge Function API refresh
   const triggerApiRefresh = useCallback(async () => {
     try {
@@ -231,7 +264,6 @@ export function useHospitals(): UseHospitalsResult {
 
   // Polling + visibility change
   useEffect(() => {
-    // Initial API refresh
     triggerApiRefresh();
 
     const POLL_INTERVAL = 5 * 60 * 1000;
@@ -285,16 +317,43 @@ export function useHospitals(): UseHospitalsResult {
     };
   }, [queryClient]);
 
-  const hospitals = data?.hospitals ?? staticHospitals;
-  const hasApiData = data?.hasApiData ?? false;
+  // Offline fallback: use localStorage cache when query fails
+  const offlineCache = useMemo(() => {
+    if (isError || (!data && !isLoading)) {
+      return loadFromLocalCache();
+    }
+    return null;
+  }, [isError, data, isLoading]);
 
-  const source: DataSource = isError
-    ? "mock"
-    : hasApiData || lastApiRefreshRef.current
-      ? "api"
-      : dataUpdatedAt
-        ? "cache"
-        : "mock";
+  const isOfflineFallback = !data && !!offlineCache;
+  const cacheAgeMs = offlineCache ? Date.now() - offlineCache.timestamp : 0;
+  const isCacheStale = cacheAgeMs > CACHE_MAX_AGE_MS;
+
+  const hospitals = data?.hospitals
+    ?? offlineCache?.data.hospitals?.map(h => ({
+        ...h,
+        dataSource: "offline" as DataSource,
+        reliability: isCacheStale ? 30 : 50,
+      }))
+    ?? staticHospitals;
+
+  const hasApiData = data?.hasApiData ?? offlineCache?.data.hasApiData ?? false;
+
+  const source: DataSource = isOfflineFallback
+    ? "offline"
+    : isError
+      ? "mock"
+      : hasApiData || lastApiRefreshRef.current
+        ? "api"
+        : dataUpdatedAt
+          ? "cache"
+          : "mock";
+
+  const lastUpdated = isOfflineFallback && offlineCache
+    ? new Date(offlineCache.timestamp)
+    : dataUpdatedAt
+      ? new Date(dataUpdatedAt)
+      : null;
 
   return {
     hospitals,
@@ -302,7 +361,7 @@ export function useHospitals(): UseHospitalsResult {
     isError,
     isRealtime: source === "api",
     source,
-    lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
+    lastUpdated,
     lastApiRefresh: lastApiRefreshRef.current,
     refetch: () => { refetch(); },
   };
