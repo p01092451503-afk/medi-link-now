@@ -38,17 +38,25 @@ interface KakaoMapViewProps {
   isPediatricSOS?: boolean;
 }
 
-// Get marker colors based on emergency grade
-const getGradeColors = (emergencyGrade?: string | null) => {
+// Get marker colors based on bed availability (primary visual cue)
+const getBedAvailabilityColors = (beds: number) => {
+  if (beds <= 0) return { bg: "#6B7280", border: "#4B5563", text: "white" }; // gray - no beds
+  if (beds <= 3) return { bg: "#F59E0B", border: "#D97706", text: "white" }; // amber - tight
+  if (beds <= 10) return { bg: "#22C55E", border: "#16A34A", text: "white" }; // green - available
+  return { bg: "#10B981", border: "#059669", text: "white" }; // emerald - plenty
+};
+
+// Get grade accent color for small badge overlay
+const getGradeBadgeColor = (emergencyGrade?: string | null) => {
   switch (emergencyGrade) {
     case "regional_center":
-      return { bg: "#DC2626", border: "#B91C1C" }; // red
+      return "#DC2626"; // red
     case "local_center":
-      return { bg: "#F97316", border: "#EA580C" }; // orange
+      return "#F97316"; // orange
     case "local_institution":
-      return { bg: "#2563EB", border: "#1D4ED8" }; // blue
+      return "#2563EB"; // blue
     default:
-      return null; // use status-based colors
+      return null;
   }
 };
 
@@ -528,27 +536,27 @@ const KakaoMapView = ({
         borderColor = moonlightColors.border;
         textColor = moonlightColors.text;
       } else {
-        const gradeColors = getGradeColors(hospital.emergencyGrade);
-        if (gradeColors) {
-          bgColor = gradeColors.bg;
-          borderColor = gradeColors.border;
-        } else {
-          if (displayBeds === 0) {
-            bgColor = "#ef4444";
-            borderColor = "#dc2626";
-          } else if (displayBeds <= 3) {
-            bgColor = "#eab308";
-            borderColor = "#ca8a04";
-          } else {
-            bgColor = "#22c55e";
-            borderColor = "#16a34a";
-          }
+        // Use bed availability as the primary marker color
+        const bedColors = getBedAvailabilityColors(displayBeds);
+        bgColor = bedColors.bg;
+        borderColor = bedColors.border;
+        textColor = bedColors.text;
+
+        // If saturated (0 beds), override to gray regardless of grade
+        if (displayBeds <= 0) {
+          bgColor = "#6B7280";
+          borderColor = "#4B5563";
         }
       }
 
       const gradeLabel = !isMoonlightMode ? getGradeLabel(hospital.emergencyGrade) : "";
-      // Grade label is hidden by default, shown on hover or when spiderfied
-      const gradeBadgeHtml = gradeLabel
+      const gradeBadgeColor = getGradeBadgeColor(hospital.emergencyGrade);
+      // Grade badge as small dot indicator on bottom-right of marker
+      const gradeBadgeHtml = gradeLabel && gradeBadgeColor
+        ? `<div class="grade-dot" style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: ${gradeBadgeColor}; border: 2px solid white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); z-index: 12;"></div>`
+        : "";
+      // Grade label shown on hover
+      const gradeLabelHtml = gradeLabel
         ? `<div class="grade-label" style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.3); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;">${gradeLabel}</div>`
         : "";
 
@@ -624,10 +632,11 @@ const KakaoMapView = ({
           <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;">
             <span style="color: ${textColor}; font-size: 18px; font-weight: 800; line-height: 1;">${displayBeds}</span>
             ${isPediatricSOS ? pediatricSOSBadgeHtml : isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
+            ${gradeBadgeHtml}
             ${groupCountHtml}
           </div>
           <div style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 8px solid white; margin-top: -2px;"></div>
-          ${gradeBadgeHtml}
+          ${gradeLabelHtml}
         </div>
       `;
 
