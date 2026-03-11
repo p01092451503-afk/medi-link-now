@@ -74,12 +74,32 @@ Deno.serve(async (req) => {
       .select("*")
       .eq("is_active", true);
 
+    // Filter to only verified (approved & not expired) drivers
+    const now = new Date().toISOString();
+    const activeDriverIds = (activeDrivers || []).map((d) => d.driver_id);
+    let verifiedDriverIds: string[] = [];
+
+    if (activeDriverIds.length > 0) {
+      const { data: verifiedDrivers } = await supabase
+        .from("driver_verifications")
+        .select("driver_id")
+        .in("driver_id", activeDriverIds)
+        .eq("status", "approved")
+        .gt("expires_at", now);
+
+      verifiedDriverIds = (verifiedDrivers || []).map((v) => v.driver_id);
+    }
+
+    const verifiedActiveDrivers = (activeDrivers || []).filter(
+      (d) => verifiedDriverIds.includes(d.driver_id)
+    );
+
     if (driversError) {
       console.error("Driver search error:", driversError);
     }
 
     // Calculate distance and filter within 10km
-    const nearbyDrivers = (activeDrivers || []).filter((d) => {
+    const nearbyDrivers = verifiedActiveDrivers.filter((d) => {
       const R = 6371;
       const dLat = ((d.lat - pickup_lat) * Math.PI) / 180;
       const dLng = ((d.lng - pickup_lng) * Math.PI) / 180;
