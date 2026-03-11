@@ -94,6 +94,29 @@ export default defineConfig(({ mode }) => ({
               },
             },
           },
+          {
+            urlPattern: /\/api\/hospital-status/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "hospital-status-cache",
+              networkTimeoutSeconds: 5,
+              expiration: {
+                maxAgeSeconds: 5 * 60,
+              },
+            },
+          },
+          {
+            urlPattern: /\/rest\/v1\//,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "supabase-api-cache",
+              networkTimeoutSeconds: 5,
+              expiration: {
+                maxAgeSeconds: 5 * 60,
+                maxEntries: 50,
+              },
+            },
+          },
         ],
       },
     }),
