@@ -331,7 +331,7 @@ const MapPage = () => {
           />
         </div>
 
-        <OfflineBanner isQueryError={isQueryError} onRetry={refetch} />
+        <OfflineBanner isQueryError={isQueryError} onRetry={refetch} lastUpdated={lastApiRefresh || lastUpdated} />
 
         {kakaoFailed ? (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
