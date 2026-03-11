@@ -612,6 +612,7 @@ export type Database = {
       }
       hospital_status_cache: {
         Row: {
+          data_source: string | null
           general_beds: number
           hospital_id: number
           hpid: string | null
@@ -621,6 +622,7 @@ export type Database = {
           pediatric_beds: number
         }
         Insert: {
+          data_source?: string | null
           general_beds?: number
           hospital_id: number
           hpid?: string | null
@@ -630,6 +632,7 @@ export type Database = {
           pediatric_beds?: number
         }
         Update: {
+          data_source?: string | null
           general_beds?: number
           hospital_id?: number
           hpid?: string | null
@@ -1160,7 +1163,45 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      hospital_status_with_age: {
+        Row: {
+          age_minutes: number | null
+          data_source: string | null
+          freshness: string | null
+          general_beds: number | null
+          hospital_id: number | null
+          hpid: string | null
+          id: number | null
+          isolation_beds: number | null
+          last_updated: string | null
+          pediatric_beds: number | null
+        }
+        Insert: {
+          age_minutes?: never
+          data_source?: string | null
+          freshness?: never
+          general_beds?: number | null
+          hospital_id?: number | null
+          hpid?: string | null
+          id?: number | null
+          isolation_beds?: number | null
+          last_updated?: string | null
+          pediatric_beds?: number | null
+        }
+        Update: {
+          age_minutes?: never
+          data_source?: string | null
+          freshness?: never
+          general_beds?: number | null
+          hospital_id?: number | null
+          hpid?: string | null
+          id?: number | null
+          isolation_beds?: number | null
+          last_updated?: string | null
+          pediatric_beds?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       cleanup_expired_rejection_logs: { Args: never; Returns: undefined }
