@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import * as Sentry from "@sentry/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Ambulance, Phone, MapPin, Check, Clock, AlertCircle, Brain, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
