@@ -560,8 +560,19 @@ const KakaoMapView = ({
         ? `<div class="grade-label" style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.3); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;">${gradeLabel}</div>`
         : "";
 
-      const traumaBadgeHtml = hospital.isTraumaCenter && !isMoonlightMode
-        ? `<div style="position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%); border: 2px solid white; border-radius: 10px; padding: 2px 7px; display: flex; align-items: center; gap: 3px; box-shadow: 0 3px 10px rgba(124, 58, 237, 0.6); z-index: 10; white-space: nowrap;">
+      // SVG icon for pediatric badge (baby/child silhouette)
+      const pediatricSvgIcon = (size: number, color = "white") => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><circle cx="12" cy="6" r="3"/><path d="M12 10c-2.5 0-4 1.5-4 3v2c0 .5.5 1 1 1h1v4c0 .5.5 1 1 1h2c.5 0 1-.5 1-1v-4h1c.5 0 1-.5 1-1v-2c0-1.5-1.5-3-4-3z"/></svg>`;
+
+      const hasPediatricBadge = !isPediatricSOS && !isMoonlightMode && (hospital.hasPediatric || hospital.beds.pediatric > 0);
+      const hasTraumaBadge = hospital.isTraumaCenter && !isMoonlightMode && !isPediatricSOS;
+
+      // Trauma badge: top-left when pediatric badge coexists, otherwise top-center
+      const traumaBadgePosition = hasPediatricBadge
+        ? "top: -12px; left: -14px;"
+        : "top: -16px; left: 50%; transform: translateX(-50%);";
+
+      const traumaBadgeHtml = hasTraumaBadge
+        ? `<div style="position: absolute; ${traumaBadgePosition} background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%); border: 2px solid white; border-radius: 10px; padding: 2px 7px; display: flex; align-items: center; gap: 3px; box-shadow: 0 3px 10px rgba(124, 58, 237, 0.6); z-index: 10; white-space: nowrap;">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><rect x="10" y="4" width="4" height="16" rx="1" fill="white"/><rect x="4" y="10" width="16" height="4" rx="1" fill="white"/></svg>
             <span style="color: white; font-size: 9px; font-weight: 700; letter-spacing: 0.5px;">외상</span>
           </div>`
@@ -572,12 +583,12 @@ const KakaoMapView = ({
         : "";
 
       const pediatricSOSBadgeHtml = isPediatricSOS
-        ? `<div style="position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5); z-index: 10;"><span style="font-size: 12px;">👶</span></div>`
+        ? `<div style="position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5); z-index: 10;">${pediatricSvgIcon(14)}</div>`
         : "";
 
-      // Pediatric-capable badge (shown in normal mode, not SOS/moonlight)
-      const pediatricCapableBadgeHtml = !isPediatricSOS && !isMoonlightMode && (hospital.hasPediatric || hospital.beds.pediatric > 0)
-        ? `<div style="position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(14, 165, 233, 0.4); z-index: 13;"><span style="font-size: 10px;">👶</span></div>`
+      // Pediatric-capable badge (shown in normal mode, not SOS/moonlight) — top-right
+      const pediatricCapableBadgeHtml = hasPediatricBadge
+        ? `<div style="position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(14, 165, 233, 0.4); z-index: 13;">${pediatricSvgIcon(12)}</div>`
         : "";
 
       const incomingCount = incomingCountMap.get(hospital.id) || 0;
