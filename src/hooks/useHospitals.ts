@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import * as Sentry from "@sentry/react";
 import { supabase } from "@/integrations/supabase/client";
 import { hospitals as staticHospitals, Hospital } from "@/data/hospitals";
 
