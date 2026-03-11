@@ -250,16 +250,24 @@ const Landing = () => {
                 </button>
               </div>
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                {lastUpdated && (
-                  <span>
-                    {lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                {lastUpdated ? (
+                  <>
+                    <span>
+                      {lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <span className="text-[10px]">실시간</span>
+                    <div className="relative">
+                      <div className="w-3 h-3 rounded-full bg-success" />
+                      <div className="absolute inset-0 w-3 h-3 rounded-full bg-success animate-ping opacity-75" />
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-3 w-12 rounded bg-muted animate-pulse" />
+                    <div className="h-3 w-8 rounded bg-muted animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-muted animate-pulse" />
+                  </div>
                 )}
-                <span className="text-[10px]">실시간</span>
-                <div className="relative">
-                  <div className="w-3 h-3 rounded-full bg-success" />
-                  <div className="absolute inset-0 w-3 h-3 rounded-full bg-success animate-ping opacity-75" />
-                </div>
               </div>
             </div>
 
