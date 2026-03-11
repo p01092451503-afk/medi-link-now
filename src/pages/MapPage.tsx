@@ -411,7 +411,7 @@ const MapPage = () => {
         </div>
 
         {/* Header */}
-        <header className="absolute top-2 left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide">
+        <header className={`absolute left-0 right-0 z-[1001] p-4 overflow-x-auto scrollbar-hide transition-all ${!isRealtime && !mockBannerDismissed ? 'top-10' : 'top-2'}`}>
           <div className="flex items-center gap-3 min-w-max">
             <button
               onClick={() => navigate("/")}
