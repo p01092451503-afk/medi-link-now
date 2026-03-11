@@ -1,0 +1,1 @@
+UPDATE hospitals SET is_trauma_center = true WHERE id = 470;
