@@ -19,7 +19,7 @@ interface AmbulanceCallModalProps {
   userLocation?: [number, number] | null;
 }
 
-type CallState = "form" | "submitting" | "submitted" | "accepted";
+type CallState = "form" | "submitting" | "submitted" | "accepted" | "completed";
 
 const severityConfig = {
   critical: { bg: "bg-destructive/10", border: "border-destructive/30", text: "text-destructive", label: "위급" },
