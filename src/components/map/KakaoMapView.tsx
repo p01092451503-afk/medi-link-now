@@ -80,16 +80,14 @@ const getGradeLabel = (emergencyGrade?: string | null): string => {
   }
 };
 
-// Convert Leaflet zoom (0-18) to Kakao zoom (1-14, inverted)
-const leafletToKakaoZoom = (leafletZoom: number): number => {
-  // Leaflet zoom 13 ≈ Kakao zoom 5
-  // Leaflet zoom 10 ≈ Kakao zoom 8
-  const kakaoZoom = Math.max(1, Math.min(14, 18 - leafletZoom));
+// Convert app zoom level (0-18) to Kakao zoom (1-14, inverted)
+const appToKakaoZoom = (appZoom: number): number => {
+  const kakaoZoom = Math.max(1, Math.min(14, 18 - appZoom));
   return kakaoZoom;
 };
 
-// Convert Kakao zoom (1-14) back to Leaflet zoom (0-18)
-const kakaoToLeafletZoom = (kakaoZoom: number): number => {
+// Convert Kakao zoom (1-14) back to app zoom level (0-18)
+const kakaoToAppZoom = (kakaoZoom: number): number => {
   return Math.max(4, Math.min(18, 18 - kakaoZoom));
 };
 

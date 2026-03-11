@@ -79,7 +79,7 @@ const MapPage = () => {
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
-  const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao, setMapProvider } = useMapProvider();
+  // Kakao Maps is the sole map provider
 
   // Geolocation
   const { userLocation, setUserLocation, userDistrictName } = useUserGeolocation();
