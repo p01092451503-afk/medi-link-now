@@ -236,6 +236,13 @@ export function useHospitals(): UseHospitalsResult {
     refetchOnWindowFocus: true,
   });
 
+  // Save to localStorage on successful fetch
+  useEffect(() => {
+    if (data) {
+      saveToLocalCache(data);
+    }
+  }, [data]);
+
   // Trigger Edge Function API refresh
   const triggerApiRefresh = useCallback(async () => {
     try {
@@ -257,7 +264,6 @@ export function useHospitals(): UseHospitalsResult {
 
   // Polling + visibility change
   useEffect(() => {
-    // Initial API refresh
     triggerApiRefresh();
 
     const POLL_INTERVAL = 5 * 60 * 1000;
@@ -311,16 +317,43 @@ export function useHospitals(): UseHospitalsResult {
     };
   }, [queryClient]);
 
-  const hospitals = data?.hospitals ?? staticHospitals;
-  const hasApiData = data?.hasApiData ?? false;
+  // Offline fallback: use localStorage cache when query fails
+  const offlineCache = useMemo(() => {
+    if (isError || (!data && !isLoading)) {
+      return loadFromLocalCache();
+    }
+    return null;
+  }, [isError, data, isLoading]);
 
-  const source: DataSource = isError
-    ? "mock"
-    : hasApiData || lastApiRefreshRef.current
-      ? "api"
-      : dataUpdatedAt
-        ? "cache"
-        : "mock";
+  const isOfflineFallback = !data && !!offlineCache;
+  const cacheAgeMs = offlineCache ? Date.now() - offlineCache.timestamp : 0;
+  const isCacheStale = cacheAgeMs > CACHE_MAX_AGE_MS;
+
+  const hospitals = data?.hospitals
+    ?? offlineCache?.data.hospitals?.map(h => ({
+        ...h,
+        dataSource: "offline" as DataSource,
+        reliability: isCacheStale ? 30 : 50,
+      }))
+    ?? staticHospitals;
+
+  const hasApiData = data?.hasApiData ?? offlineCache?.data.hasApiData ?? false;
+
+  const source: DataSource = isOfflineFallback
+    ? "offline"
+    : isError
+      ? "mock"
+      : hasApiData || lastApiRefreshRef.current
+        ? "api"
+        : dataUpdatedAt
+          ? "cache"
+          : "mock";
+
+  const lastUpdated = isOfflineFallback && offlineCache
+    ? new Date(offlineCache.timestamp)
+    : dataUpdatedAt
+      ? new Date(dataUpdatedAt)
+      : null;
 
   return {
     hospitals,
@@ -328,7 +361,7 @@ export function useHospitals(): UseHospitalsResult {
     isError,
     isRealtime: source === "api",
     source,
-    lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
+    lastUpdated,
     lastApiRefresh: lastApiRefreshRef.current,
     refetch: () => { refetch(); },
   };
