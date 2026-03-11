@@ -34,6 +34,8 @@ const PrivacyPage = () => {
               <li>회원 탈퇴 시까지 보유하며, 탈퇴 즉시 파기합니다.</li>
               <li>전자상거래법에 따른 계약/청약철회 기록: 5년</li>
               <li>통신비밀보호법에 따른 접속 로그: 3개월</li>
+              <li>위치정보(이용자): 수집 후 1년</li>
+              <li>위치정보(기사 운행기록): 운행 완료 후 6개월</li>
             </ul>
           )},
           { title: "제4조 (개인정보의 제3자 제공)", content: (
@@ -71,9 +73,19 @@ const PrivacyPage = () => {
             </ul>
           )},
           { title: "제8조 (위치정보의 처리)", content: (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              서비스는 주변 응급실 검색 및 경로 안내를 위해 위치정보를 수집합니다. 위치정보는 서비스 이용 시에만 일시적으로 사용되며, 별도로 저장하지 않습니다.
-            </p>
+            <>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                서비스는 다음 목적으로 위치정보를 수집·이용합니다.
+              </p>
+              <ul className="text-sm text-muted-foreground leading-relaxed space-y-1.5 list-disc pl-5 mb-3">
+                <li>주변 응급실 검색 및 경로 안내 (이용자)</li>
+                <li>구급차 기사의 실시간 위치 추적 및 배차 (기사 회원)</li>
+                <li>병원 방문 이력 분석을 통한 서비스 개선</li>
+              </ul>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                위치정보는 서비스 제공에 필요한 최소한으로 수집하며, 목적 달성 후 1년 이내 파기합니다. 기사 회원의 위치정보는 운행 완료 후 6개월 보관됩니다. 위치정보 수집을 원하지 않을 경우 기기 설정에서 위치 권한을 거부할 수 있으나, 일부 서비스 이용이 제한될 수 있습니다.
+              </p>
+            </>
           )},
           { title: "제9조 (개인정보 보호책임자)", content: (
             <div className="bg-secondary rounded-2xl p-4 text-sm text-muted-foreground">
