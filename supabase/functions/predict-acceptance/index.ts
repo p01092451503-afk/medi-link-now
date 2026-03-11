@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
     if (nearby.length > 0) sourcesActive++;
     const confidence = sourcesActive >= 3 ? 'high' : sourcesActive === 2 ? 'medium' : 'low';
 
-    const hasPediatric = pediatricBeds > 0;
+    const hasPediatric = pediatricBeds > 0 || (hospital.has_pediatric ?? false);
     const equipment = hospital.equipment || [];
 
     const result = {
