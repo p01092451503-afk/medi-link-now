@@ -308,6 +308,20 @@ const MapPage = () => {
 
       {/* Map Container */}
       <div className="relative flex-1 h-full">
+        {/* Mock Data Warning Banner */}
+        {!isRealtime && !mockBannerDismissed && (
+          <div className="absolute top-0 left-0 right-0 z-[1100] bg-warning/90 text-warning-foreground px-4 py-2 flex items-center justify-between text-xs font-medium backdrop-blur-sm">
+            <span>⚠️ 현재 샘플 데이터를 표시 중입니다. 실제 응급실 현황과 다를 수 있습니다.</span>
+            <button
+              onClick={() => setMockBannerDismissed(true)}
+              className="ml-2 p-0.5 rounded hover:bg-warning-foreground/10 shrink-0"
+              aria-label="배너 닫기"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
         {/* Data Source Badge */}
         <div className="absolute bottom-safe-1 right-2 z-[1000]">
           <DataSourceBadge
