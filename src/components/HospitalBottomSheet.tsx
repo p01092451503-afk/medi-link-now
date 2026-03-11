@@ -42,6 +42,7 @@ interface HospitalBottomSheetProps {
   userLocation?: [number, number] | null;
   onCallAmbulance?: () => void;
   allHospitals?: Hospital[];
+  symptomFilter?: string | null;
 }
 
 
