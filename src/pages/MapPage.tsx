@@ -109,6 +109,7 @@ const MapPage = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState<NearbyPharmacy | null>(null);
   const [selectedNursingHospital, setSelectedNursingHospital] = useState<NursingHospital | null>(null);
   const [showSplash, setShowSplash] = useState(false);
+  const [mockBannerDismissed, setMockBannerDismissed] = useState(false);
 
   // Region change with location reset
   const handleMajorRegionChange = useCallback((region: any) => {
