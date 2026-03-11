@@ -1,9 +1,20 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = [
+  'https://find-bed-now.lovable.app',
+  'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 interface HospitalData {
   hpid?: string;
@@ -57,7 +68,7 @@ function getRegionFromAddress(address: string): { region: string; sub_region?: s
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -69,11 +80,10 @@ Deno.serve(async (req) => {
     const { action, hospitals } = await req.json();
 
     if (action === 'sync') {
-      // Sync hospitals from the provided data
       if (!hospitals || !Array.isArray(hospitals)) {
         return new Response(
           JSON.stringify({ error: 'hospitals array is required' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
 
@@ -104,7 +114,6 @@ Deno.serve(async (req) => {
           equipment: hospital.equipment || [],
         };
 
-        // Upsert hospital (insert or update if exists)
         const { error } = await supabase
           .from('hospitals')
           .upsert(hospitalData, { onConflict: 'hpid' });
@@ -121,18 +130,17 @@ Deno.serve(async (req) => {
 
       return new Response(
         JSON.stringify({ success: true, results }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
     if (action === 'fetch') {
-      // Fetch hospitals from API and sync to database
       const serviceKey = Deno.env.get('PUBLIC_DATA_PORTAL_KEY');
       
       if (!serviceKey) {
         return new Response(
           JSON.stringify({ error: 'PUBLIC_DATA_PORTAL_KEY not configured' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
         );
       }
 
@@ -143,7 +151,6 @@ Deno.serve(async (req) => {
       const response = await fetch(bedsUrl);
       const xmlText = await response.text();
 
-      // Parse XML (simple parsing for items)
       const items = xmlText.match(/<item>[\s\S]*?<\/item>/g) || [];
       const results = {
         fetched: items.length,
@@ -173,7 +180,7 @@ Deno.serve(async (req) => {
           lat: parseFloat(getValue('wgs84Lat')) || 0,
           lng: parseFloat(getValue('wgs84Lon')) || 0,
           category: '응급의료기관',
-          region: 'seoul', // Will be updated based on address
+          region: 'seoul',
           is_trauma_center: false,
           has_pediatric: getNumValue('hvec') > 0,
           equipment: [],
@@ -196,13 +203,13 @@ Deno.serve(async (req) => {
 
       return new Response(
         JSON.stringify({ success: true, results }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
     return new Response(
       JSON.stringify({ error: 'Invalid action. Use "sync" or "fetch"' }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
@@ -210,7 +217,7 @@ Deno.serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 });
