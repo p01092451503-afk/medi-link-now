@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
     }
 
     // Calculate distance and filter within 10km
-    const nearbyDrivers = (activeDrivers || []).filter((d) => {
+    const nearbyDrivers = verifiedActiveDrivers.filter((d) => {
       const R = 6371;
       const dLat = ((d.lat - pickup_lat) * Math.PI) / 180;
       const dLng = ((d.lng - pickup_lng) * Math.PI) / 180;
