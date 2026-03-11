@@ -575,6 +575,11 @@ const KakaoMapView = ({
         ? `<div style="position: absolute; top: -12px; left: -12px; width: 24px; height: 24px; background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.5); z-index: 10;"><span style="font-size: 12px;">👶</span></div>`
         : "";
 
+      // Pediatric-capable badge (shown in normal mode, not SOS/moonlight)
+      const pediatricCapableBadgeHtml = !isPediatricSOS && !isMoonlightMode && (hospital.hasPediatric || hospital.beds.pediatric > 0)
+        ? `<div style="position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(14, 165, 233, 0.4); z-index: 13;"><span style="font-size: 10px;">👶</span></div>`
+        : "";
+
       const incomingCount = incomingCountMap.get(hospital.id) || 0;
       const congestionBadgeHtml = incomingCount >= 3
         ? `<div class="congestion-badge" style="position: absolute; top: -32px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; white-space: nowrap; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5); animation: kakao-float 2s ease-in-out infinite; z-index: 20;">🏃 ${incomingCount}명 이동 중</div>`
