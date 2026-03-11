@@ -82,12 +82,12 @@ const InstallPage = () => {
           <div className="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg">
             <img
               src="/pwa-192x192.png"
-              alt="Medi-Link"
+              alt="FIND-ER"
               className="w-full h-full object-cover"
             />
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Medi-Link</h2>
-          <p className="text-muted-foreground">실시간 응급 병상 찾기</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">FIND-ER</h2>
+          <p className="text-muted-foreground">전국 응급실 실시간 현황</p>
         </motion.div>
 
         {/* Install Status */}
@@ -105,7 +105,7 @@ const InstallPage = () => {
                   이미 설치되었습니다!
                 </h3>
                 <p className="text-green-600 dark:text-green-500 text-sm">
-                  홈 화면에서 Medi-Link 앱을 찾아보세요.
+                  홈 화면에서 FIND-ER 앱을 찾아보세요.
                 </p>
               </CardContent>
             </Card>
