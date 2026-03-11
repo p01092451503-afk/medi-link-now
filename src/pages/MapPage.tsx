@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, Map as MapIcon, X } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
 import KakaoMapView from "@/components/map/KakaoMapView";
