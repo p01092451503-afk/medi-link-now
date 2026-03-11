@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Map as MapIcon } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
-import { useMapProvider } from "@/hooks/useMapProvider";
 import KakaoMapView from "@/components/map/KakaoMapView";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -80,7 +79,7 @@ const MapPage = () => {
   const { getActiveWarnings } = useSharedRejectionLogs();
   const { isTransferMode, transferFilter, setMode } = useTransferMode();
   const { hospitals: nursingHospitals, isLoading: isLoadingNursing } = useNursingHospitals(isTransferMode);
-  const { provider: mapProvider, toggleProvider: toggleMapProvider, isKakao, setMapProvider } = useMapProvider();
+  // Kakao Maps is the sole map provider
 
   // Geolocation
   const { userLocation, setUserLocation, userDistrictName } = useUserGeolocation();
