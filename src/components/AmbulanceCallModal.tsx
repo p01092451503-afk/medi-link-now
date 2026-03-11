@@ -9,6 +9,7 @@ import { Hospital } from "@/data/hospitals";
 import { cleanHospitalName } from "@/lib/utils";
 import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import { useSymptomAnalysis, SYMPTOM_CHIPS } from "@/hooks/useSymptomAnalysis";
+import ReviewModal from "@/components/ReviewModal";
 import type { SymptomAnalysisResult } from "@/hooks/useSymptomAnalysis";
 
 interface AmbulanceCallModalProps {
