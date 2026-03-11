@@ -638,6 +638,7 @@ const KakaoMapView = ({
           <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;">
             <span style="color: ${textColor}; font-size: 18px; font-weight: 800; line-height: 1;">${displayBeds}</span>
             ${isPediatricSOS ? pediatricSOSBadgeHtml : isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
+            ${pediatricCapableBadgeHtml}
             ${gradeBadgeHtml}
             ${groupCountHtml}
           </div>
