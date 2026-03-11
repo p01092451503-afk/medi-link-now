@@ -434,7 +434,7 @@ const MapPage = () => {
 
         {/* Filter Chips */}
         {!isTransferMode ? (
-          <div className="absolute top-[4.5rem] left-0 right-0 z-[999] px-4">
+          <div className={`absolute left-0 right-0 z-[999] px-4 transition-all ${!isRealtime && !mockBannerDismissed ? 'top-[6.5rem]' : 'top-[4.5rem]'}`}>
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {filterOptions
                 .filter((f) => (f.category === "bed" || f.category === "special") && !f.parent)
