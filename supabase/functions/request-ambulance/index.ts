@@ -71,8 +71,16 @@ Deno.serve(async (req) => {
     // 2. Find nearby active drivers within 10km using Haversine approximation
     const { data: activeDrivers, error: driversError } = await supabase
       .from("driver_locations")
-      .select("*")
-      .eq("is_active", true);
+      .select(`
+        *,
+        driver_verifications!inner(
+          status,
+          expires_at
+        )
+      `)
+      .eq("is_active", true)
+      .eq("driver_verifications.status", "approved")
+      .gt("driver_verifications.expires_at", new Date().toISOString());
 
     if (driversError) {
       console.error("Driver search error:", driversError);
