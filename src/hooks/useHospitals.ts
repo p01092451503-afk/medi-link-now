@@ -96,6 +96,7 @@ function dbToHospital(dbHospital: DbHospital): Hospital {
     equipment: dbHospital.equipment || [],
     region: dbHospital.region,
     isTraumaCenter: dbHospital.is_trauma_center || false,
+    hasPediatric: dbHospital.has_pediatric || false,
     emergencyGrade: (dbHospital.emergency_grade as Hospital["emergencyGrade"]) || null,
   };
 }
