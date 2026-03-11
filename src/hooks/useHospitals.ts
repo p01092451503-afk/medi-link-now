@@ -145,8 +145,22 @@ async function fetchHospitals(): Promise<{
     .from("hospitals")
     .select("*");
 
-  // Build a lookup of static hospital bed data for fallback
-  const staticBedMap = new Map(staticHospitals.map((h) => [h.nameKr, h.beds]));
+  // Build lookups of static hospital bed data for fallback (by nameKr and by fuzzy core name)
+  const staticBedByName = new Map(staticHospitals.map((h) => [h.nameKr, h.beds]));
+  const staticBedByCore = new Map(staticHospitals.map((h) => [extractCoreName(h.nameKr), h.beds]));
+
+  function findStaticBeds(dbName: string): Hospital["beds"] | undefined {
+    // Exact match first
+    if (staticBedByName.has(dbName)) return staticBedByName.get(dbName);
+    // Fuzzy core name match
+    const core = extractCoreName(dbName);
+    if (staticBedByCore.has(core)) return staticBedByCore.get(core);
+    // Partial match: check if any static name is contained in or contains db name
+    for (const [nameKr, beds] of staticBedByName) {
+      if (dbName.includes(nameKr) || nameKr.includes(dbName)) return beds;
+    }
+    return undefined;
+  }
 
   let mergedHospitals: Hospital[] = [...staticHospitals];
 
@@ -160,7 +174,7 @@ async function fetchHospitals(): Promise<{
 
     const dbConverted = legallyDesignated.map((h: DbHospital) => {
       // Preserve static bed data as fallback instead of initializing to 0
-      const staticBeds = staticBedMap.get(h.name);
+      const staticBeds = findStaticBeds(h.name);
       return {
         ...dbToHospital(h),
         beds: staticBeds || { general: 0, pediatric: 0, fever: 0 },
