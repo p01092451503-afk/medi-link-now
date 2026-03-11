@@ -9,7 +9,7 @@ import {
   Locate, Pill, Heart, ArrowRight, BarChart3, AlertTriangle, Moon,
 } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
-import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useHospitals } from "@/hooks/useHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
