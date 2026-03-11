@@ -1,7 +1,9 @@
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 
-// 테스트 모드 Client Key (나중에 실제 키로 교체)
-const TOSS_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gmeYblrqG";
+const TOSS_CLIENT_KEY = import.meta.env.VITE_TOSS_CLIENT_KEY ?? '';
+if (!TOSS_CLIENT_KEY) {
+  console.warn('⚠️ VITE_TOSS_CLIENT_KEY 환경변수가 설정되지 않았습니다. 결제 기능이 제한됩니다.');
+}
 
 let tossPaymentsInstance: any = null;
 
