@@ -8,7 +8,7 @@ import {
 
 interface DataSourceBadgeProps {
   isRealtime: boolean;
-  source: "api" | "db" | "cache" | "mock";
+  source: "api" | "db" | "cache" | "mock" | "offline";
   lastUpdated: Date | null;
 }
 
