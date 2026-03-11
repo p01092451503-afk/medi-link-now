@@ -1,9 +1,20 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
+const ALLOWED_ORIGINS = [
+  'https://find-bed-now.lovable.app',
+  'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 // Simple in-memory cache (per isolate)
 const cache = new Map<number, { data: unknown; ts: number }>();
@@ -67,18 +78,18 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const { hospital_id } = await req.json();
     if (!hospital_id) {
-      return new Response(JSON.stringify({ error: 'hospital_id required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'hospital_id required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // Check cache
     const cached = cache.get(hospital_id);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify(cached.data), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify(cached.data), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     const supabase = createClient(
@@ -89,7 +100,7 @@ Deno.serve(async (req) => {
     // Fetch hospital
     const { data: hospital } = await supabase.from('hospitals').select('*').eq('id', hospital_id).single();
     if (!hospital) {
-      return new Response(JSON.stringify({ error: 'Hospital not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Hospital not found' }), { status: 404, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // Fetch bed status
@@ -181,9 +192,9 @@ Deno.serve(async (req) => {
 
     cache.set(hospital_id, { data: result, ts: Date.now() });
 
-    return new Response(JSON.stringify(result), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify(result), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   } catch (err) {
     console.error('predict-acceptance error:', err);
-    return new Response(JSON.stringify({ error: 'Internal error' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: 'Internal error' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   }
 });
