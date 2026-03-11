@@ -23,7 +23,7 @@ import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
 import { useTransferMode } from "@/contexts/TransferModeContext";
-import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useHospitals } from "@/hooks/useHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
