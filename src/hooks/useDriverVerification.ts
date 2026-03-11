@@ -12,6 +12,11 @@ export interface DriverVerification {
   driver_phone: string;
   license_type: string | null;
   experience_years: number | null;
+  license_number: string | null;
+  business_reg_number: string | null;
+  vehicle_reg_number: string | null;
+  license_doc_url: string | null;
+  vehicle_doc_url: string | null;
   verification_notes: string | null;
   rejection_reason: string | null;
   approved_by: string | null;
@@ -32,7 +37,7 @@ export interface VerificationDocument {
 }
 
 const DOCUMENT_TYPES = [
-  { key: "operation_permit", label: "구급차 운행 허가증" },
+  { key: "operation_permit", label: "응급환자이송업 허가증 사본" },
   { key: "qualification", label: "응급구조사 자격증 / 운전면허증" },
   { key: "vehicle_registration", label: "차량 등록증" },
 ] as const;
@@ -73,7 +78,15 @@ export const useDriverVerification = () => {
   });
 
   const createVerification = useMutation({
-    mutationFn: async (params: { name: string; phone: string; licenseType: string; experienceYears: number }) => {
+    mutationFn: async (params: {
+      name: string;
+      phone: string;
+      licenseType: string;
+      experienceYears: number;
+      licenseNumber: string;
+      businessRegNumber: string;
+      vehicleRegNumber: string;
+    }) => {
       if (!user) throw new Error("로그인이 필요합니다");
       const expiresAt = new Date();
       expiresAt.setFullYear(expiresAt.getFullYear() + 1);
@@ -86,6 +99,9 @@ export const useDriverVerification = () => {
           driver_phone: params.phone,
           license_type: params.licenseType,
           experience_years: params.experienceYears,
+          license_number: params.licenseNumber,
+          business_reg_number: params.businessRegNumber,
+          vehicle_reg_number: params.vehicleRegNumber,
           expires_at: expiresAt.toISOString(),
         })
         .select()

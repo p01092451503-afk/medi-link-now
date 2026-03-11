@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import {
   ShieldCheck, ShieldX, Eye, CheckCircle, XCircle,
-  FileText, Clock, User, Phone
+  FileText, Clock, User, Phone, Building2, Car
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,13 @@ const statusBadge: Record<string, { label: string; variant: "default" | "seconda
   approved: { label: "승인됨", variant: "default" },
   rejected: { label: "반려됨", variant: "destructive" },
 };
+
+const CHECKLIST_ITEMS = [
+  { key: "license", label: "응급환자이송업 허가번호 확인" },
+  { key: "business", label: "사업자등록번호 일치 확인" },
+  { key: "vehicle", label: "차량 등록 확인" },
+  { key: "docs", label: "서류 사본 육안 확인" },
+] as const;
 
 const AdminVerificationTab = () => {
   const {
@@ -42,8 +50,19 @@ const AdminVerificationTab = () => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [checklist, setChecklist] = useState<Record<string, Record<string, boolean>>>({});
 
   const selected = pendingVerifications.find(v => v.id === selectedId);
+
+  const getChecklist = (id: string) => checklist[id] || {};
+  const allChecked = (id: string) => CHECKLIST_ITEMS.every(item => getChecklist(id)[item.key]);
+
+  const toggleCheck = (verId: string, key: string) => {
+    setChecklist(prev => ({
+      ...prev,
+      [verId]: { ...(prev[verId] || {}), [key]: !(prev[verId]?.[key]) },
+    }));
+  };
 
   const handleViewDocs = async (verificationId: string) => {
     setSelectedId(verificationId);
@@ -51,7 +70,6 @@ const AdminVerificationTab = () => {
     try {
       const documents = await getDocuments(verificationId);
       setDocs(documents);
-      // Get signed URLs
       const urls: Record<string, string> = {};
       for (const doc of documents) {
         const url = await getDocumentUrl(doc.file_path);
@@ -68,6 +86,7 @@ const AdminVerificationTab = () => {
   const handleApprove = (id: string) => {
     approveVerification.mutate({ id });
     setSelectedId(null);
+    setChecklist(prev => { const n = { ...prev }; delete n[id]; return n; });
   };
 
   const handleReject = () => {
@@ -131,6 +150,7 @@ const AdminVerificationTab = () => {
                       <Badge variant={badge.variant}>{badge.label}</Badge>
                     </div>
 
+                    {/* License & Business Info */}
                     <div className="flex flex-wrap gap-2 mb-3 text-xs">
                       <Badge variant="secondary">
                         {v.license_type === "emt" ? "응급구조사" : "운전면허"}
@@ -143,6 +163,33 @@ const AdminVerificationTab = () => {
                         {formatDistanceToNow(new Date(v.created_at), { addSuffix: true, locale: ko })}
                       </div>
                     </div>
+
+                    {/* Registration details */}
+                    {(v.license_number || v.business_reg_number || v.vehicle_reg_number) && (
+                      <div className="p-3 rounded-lg bg-muted/50 mb-3 space-y-1.5 text-xs">
+                        {v.license_number && (
+                          <div className="flex items-center gap-2">
+                            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-muted-foreground">허가번호:</span>
+                            <span className="font-mono font-medium text-foreground">{v.license_number}</span>
+                          </div>
+                        )}
+                        {v.business_reg_number && (
+                          <div className="flex items-center gap-2">
+                            <Building2 className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-muted-foreground">사업자번호:</span>
+                            <span className="font-mono font-medium text-foreground">{v.business_reg_number}</span>
+                          </div>
+                        )}
+                        {v.vehicle_reg_number && (
+                          <div className="flex items-center gap-2">
+                            <Car className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-muted-foreground">차량번호:</span>
+                            <span className="font-mono font-medium text-foreground">{v.vehicle_reg_number}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <div className="flex gap-2">
                       <Button
@@ -159,7 +206,7 @@ const AdminVerificationTab = () => {
                           <Button
                             size="sm"
                             onClick={() => handleApprove(v.id)}
-                            disabled={approveVerification.isPending}
+                            disabled={approveVerification.isPending || !allChecked(v.id)}
                             className="flex-1"
                           >
                             <CheckCircle className="w-3 h-3 mr-1" />
@@ -178,6 +225,32 @@ const AdminVerificationTab = () => {
                       )}
                     </div>
 
+                    {/* Verification Checklist */}
+                    {v.status === "pending" && (
+                      <div className="mt-4 pt-3 border-t space-y-2">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2">검증 체크리스트</p>
+                        {CHECKLIST_ITEMS.map(item => (
+                          <label
+                            key={item.key}
+                            className="flex items-center gap-2.5 cursor-pointer text-sm"
+                          >
+                            <Checkbox
+                              checked={!!getChecklist(v.id)[item.key]}
+                              onCheckedChange={() => toggleCheck(v.id, item.key)}
+                            />
+                            <span className={getChecklist(v.id)[item.key] ? "text-foreground" : "text-muted-foreground"}>
+                              {item.label}
+                            </span>
+                          </label>
+                        ))}
+                        {!allChecked(v.id) && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            모든 항목을 확인해야 승인할 수 있습니다
+                          </p>
+                        )}
+                      </div>
+                    )}
+
                     {/* Document Preview */}
                     {selectedId === v.id && (
                       <div className="mt-4 pt-4 border-t space-y-3">
@@ -194,7 +267,7 @@ const AdminVerificationTab = () => {
                                 <div className="flex items-center gap-2">
                                   <FileText className="w-4 h-4 text-primary" />
                                   <span className="text-sm font-medium">
-                                    {doc.document_type === "operation_permit" && "운행 허가증"}
+                                    {doc.document_type === "operation_permit" && "허가증 사본"}
                                     {doc.document_type === "qualification" && "자격증/면허증"}
                                     {doc.document_type === "vehicle_registration" && "차량 등록증"}
                                   </span>
