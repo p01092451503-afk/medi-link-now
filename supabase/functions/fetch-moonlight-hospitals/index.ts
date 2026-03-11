@@ -1,10 +1,21 @@
 // @deno-std v0.224.0 — updated 2026-03
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
+const ALLOWED_ORIGINS = [
+  'https://find-bed-now.lovable.app',
+  'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 // 국립중앙의료원_전국 병·의원 찾기 서비스 - 달빛어린이병원 및 소아전문센터 목록정보 조회
 const API_BASE = "http://apis.data.go.kr/B552657/HsptlAsembySearchService";

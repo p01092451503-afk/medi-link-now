@@ -1,11 +1,22 @@
 // @deno-std v0.224.0 — updated 2026-03
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
- 
- const corsHeaders = {
-   'Access-Control-Allow-Origin': '*',
-   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
- };
- 
+
+const ALLOWED_ORIGINS = [
+  'https://find-bed-now.lovable.app',
+  'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
+
  interface Fire119Response {
    hospitals?: Fire119HospitalStat[];
    regionStats?: RegionDispatchStat[];
@@ -36,9 +47,8 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
  }
  
  serve(async (req) => {
-   // Handle CORS preflight requests
    if (req.method === 'OPTIONS') {
-     return new Response('ok', { headers: corsHeaders });
+     return new Response('ok', { headers: getCorsHeaders(req) });
    }
  
    try {
@@ -48,19 +58,14 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
        console.error('FIRE119_API_KEY not configured');
        return new Response(
          JSON.stringify({ error: 'API key not configured' }),
-         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+         { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
        );
      }
  
      const { type, region } = await req.json();
      console.log(`Fetching 119 stats - type: ${type}, region: ${region || 'all'}`);
  
-     // Note: The actual API endpoints for 소방청_구급통계서비스 and 소방청_구급정보서비스
-     // may vary. These are example endpoints based on data.go.kr patterns.
-     // You may need to adjust based on actual API documentation.
-     
      if (type === 'hospital_stats') {
-       // 구급통계서비스 - Hospital transfer statistics
        const statsUrl = `http://apis.data.go.kr/1661000/EmergencyAssemblyInformation119/getEmergencyAssemblyInformation119?serviceKey=${encodeURIComponent(apiKey)}&pageNo=1&numOfRows=100&type=json`;
        
        console.log('Fetching hospital transfer statistics...');
@@ -72,26 +77,24 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
          
          if (!response.ok) {
            console.log(`API returned error status: ${statusCode}, using mock data`);
-           // Return mock data as fallback
            return new Response(
              JSON.stringify({ 
                hospitals: getMockHospitalStats(),
                source: 'mock',
                message: `API returned ${statusCode}, using statistical mock data`
              }),
-             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+             { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
            );
          }
          
          const data = await response.json();
          console.log('Hospital stats received:', JSON.stringify(data).slice(0, 200));
          
-         // Transform API response to our format
          const hospitals = transformHospitalData(data);
          
          return new Response(
            JSON.stringify({ hospitals, source: 'api' }),
-           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+           { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
          );
        } catch (fetchError) {
          console.error('Fetch error for hospital stats:', fetchError);
@@ -101,13 +104,12 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
              source: 'mock',
              message: 'API unavailable, using statistical mock data'
            }),
-           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+           { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
          );
        }
      }
      
      if (type === 'region_dispatch') {
-       // 구급정보서비스 - Regional dispatch information
        const regionParam = region ? `&sido=${encodeURIComponent(region)}` : '';
        const dispatchUrl = `http://apis.data.go.kr/1661000/AmbulanceInfoInqireService/getAmbulanceInfoInqire?serviceKey=${encodeURIComponent(apiKey)}&pageNo=1&numOfRows=100&type=json${regionParam}`;
        
@@ -126,7 +128,7 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
                source: 'mock',
                message: `API returned ${statusCode}, using statistical mock data`
              }),
-             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+             { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
            );
          }
          
@@ -137,7 +139,7 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
          
          return new Response(
            JSON.stringify({ regionStats, source: 'api' }),
-           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+           { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
          );
        } catch (fetchError) {
          console.error('Fetch error for region dispatch:', fetchError);
@@ -147,29 +149,27 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
              source: 'mock',
              message: 'API unavailable, using statistical mock data'
            }),
-           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+           { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
          );
        }
      }
  
      return new Response(
        JSON.stringify({ error: 'Invalid request type. Use "hospital_stats" or "region_dispatch"' }),
-       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+       { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
      );
  
    } catch (error) {
      console.error('Error in fetch-fire119-stats:', error);
      return new Response(
        JSON.stringify({ error: error.message }),
-       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+       { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
      );
    }
  });
  
  // Transform API response to our hospital stats format
  function transformHospitalData(apiData: any): Fire119HospitalStat[] {
-   // This transformation logic will depend on actual API response structure
-   // For now, return mock data if transformation fails
    try {
      const items = apiData?.response?.body?.items?.item || [];
      if (!Array.isArray(items) || items.length === 0) {
@@ -177,8 +177,6 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
        return getMockHospitalStats();
      }
      
-     // Transform based on actual API structure
-     // This is a placeholder - adjust based on real API response
      return items.map((item: any, index: number) => ({
        hospitalName: item.dutyName || item.hospitalName || `병원 ${index + 1}`,
        totalTransfers: item.transferCount || Math.floor(Math.random() * 5000) + 3000,
@@ -198,7 +196,6 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
    }
  }
  
- // Transform API response to our region stats format
  function transformRegionData(apiData: any): RegionDispatchStat[] {
    try {
      const items = apiData?.response?.body?.items?.item || [];
@@ -207,12 +204,11 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
        return getMockRegionStats();
      }
      
-     // Transform based on actual API structure
      return items.map((item: any) => ({
        regionId: item.sido || 'unknown',
        regionName: item.sidoName || '지역',
        totalDispatches: item.dispatchCount || 0,
-       peakDays: [5, 6], // Friday, Saturday typically
+       peakDays: [5, 6],
        peakHours: [20, 21, 22],
        avgIncidentsPerHour: item.avgCount || 30,
      }));
@@ -222,7 +218,6 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
    }
  }
  
- // Mock data based on statistical analysis patterns
  function getMockHospitalStats(): Fire119HospitalStat[] {
    return [
      {

@@ -1,9 +1,20 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
+const ALLOWED_ORIGINS = [
+  'https://find-bed-now.lovable.app',
+  'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 interface LocationLog {
   id: string;
@@ -132,7 +143,7 @@ function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: numbe
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -146,7 +157,7 @@ Deno.serve(async (req) => {
     if (!hospital_id) {
       return new Response(
         JSON.stringify({ error: 'hospital_id is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
@@ -160,7 +171,7 @@ Deno.serve(async (req) => {
     if (hospitalError || !hospital) {
       return new Response(
         JSON.stringify({ error: 'Hospital not found' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 404 }
       );
     }
 
@@ -168,28 +179,21 @@ Deno.serve(async (req) => {
     const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
 
     const [logsResult, bedCacheResult, nearbyHospitalsResult, weatherData] = await Promise.all([
-      // Location logs
       supabase
         .from('location_logs')
         .select('*')
         .eq('hospital_id', hospital_id)
         .gte('recorded_at', threeHoursAgo)
         .order('recorded_at', { ascending: true }),
-
-      // Current bed status
       supabase
         .from('hospital_status_cache')
         .select('general_beds, pediatric_beds, isolation_beds')
         .eq('hospital_id', hospital_id)
         .maybeSingle(),
-
-      // Nearby hospitals (within ~15km) for competition analysis
       supabase
         .from('hospital_status_cache')
         .select('hospital_id, general_beds, pediatric_beds, isolation_beds')
         .neq('hospital_id', hospital_id),
-
-      // Weather
       fetchWeather(hospital.lat, hospital.lng),
     ]);
 
@@ -211,14 +215,13 @@ Deno.serve(async (req) => {
     // === Factor 2: Time pattern ===
     const timePatternScore = getTimePatternScore();
 
-    // === Factor 3: Nearby competition (0-100, higher = less competition/more pressure on this hospital) ===
+    // === Factor 3: Nearby competition ===
     let nearbyCompetitionScore = 50;
     if (nearbyHospitalsResult.data) {
       const nearbyWithBeds = nearbyHospitalsResult.data.filter(h => {
         const total = h.general_beds + h.pediatric_beds + h.isolation_beds;
         return total > 0;
       });
-      // More nearby hospitals with beds = less pressure
       if (nearbyWithBeds.length >= 10) nearbyCompetitionScore = 25;
       else if (nearbyWithBeds.length >= 5) nearbyCompetitionScore = 40;
       else if (nearbyWithBeds.length >= 2) nearbyCompetitionScore = 60;
@@ -272,7 +275,6 @@ Deno.serve(async (req) => {
     const historicalAcceptanceScore = historicalRate;
 
     // === Weighted combination ===
-    // Weights: bed availability 35%, historical 25%, time 15%, weather 10%, competition 15%
     const weights = {
       bed: 0.35,
       historical: 0.25,
@@ -281,7 +283,6 @@ Deno.serve(async (req) => {
       competition: 0.15,
     };
 
-    // For acceptance probability, invert time/weather/competition (higher those = lower acceptance)
     const rawScore =
       bedAvailabilityScore * weights.bed +
       historicalAcceptanceScore * weights.historical +
@@ -304,11 +305,9 @@ Deno.serve(async (req) => {
     else if (acceptanceProbability >= 20) estimatedWait = 75;
     else estimatedWait = 120;
 
-    // Add uncertainty range for low confidence
     if (confidence === 'low') estimatedWait = Math.round(estimatedWait * 1.3);
 
     // === 30-minute forecast ===
-    // Simulate time shift: what would the score be 30 min from now?
     const now = new Date();
     const futureHour = new Date(now.getTime() + 30 * 60 * 1000).getHours();
     const hourlyPattern: Record<number, number> = {
@@ -372,14 +371,14 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify(result),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
     console.error('Prediction error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: 'Internal server error', details: errorMessage }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });

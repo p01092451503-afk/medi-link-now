@@ -1,10 +1,21 @@
 // @deno-std v0.224.0 — updated 2026-03
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  'https://find-bed-now.lovable.app',
+  'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 const systemPrompt = `당신은 한국 응급의료 시스템을 위한 환자 정보 파싱 AI입니다.
 사용자가 음성으로 말한 환자 정보 텍스트를 분석하여 구조화된 데이터로 변환해야 합니다.
@@ -45,7 +56,7 @@ JSON 형식으로만 응답하세요. 추가 설명 없이 JSON만 출력하세�
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -54,7 +65,7 @@ serve(async (req) => {
     if (!transcript || typeof transcript !== "string") {
       return new Response(
         JSON.stringify({ error: "transcript is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -90,13 +101,13 @@ serve(async (req) => {
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
         );
       }
       if (response.status === 402) {
         return new Response(
           JSON.stringify({ error: "AI 서비스 크레딧이 부족합니다." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 402, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
         );
       }
       
@@ -111,14 +122,13 @@ serve(async (req) => {
     // Try to parse the JSON response
     let parsedData;
     try {
-      // Remove any markdown code blocks if present
       const cleanContent = content.replace(/```json\n?|\n?```/g, "").trim();
       parsedData = JSON.parse(cleanContent);
     } catch (parseError) {
       console.error("Failed to parse AI response as JSON:", content);
       return new Response(
         JSON.stringify({ error: "AI 응답을 파싱할 수 없습니다", rawContent: content }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -131,13 +141,13 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, data: parsedData }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Error in parse-patient-info:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }
 });
