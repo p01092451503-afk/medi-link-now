@@ -104,11 +104,21 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
     }
   }, [isOpen]);
 
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [completedDriverId, setCompletedDriverId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!createdRequestId) return;
     const myReq = myRequests.find((r) => r.id === createdRequestId);
     if (myReq && myReq.status === "accepted") {
       setCallState("accepted");
+    }
+    if (myReq && myReq.status === "completed" && callState !== "completed") {
+      setCallState("completed");
+      if (myReq.driver_id) {
+        setCompletedDriverId(myReq.driver_id);
+        setShowReviewModal(true);
+      }
     }
   }, [myRequests, createdRequestId]);
 
