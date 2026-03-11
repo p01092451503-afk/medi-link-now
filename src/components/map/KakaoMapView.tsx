@@ -561,8 +561,9 @@ const KakaoMapView = ({
         : "";
 
       const traumaBadgeHtml = hospital.isTraumaCenter && !isMoonlightMode
-        ? `<div style="position: absolute; top: -14px; left: -14px; width: 28px; height: 28px; background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%); border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(124, 58, 237, 0.6); z-index: 10;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="10" y="4" width="4" height="16" rx="1" fill="white"/><rect x="4" y="10" width="16" height="4" rx="1" fill="white"/></svg>
+        ? `<div style="position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%); border: 2px solid white; border-radius: 10px; padding: 2px 7px; display: flex; align-items: center; gap: 3px; box-shadow: 0 3px 10px rgba(124, 58, 237, 0.6); z-index: 10; white-space: nowrap;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><rect x="10" y="4" width="4" height="16" rx="1" fill="white"/><rect x="4" y="10" width="16" height="4" rx="1" fill="white"/></svg>
+            <span style="color: white; font-size: 9px; font-weight: 700; letter-spacing: 0.5px;">외상</span>
           </div>`
         : "";
 
