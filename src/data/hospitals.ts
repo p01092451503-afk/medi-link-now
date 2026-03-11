@@ -42,6 +42,7 @@ export interface Hospital {
   region: string;
   // New fields for extended API data
   isTraumaCenter?: boolean;     // 권역외상센터 여부
+  hasPediatric?: boolean;       // 소아응급 운영 여부 (DB flag)
   acceptance?: HospitalAcceptance;
   alertMessage?: string;        // Real-time hospital message
   // Legal emergency medical institution grade (법정 응급의료기관 등급)
