@@ -324,7 +324,7 @@ const KakaoMapView = ({
 
           const options = {
             center: new window.kakao.maps.LatLng(center[0], center[1]),
-            level: leafletToKakaoZoom(zoom),
+            level: appToKakaoZoom(zoom),
             minLevel: 1,
             maxLevel: 13,
           };
