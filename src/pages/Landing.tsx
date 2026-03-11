@@ -9,7 +9,7 @@ import {
   Locate, Pill, Heart, ArrowRight, BarChart3, AlertTriangle, Moon,
 } from "lucide-react";
 import { useTransferMode } from "@/contexts/TransferModeContext";
-import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useHospitals } from "@/hooks/useHospitals";
 import { useMemo, useState, useEffect } from "react";
 import { getHospitalStatus } from "@/data/hospitals";
 import { toast } from "@/hooks/use-toast";
@@ -19,7 +19,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const Landing = () => {
   const navigate = useNavigate();
   const { setMode } = useTransferMode();
-  const { hospitals, isLoading, lastUpdated } = useRealtimeHospitals();
+  const { hospitals, isLoading, lastUpdated } = useHospitals();
   const [activeTab, setActiveTab] = useState<"national" | "local">("local");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);

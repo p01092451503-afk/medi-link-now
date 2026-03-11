@@ -23,7 +23,7 @@ import ModeToggle from "@/components/ModeToggle";
 import TransferFilterChips from "@/components/TransferFilterChips";
 import MyRequestsPanel from "@/components/MyRequestsPanel";
 import { useTransferMode } from "@/contexts/TransferModeContext";
-import { useRealtimeHospitals } from "@/hooks/useRealtimeHospitals";
+import { useHospitals } from "@/hooks/useHospitals";
 import { useRealtimeReports } from "@/hooks/useRealtimeReports";
 import { useDriverPresence, DriverPresence } from "@/hooks/useDriverPresence";
 import { useHolidayPharmacies } from "@/hooks/useHolidayPharmacies";
@@ -72,7 +72,7 @@ const MapPage = () => {
   const isParamedicMode = searchParams.get("role") === "paramedic";
 
   // Data hooks
-  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useRealtimeHospitals();
+  const { hospitals: hospitalData, isLoading: isLoadingHospitals, isError: isQueryError, isRealtime, source: dataSource, lastUpdated, lastApiRefresh, refetch } = useHospitals();
   const { reports: liveReports } = useRealtimeReports();
   const { nearbyDrivers } = useDriverPresence();
   const { trips: activeAmbulanceTrips } = useAmbulanceTrips();

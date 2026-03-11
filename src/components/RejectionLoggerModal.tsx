@@ -4,7 +4,7 @@ import { X, MapPin, Hospital, Check } from 'lucide-react';
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from '@/components/ui/button';
 import { useRejectionLogs, REJECTION_REASONS } from '@/hooks/useRejectionLogs';
-import { useRealtimeHospitals } from '@/hooks/useRealtimeHospitals';
+import { useHospitals } from '@/hooks/useHospitals';
 import { toast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 
@@ -21,7 +21,7 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
   const [selectedHospital, setSelectedHospital] = useState<{ id: number; name: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { hospitals } = useRealtimeHospitals();
+  const { hospitals } = useHospitals();
   const { addLog } = useRejectionLogs();
 
   useEffect(() => {
