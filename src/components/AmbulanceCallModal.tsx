@@ -106,6 +106,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
   }, [isOpen]);
 
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showReturnTripModal, setShowReturnTripModal] = useState(false);
   const [completedDriverId, setCompletedDriverId] = useState<string | null>(null);
 
   useEffect(() => {
