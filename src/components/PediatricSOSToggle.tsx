@@ -42,7 +42,7 @@ const PediatricSOSToggle = ({ isActive, onToggle }: PediatricSOSToggleProps) => 
         </motion.button>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[220px] text-center text-xs">
-        소아 응급 진료가 가능한 병원만 표시합니다 (소아 전문 응급센터 + 소아 병상 보유 기관)
+        소아 응급 진료가 가능한 병원만 표시합니다 (소아 병상 보유 기관)
       </TooltipContent>
     </Tooltip>
   );

@@ -64,7 +64,7 @@ export function useMapFilters(hospitalData: Hospital[], userLocation: [number, n
     let result = isTransferMode ? [...hospitalData] : filterHospitals(hospitalData, activeFilter);
 
     if (isPediatricSOS && !isTransferMode) {
-      result = result.filter((h) => h.hasPediatric || h.beds.pediatric > 0);
+      result = result.filter((h) => h.beds.pediatric > 0);
     }
     result = filterHospitalsByRegion(result, activeRegion);
 
