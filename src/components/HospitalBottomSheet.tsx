@@ -280,6 +280,33 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
 
               {/* Wait Time Prediction removed — consolidated into AcceptancePredictionPanel */}
 
+              {/* Symptom-based filter highlight */}
+              {symptomFilter && hospital.acceptance && (
+                <div className="mb-4 p-3 bg-primary/5 border border-primary/15 rounded-2xl">
+                  <p className="text-xs font-medium text-foreground mb-1">🎯 증상 분석 기반 수용 가능 여부</p>
+                  <div className="flex items-center gap-2">
+                    {symptomFilter === "cardio" && hospital.acceptance.heart && (
+                      <span className="px-2 py-1 rounded-full text-xs font-bold bg-foreground text-background">심근경색 수용 ✓</span>
+                    )}
+                    {symptomFilter === "cardio" && !hospital.acceptance.heart && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">심근경색 수용 불가</span>
+                    )}
+                    {symptomFilter === "neuro" && hospital.acceptance.brainBleed && (
+                      <span className="px-2 py-1 rounded-full text-xs font-bold bg-foreground text-background">뇌출혈 수용 ✓</span>
+                    )}
+                    {symptomFilter === "neuro" && hospital.acceptance.brainStroke && (
+                      <span className="px-2 py-1 rounded-full text-xs font-bold bg-foreground text-background">뇌경색 수용 ✓</span>
+                    )}
+                    {symptomFilter === "trauma" && hospital.isTraumaCenter && (
+                      <span className="px-2 py-1 rounded-full text-xs font-bold bg-foreground text-background">외상센터 ✓</span>
+                    )}
+                    {symptomFilter === "trauma" && !hospital.isTraumaCenter && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">외상센터 아님</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Procedure Availability */}
               {hospital.acceptance && (
                 <div className="mb-6">
