@@ -469,6 +469,15 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
           driverId={completedDriverId}
         />
       )}
+
+      {hospital && (
+        <ReturnTripRequestModal
+          isOpen={showReturnTripModal}
+          onClose={() => setShowReturnTripModal(false)}
+          hospitalName={cleanHospitalName(hospital.nameKr)}
+          patientName={formData.patientName || undefined}
+        />
+      )}
     </AnimatePresence>
   );
 };
