@@ -16,10 +16,31 @@ import { toast } from "@/hooks/use-toast";
 import { cleanHospitalName } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+const LANDING_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FIND-ER",
+  "url": "https://find-bed-now.lovable.app",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+  "description": "전국 응급실 실시간 병상 현황 조회 및 사설 구급차 매칭 서비스"
+});
+
 const Landing = () => {
   const navigate = useNavigate();
   const { setMode } = useTransferMode();
   const { hospitals, isLoading, lastUpdated } = useHospitals();
+
+  // Inject JSON-LD for this page
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.id = "landing-jsonld";
+    script.textContent = LANDING_JSON_LD;
+    document.head.appendChild(script);
+    return () => { script.remove(); };
+  }, []);
   const [activeTab, setActiveTab] = useState<"national" | "local">("local");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
