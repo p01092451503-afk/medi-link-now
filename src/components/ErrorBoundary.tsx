@@ -1,4 +1,5 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import * as Sentry from "@sentry/react";
 import { Phone, RefreshCw, AlertTriangle } from "lucide-react";
 
 interface Props {
