@@ -145,6 +145,9 @@ async function fetchHospitals(): Promise<{
     .from("hospitals")
     .select("*");
 
+  // Build a lookup of static hospital bed data for fallback
+  const staticBedMap = new Map(staticHospitals.map((h) => [h.nameKr, h.beds]));
+
   let mergedHospitals: Hospital[] = [...staticHospitals];
 
   if (!dbError && dbHospitals && dbHospitals.length > 0) {
@@ -155,7 +158,14 @@ async function fetchHospitals(): Promise<{
         h.emergency_grade === "local_institution"
     );
 
-    const dbConverted = legallyDesignated.map((h: DbHospital) => dbToHospital(h));
+    const dbConverted = legallyDesignated.map((h: DbHospital) => {
+      // Preserve static bed data as fallback instead of initializing to 0
+      const staticBeds = staticBedMap.get(h.name);
+      return {
+        ...dbToHospital(h),
+        beds: staticBeds || { general: 0, pediatric: 0, fever: 0 },
+      };
+    });
     const staticByName = new Map(staticHospitals.map((h) => [h.nameKr, h]));
     const staticTraumaCenters = staticHospitals.filter((h) => h.isTraumaCenter === true);
 
