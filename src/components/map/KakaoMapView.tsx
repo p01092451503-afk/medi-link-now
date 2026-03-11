@@ -536,27 +536,27 @@ const KakaoMapView = ({
         borderColor = moonlightColors.border;
         textColor = moonlightColors.text;
       } else {
-        const gradeColors = getGradeColors(hospital.emergencyGrade);
-        if (gradeColors) {
-          bgColor = gradeColors.bg;
-          borderColor = gradeColors.border;
-        } else {
-          if (displayBeds === 0) {
-            bgColor = "#ef4444";
-            borderColor = "#dc2626";
-          } else if (displayBeds <= 3) {
-            bgColor = "#eab308";
-            borderColor = "#ca8a04";
-          } else {
-            bgColor = "#22c55e";
-            borderColor = "#16a34a";
-          }
+        // Use bed availability as the primary marker color
+        const bedColors = getBedAvailabilityColors(displayBeds);
+        bgColor = bedColors.bg;
+        borderColor = bedColors.border;
+        textColor = bedColors.text;
+
+        // If saturated (0 beds), override to gray regardless of grade
+        if (displayBeds <= 0) {
+          bgColor = "#6B7280";
+          borderColor = "#4B5563";
         }
       }
 
       const gradeLabel = !isMoonlightMode ? getGradeLabel(hospital.emergencyGrade) : "";
-      // Grade label is hidden by default, shown on hover or when spiderfied
-      const gradeBadgeHtml = gradeLabel
+      const gradeBadgeColor = getGradeBadgeColor(hospital.emergencyGrade);
+      // Grade badge as small dot indicator on bottom-right of marker
+      const gradeBadgeHtml = gradeLabel && gradeBadgeColor
+        ? `<div class="grade-dot" style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: ${gradeBadgeColor}; border: 2px solid white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); z-index: 12;"></div>`
+        : "";
+      // Grade label shown on hover
+      const gradeLabelHtml = gradeLabel
         ? `<div class="grade-label" style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.3); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;">${gradeLabel}</div>`
         : "";
 
