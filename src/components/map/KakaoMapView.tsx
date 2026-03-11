@@ -406,7 +406,7 @@ const KakaoMapView = ({
   // Update zoom when props change
   useEffect(() => {
     if (!mapRef.current || !isLoaded) return;
-    mapRef.current.setLevel(leafletToKakaoZoom(zoom));
+    mapRef.current.setLevel(appToKakaoZoom(zoom));
   }, [zoom, isLoaded]);
 
   // Update user location marker
