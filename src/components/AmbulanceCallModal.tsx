@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import * as Sentry from "@sentry/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Ambulance, Phone, MapPin, Check, Clock, AlertCircle, Brain, Loader2, Star } from "lucide-react";
+import { X, Ambulance, Phone, MapPin, Check, Clock, AlertCircle, Brain, Loader2, Star, Navigation as NavigationIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,7 @@ import { cleanHospitalName } from "@/lib/utils";
 import { useDispatchRequests } from "@/hooks/useDispatchRequests";
 import { useSymptomAnalysis, SYMPTOM_CHIPS } from "@/hooks/useSymptomAnalysis";
 import ReviewModal from "@/components/ReviewModal";
+import ReturnTripRequestModal from "@/components/ReturnTripRequestModal";
 import type { SymptomAnalysisResult } from "@/hooks/useSymptomAnalysis";
 
 interface AmbulanceCallModalProps {
@@ -105,6 +106,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
   }, [isOpen]);
 
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showReturnTripModal, setShowReturnTripModal] = useState(false);
   const [completedDriverId, setCompletedDriverId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -422,6 +424,14 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                     <Clock className="w-5 h-5" />
                     <span>예상 도착: {estimatedTime}분</span>
                   </div>
+                  <Button
+                    onClick={() => setShowReturnTripModal(true)}
+                    variant="outline"
+                    className="w-full py-4 rounded-2xl flex items-center justify-center gap-2"
+                  >
+                    <NavigationIcon className="w-4 h-4" />
+                    복귀편 예약하기
+                  </Button>
                   <Button onClick={onClose} variant="outline" className="w-full py-4 rounded-2xl">닫기</Button>
                 </motion.div>
               )}
@@ -457,6 +467,15 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
           onClose={() => setShowReviewModal(false)}
           requestId={createdRequestId}
           driverId={completedDriverId}
+        />
+      )}
+
+      {hospital && (
+        <ReturnTripRequestModal
+          isOpen={showReturnTripModal}
+          onClose={() => setShowReturnTripModal(false)}
+          hospitalName={cleanHospitalName(hospital.nameKr)}
+          patientName={formData.patientName || undefined}
         />
       )}
     </AnimatePresence>
