@@ -149,6 +149,10 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
       setCreatedRequestId(request.id);
       setCallState("submitted");
     } else {
+      Sentry.captureMessage("Ambulance dispatch failed", {
+        level: "error",
+        extra: { hospitalId: hospital?.id },
+      });
       setCallState("form");
     }
   }, [hospital, userLocation, formData, distance, estimatedCost, createRequest, symptomAnalysis]);

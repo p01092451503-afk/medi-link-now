@@ -260,6 +260,9 @@ export function useHospitals(): UseHospitalsResult {
       }
     } catch (err) {
       console.error("[useHospitals] API refresh failed:", err);
+      Sentry.captureException(err, {
+        tags: { feature: "api-refresh", source: "edge-function" },
+      });
     }
   }, [queryClient]);
 
