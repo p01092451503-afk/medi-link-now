@@ -343,8 +343,8 @@ const KakaoMapView = ({
               spiderfyManagerRef.current.unspiderfy();
             }
             const currentKakaoZoom = map.getLevel();
-            const leafletZoom = kakaoToLeafletZoom(currentKakaoZoom);
-            onZoomChange?.(leafletZoom);
+            const appZoom = kakaoToAppZoom(currentKakaoZoom);
+            onZoomChange?.(appZoom);
           });
 
           window.kakao.maps.event.addListener(map, "dragend", () => {
