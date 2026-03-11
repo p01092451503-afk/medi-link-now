@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Map as MapIcon } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
-import { useMapProvider } from "@/hooks/useMapProvider";
 import KakaoMapView from "@/components/map/KakaoMapView";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
