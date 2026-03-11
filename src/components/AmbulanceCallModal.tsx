@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import * as Sentry from "@sentry/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Ambulance, Phone, MapPin, Check, Clock, AlertCircle, Brain, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -148,6 +149,10 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
       setCreatedRequestId(request.id);
       setCallState("submitted");
     } else {
+      Sentry.captureMessage("Ambulance dispatch failed", {
+        level: "error",
+        extra: { hospitalId: hospital?.id },
+      });
       setCallState("form");
     }
   }, [hospital, userLocation, formData, distance, estimatedCost, createRequest, symptomAnalysis]);
