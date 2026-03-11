@@ -21,7 +21,7 @@ const RejectionLoggerModal = ({ isOpen, onClose }: Props) => {
   const [selectedHospital, setSelectedHospital] = useState<{ id: number; name: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { hospitals } = useRealtimeHospitals();
+  const { hospitals } = useHospitals();
   const { addLog } = useRejectionLogs();
 
   useEffect(() => {
