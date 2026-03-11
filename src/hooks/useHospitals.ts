@@ -244,15 +244,18 @@ export function useHospitals(): UseHospitalsResult {
     }
   }, [data]);
 
-  // Trigger Edge Function API refresh
-  const triggerApiRefresh = useCallback(async () => {
+  // Trigger Edge Function API refresh (only for user's current city)
+  const triggerApiRefresh = useCallback(async (city = "서울특별시") => {
     try {
-      console.log("[useHospitals] Triggering API refresh...");
+      console.log(`[useHospitals] Triggering API refresh for ${city}...`);
       const { data: result, error } = await supabase.functions.invoke("fetch-er-data", {
-        body: { city: "서울특별시" },
+        body: { city },
       });
       if (error) {
         console.error("[useHospitals] API refresh error:", error);
+      } else if (result?.cached) {
+        console.log(`[useHospitals] Cache is fresh (${result.cacheAgeMinutes?.toFixed(1)}min). No API call made.`);
+        lastApiRefreshRef.current = new Date();
       } else {
         console.log(`[useHospitals] API refresh success: ${result?.count || 0} hospitals`);
         lastApiRefreshRef.current = new Date();
@@ -266,16 +269,17 @@ export function useHospitals(): UseHospitalsResult {
     }
   }, [queryClient]);
 
-  // Polling + visibility change
+  // Polling: refresh every 10 minutes (not 5) to stay within 1000/day quota
   useEffect(() => {
+    // Initial refresh
     triggerApiRefresh();
 
-    const POLL_INTERVAL = 5 * 60 * 1000;
+    const POLL_INTERVAL = 10 * 60 * 1000; // 10 minutes
     let pollingId: ReturnType<typeof setInterval> | null = null;
 
     const startPolling = () => {
       if (pollingId) clearInterval(pollingId);
-      pollingId = setInterval(triggerApiRefresh, POLL_INTERVAL);
+      pollingId = setInterval(() => triggerApiRefresh(), POLL_INTERVAL);
     };
 
     const stopPolling = () => {

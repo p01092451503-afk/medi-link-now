@@ -21,14 +21,10 @@ function getCorsHeaders(req: Request) {
 // API Endpoints from National Emergency Medical Center
 const API_BASE = "http://apis.data.go.kr/B552657/ErmctInfoInqireService";
 const API_ENDPOINTS = {
-  // Real-time ER bed availability
   beds: `${API_BASE}/getEmrrmRltmUsefulSckbdInfoInqire`,
-  // Severe disease acceptance (procedure availability)
   acceptance: `${API_BASE}/getSrsillDissAcceptncPosblInfoInqire`,
-  // Real-time hospital messages
   messages: `${API_BASE}/getEmrrmSrsillDissMsgInqire`,
-  // Trauma center list
-  trauma: "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getStrmListInfoInqire",
+  trauma: `${API_BASE}/getStrmListInfoInqire`,
 };
 
 interface ERData {
@@ -36,30 +32,27 @@ interface ERData {
   hospitalName: string;
   address: string;
   phone: string;
-  // 병상 현황
-  generalBeds: number;       // hvec - 응급실 일반 병상
-  pediatricBeds: number;     // hvicc - 소아 중환자실
-  feverBeds: number;         // hvs01 - 코호트 격리
-  icuBeds: number;           // hvcc - 일반 중환자실
-  surgicalIcuBeds: number;   // hv2 - 외과 중환자실
-  medicalIcuBeds: number;    // hv3 - 내과 중환자실
-  operatingRooms: number;    // hvoc - 수술실
-  neonatalIcuBeds: number;   // hvncc - 신생아 중환자실
-  // 장비 현황
+  generalBeds: number;
+  pediatricBeds: number;
+  feverBeds: number;
+  icuBeds: number;
+  surgicalIcuBeds: number;
+  medicalIcuBeds: number;
+  operatingRooms: number;
+  neonatalIcuBeds: number;
   equipment: {
-    ct: boolean;             // hvctayn
-    mri: boolean;            // hvmriayn
-    angio: boolean;          // hvangio - 혈관촬영기
-    ventilator: boolean;     // hvventiayn - 인공호흡기
-    ecmo: boolean;           // hvecmoayn - 에크모
-    incubator: boolean;      // hvincuayn - 인큐베이터
+    ct: boolean;
+    mri: boolean;
+    angio: boolean;
+    ventilator: boolean;
+    ecmo: boolean;
+    incubator: boolean;
   };
-  // 운영 상태
-  erDivision: string;        // dutyDiv - 응급의료기관 구분
-  traumaYn: string;          // 권역외상센터 여부
+  erDivision: string;
+  traumaYn: string;
   lat?: number;
   lng?: number;
-  isTraumaCenter?: boolean;
+  isTraumaCenter: boolean;
   acceptance?: {
     heart: boolean;
     brainBleed: boolean;
@@ -87,250 +80,217 @@ const getBoolValue = (xml: string, tag: string): boolean => {
   return val === 'Y' || val === '1' || val === 'TRUE';
 };
 
-// Fetch severe disease acceptance data
+// ── Cache-first: check if DB has fresh data ──
+async function getCachedAge(city: string): Promise<number | null> {
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+
+  try {
+    const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data } = await sb
+      .from('hospital_status_with_age')
+      .select('age_minutes, data_source')
+      .eq('data_source', 'api')
+      .order('last_updated', { ascending: false })
+      .limit(1);
+
+    if (data && data.length > 0) {
+      return data[0].age_minutes ?? null;
+    }
+  } catch (e) {
+    console.error('[cache-check] Error:', e);
+  }
+  return null;
+}
+
+// Fetch acceptance data
 async function fetchAcceptanceData(serviceKey: string, city: string): Promise<Map<string, ERData['acceptance']>> {
   const acceptanceMap = new Map<string, ERData['acceptance']>();
-  
   try {
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
     const url = `${API_ENDPOINTS.acceptance}?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(city)}&numOfRows=100&pageNo=1`;
-    
     console.log("Fetching acceptance data...");
     const response = await fetch(url, { headers: { 'Accept': 'application/xml' } });
-    
-    if (!response.ok) {
-      console.error("Acceptance API failed:", response.status);
-      return acceptanceMap;
-    }
-    
+    if (!response.ok) { console.error("Acceptance API failed:", response.status); return acceptanceMap; }
     const xmlText = await response.text();
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
     let match;
-    
     while ((match = itemRegex.exec(xmlText)) !== null) {
       const itemXml = match[1];
       const hpid = getValue(itemXml, 'hpid');
-      
       if (hpid) {
         acceptanceMap.set(hpid, {
-          heart: getBoolValue(itemXml, 'MKioskTy1'),      // 심근경색
-          brainBleed: getBoolValue(itemXml, 'MKioskTy2'), // 뇌출혈
-          brainStroke: getBoolValue(itemXml, 'MKioskTy3'), // 뇌경색
-          endoscopy: getBoolValue(itemXml, 'MKioskTy4'),  // 응급내시경
-          dialysis: getBoolValue(itemXml, 'MKioskTy5'),   // 응급투석
+          heart: getBoolValue(itemXml, 'MKioskTy1'),
+          brainBleed: getBoolValue(itemXml, 'MKioskTy2'),
+          brainStroke: getBoolValue(itemXml, 'MKioskTy3'),
+          endoscopy: getBoolValue(itemXml, 'MKioskTy4'),
+          dialysis: getBoolValue(itemXml, 'MKioskTy5'),
         });
       }
     }
-    
     console.log(`Fetched ${acceptanceMap.size} acceptance records`);
-  } catch (error) {
-    console.error("Error fetching acceptance data:", error);
-  }
-  
+  } catch (error) { console.error("Error fetching acceptance data:", error); }
   return acceptanceMap;
 }
 
-// Fetch real-time hospital messages
+// Fetch messages
 async function fetchMessages(serviceKey: string, city: string): Promise<Map<string, string>> {
   const messagesMap = new Map<string, string>();
-  
   try {
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
     const url = `${API_ENDPOINTS.messages}?serviceKey=${encodedKey}&STAGE1=${encodeURIComponent(city)}&numOfRows=100&pageNo=1`;
-    
     console.log("Fetching hospital messages...");
     const response = await fetch(url, { headers: { 'Accept': 'application/xml' } });
-    
-    if (!response.ok) {
-      console.error("Messages API failed:", response.status);
-      return messagesMap;
-    }
-    
+    if (!response.ok) { console.error("Messages API failed:", response.status); return messagesMap; }
     const xmlText = await response.text();
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
     let match;
-    
     while ((match = itemRegex.exec(xmlText)) !== null) {
       const itemXml = match[1];
       const hpid = getValue(itemXml, 'hpid');
       const message = getValue(itemXml, 'symBlkMsg') || getValue(itemXml, 'msgType');
-      
-      if (hpid && message) {
-        messagesMap.set(hpid, message);
-      }
+      if (hpid && message) messagesMap.set(hpid, message);
     }
-    
     console.log(`Fetched ${messagesMap.size} hospital messages`);
-  } catch (error) {
-    console.error("Error fetching messages:", error);
-  }
-  
+  } catch (error) { console.error("Error fetching messages:", error); }
   return messagesMap;
 }
 
-// Fetch trauma center list
+// Fetch trauma centers
 async function fetchTraumaCenters(serviceKey: string): Promise<Set<string>> {
   const traumaSet = new Set<string>();
-  
   try {
     const isAlreadyEncoded = serviceKey.includes('%');
     const encodedKey = isAlreadyEncoded ? serviceKey : encodeURIComponent(serviceKey);
     const url = `${API_ENDPOINTS.trauma}?serviceKey=${encodedKey}&numOfRows=100&pageNo=1`;
-    
     console.log("Fetching trauma center list...");
     const response = await fetch(url, { headers: { 'Accept': 'application/xml' } });
-    
-    if (!response.ok) {
-      console.error("Trauma API failed:", response.status);
-      return traumaSet;
-    }
-    
+    if (!response.ok) { console.error("Trauma API failed:", response.status); return traumaSet; }
     const xmlText = await response.text();
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
     let match;
-    
     while ((match = itemRegex.exec(xmlText)) !== null) {
-      const itemXml = match[1];
-      const hpid = getValue(itemXml, 'hpid');
-      
-      if (hpid) {
-        traumaSet.add(hpid);
-      }
+      const hpid = getValue(match[1], 'hpid');
+      if (hpid) traumaSet.add(hpid);
     }
-    
     console.log(`Found ${traumaSet.size} trauma centers`);
-  } catch (error) {
-    console.error("Error fetching trauma centers:", error);
-  }
-  
+  } catch (error) { console.error("Error fetching trauma centers:", error); }
   return traumaSet;
 }
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const SERVICE_KEY = Deno.env.get('PUBLIC_DATA_PORTAL_KEY');
-    
     if (!SERVICE_KEY) {
-      console.log("PUBLIC_DATA_PORTAL_KEY not found, returning mock indication");
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "API key not configured",
-          useMockData: true,
-          diagnostics: {
-            reason: 'API_KEY_NOT_CONFIGURED',
-            message: 'Supabase Secrets에 PUBLIC_DATA_PORTAL_KEY가 등록되지 않았습니다.',
-            setupGuide: 'supabase/README.md 참고',
-            timestamp: new Date().toISOString(),
-          }
+        JSON.stringify({
+          success: false, error: "API key not configured", useMockData: true,
+          diagnostics: { reason: 'API_KEY_NOT_CONFIGURED', message: 'Supabase Secrets에 PUBLIC_DATA_PORTAL_KEY가 등록되지 않았습니다.', setupGuide: 'supabase/README.md 참고', timestamp: new Date().toISOString() }
         }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200 
-        }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
 
     const { searchParams } = new URL(req.url);
-    const city = searchParams.get('city') || '서울특별시';
-    const district = searchParams.get('district') || '';
-    
-    // Also accept POST body
-    let bodyCity = city;
-    let bodyDistrict = district;
-    
+    let bodyCity = searchParams.get('city') || '서울특별시';
+    let bodyDistrict = searchParams.get('district') || '';
+    let forceRefresh = false;
+
     if (req.method === 'POST') {
       try {
         const body = await req.json();
-        bodyCity = body.city || city;
-        bodyDistrict = body.district || district;
-      } catch {
-        // Use query params if body parsing fails
+        bodyCity = body.city || bodyCity;
+        bodyDistrict = body.district || bodyDistrict;
+        forceRefresh = body.forceRefresh === true;
+      } catch { /* use query params */ }
+    }
+
+    // ── Cache guard: skip API if data < 5 min old ──
+    if (!forceRefresh) {
+      const cacheAge = await getCachedAge(bodyCity);
+      if (cacheAge !== null && cacheAge < 5) {
+        console.log(`[fetch-er-data] Cache is fresh (${cacheAge.toFixed(1)}min). Skipping API call.`);
+        return new Response(
+          JSON.stringify({
+            success: true, data: [], count: 0,
+            city: bodyCity, district: bodyDistrict,
+            cached: true, cacheAgeMinutes: cacheAge,
+            timestamp: new Date().toISOString()
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+        );
       }
     }
 
     const isAlreadyEncoded = SERVICE_KEY.includes('%');
     const encodedKey = isAlreadyEncoded ? SERVICE_KEY : encodeURIComponent(SERVICE_KEY);
-    
     console.log(`Fetching ER data for: ${bodyCity} ${bodyDistrict}`);
 
-    // Helper: fetch all beds with pagination
+    // Fetch beds with pagination
     async function fetchAllBeds(key: string, city: string, district: string): Promise<string[]> {
       const allItemXmls: string[] = [];
       let pageNo = 1;
       const pageSize = 100;
-
       while (true) {
         let url = `${API_ENDPOINTS.beds}?serviceKey=${key}&STAGE1=${encodeURIComponent(city)}&numOfRows=${pageSize}&pageNo=${pageNo}`;
-        if (district) {
-          url += `&STAGE2=${encodeURIComponent(district)}`;
-        }
-
+        if (district) url += `&STAGE2=${encodeURIComponent(district)}`;
         console.log(`Fetching beds page ${pageNo}...`);
         const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/xml' } });
-
         if (!res.ok) {
           console.error(`Beds API page ${pageNo} returned status: ${res.status}`);
           break;
         }
-
         const xml = await res.text();
-        if (pageNo === 1) {
-          console.log(`Beds XML page 1 (first 500 chars): ${xml.substring(0, 500)}`);
-        }
-
-        // Parse totalCount from first page
+        if (pageNo === 1) console.log(`Beds XML page 1 (first 500 chars): ${xml.substring(0, 500)}`);
         const totalCount = parseInt(getValue(xml, 'totalCount')) || 0;
-
-        // Extract items
         const itemRegex = /<item>([\s\S]*?)<\/item>/g;
         let match;
         let pageItems = 0;
-        while ((match = itemRegex.exec(xml)) !== null) {
-          allItemXmls.push(match[1]);
-          pageItems++;
-        }
-
+        while ((match = itemRegex.exec(xml)) !== null) { allItemXmls.push(match[1]); pageItems++; }
         console.log(`Page ${pageNo}: ${pageItems} items (total so far: ${allItemXmls.length}/${totalCount})`);
-
         if (allItemXmls.length >= totalCount) break;
         if (pageItems < pageSize) break;
         pageNo++;
-        if (pageNo > 10) break; // 안전장치
+        if (pageNo > 10) break;
       }
-
       return allItemXmls;
     }
 
-    // Fetch all data in parallel
-    const [bedItems, acceptanceData, messagesData, traumaCenters] = await Promise.all([
+    // ── Only fetch beds (core) + acceptance. Skip messages/trauma to save quota ──
+    const [bedItems, acceptanceData] = await Promise.all([
       fetchAllBeds(encodedKey, bodyCity, bodyDistrict),
       fetchAcceptanceData(SERVICE_KEY, bodyCity),
-      fetchMessages(SERVICE_KEY, bodyCity),
-      fetchTraumaCenters(SERVICE_KEY),
     ]);
 
-    // Parse bed items into hospitals
-    const hospitals: ERData[] = [];
+    // Fetch messages only if we have quota headroom (beds returned data)
+    let messagesData = new Map<string, string>();
+    let traumaCenters = new Set<string>();
+    if (bedItems.length > 0) {
+      // Fetch messages — lightweight, valuable for users
+      messagesData = await fetchMessages(SERVICE_KEY, bodyCity);
+      // Trauma centers rarely change — skip unless forced
+      if (forceRefresh) {
+        traumaCenters = await fetchTraumaCenters(SERVICE_KEY);
+      }
+    }
 
+    // Parse bed items
+    const hospitals: ERData[] = [];
     for (const itemXml of bedItems) {
       const hpid = getValue(itemXml, 'hpid');
-
       const hospital: ERData = {
         hospitalId: hpid,
         hospitalName: getValue(itemXml, 'dutyName'),
         address: getValue(itemXml, 'dutyAddr'),
         phone: getValue(itemXml, 'dutyTel3') || getValue(itemXml, 'dutyTel1'),
-        // 병상 현황
         generalBeds: getNumValue(itemXml, 'hvec'),
         pediatricBeds: getNumValue(itemXml, 'hvicc'),
         feverBeds: getNumValue(itemXml, 'hvs01'),
@@ -339,7 +299,6 @@ serve(async (req) => {
         medicalIcuBeds: getNumValue(itemXml, 'hv3'),
         operatingRooms: getNumValue(itemXml, 'hvoc'),
         neonatalIcuBeds: getNumValue(itemXml, 'hvncc'),
-        // 장비 현황
         equipment: {
           ct: getBoolValue(itemXml, 'hvctayn'),
           mri: getBoolValue(itemXml, 'hvmriayn'),
@@ -348,7 +307,6 @@ serve(async (req) => {
           ecmo: getBoolValue(itemXml, 'hvecmoayn'),
           incubator: getBoolValue(itemXml, 'hvincuayn'),
         },
-        // 운영 상태
         erDivision: getValue(itemXml, 'dutyDiv'),
         traumaYn: getValue(itemXml, 'MKioskTy28'),
         lat: parseFloat(getValue(itemXml, 'wgs84Lat')) || undefined,
@@ -357,10 +315,7 @@ serve(async (req) => {
         acceptance: acceptanceData.get(hpid),
         alertMessage: messagesData.get(hpid),
       };
-
-      if (hospital.hospitalId && hospital.hospitalName) {
-        hospitals.push(hospital);
-      }
+      if (hospital.hospitalId && hospital.hospitalName) hospitals.push(hospital);
     }
 
     console.log(`Parsed ${hospitals.length} hospitals with enriched data`);
@@ -368,24 +323,18 @@ serve(async (req) => {
     console.log(`- With acceptance data: ${hospitals.filter(h => h.acceptance).length}`);
     console.log(`- With messages: ${hospitals.filter(h => h.alertMessage).length}`);
 
-    // Save bed status to database
+    // Save to DB with data_source='api'
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
+
     if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && hospitals.length > 0) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-      
-      // First, get hospital IDs by hpid
       const hpids = hospitals.map(h => h.hospitalId);
       const { data: hospitalRecords } = await supabase
-        .from('hospitals')
-        .select('id, hpid')
-        .in('hpid', hpids);
-      
+        .from('hospitals').select('id, hpid').in('hpid', hpids);
+
       if (hospitalRecords && hospitalRecords.length > 0) {
         const hpidToId = new Map(hospitalRecords.map(h => [h.hpid, h.id]));
-        
-        // Prepare upsert data
         const statusUpdates = hospitals
           .filter(h => hpidToId.has(h.hospitalId))
           .map(h => ({
@@ -395,58 +344,33 @@ serve(async (req) => {
             pediatric_beds: h.pediatricBeds,
             isolation_beds: h.feverBeds,
             last_updated: new Date().toISOString(),
+            data_source: 'api',
           }));
-        
+
         if (statusUpdates.length > 0) {
-          // Delete existing records for these hospital_ids first
           const hospitalIds = statusUpdates.map(s => s.hospital_id);
-          await supabase
-            .from('hospital_status_cache')
-            .delete()
-            .in('hospital_id', hospitalIds);
-          
-          // Insert new records
-          const { error: upsertError } = await supabase
-            .from('hospital_status_cache')
-            .insert(statusUpdates);
-          
-          if (upsertError) {
-            console.error('Error saving bed status:', upsertError);
-          } else {
-            console.log(`Saved ${statusUpdates.length} bed status records to database`);
-          }
+          await supabase.from('hospital_status_cache').delete().in('hospital_id', hospitalIds);
+          const { error: upsertError } = await supabase.from('hospital_status_cache').insert(statusUpdates);
+          if (upsertError) console.error('Error saving bed status:', upsertError);
+          else console.log(`Saved ${statusUpdates.length} bed status records (data_source=api)`);
         }
       }
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: hospitals,
-        count: hospitals.length,
-        city: bodyCity,
-        district: bodyDistrict,
-        timestamp: new Date().toISOString()
+      JSON.stringify({
+        success: true, data: hospitals, count: hospitals.length,
+        city: bodyCity, district: bodyDistrict, timestamp: new Date().toISOString()
       }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200 
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("Error fetching ER data:", errorMessage);
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: errorMessage,
-        useMockData: true 
-      }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200 
-      }
+      JSON.stringify({ success: false, error: errorMessage, useMockData: true }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   }
 });
