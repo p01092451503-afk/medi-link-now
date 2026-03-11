@@ -38,17 +38,25 @@ interface KakaoMapViewProps {
   isPediatricSOS?: boolean;
 }
 
-// Get marker colors based on emergency grade
-const getGradeColors = (emergencyGrade?: string | null) => {
+// Get marker colors based on bed availability (primary visual cue)
+const getBedAvailabilityColors = (beds: number) => {
+  if (beds <= 0) return { bg: "#6B7280", border: "#4B5563", text: "white" }; // gray - no beds
+  if (beds <= 3) return { bg: "#F59E0B", border: "#D97706", text: "white" }; // amber - tight
+  if (beds <= 10) return { bg: "#22C55E", border: "#16A34A", text: "white" }; // green - available
+  return { bg: "#10B981", border: "#059669", text: "white" }; // emerald - plenty
+};
+
+// Get grade accent color for small badge overlay
+const getGradeBadgeColor = (emergencyGrade?: string | null) => {
   switch (emergencyGrade) {
     case "regional_center":
-      return { bg: "#DC2626", border: "#B91C1C" }; // red
+      return "#DC2626"; // red
     case "local_center":
-      return { bg: "#F97316", border: "#EA580C" }; // orange
+      return "#F97316"; // orange
     case "local_institution":
-      return { bg: "#2563EB", border: "#1D4ED8" }; // blue
+      return "#2563EB"; // blue
     default:
-      return null; // use status-based colors
+      return null;
   }
 };
 
