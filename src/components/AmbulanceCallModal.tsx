@@ -429,7 +429,7 @@ const AmbulanceCallModal = ({ isOpen, onClose, hospital, distance, userLocation 
                     variant="outline"
                     className="w-full py-4 rounded-2xl flex items-center justify-center gap-2"
                   >
-                    <Navigation className="w-4 h-4" />
+                    <NavigationIcon className="w-4 h-4" />
                     복귀편 예약하기
                   </Button>
                   <Button onClick={onClose} variant="outline" className="w-full py-4 rounded-2xl">닫기</Button>
