@@ -8,37 +8,10 @@ const roles: {
   label: string;
   desc: string;
   icon: typeof Users;
-  gradient: string;
-  selectedBg: string;
-  emoji: string;
 }[] = [
-  {
-    id: "guardian",
-    label: "보호자 / 환자",
-    desc: "응급실 검색 및 가족 관리",
-    icon: Users,
-    gradient: "from-blue-500 to-blue-600",
-    selectedBg: "bg-blue-50 dark:bg-blue-950/30 border-blue-400 dark:border-blue-500",
-    emoji: "👨‍👩‍👧",
-  },
-  {
-    id: "driver",
-    label: "사설 구급 기사",
-    desc: "이송 요청 관리 및 운행 기록",
-    icon: Ambulance,
-    gradient: "from-emerald-500 to-emerald-600",
-    selectedBg: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-400 dark:border-emerald-500",
-    emoji: "🚑",
-  },
-  {
-    id: "paramedic",
-    label: "119 의료진",
-    desc: "병상 현황 및 이송 최적화",
-    icon: Stethoscope,
-    gradient: "from-orange-500 to-orange-600",
-    selectedBg: "bg-orange-50 dark:bg-orange-950/30 border-orange-400 dark:border-orange-500",
-    emoji: "🏥",
-  },
+  { id: "guardian", label: "보호자 / 환자", desc: "응급실 검색 및 가족 관리", icon: Users },
+  { id: "driver", label: "사설 구급 기사", desc: "이송 요청 관리 및 운행 기록", icon: Ambulance },
+  { id: "paramedic", label: "119 의료진", desc: "병상 현황 및 이송 최적화", icon: Stethoscope },
 ];
 
 interface StepRoleProps {
@@ -51,106 +24,70 @@ const StepRole = ({ selected, onSelect }: StepRoleProps) => (
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center"
+      className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center"
     >
-      <UserCheck className="w-8 h-8 text-primary" />
+      <UserCheck className="w-8 h-8 text-foreground" />
     </motion.div>
 
     <div>
       <h2 className="text-xl font-bold text-foreground">역할을 선택해주세요</h2>
-      <p className="text-xs text-muted-foreground mt-1">역할에 맞는 최적의 화면을 제공합니다</p>
+      <p className="text-[13px] text-muted-foreground mt-1">역할에 맞는 최적의 화면을 제공합니다</p>
     </div>
 
-    <div className="flex flex-col gap-3 w-full max-w-sm">
-      {roles.map(({ id, label, desc, icon: Icon, gradient, selectedBg, emoji }, i) => {
+    <div className="flex flex-col gap-2.5 w-full max-w-sm">
+      {roles.map(({ id, label, desc, icon: Icon }, i) => {
         const isSelected = selected === id;
         return (
           <motion.button
             key={id}
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: 16, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 + i * 0.1, type: "spring", stiffness: 300, damping: 25 }}
-            whileTap={{ scale: 0.97 }}
+            transition={{ delay: 0.08 + i * 0.06, type: "spring", stiffness: 400, damping: 30 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(id)}
-            className={`relative flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-200 overflow-hidden ${
+            className={`relative flex items-center gap-4 px-4 py-[18px] rounded-2xl border text-left transition-colors duration-150 ${
               isSelected
-                ? `${selectedBg} shadow-lg`
-                : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
+                ? "border-foreground/15 bg-secondary shadow-sm"
+                : "border-transparent bg-secondary/60 hover:bg-secondary"
             }`}
           >
-            {/* Subtle gradient overlay when selected */}
-            <AnimatePresence>
-              {isSelected && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-primary/[0.03] pointer-events-none"
-                />
-              )}
-            </AnimatePresence>
-
-            {/* Icon container */}
-            <motion.div
-              animate={isSelected ? { scale: [1, 1.08, 1] } : { scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className={`relative w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${
-                isSelected
-                  ? `bg-gradient-to-br ${gradient} shadow-md`
-                  : "bg-secondary text-muted-foreground"
-              }`}
-            >
-              <Icon className={`w-6 h-6 ${isSelected ? "text-white" : ""}`} />
-              {/* Emoji badge */}
-              <AnimatePresence>
-                {isSelected && (
-                  <motion.span
-                    initial={{ scale: 0, y: 4 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0 }}
-                    className="absolute -top-1.5 -right-1.5 text-sm"
-                  >
-                    {emoji}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.div>
+            {/* Icon */}
+            <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 transition-colors duration-150 ${
+              isSelected
+                ? "bg-foreground text-background"
+                : "bg-muted text-muted-foreground"
+            }`}>
+              <Icon className="w-[22px] h-[22px]" />
+            </div>
 
             {/* Text */}
             <div className="flex-1 min-w-0">
-              <div className={`font-bold text-[15px] transition-colors ${
-                isSelected ? "text-foreground" : "text-foreground/80"
-              }`}>
-                {label}
-              </div>
-              <div className={`text-xs mt-0.5 transition-colors ${
-                isSelected ? "text-foreground/60" : "text-muted-foreground"
-              }`}>
-                {desc}
-              </div>
+              <div className="font-semibold text-[15px] text-foreground">{label}</div>
+              <div className="text-[12px] text-muted-foreground mt-0.5">{desc}</div>
             </div>
 
             {/* Right indicator */}
-            <div className="shrink-0">
+            <div className="shrink-0 w-7 flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {isSelected ? (
                   <motion.div
                     key="check"
-                    initial={{ scale: 0, rotate: -90 }}
-                    animate={{ scale: 1, rotate: 0 }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className={`w-7 h-7 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}
+                    transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                    className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center"
                   >
-                    <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                    <Check className="w-3.5 h-3.5 text-background" strokeWidth={2.5} />
                   </motion.div>
                 ) : (
                   <motion.div
                     key="arrow"
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.4 }}
+                    animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                    <ChevronRight className="w-[18px] h-[18px] text-muted-foreground/40" />
                   </motion.div>
                 )}
               </AnimatePresence>
