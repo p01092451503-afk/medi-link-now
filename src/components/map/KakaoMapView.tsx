@@ -40,7 +40,8 @@ interface KakaoMapViewProps {
 }
 
 // Get marker colors based on bed availability (primary visual cue)
-const getBedAvailabilityColors = (beds: number) => {
+const getBedAvailabilityColors = (beds: number, hasNoData?: boolean) => {
+  if (hasNoData) return { bg: "#9CA3AF", border: "#6B7280", text: "white" }; // muted gray - no data
   if (beds <= 0) return { bg: "#6B7280", border: "#4B5563", text: "white" }; // gray - no beds
   if (beds <= 3) return { bg: "#F59E0B", border: "#D97706", text: "white" }; // amber - tight
   if (beds <= 10) return { bg: "#22C55E", border: "#16A34A", text: "white" }; // green - available
