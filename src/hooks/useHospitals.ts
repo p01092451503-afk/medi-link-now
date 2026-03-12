@@ -40,6 +40,7 @@ export interface HospitalWithMeta extends Hospital {
   reliability?: number;
   isSaturated?: boolean;
   estimatedWaitMinutes?: number;
+  hasNoData?: boolean; // hospital_status_cache에 행이 없는 경우 true
 }
 
 export interface UseHospitalsResult {
