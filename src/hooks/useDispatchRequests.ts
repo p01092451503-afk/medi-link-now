@@ -19,6 +19,9 @@ export interface DispatchRequest {
   estimated_distance_km: number | null;
   estimated_fee: number | null;
   notes: string | null;
+  is_scheduled: boolean;
+  scheduled_time: string | null;
+  vehicle_type: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -557,7 +557,7 @@ const DriverDashboard = () => {
               </div>
             )}
 
-            {myRequests.filter(r => (r as any).is_scheduled && r.status === "scheduled").length > 0 && (
+            {myRequests.filter(r => r.is_scheduled && r.status === "scheduled").length > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-foreground" />
@@ -565,7 +565,7 @@ const DriverDashboard = () => {
                 </h3>
                 <div className="space-y-3">
                   {myRequests
-                    .filter(r => (r as any).is_scheduled && r.status === "scheduled")
+                    .filter(r => r.is_scheduled && r.status === "scheduled")
                     .map(req => (
                       <div key={req.id} className="bg-card rounded-2xl p-4 border border-border">
                         <div className="flex items-start justify-between mb-2">
@@ -573,8 +573,8 @@ const DriverDashboard = () => {
                             <p className="font-semibold text-foreground">{req.patient_name || "환자"}</p>
                             <p className="text-xs text-muted-foreground flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              {(req as any).scheduled_time 
-                                ? new Date((req as any).scheduled_time).toLocaleString("ko-KR") 
+                              {req.scheduled_time 
+                                ? new Date(req.scheduled_time).toLocaleString("ko-KR") 
                                 : "시간 미정"}
                             </p>
                           </div>

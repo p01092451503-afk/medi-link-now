@@ -39,7 +39,7 @@ const GuardianLanding = () => {
   // Listen for transport started notifications
   useEffect(() => {
     const channel = supabase
-      .channel("guardian_transport_notifications")
+      .channel("dispatch_broadcast")
       .on("broadcast", { event: "transport_started" }, (payload) => {
         toast({
           title: "🚑 구급차가 이동 중입니다!",
