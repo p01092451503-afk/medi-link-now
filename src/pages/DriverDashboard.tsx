@@ -133,6 +133,8 @@ const DriverDashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({ title: "로그아웃되었습니다" });
