@@ -256,6 +256,14 @@ const DriverDashboard = () => {
               <LogOut className="w-4 h-4 mr-1" />
               로그아웃
             </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDeleteAccount(true)}
+              className="text-destructive/70 hover:text-destructive text-xs"
+            >
+              회원탈퇴
+            </Button>
           </div>
         </div>
       </header>
