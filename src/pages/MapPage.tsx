@@ -341,12 +341,29 @@ const MapPage = () => {
               </div>
               <h3 className="text-lg font-bold text-foreground">카카오맵 로딩 실패</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                지도를 불러올 수 없습니다.<br />
-                네트워크 연결을 확인하거나,<br />
-                카카오 개발자 콘솔에서 현재 도메인이<br />
-                등록되어 있는지 확인해 주세요.
+                {window.location.hostname.endsWith("lovableproject.com") ? (
+                  <>
+                    미리보기 환경에서는 카카오맵이<br />
+                    보안 정책으로 차단됩니다.<br />
+                    배포 도메인에서 확인해 주세요.
+                  </>
+                ) : (
+                  <>
+                    지도를 불러올 수 없습니다.<br />
+                    네트워크 연결을 확인하거나,<br />
+                    카카오 개발자 콘솔에서 현재 도메인이<br />
+                    등록되어 있는지 확인해 주세요.
+                  </>
+                )}
               </p>
-              <p className="text-xs text-muted-foreground/60 font-mono">{window.location.origin}</p>
+              {window.location.hostname.endsWith("lovableproject.com") ? (
+                <a href="https://find-bed-now.lovable.app/map" target="_blank" rel="noopener noreferrer"
+                   className="text-xs text-primary underline underline-offset-2">
+                  배포 도메인에서 열기 →
+                </a>
+              ) : (
+                <p className="text-xs text-muted-foreground/60 font-mono">{window.location.origin}</p>
+              )}
               <Button variant="outline" size="sm" onClick={() => setKakaoFailed(false)} className="mt-2">
                 다시 시도
               </Button>
