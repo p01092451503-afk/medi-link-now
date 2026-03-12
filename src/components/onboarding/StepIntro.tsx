@@ -16,7 +16,7 @@ const StepIntro = () => (
       transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
       className="w-20 h-20 rounded-3xl bg-foreground flex items-center justify-center mb-6"
     >
-      <span className="text-3xl font-black text-background tracking-tighter">ER</span>
+      <span className="text-[22px] font-black text-background tracking-tight">파인더</span>
     </motion.div>
 
     <motion.h1
