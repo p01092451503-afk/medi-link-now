@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { HospitalWithMeta } from "@/hooks/useHospitals";
 import { useSearchParams } from "react-router-dom";
 import { Hospital, getHospitalStatus } from "@/data/hospitals";
 import { X, Phone, Stethoscope, Baby, Thermometer, AlertTriangle, Heart, Brain, Activity, Droplet, Star, Ambulance, Truck, Send, Clock, CheckCircle, ChevronRight, Radio } from "lucide-react";
