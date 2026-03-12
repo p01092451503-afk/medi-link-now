@@ -222,7 +222,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-bold text-foreground">실질 가용 병상</h3>
-                  {incomingCount > 0 && (
+                  {incomingCount > 0 && !isNoData && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
@@ -241,37 +241,58 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
                     </TooltipProvider>
                   )}
                 </div>
-                <AIAcceptanceBadge hospitalId={hospital.id} />
+                {!isNoData && <AIAcceptanceBadge hospitalId={hospital.id} />}
               </div>
-              <div className="grid grid-cols-3 gap-2 mb-6">
-                <BedStatusCard
-                  label="성인"
-                  count={hospital.beds.general}
-                  adjustedCount={adjustedGeneralBeds}
-                  incomingCount={incomingCount}
-                  icon={Stethoscope}
-                  type="general"
-                  isHospitalFull={status === "unavailable"}
-                  rawCount={hospital.beds.general}
-                />
-                <BedStatusCard
-                  label="소아"
-                  count={hospital.beds.pediatric}
-                  icon={Baby}
-                  type="pediatric"
-                  isHospitalFull={status === "unavailable"}
-                  rawCount={hospital.beds.pediatric}
-                />
-                <BedStatusCard
-                  label="열/감염"
-                  count={hospital.beds.fever}
-                  icon={Thermometer}
-                  type="fever"
-                  showTooltip={true}
-                  tooltipText="고열(38℃+) 및 감염 환자 전용"
-                  isHospitalFull={status === "unavailable"}
-                />
-              </div>
+
+              {isNoData ? (
+                <div className="mb-6 p-5 bg-muted/50 border border-border rounded-2xl text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-2xl">📡</span>
+                    <p className="text-sm font-semibold text-muted-foreground">병상 데이터 미수신</p>
+                    <p className="text-xs text-muted-foreground/70 leading-relaxed">
+                      이 병원은 실시간 병상 데이터가 제공되지 않습니다.<br/>
+                      정확한 수용 가능 여부는 병원에 직접 전화로 확인해 주세요.
+                    </p>
+                    <button
+                      onClick={handleCall}
+                      className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      전화 확인
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2 mb-6">
+                  <BedStatusCard
+                    label="성인"
+                    count={hospital.beds.general}
+                    adjustedCount={adjustedGeneralBeds}
+                    incomingCount={incomingCount}
+                    icon={Stethoscope}
+                    type="general"
+                    isHospitalFull={status === "unavailable"}
+                    rawCount={hospital.beds.general}
+                  />
+                  <BedStatusCard
+                    label="소아"
+                    count={hospital.beds.pediatric}
+                    icon={Baby}
+                    type="pediatric"
+                    isHospitalFull={status === "unavailable"}
+                    rawCount={hospital.beds.pediatric}
+                  />
+                  <BedStatusCard
+                    label="열/감염"
+                    count={hospital.beds.fever}
+                    icon={Thermometer}
+                    type="fever"
+                    showTooltip={true}
+                    tooltipText="고열(38℃+) 및 감염 환자 전용"
+                    isHospitalFull={status === "unavailable"}
+                  />
+                </div>
+              )}
 
               {/* Wait Time Prediction removed — consolidated into AcceptancePredictionPanel */}
 
