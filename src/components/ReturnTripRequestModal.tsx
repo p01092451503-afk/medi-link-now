@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Navigation, Clock, Users, ArrowRight } from "lucide-react";
+import { MapPin, Navigation, Users, ArrowRight, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -27,7 +27,6 @@ const calculateFare = (distanceKm: number): number => {
   const extraFare = extraKm * 1000;
   const total = baseFare + extraFare;
 
-  // 심야 할증 (00:00~04:00)
   const hour = new Date().getHours();
   const isNight = hour >= 0 && hour < 4;
   return isNight ? Math.round(total * 1.2) : total;
@@ -39,6 +38,50 @@ const extractCity = (text: string): string => {
   return match ? match[1] : "미정";
 };
 
+/** 카카오맵 주소/키워드 → 좌표 변환 */
+const getCoords = (address: string): Promise<{ lat: number; lng: number }> => {
+  const kakao = (window as any).kakao;
+  if (!kakao?.maps?.services) {
+    return Promise.reject(new Error("카카오맵 API를 사용할 수 없습니다"));
+  }
+
+  const geocoder = new kakao.maps.services.Geocoder();
+  return new Promise((resolve, reject) => {
+    geocoder.addressSearch(address, (result: any, status: any) => {
+      if (status === kakao.maps.services.Status.OK) {
+        resolve({ lat: parseFloat(result[0].y), lng: parseFloat(result[0].x) });
+      } else {
+        // 주소 검색 실패 시 키워드 검색
+        const places = new kakao.maps.services.Places();
+        places.keywordSearch(address, (placeResult: any, placeStatus: any) => {
+          if (placeStatus === kakao.maps.services.Status.OK) {
+            resolve({ lat: parseFloat(placeResult[0].y), lng: parseFloat(placeResult[0].x) });
+          } else {
+            reject(new Error("주소를 찾을 수 없습니다"));
+          }
+        });
+      }
+    });
+  });
+};
+
+/** Haversine 직선거리 → 도로거리 추정 */
+const calcRoadDistance = (
+  origin: { lat: number; lng: number },
+  dest: { lat: number; lng: number }
+): number => {
+  const R = 6371;
+  const dLat = ((dest.lat - origin.lat) * Math.PI) / 180;
+  const dLon = ((dest.lng - origin.lng) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((origin.lat * Math.PI) / 180) *
+      Math.cos((dest.lat * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 1.3 * 10) / 10; // ×1.3 도로 보정
+};
+
 const ReturnTripRequestModal = ({
   isOpen,
   onClose,
@@ -48,13 +91,42 @@ const ReturnTripRequestModal = ({
   const { createTrip } = useRealtimeReturnTrips();
 
   const [destination, setDestination] = useState("");
-  const [distanceInput, setDistanceInput] = useState("");
+  const [distanceKm, setDistanceKm] = useState(0);
   const [patientName, setPatientName] = useState(initialPatientName || "");
   const [passengerCount, setPassengerCount] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCalcDistance, setIsCalcDistance] = useState(false);
+  const [distanceCalculated, setDistanceCalculated] = useState(false);
 
-  const distanceKm = parseFloat(distanceInput) || 0;
   const estimatedFare = useMemo(() => calculateFare(distanceKm), [distanceKm]);
+
+  const handleCalcDistance = useCallback(async () => {
+    if (!destination.trim()) {
+      toast({ title: "목적지를 입력해주세요", variant: "destructive" });
+      return;
+    }
+
+    setIsCalcDistance(true);
+    try {
+      const [originCoords, destCoords] = await Promise.all([
+        getCoords(hospitalName),
+        getCoords(destination.trim()),
+      ]);
+      const dist = calcRoadDistance(originCoords, destCoords);
+      setDistanceKm(dist);
+      setDistanceCalculated(true);
+      toast({ title: "거리 계산 완료", description: `예상 거리: ${dist}km` });
+    } catch (err) {
+      console.error("Distance calc error:", err);
+      toast({
+        title: "거리 계산 실패",
+        description: "주소를 확인하고 다시 시도해주세요. 직접 입력도 가능합니다.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCalcDistance(false);
+    }
+  }, [hospitalName, destination]);
 
   const handleSubmit = async () => {
     if (!destination.trim()) {
@@ -62,7 +134,7 @@ const ReturnTripRequestModal = ({
       return;
     }
     if (!patientName.trim()) {
-      toast({ title: "환자(탑승자) 이름을 입력해주세요", variant: "destructive" });
+      toast({ title: "탑승자 이름을 입력해주세요", variant: "destructive" });
       return;
     }
 
@@ -89,7 +161,8 @@ const ReturnTripRequestModal = ({
         description: "근처 기사에게 알림이 전송됩니다.",
       });
       setDestination("");
-      setDistanceInput("");
+      setDistanceKm(0);
+      setDistanceCalculated(false);
       setPatientName(initialPatientName || "");
       setPassengerCount(1);
       onClose();
@@ -112,7 +185,7 @@ const ReturnTripRequestModal = ({
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
-          {/* Origin (auto-filled) */}
+          {/* Origin */}
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">출발지</label>
             <div className="flex items-center gap-2 p-3 bg-secondary rounded-xl">
@@ -121,15 +194,41 @@ const ReturnTripRequestModal = ({
             </div>
           </div>
 
-          {/* Destination */}
+          {/* Destination + auto-calc */}
           <div>
             <label className="text-xs font-medium text-foreground mb-1 block">목적지</label>
-            <Input
-              placeholder="귀가 목적지 주소 입력"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              className="h-11 rounded-xl"
-            />
+            <div className="flex gap-2">
+              <Input
+                placeholder="귀가 목적지 주소 입력"
+                value={destination}
+                onChange={(e) => {
+                  setDestination(e.target.value);
+                  setDistanceCalculated(false);
+                }}
+                className="h-11 rounded-xl flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-xl shrink-0"
+                onClick={handleCalcDistance}
+                disabled={isCalcDistance || !destination.trim()}
+                title="거리 자동 계산"
+              >
+                {isCalcDistance ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+            {distanceCalculated && distanceKm > 0 && (
+              <p className="text-xs text-green-600 mt-1.5 flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                카카오맵 기준 약 {distanceKm}km
+              </p>
+            )}
           </div>
 
           {/* Patient name */}
@@ -143,18 +242,22 @@ const ReturnTripRequestModal = ({
             />
           </div>
 
-          {/* Distance (manual) */}
-          <div>
-            <label className="text-xs font-medium text-foreground mb-1 block">예상 거리 (km)</label>
-            <Input
-              type="number"
-              placeholder="예: 15"
-              value={distanceInput}
-              onChange={(e) => setDistanceInput(e.target.value)}
-              className="h-11 rounded-xl"
-              min={0}
-            />
-          </div>
+          {/* Manual distance fallback */}
+          {!distanceCalculated && (
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                거리 직접 입력 (km) — 자동 계산 실패 시
+              </label>
+              <Input
+                type="number"
+                placeholder="예: 15"
+                value={distanceKm || ""}
+                onChange={(e) => setDistanceKm(parseFloat(e.target.value) || 0)}
+                className="h-11 rounded-xl"
+                min={0}
+              />
+            </div>
+          )}
 
           {/* Passenger count */}
           <div>
@@ -193,6 +296,12 @@ const ReturnTripRequestModal = ({
                 {destination || "목적지"}
               </span>
             </div>
+            {distanceKm > 0 && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>예상 거리</span>
+                <span className="font-medium text-foreground">{distanceKm}km</span>
+              </div>
+            )}
             <div className="flex items-center justify-between pt-1 border-t border-border">
               <span className="text-sm text-muted-foreground">예상 요금</span>
               <span className="text-lg font-bold text-foreground">
