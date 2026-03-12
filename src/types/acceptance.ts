@@ -8,6 +8,7 @@ export interface AcceptancePrediction {
     patternScore: number;       // 시간대 패턴 점수
     weatherScore: number;       // 날씨 환경 점수
     spilloverScore: number;     // 주변 연쇄 과부하 점수
+    historicalScore: number;    // 과거 수용 이력 점수
   };
   conditionAcceptance: {
     cardiac: boolean;           // 심정지
