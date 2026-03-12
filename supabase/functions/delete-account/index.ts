@@ -24,6 +24,12 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
+  // Rate limit: 3 requests per minute per IP (strict for account deletion)
+  const rateCheck = checkRateLimit(req, { maxRequests: 3, windowMs: 60_000 });
+  if (!rateCheck.allowed) {
+    return rateLimitResponse(req, getCorsHeaders(req), rateCheck.retryAfterMs!);
+  }
+
   try {
     // Verify the requesting user
     const authHeader = req.headers.get("Authorization");

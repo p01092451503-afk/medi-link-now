@@ -24,6 +24,12 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
+  // Rate limit: 10 requests per minute per IP
+  const rateCheck = checkRateLimit(req, { maxRequests: 10, windowMs: 60_000 });
+  if (!rateCheck.allowed) {
+    return rateLimitResponse(req, getCorsHeaders(req), rateCheck.retryAfterMs!);
+  }
+
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
