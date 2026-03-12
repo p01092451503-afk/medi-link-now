@@ -173,7 +173,8 @@ Deno.serve(async (req) => {
     if (weather.temperatureRisk !== 1 || weather.precipitationRisk !== 1) sourcesActive++;
     else sourcesActive++;
     if (nearby.length > 0) sourcesActive++;
-    const confidence = sourcesActive >= 3 ? 'high' : sourcesActive === 2 ? 'medium' : 'low';
+    if (historicalRate !== null) sourcesActive++;
+    const confidence = sourcesActive >= 4 ? 'high' : sourcesActive >= 3 ? 'medium' : 'low';
 
     const hasPediatric = pediatricBeds > 0 || (hospital.has_pediatric ?? false);
     const equipment = hospital.equipment || [];
