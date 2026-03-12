@@ -94,6 +94,7 @@ const ReturnTripRequestModal = ({
   const [distanceKm, setDistanceKm] = useState(0);
   const [patientName, setPatientName] = useState(initialPatientName || "");
   const [passengerCount, setPassengerCount] = useState(1);
+  const [requestedTime, setRequestedTime] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCalcDistance, setIsCalcDistance] = useState(false);
   const [distanceCalculated, setDistanceCalculated] = useState(false);
