@@ -124,7 +124,7 @@ const MyRequestsPanel = () => {
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 100 }}
-      className="fixed bottom-4 right-4 z-[1000] w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[1000] w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
     >
       {/* Header */}
       <button
