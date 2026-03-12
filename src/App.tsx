@@ -48,6 +48,12 @@ const RootRedirect = () => {
   return <Navigate to={isOnboarded ? "/landing" : "/onboarding"} replace />;
 };
 
+const OnboardingSyncWrapper = () => {
+  const { useOnboardingSync: sync } = require("@/hooks/useOnboardingSync");
+  sync();
+  return null;
+};
+
 const AppRoutes = () => {
   const location = useLocation();
   const isMapRoute = location.pathname === "/map";
