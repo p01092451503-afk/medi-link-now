@@ -99,11 +99,23 @@ const OnboardingPage = () => {
 
   const requestNotification = useCallback(async () => {
     if (!("Notification" in window)) {
-      setNotifGranted(false);
+      // Notification API not available (e.g. iframe) — treat as success for onboarding
+      localStorage.setItem("find-er-notif-requested", "true");
+      setNotifGranted(true);
       return;
     }
-    const perm = await Notification.requestPermission();
-    setNotifGranted(perm === "granted");
+    try {
+      const perm = await Notification.requestPermission();
+      setNotifGranted(perm === "granted");
+      if (perm !== "granted") {
+        // Still mark as requested so user can proceed
+        localStorage.setItem("find-er-notif-requested", "true");
+      }
+    } catch {
+      // Permission request failed (iframe sandbox, etc.) — treat as success
+      localStorage.setItem("find-er-notif-requested", "true");
+      setNotifGranted(true);
+    }
   }, []);
 
   // Hybrid sync: save to localStorage + attempt DB sync
