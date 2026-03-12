@@ -573,8 +573,8 @@ const DriverDashboard = () => {
                             <p className="font-semibold text-foreground">{req.patient_name || "환자"}</p>
                             <p className="text-xs text-muted-foreground flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              {(req as any).scheduled_time 
-                                ? new Date((req as any).scheduled_time).toLocaleString("ko-KR") 
+                              {req.scheduled_time 
+                                ? new Date(req.scheduled_time).toLocaleString("ko-KR") 
                                 : "시간 미정"}
                             </p>
                           </div>
