@@ -5,6 +5,7 @@ import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,18 +25,24 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
     pickupLocation: "",
     destination: "",
     scheduledDate: "",
-    scheduledTime: "",
+    scheduledHour: "",
+    scheduledMinute: "",
+    scheduledAmpm: "오전",
     notes: "",
   });
 
   const handleSubmit = async () => {
-    if (!formData.scheduledDate || !formData.scheduledTime) {
+    if (!formData.scheduledDate || !formData.scheduledHour || !formData.scheduledMinute) {
       toast({ title: "날짜와 시간을 입력해주세요", variant: "destructive" });
       return;
     }
 
     setIsLoading(true);
-    const scheduledTime = new Date(`${formData.scheduledDate}T${formData.scheduledTime}`).toISOString();
+    let hour = parseInt(formData.scheduledHour, 10);
+    if (formData.scheduledAmpm === "오후" && hour !== 12) hour += 12;
+    if (formData.scheduledAmpm === "오전" && hour === 12) hour = 0;
+    const timeStr = `${String(hour).padStart(2, "0")}:${formData.scheduledMinute}`;
+    const scheduledTime = new Date(`${formData.scheduledDate}T${timeStr}`).toISOString();
 
     const { error } = await supabase.from("ambulance_dispatch_requests").insert({
       pickup_location: formData.pickupLocation || "미정",
@@ -60,7 +67,7 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
 
     toast({ title: "📅 예약 호출이 등록되었습니다", description: "기사들의 입찰을 기다려주세요." });
     onClose();
-    setFormData({ patientName: "", patientCondition: "", pickupLocation: "", destination: "", scheduledDate: "", scheduledTime: "", notes: "" });
+    setFormData({ patientName: "", patientCondition: "", pickupLocation: "", destination: "", scheduledDate: "", scheduledHour: "", scheduledMinute: "", scheduledAmpm: "오전", notes: "" });
   };
 
   return (
@@ -116,12 +123,31 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
                   <label className="flex items-center gap-1 text-sm font-medium text-foreground mb-1">
                     <Clock className="w-3.5 h-3.5" /> 시간
                   </label>
-                  <Input
-                    type="time"
-                    value={formData.scheduledTime}
-                    onChange={(e) => setFormData((p) => ({ ...p, scheduledTime: e.target.value }))}
-                    className="rounded-xl"
-                  />
+                  <div className="flex gap-2">
+                    <Select value={formData.scheduledAmpm} onValueChange={(v) => setFormData((p) => ({ ...p, scheduledAmpm: v }))}>
+                      <SelectTrigger className="rounded-xl w-[80px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="오전">오전</SelectItem>
+                        <SelectItem value="오후">오후</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={formData.scheduledHour} onValueChange={(v) => setFormData((p) => ({ ...p, scheduledHour: v }))}>
+                      <SelectTrigger className="rounded-xl flex-1"><SelectValue placeholder="시" /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                          <SelectItem key={h} value={String(h)}>{String(h).padStart(2, "0")}시</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={formData.scheduledMinute} onValueChange={(v) => setFormData((p) => ({ ...p, scheduledMinute: v }))}>
+                      <SelectTrigger className="rounded-xl flex-1"><SelectValue placeholder="분" /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
+                          <SelectItem key={m} value={String(m).padStart(2, "0")}>{String(m).padStart(2, "0")}분</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
