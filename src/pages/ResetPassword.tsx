@@ -80,7 +80,7 @@ const ResetPassword = () => {
       <div className="min-h-screen bg-background flex flex-col">
         <SubPageHeader title="비밀번호 재설정" backTo="/login" />
         <main className="flex-1 flex flex-col items-center justify-center px-5 gap-4">
-          <CheckCircle className="w-16 h-16 text-green-500" />
+          <CheckCircle className="w-16 h-16 text-primary" />
           <p className="text-foreground font-semibold text-lg">비밀번호가 변경되었습니다</p>
           <p className="text-muted-foreground text-sm">잠시 후 로그인 페이지로 이동합니다...</p>
         </main>
