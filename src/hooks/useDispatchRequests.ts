@@ -248,6 +248,7 @@ export const useDispatchRequests = () => {
     isLoading,
     createRequest,
     acceptRequest,
+    startTransport,
     updateStatus,
     refetch: () => {
       fetchPendingRequests();
