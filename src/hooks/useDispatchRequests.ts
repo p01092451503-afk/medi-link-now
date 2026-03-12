@@ -150,6 +150,34 @@ export const useDispatchRequests = () => {
     return true;
   }, [user?.id, fetchPendingRequests]);
 
+  // Start transport (driver starts moving)
+  const startTransport = useCallback(async (requestId: string) => {
+    if (!user?.id) return false;
+
+    const { error } = await supabase
+      .from("ambulance_dispatch_requests")
+      .update({ status: "en_route" })
+      .eq("id", requestId)
+      .eq("driver_id", user.id);
+
+    if (error) {
+      console.error("Error starting transport:", error);
+      toast({ title: "이송 시작 실패", variant: "destructive" });
+      return false;
+    }
+
+    // Broadcast notification to guardian/patient
+    await supabase.channel("dispatch_broadcast").send({
+      type: "broadcast",
+      event: "transport_started",
+      payload: { request_id: requestId, driver_id: user.id },
+    });
+
+    toast({ title: "🚑 이송을 시작합니다", description: "환자/보호자에게 알림을 보냈습니다." });
+    await fetchMyRequests();
+    return true;
+  }, [user?.id, fetchMyRequests]);
+
   // Update request status
   const updateStatus = useCallback(async (
     requestId: string, 
@@ -220,6 +248,7 @@ export const useDispatchRequests = () => {
     isLoading,
     createRequest,
     acceptRequest,
+    startTransport,
     updateStatus,
     refetch: () => {
       fetchPendingRequests();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -18,6 +18,8 @@ import {
 import TargetUserInfoModal from "@/components/TargetUserInfoModal";
 import SubPageHeader from "@/components/SubPageHeader";
 import ScheduledCallForm from "@/components/ScheduledCallForm";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 type TargetUserType = "parents" | "elderly" | "chronic" | null;
 
@@ -33,6 +35,21 @@ const GuardianLanding = () => {
   const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState<TargetUserType>(null);
   const [isScheduledOpen, setIsScheduledOpen] = useState(false);
+
+  // Listen for transport started notifications
+  useEffect(() => {
+    const channel = supabase
+      .channel("guardian_transport_notifications")
+      .on("broadcast", { event: "transport_started" }, (payload) => {
+        toast({
+          title: "🚑 구급차가 이동 중입니다!",
+          description: "배정된 기사님이 출발했습니다. 곧 도착 예정입니다.",
+        });
+      })
+      .subscribe();
+
+    return () => { channel.unsubscribe(); };
+  }, []);
 
   const features = [
     { icon: Search, title: "AI 증상 검색", description: "증상을 입력하면 AI가 적합한 병원을 추천" },
