@@ -100,7 +100,8 @@ const ReturnTripRequestModal = ({
   const [distanceCalculated, setDistanceCalculated] = useState(false);
 
   // Autocomplete
-  const [suggestions, setSuggestions] = useState<{ place_name: string; address_name: string; road_address_name?: string }[]>([]);
+  interface PlaceSuggestion { place_name: string; address_name: string; road_address_name?: string; lat: number; lng: number }
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -130,6 +131,8 @@ const ReturnTripRequestModal = ({
             place_name: d.place_name,
             address_name: d.address_name,
             road_address_name: d.road_address_name,
+            lat: parseFloat(d.y),
+            lng: parseFloat(d.x),
           }))
         );
         setShowSuggestions(true);
@@ -150,14 +153,24 @@ const ReturnTripRequestModal = ({
   );
 
   const selectSuggestion = useCallback(
-    (s: { place_name: string; address_name: string; road_address_name?: string }) => {
+    async (s: PlaceSuggestion) => {
       const addr = s.road_address_name || s.address_name;
       setDestination(`${s.place_name} (${addr})`);
       setShowSuggestions(false);
       setSuggestions([]);
-      setDistanceCalculated(false);
+
+      // Auto-calculate distance using known coords
+      try {
+        const originCoords = await getCoords(hospitalName);
+        const dist = calcRoadDistance(originCoords, { lat: s.lat, lng: s.lng });
+        setDistanceKm(dist);
+        setDistanceCalculated(true);
+        toast({ title: "거리 계산 완료", description: `예상 거리: ${dist}km` });
+      } catch {
+        setDistanceCalculated(false);
+      }
     },
-    []
+    [hospitalName]
   );
 
   const estimatedFare = useMemo(() => calculateFare(distanceKm), [distanceKm]);
