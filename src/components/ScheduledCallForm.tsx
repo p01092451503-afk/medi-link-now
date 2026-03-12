@@ -123,12 +123,31 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
                   <label className="flex items-center gap-1 text-sm font-medium text-foreground mb-1">
                     <Clock className="w-3.5 h-3.5" /> 시간
                   </label>
-                  <Input
-                    type="time"
-                    value={formData.scheduledTime}
-                    onChange={(e) => setFormData((p) => ({ ...p, scheduledTime: e.target.value }))}
-                    className="rounded-xl"
-                  />
+                  <div className="flex gap-2">
+                    <Select value={formData.scheduledAmpm} onValueChange={(v) => setFormData((p) => ({ ...p, scheduledAmpm: v }))}>
+                      <SelectTrigger className="rounded-xl w-[80px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="오전">오전</SelectItem>
+                        <SelectItem value="오후">오후</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={formData.scheduledHour} onValueChange={(v) => setFormData((p) => ({ ...p, scheduledHour: v }))}>
+                      <SelectTrigger className="rounded-xl flex-1"><SelectValue placeholder="시" /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                          <SelectItem key={h} value={String(h)}>{String(h).padStart(2, "0")}시</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={formData.scheduledMinute} onValueChange={(v) => setFormData((p) => ({ ...p, scheduledMinute: v }))}>
+                      <SelectTrigger className="rounded-xl flex-1"><SelectValue placeholder="분" /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
+                          <SelectItem key={m} value={String(m).padStart(2, "0")}>{String(m).padStart(2, "0")}분</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
