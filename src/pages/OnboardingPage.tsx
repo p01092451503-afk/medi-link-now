@@ -240,10 +240,10 @@ const OnboardingPage = () => {
             key={i}
             className={`rounded-full transition-all duration-300 ${
               i === step
-                ? "w-5 h-1.5 bg-primary"
+                ? "w-5 h-1.5 bg-foreground"
                 : i < step
-                ? "w-1.5 h-1.5 bg-primary/40"
-                : "w-1.5 h-1.5 bg-muted-foreground/20"
+                ? "w-1.5 h-1.5 bg-foreground/30"
+                : "w-1.5 h-1.5 bg-muted-foreground/15"
             }`}
           />
         ))}
@@ -275,26 +275,39 @@ const OnboardingPage = () => {
       <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm px-5 pb-6 pt-3 flex gap-2.5">
         {isLastStep && showFamilyStep ? (
           <>
-            <Button variant="outline" className="flex-1 gap-1 rounded-xl" onClick={handleComplete}>
-              <SkipForward className="w-4 h-4" /> 건너뛰기
-            </Button>
-            <Button className="flex-1 gap-1 rounded-xl" onClick={handleComplete} disabled={!familyName.trim()}>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={handleComplete}
+              className="flex-1 flex items-center justify-center gap-1.5 h-[52px] rounded-2xl bg-secondary text-foreground font-semibold text-[15px] transition-colors hover:bg-secondary/80"
+            >
+              건너뛰기
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={handleComplete}
+              disabled={!familyName.trim()}
+              className="flex-1 flex items-center justify-center gap-1.5 h-[52px] rounded-2xl bg-foreground text-background font-semibold text-[15px] transition-opacity hover:opacity-90 disabled:opacity-30"
+            >
               <Check className="w-4 h-4" /> 등록 완료
-            </Button>
+            </motion.button>
           </>
         ) : isLastStep ? (
-          <Button className="w-full gap-1 rounded-xl" onClick={handleComplete} size="lg">
-            <Check className="w-4 h-4" /> 시작하기
-          </Button>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={handleComplete}
+            className="w-full flex items-center justify-center gap-1.5 h-[52px] rounded-2xl bg-foreground text-background font-semibold text-[15px] transition-opacity hover:opacity-90"
+          >
+            시작하기
+          </motion.button>
         ) : (
-          <Button
-            className="w-full gap-1 rounded-xl"
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={goNext}
-            size="lg"
             disabled={!canAdvance()}
+            className="w-full flex items-center justify-center gap-1.5 h-[52px] rounded-2xl bg-foreground text-background font-semibold text-[15px] transition-opacity hover:opacity-90 disabled:opacity-30"
           >
             다음 <ChevronRight className="w-4 h-4" />
-          </Button>
+          </motion.button>
         )}
       </div>
     </div>
