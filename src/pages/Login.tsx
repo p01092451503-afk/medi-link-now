@@ -5,10 +5,12 @@ import { Ambulance, Mail, Lock, Users } from "lucide-react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import SubPageHeader from "@/components/SubPageHeader";
+import ForgotPasswordModal from "@/components/ForgotPasswordModal";
 
 const Login = () => {
   const navigate = useNavigate();
