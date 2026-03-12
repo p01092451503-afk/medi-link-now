@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { config } from "@/lib/config";
 import { Hospital, FilterType } from "@/data/hospitals";
+import type { HospitalWithMeta } from "@/hooks/useHospitals";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
@@ -39,7 +40,8 @@ interface KakaoMapViewProps {
 }
 
 // Get marker colors based on bed availability (primary visual cue)
-const getBedAvailabilityColors = (beds: number) => {
+const getBedAvailabilityColors = (beds: number, hasNoData?: boolean) => {
+  if (hasNoData) return { bg: "#9CA3AF", border: "#6B7280", text: "white" }; // muted gray - no data
   if (beds <= 0) return { bg: "#6B7280", border: "#4B5563", text: "white" }; // gray - no beds
   if (beds <= 3) return { bg: "#F59E0B", border: "#D97706", text: "white" }; // amber - tight
   if (beds <= 10) return { bg: "#22C55E", border: "#16A34A", text: "white" }; // green - available
@@ -521,6 +523,7 @@ const KakaoMapView = ({
       };
 
       const displayBeds = getFilteredBeds();
+      const isNoData = !!(hospital as HospitalWithMeta).hasNoData;
       let bgColor: string;
       let borderColor: string;
       let textColor = "white";
@@ -537,13 +540,13 @@ const KakaoMapView = ({
         textColor = moonlightColors.text;
       } else {
         // Use bed availability as the primary marker color
-        const bedColors = getBedAvailabilityColors(displayBeds);
+        const bedColors = getBedAvailabilityColors(displayBeds, isNoData);
         bgColor = bedColors.bg;
         borderColor = bedColors.border;
         textColor = bedColors.text;
 
-        // If saturated (0 beds), override to gray regardless of grade
-        if (displayBeds <= 0) {
+        // If saturated (0 beds) and has data, override to gray
+        if (displayBeds <= 0 && !isNoData) {
           bgColor = "#6B7280";
           borderColor = "#4B5563";
         }
@@ -647,7 +650,7 @@ const KakaoMapView = ({
             "></div>
           </div>
           <div class="marker-circle" style="position: relative; width: 42px; height: 42px; background: ${bgColor}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;">
-            <span style="color: ${textColor}; font-size: 18px; font-weight: 800; line-height: 1;">${displayBeds}</span>
+            <span style="color: ${textColor}; font-size: ${isNoData ? '16px' : '18px'}; font-weight: 800; line-height: 1;">${isNoData ? '?' : displayBeds}</span>
             ${isPediatricSOS ? pediatricSOSBadgeHtml : isMoonlightMode ? moonlightBadgeHtml : traumaBadgeHtml}
             ${pediatricCapableBadgeHtml}
             ${gradeBadgeHtml}

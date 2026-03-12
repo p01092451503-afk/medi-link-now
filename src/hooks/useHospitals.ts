@@ -40,6 +40,7 @@ export interface HospitalWithMeta extends Hospital {
   reliability?: number;
   isSaturated?: boolean;
   estimatedWaitMinutes?: number;
+  hasNoData?: boolean; // hospital_status_cache에 행이 없는 경우 true
 }
 
 export interface UseHospitalsResult {
@@ -207,10 +208,16 @@ async function fetchHospitals(): Promise<{
 
   let hasApiData = false;
 
+  // Track which hospital IDs have real status data
+  const statusIdSet = new Set<number>();
+
   if (statusData && statusData.length > 0) {
     hasApiData = true;
     const statusMap = new Map<number, HospitalStatusCache>();
-    statusData.forEach((s: HospitalStatusCache) => statusMap.set(s.hospital_id, s));
+    statusData.forEach((s: HospitalStatusCache) => {
+      statusMap.set(s.hospital_id, s);
+      statusIdSet.add(s.hospital_id);
+    });
 
     mergedHospitals = mergedHospitals.map((hospital) => {
       const status = statusMap.get(hospital.id);
@@ -232,12 +239,14 @@ async function fetchHospitals(): Promise<{
   const withMeta: HospitalWithMeta[] = mergedHospitals.map((h) => {
     const totalBeds = h.beds.general + h.beds.pediatric + h.beds.fever;
     const isSaturated = totalBeds <= 0;
+    const hasNoData = hasApiData && !statusIdSet.has(h.id);
     return {
       ...h,
       dataSource: hasApiData ? ("api" as DataSource) : ("db" as DataSource),
       reliability: hasApiData ? 95 : 70,
       isSaturated,
       estimatedWaitMinutes: isSaturated ? estimateWaitMinutes(h.beds) : 0,
+      hasNoData,
     };
   });
 
