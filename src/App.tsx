@@ -11,6 +11,7 @@ import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import BottomNavBar from "@/components/BottomNavBar";
+import InstallPromptBanner from "@/components/InstallPromptBanner";
 import ScrollToTop from "./components/ScrollToTop";
 import { useOnboardingSync } from "@/hooks/useOnboardingSync";
 
@@ -91,6 +92,7 @@ const AppRoutes = () => {
         </Suspense>
       </div>
       <BottomNavBar />
+      <InstallPromptBanner />
     </>
   );
 };
