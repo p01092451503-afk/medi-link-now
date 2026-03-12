@@ -138,6 +138,8 @@ export default defineConfig(({ mode }) => ({
           'vendor-map': ['react-kakao-maps-sdk'],
           'vendor-ui': ['framer-motion', 'recharts'],
           'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-sentry': ['@sentry/react'],
+          'vendor-icons': ['lucide-react'],
         },
       },
     },
