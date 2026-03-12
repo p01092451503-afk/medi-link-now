@@ -243,6 +243,17 @@ const ReturnTripRequestModal = ({
             />
           </div>
 
+          {/* Requested departure time */}
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1 block">희망 출발 시간</label>
+            <Input
+              type="datetime-local"
+              value={requestedTime}
+              onChange={(e) => setRequestedTime(e.target.value)}
+              className="h-11 rounded-xl"
+            />
+          </div>
+
           {/* Manual distance fallback */}
           {!distanceCalculated && (
             <div>
