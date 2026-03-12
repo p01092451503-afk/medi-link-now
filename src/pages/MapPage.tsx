@@ -4,6 +4,7 @@ import { ArrowLeft, Map as MapIcon, X } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
 import KakaoMapView from "@/components/map/KakaoMapView";
+import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
