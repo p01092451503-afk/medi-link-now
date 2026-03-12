@@ -22,6 +22,7 @@ import {
   Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AccountDeleteModal from "@/components/AccountDeleteModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
