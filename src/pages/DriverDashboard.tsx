@@ -149,6 +149,13 @@ const DriverDashboard = () => {
     }
   };
 
+  const handleStartTransport = async (requestId: string) => {
+    await startTransport(requestId);
+  };
+
+  // Get accepted requests (awaiting transport start)
+  const acceptedRequests = myRequests.filter((r) => r.status === "accepted" && r.driver_id === user?.id);
+
   const handleLogComplete = async (input: CreateDrivingLogInput): Promise<string | null> => {
     const log = await createLog(input);
     return log?.id || null;
