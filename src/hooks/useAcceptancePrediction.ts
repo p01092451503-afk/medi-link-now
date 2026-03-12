@@ -197,6 +197,7 @@ export function useAcceptancePrediction(
         patternScore: Math.round(patternScore),
         weatherScore: Math.round(weatherScore),
         spilloverScore: Math.round(spilloverScore),
+        historicalScore: 50, // fallback: 서버 데이터 없을 때 중립값
       },
       conditionAcceptance,
       dataFreshness: {
