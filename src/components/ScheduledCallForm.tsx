@@ -67,7 +67,7 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
 
     toast({ title: "📅 예약 호출이 등록되었습니다", description: "기사들의 입찰을 기다려주세요." });
     onClose();
-    setFormData({ patientName: "", patientCondition: "", pickupLocation: "", destination: "", scheduledDate: "", scheduledTime: "", notes: "" });
+    setFormData({ patientName: "", patientCondition: "", pickupLocation: "", destination: "", scheduledDate: "", scheduledHour: "", scheduledMinute: "", scheduledAmpm: "오전", notes: "" });
   };
 
   return (
