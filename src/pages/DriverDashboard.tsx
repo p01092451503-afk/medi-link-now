@@ -497,7 +497,66 @@ const DriverDashboard = () => {
               )}
             </div>
 
-            {/* Scheduled Calls (Bidding) */}
+            {/* Accepted Calls - Awaiting Transport Start */}
+            {acceptedRequests.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                  수락된 호출 ({acceptedRequests.length})
+                </h3>
+                <div className="space-y-3">
+                  {acceptedRequests.map((request) => (
+                    <motion.div
+                      key={request.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-card rounded-2xl p-4 border-2 border-primary/30"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="font-semibold text-foreground tracking-tight">
+                            {request.patient_name || "환자"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatTimeAgo(request.created_at)}
+                          </p>
+                        </div>
+                        <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                          수락됨
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-start gap-2 text-sm">
+                          <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                          <span className="text-muted-foreground">{request.pickup_location}</span>
+                        </div>
+                        {request.destination && (
+                          <div className="flex items-start gap-2 text-sm">
+                            <Navigation className="w-4 h-4 text-foreground mt-0.5" />
+                            <span className="text-foreground font-medium">{request.destination}</span>
+                          </div>
+                        )}
+                        {request.patient_condition && (
+                          <div className="text-xs text-muted-foreground bg-secondary rounded-lg px-2 py-1">
+                            환자 상태: {request.patient_condition}
+                          </div>
+                        )}
+                      </div>
+
+                      <Button
+                        onClick={() => handleStartTransport(request.id)}
+                        className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-base py-5"
+                      >
+                        <Navigation className="w-5 h-5 mr-2" />
+                        이송 시작하기
+                      </Button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {myRequests.filter(r => (r as any).is_scheduled && r.status === "scheduled").length > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
