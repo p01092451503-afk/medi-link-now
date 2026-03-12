@@ -665,6 +665,8 @@ const DriverDashboard = () => {
           onReject={() => setIncomingCall(null)}
         />
       )}
+
+      <AccountDeleteModal open={showDeleteAccount} onOpenChange={setShowDeleteAccount} />
     </div>
   );
 };
