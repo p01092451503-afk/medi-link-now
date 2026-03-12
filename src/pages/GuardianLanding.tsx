@@ -36,6 +36,21 @@ const GuardianLanding = () => {
   const [selectedUserType, setSelectedUserType] = useState<TargetUserType>(null);
   const [isScheduledOpen, setIsScheduledOpen] = useState(false);
 
+  // Listen for transport started notifications
+  useEffect(() => {
+    const channel = supabase
+      .channel("guardian_transport_notifications")
+      .on("broadcast", { event: "transport_started" }, (payload) => {
+        toast({
+          title: "🚑 구급차가 이동 중입니다!",
+          description: "배정된 기사님이 출발했습니다. 곧 도착 예정입니다.",
+        });
+      })
+      .subscribe();
+
+    return () => { channel.unsubscribe(); };
+  }, []);
+
   const features = [
     { icon: Search, title: "AI 증상 검색", description: "증상을 입력하면 AI가 적합한 병원을 추천" },
     { icon: MapPin, title: "실시간 병상 현황", description: "전국 120+ 응급실 병상 정보 실시간 확인" },
