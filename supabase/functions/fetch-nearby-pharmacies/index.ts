@@ -119,8 +119,6 @@ const parsePharmacyFromXml = (item: string) => {
 };
 
 serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
-
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
