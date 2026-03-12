@@ -32,13 +32,17 @@ const ScheduledCallForm = ({ isOpen, onClose, userLocation }: ScheduledCallFormP
   });
 
   const handleSubmit = async () => {
-    if (!formData.scheduledDate || !formData.scheduledTime) {
+    if (!formData.scheduledDate || !formData.scheduledHour || !formData.scheduledMinute) {
       toast({ title: "날짜와 시간을 입력해주세요", variant: "destructive" });
       return;
     }
 
     setIsLoading(true);
-    const scheduledTime = new Date(`${formData.scheduledDate}T${formData.scheduledTime}`).toISOString();
+    let hour = parseInt(formData.scheduledHour, 10);
+    if (formData.scheduledAmpm === "오후" && hour !== 12) hour += 12;
+    if (formData.scheduledAmpm === "오전" && hour === 12) hour = 0;
+    const timeStr = `${String(hour).padStart(2, "0")}:${formData.scheduledMinute}`;
+    const scheduledTime = new Date(`${formData.scheduledDate}T${timeStr}`).toISOString();
 
     const { error } = await supabase.from("ambulance_dispatch_requests").insert({
       pickup_location: formData.pickupLocation || "미정",
