@@ -92,6 +92,7 @@ const AppRoutes = () => {
         </Suspense>
       </div>
       <BottomNavBar />
+      <InstallPromptBanner />
     </>
   );
 };
