@@ -35,6 +35,7 @@ const EmergencyGuidePage = lazy(() => import("./pages/EmergencyGuidePage"));
 const DriverBidHistoryPage = lazy(() => import("./pages/DriverBidHistoryPage"));
 const PaymentsPage = lazy(() => import("./pages/PaymentsPage"));
 const DriverRegistrationPage = lazy(() => import("./pages/DriverRegistrationPage"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const PageLoader = () => <AmbulanceLoader variant="fullscreen" />;
