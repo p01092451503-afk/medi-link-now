@@ -614,30 +614,36 @@ export type Database = {
         Row: {
           data_source: string | null
           general_beds: number
+          historical_acceptance_rate: number | null
           hospital_id: number
           hpid: string | null
           id: number
           isolation_beds: number
+          last_acceptance_result: boolean | null
           last_updated: string
           pediatric_beds: number
         }
         Insert: {
           data_source?: string | null
           general_beds?: number
+          historical_acceptance_rate?: number | null
           hospital_id: number
           hpid?: string | null
           id?: number
           isolation_beds?: number
+          last_acceptance_result?: boolean | null
           last_updated?: string
           pediatric_beds?: number
         }
         Update: {
           data_source?: string | null
           general_beds?: number
+          historical_acceptance_rate?: number | null
           hospital_id?: number
           hpid?: string | null
           id?: number
           isolation_beds?: number
+          last_acceptance_result?: boolean | null
           last_updated?: string
           pediatric_beds?: number
         }

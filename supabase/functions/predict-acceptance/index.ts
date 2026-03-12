@@ -103,12 +103,14 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Hospital not found' }), { status: 404, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    // Fetch bed status
+    // Fetch bed status (including historical acceptance fields)
     const { data: bedStatus } = await supabase.from('hospital_status_cache').select('*').eq('hospital_id', hospital_id).maybeSingle();
     const generalBeds = bedStatus?.general_beds ?? 5;
     const pediatricBeds = bedStatus?.pediatric_beds ?? 0;
     const isolationBeds = bedStatus?.isolation_beds ?? 0;
     const totalBeds = generalBeds + pediatricBeds + isolationBeds;
+    const historicalRate = bedStatus?.historical_acceptance_rate as number | null;
+    const lastResult = bedStatus?.last_acceptance_result as boolean | null;
 
     // Incoming ambulances
     const { count: incomingCount } = await supabase
@@ -117,7 +119,7 @@ Deno.serve(async (req) => {
       .eq('destination_hospital_id', hospital_id)
       .eq('status', 'en_route');
 
-    // Layer 1: Occupancy
+    // Layer 1: Occupancy (weight: 20%, reduced from 40%)
     const maxCapacity = Math.max(totalBeds + 10, 20);
     const available = Math.max(0, totalBeds);
     let occupancyRate = totalBeds <= 0 ? 95 : Math.min(100, ((maxCapacity - available) / maxCapacity) * 100);
@@ -150,8 +152,19 @@ Deno.serve(async (req) => {
     }
     const spilloverScore = Math.min(100, saturatedCount * 15);
 
-    // Final
-    const finalScore = occupancyScore * 0.4 + patternScore * 0.3 + weatherScore * 0.2 + spilloverScore * 0.1;
+    // Layer 5: Historical acceptance (weight: 20%, new)
+    // historicalRate is 0.0~1.0 from the trigger; convert to 0~100 rejection pressure
+    let historicalScore = 50; // neutral default when no data
+    if (historicalRate !== null && historicalRate !== undefined) {
+      // Higher acceptance rate → lower rejection pressure score
+      historicalScore = Math.round((1 - historicalRate) * 100);
+      // Boost/penalize based on most recent result
+      if (lastResult === false) historicalScore = Math.min(100, historicalScore + 10);
+      else if (lastResult === true) historicalScore = Math.max(0, historicalScore - 5);
+    }
+
+    // Final — updated weights: occupancy 20%, pattern 20%, weather 10%, spillover 10%, historical 40%
+    const finalScore = occupancyScore * 0.2 + patternScore * 0.2 + weatherScore * 0.1 + spilloverScore * 0.1 + historicalScore * 0.4;
     const probability = Math.max(0, Math.min(100, Math.round(100 - finalScore)));
     const estimatedWaitMin = Math.round((finalScore / 100) * 120);
     const signal = probability >= 60 ? 'green' : probability >= 35 ? 'yellow' : 'red';
@@ -160,7 +173,8 @@ Deno.serve(async (req) => {
     if (weather.temperatureRisk !== 1 || weather.precipitationRisk !== 1) sourcesActive++;
     else sourcesActive++;
     if (nearby.length > 0) sourcesActive++;
-    const confidence = sourcesActive >= 3 ? 'high' : sourcesActive === 2 ? 'medium' : 'low';
+    if (historicalRate !== null) sourcesActive++;
+    const confidence = sourcesActive >= 4 ? 'high' : sourcesActive >= 3 ? 'medium' : 'low';
 
     const hasPediatric = pediatricBeds > 0 || (hospital.has_pediatric ?? false);
     const equipment = hospital.equipment || [];
@@ -175,6 +189,7 @@ Deno.serve(async (req) => {
         patternScore: Math.round(patternScore),
         weatherScore: Math.round(weatherScore),
         spilloverScore: Math.round(spilloverScore),
+        historicalScore: Math.round(historicalScore),
       },
       conditionAcceptance: {
         cardiac: totalBeds > 0,
