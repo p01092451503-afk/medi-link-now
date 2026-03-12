@@ -103,6 +103,7 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
     unavailable: { label: "만실", dotClass: "bg-destructive" },
     limited: { label: "혼잡", dotClass: "bg-foreground/50" },
     available: { label: "여유", dotClass: "bg-foreground" },
+    nodata: { label: "데이터 없음", dotClass: "bg-muted-foreground/30" },
   };
 
   const currentStatus = statusConfig[status] || statusConfig.available;
