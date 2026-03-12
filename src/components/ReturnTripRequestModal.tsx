@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Navigation, Users, ArrowRight, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -99,6 +99,67 @@ const ReturnTripRequestModal = ({
   const [isCalcDistance, setIsCalcDistance] = useState(false);
   const [distanceCalculated, setDistanceCalculated] = useState(false);
 
+  // Autocomplete
+  const [suggestions, setSuggestions] = useState<{ place_name: string; address_name: string; road_address_name?: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const searchKeyword = useCallback((query: string) => {
+    const kakao = (window as any).kakao;
+    if (!kakao?.maps?.services || query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    const ps = new kakao.maps.services.Places();
+    ps.keywordSearch(query, (data: any[], status: any) => {
+      if (status === kakao.maps.services.Status.OK) {
+        setSuggestions(
+          data.slice(0, 5).map((d: any) => ({
+            place_name: d.place_name,
+            address_name: d.address_name,
+            road_address_name: d.road_address_name,
+          }))
+        );
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+      }
+    });
+  }, []);
+
+  const handleDestinationChange = useCallback(
+    (value: string) => {
+      setDestination(value);
+      setDistanceCalculated(false);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => searchKeyword(value), 300);
+    },
+    [searchKeyword]
+  );
+
+  const selectSuggestion = useCallback(
+    (s: { place_name: string; address_name: string; road_address_name?: string }) => {
+      const addr = s.road_address_name || s.address_name;
+      setDestination(`${s.place_name} (${addr})`);
+      setShowSuggestions(false);
+      setSuggestions([]);
+      setDistanceCalculated(false);
+    },
+    []
+  );
+
   const estimatedFare = useMemo(() => calculateFare(distanceKm), [distanceKm]);
 
   const handleCalcDistance = useCallback(async () => {
@@ -197,17 +258,16 @@ const ReturnTripRequestModal = ({
           </div>
 
           {/* Destination + auto-calc */}
-          <div>
+          <div ref={wrapperRef} className="relative">
             <label className="text-xs font-medium text-foreground mb-1 block">목적지</label>
             <div className="flex gap-2">
               <Input
-                placeholder="귀가 목적지 주소 입력"
+                placeholder="귀가 목적지 주소 또는 장소명 입력"
                 value={destination}
-                onChange={(e) => {
-                  setDestination(e.target.value);
-                  setDistanceCalculated(false);
-                }}
+                onChange={(e) => handleDestinationChange(e.target.value)}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                 className="h-11 rounded-xl flex-1"
+                autoComplete="off"
               />
               <Button
                 type="button"
@@ -225,8 +285,28 @@ const ReturnTripRequestModal = ({
                 )}
               </Button>
             </div>
+
+            {/* Autocomplete dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 left-0 right-12 mt-1 bg-popover border border-border rounded-xl shadow-lg overflow-hidden">
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="w-full text-left px-3 py-2.5 hover:bg-accent transition-colors border-b border-border last:border-b-0"
+                    onClick={() => selectSuggestion(s)}
+                  >
+                    <p className="text-sm font-medium text-foreground truncate">{s.place_name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {s.road_address_name || s.address_name}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+
             {distanceCalculated && distanceKm > 0 && (
-              <p className="text-xs text-green-600 mt-1.5 flex items-center gap-1">
+              <p className="text-xs text-primary mt-1.5 flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
                 카카오맵 기준 약 {distanceKm}km
               </p>
