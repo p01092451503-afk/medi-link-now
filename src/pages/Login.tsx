@@ -53,6 +53,10 @@ const Login = () => {
         toast({ title: "로그인 성공!" });
         navigate(returnTo);
       } else {
+        if (!agreedTerms) {
+          toast({ title: "이용약관 및 개인정보처리방침에 동의해주세요", variant: "destructive" });
+          return;
+        }
         const redirectUrl = `${window.location.origin}${returnTo}`;
         const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: redirectUrl } });
         if (error) {
