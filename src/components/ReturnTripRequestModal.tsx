@@ -99,6 +99,67 @@ const ReturnTripRequestModal = ({
   const [isCalcDistance, setIsCalcDistance] = useState(false);
   const [distanceCalculated, setDistanceCalculated] = useState(false);
 
+  // Autocomplete
+  const [suggestions, setSuggestions] = useState<{ place_name: string; address_name: string; road_address_name?: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const searchKeyword = useCallback((query: string) => {
+    const kakao = (window as any).kakao;
+    if (!kakao?.maps?.services || query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    const ps = new kakao.maps.services.Places();
+    ps.keywordSearch(query, (data: any[], status: any) => {
+      if (status === kakao.maps.services.Status.OK) {
+        setSuggestions(
+          data.slice(0, 5).map((d: any) => ({
+            place_name: d.place_name,
+            address_name: d.address_name,
+            road_address_name: d.road_address_name,
+          }))
+        );
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+      }
+    });
+  }, []);
+
+  const handleDestinationChange = useCallback(
+    (value: string) => {
+      setDestination(value);
+      setDistanceCalculated(false);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => searchKeyword(value), 300);
+    },
+    [searchKeyword]
+  );
+
+  const selectSuggestion = useCallback(
+    (s: { place_name: string; address_name: string; road_address_name?: string }) => {
+      const addr = s.road_address_name || s.address_name;
+      setDestination(`${s.place_name} (${addr})`);
+      setShowSuggestions(false);
+      setSuggestions([]);
+      setDistanceCalculated(false);
+    },
+    []
+  );
+
   const estimatedFare = useMemo(() => calculateFare(distanceKm), [distanceKm]);
 
   const handleCalcDistance = useCallback(async () => {
