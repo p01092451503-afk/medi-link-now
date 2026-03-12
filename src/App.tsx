@@ -53,6 +53,7 @@ const RootRedirect = () => {
 const AppRoutes = () => {
   const location = useLocation();
   const isMapRoute = location.pathname === "/map";
+  useOnboardingSync();
 
   return (
     <>
