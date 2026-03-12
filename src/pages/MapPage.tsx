@@ -357,7 +357,7 @@ const MapPage = () => {
                 )}
               </p>
               {window.location.hostname.endsWith("lovableproject.com") ? (
-                <a href="https://find-bed-now.lovable.app/map" target="_blank" rel="noopener noreferrer"
+                <a href="https://find-er.kr/map" target="_blank" rel="noopener noreferrer"
                    className="text-xs text-primary underline underline-offset-2">
                   배포 도메인에서 열기 →
                 </a>
