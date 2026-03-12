@@ -166,6 +166,7 @@ const ReturnTripRequestModal = ({
       setDistanceCalculated(false);
       setPatientName(initialPatientName || "");
       setPassengerCount(1);
+      setRequestedTime("");
       onClose();
     } else {
       toast({ title: "요청 실패", description: "다시 시도해주세요.", variant: "destructive" });
