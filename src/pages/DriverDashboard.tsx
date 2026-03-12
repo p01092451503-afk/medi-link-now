@@ -565,7 +565,7 @@ const DriverDashboard = () => {
                 </h3>
                 <div className="space-y-3">
                   {myRequests
-                    .filter(r => (r as any).is_scheduled && r.status === "scheduled")
+                    .filter(r => r.is_scheduled && r.status === "scheduled")
                     .map(req => (
                       <div key={req.id} className="bg-card rounded-2xl p-4 border border-border">
                         <div className="flex items-start justify-between mb-2">
