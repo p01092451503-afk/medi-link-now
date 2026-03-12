@@ -557,7 +557,7 @@ const DriverDashboard = () => {
               </div>
             )}
 
-            {myRequests.filter(r => (r as any).is_scheduled && r.status === "scheduled").length > 0 && (
+            {myRequests.filter(r => r.is_scheduled && r.status === "scheduled").length > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-foreground" />
