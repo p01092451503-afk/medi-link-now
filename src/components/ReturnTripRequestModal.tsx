@@ -94,6 +94,7 @@ const ReturnTripRequestModal = ({
   const [distanceKm, setDistanceKm] = useState(0);
   const [patientName, setPatientName] = useState(initialPatientName || "");
   const [passengerCount, setPassengerCount] = useState(1);
+  const [requestedTime, setRequestedTime] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCalcDistance, setIsCalcDistance] = useState(false);
   const [distanceCalculated, setDistanceCalculated] = useState(false);
@@ -165,6 +166,7 @@ const ReturnTripRequestModal = ({
       setDistanceCalculated(false);
       setPatientName(initialPatientName || "");
       setPassengerCount(1);
+      setRequestedTime("");
       onClose();
     } else {
       toast({ title: "요청 실패", description: "다시 시도해주세요.", variant: "destructive" });
@@ -238,6 +240,17 @@ const ReturnTripRequestModal = ({
               placeholder="이름"
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
+              className="h-11 rounded-xl"
+            />
+          </div>
+
+          {/* Requested departure time */}
+          <div>
+            <label className="text-xs font-medium text-foreground mb-1 block">희망 출발 시간</label>
+            <Input
+              type="datetime-local"
+              value={requestedTime}
+              onChange={(e) => setRequestedTime(e.target.value)}
               className="h-11 rounded-xl"
             />
           </div>
