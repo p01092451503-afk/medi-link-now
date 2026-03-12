@@ -12,6 +12,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import BottomNavBar from "@/components/BottomNavBar";
 import ScrollToTop from "./components/ScrollToTop";
+import { useOnboardingSync } from "@/hooks/useOnboardingSync";
 
 // Lazy-loaded pages for code splitting
 const Landing = lazy(() => import("./pages/Landing"));
