@@ -570,6 +570,7 @@ const MapPage = () => {
       <MyRequestsPanel />
 
       {!isParamedicMode && !isDriverMode && <FirstAidFAB />}
+      <MedicalDisclaimer />
     </div>
   );
 };
