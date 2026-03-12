@@ -68,6 +68,7 @@ const AppRoutes = () => {
             <Route path="/map" element={<MapPage />} />
             <Route path="/family" element={<FamilyPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/driver" element={<DriverDashboard />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
