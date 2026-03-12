@@ -35,6 +35,7 @@ const EmergencyGuidePage = lazy(() => import("./pages/EmergencyGuidePage"));
 const DriverBidHistoryPage = lazy(() => import("./pages/DriverBidHistoryPage"));
 const PaymentsPage = lazy(() => import("./pages/PaymentsPage"));
 const DriverRegistrationPage = lazy(() => import("./pages/DriverRegistrationPage"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const PageLoader = () => <AmbulanceLoader variant="fullscreen" />;
@@ -67,6 +68,7 @@ const AppRoutes = () => {
             <Route path="/map" element={<MapPage />} />
             <Route path="/family" element={<FamilyPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/driver" element={<DriverDashboard />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />

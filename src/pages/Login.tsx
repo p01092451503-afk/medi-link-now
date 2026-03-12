@@ -5,10 +5,12 @@ import { Ambulance, Mail, Lock, Users } from "lucide-react";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import SubPageHeader from "@/components/SubPageHeader";
+import ForgotPasswordModal from "@/components/ForgotPasswordModal";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ const Login = () => {
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated && !isAuthLoading) {
@@ -49,6 +53,10 @@ const Login = () => {
         toast({ title: "로그인 성공!" });
         navigate(returnTo);
       } else {
+        if (!agreedTerms) {
+          toast({ title: "이용약관 및 개인정보처리방침에 동의해주세요", variant: "destructive" });
+          return;
+        }
         const redirectUrl = `${window.location.origin}${returnTo}`;
         const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: redirectUrl } });
         if (error) {
@@ -129,9 +137,25 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Terms checkbox - signup only */}
+            {!isLogin && (
+              <div className="flex items-start gap-2 pt-1">
+                <Checkbox
+                  id="terms-agree"
+                  checked={agreedTerms}
+                  onCheckedChange={(v) => setAgreedTerms(v === true)}
+                  className="mt-0.5"
+                />
+                <label htmlFor="terms-agree" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                  <a href="/terms" target="_blank" className="text-primary hover:underline">이용약관</a> 및{" "}
+                  <a href="/privacy" target="_blank" className="text-primary hover:underline">개인정보처리방침</a>에 동의합니다 (필수)
+                </label>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (!isLogin ? false : false)}
               className="w-full py-4 rounded-2xl bg-foreground text-background text-[15px] font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center"
             >
               {isLoading ? (
@@ -140,7 +164,17 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          {/* Forgot password & toggle */}
+          <div className="mt-6 flex flex-col items-center gap-2">
+            {isLogin && (
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                비밀번호를 잊으셨나요?
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
@@ -150,6 +184,8 @@ const Login = () => {
             </button>
           </div>
         </motion.div>
+
+        <ForgotPasswordModal open={showForgotPassword} onOpenChange={setShowForgotPassword} />
       </main>
     </div>
   );

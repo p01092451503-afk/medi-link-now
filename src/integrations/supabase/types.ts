@@ -1146,6 +1146,7 @@ export type Database = {
           display_name: string | null
           id: string
           role: Database["public"]["Enums"]["user_role"]
+          terms_agreed_at: string | null
           updated_at: string
           user_id: string
         }
@@ -1154,6 +1155,7 @@ export type Database = {
           display_name?: string | null
           id?: string
           role?: Database["public"]["Enums"]["user_role"]
+          terms_agreed_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -1162,6 +1164,7 @@ export type Database = {
           display_name?: string | null
           id?: string
           role?: Database["public"]["Enums"]["user_role"]
+          terms_agreed_at?: string | null
           updated_at?: string
           user_id?: string
         }

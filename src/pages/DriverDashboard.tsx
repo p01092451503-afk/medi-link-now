@@ -22,6 +22,7 @@ import {
   Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AccountDeleteModal from "@/components/AccountDeleteModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
@@ -131,6 +132,8 @@ const DriverDashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -252,6 +255,14 @@ const DriverDashboard = () => {
             >
               <LogOut className="w-4 h-4 mr-1" />
               로그아웃
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDeleteAccount(true)}
+              className="text-destructive/70 hover:text-destructive text-xs"
+            >
+              회원탈퇴
             </Button>
           </div>
         </div>
@@ -654,6 +665,8 @@ const DriverDashboard = () => {
           onReject={() => setIncomingCall(null)}
         />
       )}
+
+      <AccountDeleteModal open={showDeleteAccount} onOpenChange={setShowDeleteAccount} />
     </div>
   );
 };
