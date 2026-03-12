@@ -11,9 +11,7 @@ import { PrivateTrafficProvider } from "@/contexts/PrivateTrafficContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import BottomNavBar from "@/components/BottomNavBar";
-import InstallPromptBanner from "@/components/InstallPromptBanner";
 import ScrollToTop from "./components/ScrollToTop";
-import { useOnboardingSync } from "@/hooks/useOnboardingSync";
 
 // Lazy-loaded pages for code splitting
 const Landing = lazy(() => import("./pages/Landing"));
@@ -50,11 +48,9 @@ const RootRedirect = () => {
   return <Navigate to={isOnboarded ? "/landing" : "/onboarding"} replace />;
 };
 
-
 const AppRoutes = () => {
   const location = useLocation();
   const isMapRoute = location.pathname === "/map";
-  useOnboardingSync();
 
   return (
     <>
@@ -92,7 +88,6 @@ const AppRoutes = () => {
         </Suspense>
       </div>
       <BottomNavBar />
-      <InstallPromptBanner />
     </>
   );
 };
