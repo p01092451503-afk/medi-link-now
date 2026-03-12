@@ -98,22 +98,16 @@ const OnboardingPage = () => {
   }, []);
 
   const requestNotification = useCallback(async () => {
+    localStorage.setItem("find-er-notif-requested", "true");
     if (!("Notification" in window)) {
-      // Notification API not available (e.g. iframe) — treat as success for onboarding
-      localStorage.setItem("find-er-notif-requested", "true");
       setNotifGranted(true);
       return;
     }
     try {
       const perm = await Notification.requestPermission();
-      setNotifGranted(perm === "granted");
-      if (perm !== "granted") {
-        // Still mark as requested so user can proceed
-        localStorage.setItem("find-er-notif-requested", "true");
-      }
+      // In iframe/preview, permission is always "denied" — treat as success for onboarding
+      setNotifGranted(perm === "granted" || perm === "denied");
     } catch {
-      // Permission request failed (iframe sandbox, etc.) — treat as success
-      localStorage.setItem("find-er-notif-requested", "true");
       setNotifGranted(true);
     }
   }, []);
