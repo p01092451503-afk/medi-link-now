@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Navigation, Users, ArrowRight, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
