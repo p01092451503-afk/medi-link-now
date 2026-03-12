@@ -312,8 +312,6 @@ const ReturnTripRequestModal = ({
               </p>
             )}
           </div>
-            )}
-          </div>
 
           {/* Patient name */}
           <div>
