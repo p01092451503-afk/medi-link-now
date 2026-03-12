@@ -20,7 +20,7 @@ const LANDING_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "FIND-ER",
-  "url": "https://find-bed-now.lovable.app",
+  "url": "https://find-er.kr",
   "applicationCategory": "HealthApplication",
   "operatingSystem": "Web, iOS, Android",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },

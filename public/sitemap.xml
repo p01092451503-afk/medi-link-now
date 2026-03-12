@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://find-bed-now.lovable.app/</loc>
+    <loc>https://find-er.kr/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/landing</loc>
+    <loc>https://find-er.kr/landing</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/map</loc>
+    <loc>https://find-er.kr/map</loc>
     <changefreq>always</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/guardian</loc>
+    <loc>https://find-er.kr/guardian</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/driver-intro</loc>
+    <loc>https://find-er.kr/driver-intro</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/paramedic</loc>
+    <loc>https://find-er.kr/paramedic</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/emergency-guide</loc>
+    <loc>https://find-er.kr/emergency-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/medicine-guide</loc>
+    <loc>https://find-er.kr/medicine-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/fare-calculator</loc>
+    <loc>https://find-er.kr/fare-calculator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/family</loc>
+    <loc>https://find-er.kr/family</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/terms</loc>
+    <loc>https://find-er.kr/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://find-bed-now.lovable.app/privacy</loc>
+    <loc>https://find-er.kr/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

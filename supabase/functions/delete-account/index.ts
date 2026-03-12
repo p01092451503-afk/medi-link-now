@@ -1,6 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
 
 const ALLOWED_ORIGINS = [
+  'https://find-er.kr',
+  'https://www.find-er.kr',
   'https://find-bed-now.lovable.app',
   'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
   'http://localhost:8080',
@@ -19,6 +22,12 @@ function getCorsHeaders(req: Request): Record<string, string> {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
+  }
+
+  // Rate limit: 3 requests per minute per IP (strict for account deletion)
+  const rateCheck = checkRateLimit(req, { maxRequests: 3, windowMs: 60_000 });
+  if (!rateCheck.allowed) {
+    return rateLimitResponse(req, getCorsHeaders(req), rateCheck.retryAfterMs!);
   }
 
   try {

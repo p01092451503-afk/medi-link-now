@@ -4,6 +4,7 @@ import { ArrowLeft, Map as MapIcon, X } from "lucide-react";
 
 import SplashScreen from "@/components/SplashScreen";
 import KakaoMapView from "@/components/map/KakaoMapView";
+import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
@@ -357,7 +358,7 @@ const MapPage = () => {
                 )}
               </p>
               {window.location.hostname.endsWith("lovableproject.com") ? (
-                <a href="https://find-bed-now.lovable.app/map" target="_blank" rel="noopener noreferrer"
+                <a href="https://find-er.kr/map" target="_blank" rel="noopener noreferrer"
                    className="text-xs text-primary underline underline-offset-2">
                   배포 도메인에서 열기 →
                 </a>
@@ -569,6 +570,7 @@ const MapPage = () => {
       <MyRequestsPanel />
 
       {!isParamedicMode && !isDriverMode && <FirstAidFAB />}
+      <MedicalDisclaimer />
     </div>
   );
 };

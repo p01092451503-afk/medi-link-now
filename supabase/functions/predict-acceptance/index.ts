@@ -1,6 +1,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const ALLOWED_ORIGINS = [
+  'https://find-er.kr',
+  'https://www.find-er.kr',
   'https://find-bed-now.lovable.app',
   'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
   'http://localhost:8080',

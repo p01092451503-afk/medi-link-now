@@ -2,6 +2,8 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 const ALLOWED_ORIGINS = [
+  'https://find-er.kr',
+  'https://www.find-er.kr',
   'https://find-bed-now.lovable.app',
   'https://id-preview--0014984b-817e-4711-bddc-15810d8fceb9.lovable.app',
   'http://localhost:8080',
