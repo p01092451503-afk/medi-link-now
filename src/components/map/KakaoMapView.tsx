@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { config } from "@/lib/config";
 import { Hospital, FilterType } from "@/data/hospitals";
+import type { HospitalWithMeta } from "@/hooks/useHospitals";
 import AmbulanceLoader from "@/components/AmbulanceLoader";
 import type { NursingHospital } from "@/hooks/useNursingHospitals";
 import type { NearbyPharmacy } from "@/hooks/useNearbyPharmacies";
