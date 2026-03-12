@@ -72,7 +72,9 @@ const HospitalBottomSheet = ({ hospital, onClose, distance, userLocation, onCall
   
   if (!hospital) return null;
 
-  const status = getHospitalStatus(hospital);
+  const isNoData = !!(hospital as HospitalWithMeta).hasNoData;
+  
+  const status = isNoData ? "nodata" as const : getHospitalStatus(hospital);
   const totalBeds = hospital.beds.general + hospital.beds.pediatric + hospital.beds.fever;
   const hasPediatric = hospital.beds.pediatric > 0;
   const isFavorite = isHotline(hospital.phone);
