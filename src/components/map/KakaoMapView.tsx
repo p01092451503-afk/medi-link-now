@@ -523,6 +523,7 @@ const KakaoMapView = ({
       };
 
       const displayBeds = getFilteredBeds();
+      const isNoData = !!(hospital as HospitalWithMeta).hasNoData;
       let bgColor: string;
       let borderColor: string;
       let textColor = "white";
@@ -539,13 +540,13 @@ const KakaoMapView = ({
         textColor = moonlightColors.text;
       } else {
         // Use bed availability as the primary marker color
-        const bedColors = getBedAvailabilityColors(displayBeds);
+        const bedColors = getBedAvailabilityColors(displayBeds, isNoData);
         bgColor = bedColors.bg;
         borderColor = bedColors.border;
         textColor = bedColors.text;
 
-        // If saturated (0 beds), override to gray regardless of grade
-        if (displayBeds <= 0) {
+        // If saturated (0 beds) and has data, override to gray
+        if (displayBeds <= 0 && !isNoData) {
           bgColor = "#6B7280";
           borderColor = "#4B5563";
         }
