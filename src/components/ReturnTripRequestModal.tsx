@@ -258,17 +258,16 @@ const ReturnTripRequestModal = ({
           </div>
 
           {/* Destination + auto-calc */}
-          <div>
+          <div ref={wrapperRef} className="relative">
             <label className="text-xs font-medium text-foreground mb-1 block">목적지</label>
             <div className="flex gap-2">
               <Input
-                placeholder="귀가 목적지 주소 입력"
+                placeholder="귀가 목적지 주소 또는 장소명 입력"
                 value={destination}
-                onChange={(e) => {
-                  setDestination(e.target.value);
-                  setDistanceCalculated(false);
-                }}
+                onChange={(e) => handleDestinationChange(e.target.value)}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                 className="h-11 rounded-xl flex-1"
+                autoComplete="off"
               />
               <Button
                 type="button"
@@ -286,11 +285,33 @@ const ReturnTripRequestModal = ({
                 )}
               </Button>
             </div>
+
+            {/* Autocomplete dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 left-0 right-12 mt-1 bg-popover border border-border rounded-xl shadow-lg overflow-hidden">
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="w-full text-left px-3 py-2.5 hover:bg-accent transition-colors border-b border-border last:border-b-0"
+                    onClick={() => selectSuggestion(s)}
+                  >
+                    <p className="text-sm font-medium text-foreground truncate">{s.place_name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {s.road_address_name || s.address_name}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+
             {distanceCalculated && distanceKm > 0 && (
-              <p className="text-xs text-green-600 mt-1.5 flex items-center gap-1">
+              <p className="text-xs text-primary mt-1.5 flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
                 카카오맵 기준 약 {distanceKm}km
               </p>
+            )}
+          </div>
             )}
           </div>
 
