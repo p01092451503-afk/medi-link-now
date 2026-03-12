@@ -87,7 +87,7 @@ const DriverDashboard = () => {
   
   const { hotlines, toggleFavorite, removeHotline } = useHotlines();
   const { isTracking, startTracking, stopTracking, nearbyDrivers, currentLocation: driverLocation } = useDriverPresence();
-  const { pendingRequests, myRequests, acceptRequest, isLoading: isDispatchLoading } = useDispatchRequests();
+  const { pendingRequests, myRequests, acceptRequest, startTransport, isLoading: isDispatchLoading } = useDispatchRequests();
   const { logs: rejectionLogs } = useRejectionLogs();
   const { isCallWaiting, toggleCallWaiting } = useDriverLocation();
   const { driverStats } = useReviews(user?.id);
