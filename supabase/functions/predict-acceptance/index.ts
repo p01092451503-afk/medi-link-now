@@ -189,6 +189,7 @@ Deno.serve(async (req) => {
         patternScore: Math.round(patternScore),
         weatherScore: Math.round(weatherScore),
         spilloverScore: Math.round(spilloverScore),
+        historicalScore: Math.round(historicalScore),
       },
       conditionAcceptance: {
         cardiac: totalBeds > 0,
